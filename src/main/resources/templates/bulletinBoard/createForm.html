@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<style>
+ .fieldError {
+ border-color: #bd2130;
+ }
+</style>
+<body>
+<div class="container">
+	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+	<form role="form" action="/boards/new" th:object="${boardForm}"
+	      th:method="post">
+		<div class="form-group">
+			<label th:for="region">지역</label>
+			<input type="text" th:field="*{region}" class="form-control"
+			       placeholder="지역을 입력하세요"
+			       th:class="${#fields.hasErrors('region')}? 'form-control fieldError' : 'form-control'">
+			<p th:if="${#fields.hasErrors('region')}"
+			   th:errors="*{region}">Incorrect date</p>
+		</div>
+		<div class="form-group">
+			<label th:for="title">제목</label>
+			<input type="text" th:field="*{title}" class="form-control"
+			       placeholder="제목을 입력하세요">
+		</div>
+		<div class="form-group">
+			<label th:for="content">내용</label>
+			<textarea class="form-control" th:field="*{content}" rows="5"></textarea>
+		</div>
+		<div class="form-group">
+			<label th:for="image">이미지</label>
+			<input type="file"multiple th:field="*{image}" class="form-control-file">
+		</div>
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+	<br/>
+	<div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

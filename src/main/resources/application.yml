@@ -1,0 +1,24 @@
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/catdog?serverTimezone=Asia/Seoul
+#    username: java
+#    password: mysql
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/catdog
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        show_sql: true  -> System.out
+        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace #스프링 부트 2.x, hibernate5
