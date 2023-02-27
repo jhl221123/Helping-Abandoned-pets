@@ -24,7 +24,7 @@ public class BulletinBoardController {
     @GetMapping("/boards/new")
     public String createBulletinBoardForm(Model model) {
         model.addAttribute("boardForm", new BoardForm());
-        return "bulletinBoard/createForm";
+        return "bulletinBoard/create";
     }
 
     @PostMapping("/boards/new")
@@ -36,21 +36,27 @@ public class BulletinBoardController {
     @GetMapping("/boards")
     public String BulletinBoardList(Model model) {
         List<BoardForm> boardForms = bulletinBoardService.readAll();
-        model.addAttribute("boardForms", boardForms); //엔티티로 접근, 수정 필요
-        return "bulletinBoard/listForm";
+        model.addAttribute("boardForms", boardForms);
+        return "bulletinBoard/list";
     }
 
     @GetMapping("/boards/{boardNo}")
     public String readBulletinBoard(@PathVariable("boardNo") Long boardNo, Model model) {
         BoardForm boardForm = bulletinBoardService.readBoard(boardNo);
         model.addAttribute("boardForm", boardForm);
-        return "bulletinBoard/readForm";
+        return "bulletinBoard/detail";
     }
 
     @GetMapping("/boards/{boardNo}/edit")
     public String updateBulletinBoardForm(@PathVariable("boardNo") Long boardNo, Model model) {
-        BoardForm boardForm = bulletinBoardService.updateBoard(boardNo);
+        BoardForm boardForm = bulletinBoardService.readBoard(boardNo);
         model.addAttribute("boardForm", boardForm);
-        return "bulletinBoard/readForm";
+        return "bulletinBoard/update";
+    }
+
+    @PostMapping("/boards/{boardNo}/edit")
+    public String updateBulletinBoard(@ModelAttribute("boardForm") BoardForm boardForm) {
+        bulletinBoardService.updateBoard(boardForm);
+        return "redirect:/boards/{boardNo}";
     }
 }

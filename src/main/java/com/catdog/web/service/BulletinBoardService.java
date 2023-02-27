@@ -27,15 +27,20 @@ public class BulletinBoardService {
     public BoardForm readBoard(Long boardNo) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(boardNo);
         BoardForm boardForm = createBoardForm(findBoard);
-        boardForm.setReadOnly(true);
         return boardForm;
     }
 
-    public BoardForm updateBoard(Long boardNo) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardNo);
-        BoardForm boardForm = createBoardForm(findBoard);
-        boardForm.setReadOnly(false);
-        return boardForm;
+    public Long updateBoard(BoardForm boardForm) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardForm.getBoardNo());
+        updateBulletinBoard(findBoard, boardForm);
+        return findBoard.getNo();
+    }
+
+    private static void updateBulletinBoard(BulletinBoard findBoard, BoardForm boardForm) {
+        findBoard.setRegion(boardForm.getRegion());
+        findBoard.setTitle(boardForm.getTitle());
+        findBoard.setContent(boardForm.getContent());
+        findBoard.setImage(boardForm.getImage());
     }
 
     public List<BoardForm> readAll() {

@@ -18,5 +18,4 @@ public class BoardForm {
     private String image; //Blob으로 교체!
     private LocalDateTime writeDate;
     private int score;
-    private boolean readOnly;
 }
