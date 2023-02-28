@@ -23,7 +23,7 @@ public class BulletinBoardRepository {
     }
 
     public List<BulletinBoard> findAll() {
-        List<BulletinBoard> boards = em.createQuery("select b from BulletinBoard b", BulletinBoard.class).getResultList();
+        List<BulletinBoard> boards = em.createQuery("select b from BulletinBoard b order by board_date desc", BulletinBoard.class).getResultList();
         return boards;
     }
 }
