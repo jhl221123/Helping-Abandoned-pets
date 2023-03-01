@@ -1,15 +1,16 @@
-package com.catdog.web.domain;
+package com.catdog.web.domain.Board;
 
+import com.catdog.web.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.time.LocalDateTime;
-
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 @Getter @Setter
-public class BulletinBoard {
+public abstract class Board {
 
     @Id @GeneratedValue
     @Column(name = "board_no")
@@ -19,20 +20,12 @@ public class BulletinBoard {
     @JoinColumn(name = "user_no")
     private User user;
 
-    private String region;
-
     @Column(name = "board_title")
     private String title;
 
     @Column(name = "board_content")
     private String content;
 
-    @Column(name = "board_image")
-    private String image; // Blob으로 교체!
-
     @Column(name = "board_date")
-    private LocalDateTime writeDate; //리팩토링 필요
-
-    @Column(name = "board_score")
-    private int score;
+    private LocalDateTime writeDate; //날짜모음 값타입으로 리팩토링 필요
 }

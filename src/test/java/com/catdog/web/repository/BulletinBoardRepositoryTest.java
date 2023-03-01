@@ -1,6 +1,6 @@
 //package com.catdog.web.repository;
 //
-//import com.catdog.web.domain.BulletinBoard;
+//import com.catdog.web.domain.Board.BulletinBoard;
 //import com.catdog.web.domain.Gender;
 //import com.catdog.web.domain.User;
 //import org.assertj.core.api.Assertions;

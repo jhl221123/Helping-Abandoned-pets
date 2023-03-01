@@ -1,11 +1,10 @@
 package com.catdog.web.repository;
 
-import com.catdog.web.domain.BulletinBoard;
+import com.catdog.web.domain.Board.BulletinBoard;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository

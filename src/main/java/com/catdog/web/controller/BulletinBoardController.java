@@ -1,6 +1,5 @@
 package com.catdog.web.controller;
 
-import com.catdog.web.domain.BulletinBoard;
 import com.catdog.web.repository.BulletinBoardRepository;
 import com.catdog.web.service.BulletinBoardService;
 import lombok.RequiredArgsConstructor;

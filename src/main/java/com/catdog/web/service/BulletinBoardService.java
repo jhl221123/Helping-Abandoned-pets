@@ -1,7 +1,7 @@
 package com.catdog.web.service;
 
 import com.catdog.web.controller.BoardForm;
-import com.catdog.web.domain.BulletinBoard;
+import com.catdog.web.domain.Board.BulletinBoard;
 import com.catdog.web.repository.BulletinBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
