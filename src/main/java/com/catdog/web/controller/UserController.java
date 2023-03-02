@@ -1,6 +1,6 @@
 package com.catdog.web.controller;
 
-import com.catdog.web.repository.UserRepository;
+import com.catdog.web.repository.UserRepositoryImpl;
 import com.catdog.web.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryImpl userRepositoryImpl;
     private final UserService userService;
 
     @GetMapping("/users/new")

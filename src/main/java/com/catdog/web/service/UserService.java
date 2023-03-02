@@ -3,7 +3,7 @@ package com.catdog.web.service;
 import com.catdog.web.controller.UserForm;
 import com.catdog.web.domain.Gender;
 import com.catdog.web.domain.User;
-import com.catdog.web.repository.UserRepository;
+import com.catdog.web.repository.UserRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryImpl userRepositoryImpl;
 
     @Transactional
     public Long join(UserForm userForm) {
@@ -23,7 +23,7 @@ public class UserService {
                 userForm.getName(),
                 userForm.getAge(),
                 userForm.getGender());
-        userRepository.save(user);
+        userRepositoryImpl.save(user);
         return user.getNo();
     }
 
