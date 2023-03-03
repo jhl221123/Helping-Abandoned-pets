@@ -2,6 +2,7 @@ package com.catdog.web.repository;
 
 import com.catdog.web.domain.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
