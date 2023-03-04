@@ -1,10 +1,10 @@
-package com.catdog.web;
+package com.catdog.help;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WebApplicationTests {
+class HelpApplicationTests {
 
 	@Test
 	void contextLoads() {

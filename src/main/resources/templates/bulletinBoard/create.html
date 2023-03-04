@@ -9,7 +9,7 @@
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" action="/boards/new" th:object="${boardForm}"
+	<form role="form" action="/boards/new" th:object="${updateBoardForm}"
 	      th:method="post">
 		<div class="form-group">
 			<label th:for="region">지역</label>

@@ -1,6 +1,5 @@
-package com.catdog.web.controller;
+package com.catdog.help.web;
 
-import com.catdog.web.domain.Gender;
 import lombok.Getter;
 import lombok.Setter;
 

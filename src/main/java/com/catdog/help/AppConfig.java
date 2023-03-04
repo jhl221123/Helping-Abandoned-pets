@@ -1,4 +1,4 @@
-package com.catdog.web;
+package com.catdog.help;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

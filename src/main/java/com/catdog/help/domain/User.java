@@ -1,4 +1,4 @@
-package com.catdog.web.domain;
+package com.catdog.help.domain;
 
 import lombok.Getter;
 import lombok.Setter;

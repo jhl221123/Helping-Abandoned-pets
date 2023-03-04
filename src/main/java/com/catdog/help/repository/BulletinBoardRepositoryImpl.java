@@ -1,6 +1,6 @@
-package com.catdog.web.repository;
+package com.catdog.help.repository;
 
-import com.catdog.web.domain.Board.BulletinBoard;
+import com.catdog.help.domain.Board.BulletinBoard;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

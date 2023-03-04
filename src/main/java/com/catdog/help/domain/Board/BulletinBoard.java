@@ -1,12 +1,9 @@
-package com.catdog.web.domain.Board;
+package com.catdog.help.domain.Board;
 
-import com.catdog.web.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Blob;
-import java.time.LocalDateTime;
 
 @Entity
 @DiscriminatorValue("Bulletin")

@@ -1,13 +1,13 @@
-package com.catdog.web;
+package com.catdog.help;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WebApplication {
+public class HelpApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WebApplication.class, args);
+		SpringApplication.run(HelpApplication.class, args);
 	}
 
 }

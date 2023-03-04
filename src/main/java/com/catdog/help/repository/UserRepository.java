@@ -1,6 +1,6 @@
-package com.catdog.web.repository;
+package com.catdog.help.repository;
 
-import com.catdog.web.domain.User;
+import com.catdog.help.domain.User;
 
 import java.util.List;
 
