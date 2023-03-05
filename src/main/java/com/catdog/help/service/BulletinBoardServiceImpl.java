@@ -1,9 +1,10 @@
 package com.catdog.help.service;
 
-import com.catdog.help.web.UpdateBoardForm;
+import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.UpdateBulletinBoardForm;
 import com.catdog.help.domain.Board.BulletinBoard;
 import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.web.SaveBoardForm;
+import com.catdog.help.web.form.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,44 +14,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     private final BulletinBoardRepository bulletinBoardRepository;
 
-    public Long createBoard(SaveBoardForm boardForm) {
+    @Transactional
+    public Long createBoard(SaveBulletinBoardForm boardForm) {
         BulletinBoard board = createBulletinBoard(boardForm);
         bulletinBoardRepository.save(board);
-        return board.getNo();
+        return board.getId();
     }
 
-    public UpdateBoardForm readBoard(Long boardNo) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardNo);
-        UpdateBoardForm updateBoardForm = createUpdateBoardForm(findBoard);
-        return updateBoardForm;
+    public BulletinBoardDto readBoard(Long id) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
+        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard);
+        return bulletinBoardDto;
     }
 
-    public Long updateBoard(UpdateBoardForm updateBoardForm) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(updateBoardForm.getBoardNo());
-        updateBulletinBoard(findBoard, updateBoardForm);
-        return findBoard.getNo();
+    public UpdateBulletinBoardForm getUpdateForm(Long id) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
+        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
+        updateForm.setId(findBoard.getId());
+        updateForm.setRegion(findBoard.getRegion());
+        updateForm.setTitle(findBoard.getTitle());
+        updateForm.setContent(findBoard.getContent());
+        updateForm.setImage(findBoard.getImage());
+        updateForm.setWriteDate(findBoard.getWriteDate());
+        return updateForm;
     }
 
-    public List<UpdateBoardForm> readAll() {
-        List<UpdateBoardForm> updateBoardForms = new ArrayList<>();
+    @Transactional
+    public Long updateBoard(UpdateBulletinBoardForm updateForm) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(updateForm.getId());
+        updateBulletinBoard(findBoard, updateForm);
+        return findBoard.getId();
+    }
+
+    public List<BulletinBoardDto> readAll() {
+        List<BulletinBoardDto> bulletinBoardDtos = new ArrayList<>();
         List<BulletinBoard> boards = bulletinBoardRepository.findAll();
         for (BulletinBoard board : boards) {
-            updateBoardForms.add(createUpdateBoardForm(board));
+            bulletinBoardDtos.add(getBulletinBoardDto(board));
         }
-        return updateBoardForms;
+        return bulletinBoardDtos;
     }
 
-    public BulletinBoard readOne(Long boardNo) {
-        return bulletinBoardRepository.findOne(boardNo);
-    }
-
-    private static BulletinBoard createBulletinBoard(SaveBoardForm boardForm) {
+    private static BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm) {
         BulletinBoard board = new BulletinBoard();
         //todo -> user
         board.setRegion(boardForm.getRegion());
@@ -62,21 +73,21 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         return board;
     }
 
-    private static UpdateBoardForm createUpdateBoardForm(BulletinBoard findBoard) {
-        UpdateBoardForm updateBoardForm = new UpdateBoardForm();
-        updateBoardForm.setBoardNo(findBoard.getNo());
-        updateBoardForm.setRegion(findBoard.getRegion());
-        updateBoardForm.setTitle(findBoard.getTitle());
-        updateBoardForm.setContent(findBoard.getContent());
-        updateBoardForm.setImage(findBoard.getImage());
-        updateBoardForm.setWriteDate(findBoard.getWriteDate());
-        return updateBoardForm;
+    private static BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard) {
+        BulletinBoardDto bulletinBoardDto = new BulletinBoardDto();
+        bulletinBoardDto.setId(findBoard.getId());
+        bulletinBoardDto.setRegion(findBoard.getRegion());
+        bulletinBoardDto.setTitle(findBoard.getTitle());
+        bulletinBoardDto.setContent(findBoard.getContent());
+        bulletinBoardDto.setImage(findBoard.getImage());
+        bulletinBoardDto.setWriteDate(findBoard.getWriteDate());
+        return bulletinBoardDto;
     }
 
-    private static void updateBulletinBoard(BulletinBoard findBoard, UpdateBoardForm updateBoardForm) {
-        findBoard.setRegion(updateBoardForm.getRegion());
-        findBoard.setTitle(updateBoardForm.getTitle());
-        findBoard.setContent(updateBoardForm.getContent());
-        findBoard.setImage(updateBoardForm.getImage());
+    private static void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
+        findBoard.setRegion(updateForm.getRegion());
+        findBoard.setTitle(updateForm.getTitle());
+        findBoard.setContent(updateForm.getContent());
+        findBoard.setImage(updateForm.getImage());
     }
 }

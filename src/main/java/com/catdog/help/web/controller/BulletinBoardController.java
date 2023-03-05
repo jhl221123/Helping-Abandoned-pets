@@ -2,11 +2,14 @@ package com.catdog.help.web.controller;
 
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.service.BulletinBoardService;
-import com.catdog.help.web.UpdateBoardForm;
-import com.catdog.help.web.SaveBoardForm;
+import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,40 +27,48 @@ public class BulletinBoardController {
 
     @GetMapping("/boards/new")
     public String createBulletinBoardForm(Model model) {
-        model.addAttribute("updateBoardForm", new UpdateBoardForm());
+        model.addAttribute("saveBoardForm", new SaveBulletinBoardForm());
         return "bulletinBoard/create";
     }
 
     @PostMapping("/boards/new")
-    public String createBulletinBoard(@ModelAttribute("saveBoardForm") SaveBoardForm saveBoardForm) {
+    public String createBulletinBoard(@Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
+                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "bulletinBoard/create";
+        }
         bulletinBoardService.createBoard(saveBoardForm);
         return "redirect:/boards";
     }
 
     @GetMapping("/boards")
     public String BulletinBoardList(Model model) {
-        List<UpdateBoardForm> updateBoardForms = bulletinBoardService.readAll();
-        model.addAttribute("updateBoardForms", updateBoardForms);
+        List<BulletinBoardDto> bulletinBoardDtos = bulletinBoardService.readAll();
+        model.addAttribute("bulletinBoardDtos", bulletinBoardDtos);
         return "bulletinBoard/list";
     }
 
-    @GetMapping("/boards/{boardNo}")
-    public String readBulletinBoard(@PathVariable("boardNo") Long boardNo, Model model) {
-        UpdateBoardForm updateBoardForm = bulletinBoardService.readBoard(boardNo);
-        model.addAttribute("updateBoardForm", updateBoardForm);
+    @GetMapping("/boards/{id}")
+    public String readBulletinBoard(@PathVariable("id") Long id, Model model) {
+        BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
+        model.addAttribute("bulletinBoardDto", bulletinBoardDto);
         return "bulletinBoard/detail";
     }
 
-    @GetMapping("/boards/{boardNo}/edit")
-    public String updateBulletinBoardForm(@PathVariable("boardNo") Long boardNo, Model model) {
-        UpdateBoardForm updateBoardForm = bulletinBoardService.readBoard(boardNo);
-        model.addAttribute("updateBoardForm", updateBoardForm);
+    @GetMapping("/boards/{id}/edit")
+    public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model) {
+        UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
+        model.addAttribute("updateBoardForm", updateBulletinBoardForm);
         return "bulletinBoard/update";
     }
 
-    @PostMapping("/boards/{boardNo}/edit")
-    public String updateBulletinBoard(@ModelAttribute("updateBoardForm") UpdateBoardForm updateBoardForm) {
-        bulletinBoardService.updateBoard(updateBoardForm);
-        return "redirect:/boards/{boardNo}";
+    @PostMapping("/boards/{id}/edit")
+    public String updateBulletinBoard(@Validated @ModelAttribute("updateBoardForm") UpdateBulletinBoardForm updateBulletinBoardForm,
+                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "bulletinBoard/update";
+        }
+        bulletinBoardService.updateBoard(updateBulletinBoardForm);
+        return "redirect:/boards/{id}";
     }
 }

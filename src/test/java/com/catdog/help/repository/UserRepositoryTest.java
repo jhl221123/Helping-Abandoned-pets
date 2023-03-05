@@ -27,8 +27,8 @@ class UserRepositoryTest {
         //when
         userRepository.save(user1);
         userRepository.save(user2);
-        User findUser1 = userRepository.findOne(user1.getNo());
-        User findUser2 = userRepository.findOne(user2.getNo());
+        User findUser1 = userRepository.findOne(user1.getId());
+        User findUser2 = userRepository.findOne(user2.getId());
 
         //then
         assertThat(findUser1.getEmailId()).isEqualTo("id1@123");

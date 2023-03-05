@@ -1,20 +1,20 @@
 package com.catdog.help.service;
 
-import com.catdog.help.web.UpdateBoardForm;
-import com.catdog.help.domain.Board.BulletinBoard;
-import com.catdog.help.web.SaveBoardForm;
+import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.SaveBulletinBoardForm;
 
 import java.util.List;
 
 public interface BulletinBoardService {
 
-    public Long createBoard(SaveBoardForm boardForm);
+    public Long createBoard(SaveBulletinBoardForm boardForm);
 
-    public UpdateBoardForm readBoard(Long boardNo);
+    public BulletinBoardDto readBoard(Long id);
 
-    public Long updateBoard(UpdateBoardForm updateBoardForm);
+    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm);
 
-    public List<UpdateBoardForm> readAll();
+    public List<BulletinBoardDto> readAll();
 
-    public BulletinBoard readOne(Long boardNo);
+    public UpdateBulletinBoardForm getUpdateForm(Long id);
 }

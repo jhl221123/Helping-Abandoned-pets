@@ -15,11 +15,11 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="updateBoardForm : ${updateBoardForms}">
-				<td th:text="${updateBoardForm.region}"></td>
-				<td th:text="${updateBoardForm.title}" th:onclick="|location.href='@{/boards/{boardNo}(boardNo=${updateBoardForm.boardNo})}'|" style="cursor:pointer;"></td>
-				<td th:text="${updateBoardForm.user?.emailId}"></td>
-				<td th:text="${updateBoardForm.writeDate}"></td>
+			<tr th:each="bulletinBoardDto : ${bulletinBoardDtos}">
+				<td th:text="${bulletinBoardDto.region}"></td>
+				<td th:text="${bulletinBoardDto.title}" th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|" style="cursor:pointer;"></td>
+				<td th:text="${bulletinBoardDto.user?.emailId}"></td>
+				<td th:text="${bulletinBoardDto.writeDate}"></td>
 			</tr>
 			</tbody>
 		</table>

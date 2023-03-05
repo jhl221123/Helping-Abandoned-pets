@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id @GeneratedValue
-    @Column(name = "user_no")
-    private Long no;
+    @Column(name = "user_id")
+    private Long id;
 
-    @Column(name = "user_id", unique = true)
+    @Column(name = "user_emailId", unique = true)
     private String emailId;
 
     @Column(name = "user_password")
@@ -34,5 +34,5 @@ public class User {
     private int reliability;
 
     @Column(name = "user_join_date")
-    private LocalDateTime joinDate; // 리팩토링 필요
+    private LocalDateTime joinDate; //todo 2023-03-05 날짜 모음 값타입으로 수정
 }

@@ -31,8 +31,8 @@ class BulletinBoardRepositoryTest {
         //when
         bulletinBoardRepository.save(board1);
         bulletinBoardRepository.save(board2);
-        BulletinBoard findBoard1 = bulletinBoardRepository.findOne(board1.getNo());
-        BulletinBoard findBoard2 = bulletinBoardRepository.findOne(board2.getNo());
+        BulletinBoard findBoard1 = bulletinBoardRepository.findOne(board1.getId());
+        BulletinBoard findBoard2 = bulletinBoardRepository.findOne(board2.getId());
 
         //then
         assertThat(findBoard1.getTitle()).isEqualTo("title1");

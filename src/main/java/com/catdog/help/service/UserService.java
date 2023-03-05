@@ -1,6 +1,6 @@
 package com.catdog.help.service;
 
-import com.catdog.help.web.UserForm;
+import com.catdog.help.web.form.SaveUserForm;
 import com.catdog.help.domain.Gender;
 import com.catdog.help.domain.User;
 import com.catdog.help.repository.UserRepositoryImpl;
@@ -17,14 +17,14 @@ public class UserService {
     private final UserRepositoryImpl userRepositoryImpl;
 
     @Transactional
-    public Long join(UserForm userForm) {
-        User user = createUser(userForm.getEmailId(),
-                userForm.getPassword(),
-                userForm.getName(),
-                userForm.getAge(),
-                userForm.getGender());
+    public Long join(SaveUserForm saveUserForm) {
+        User user = createUser(saveUserForm.getEmailId(),
+                saveUserForm.getPassword(),
+                saveUserForm.getName(),
+                saveUserForm.getAge(),
+                saveUserForm.getGender());
         userRepositoryImpl.save(user);
-        return user.getNo();
+        return user.getId();
     }
 
     private static User createUser(String emailId, String password, String name, int age, String gender) {
