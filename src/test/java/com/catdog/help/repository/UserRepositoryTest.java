@@ -21,20 +21,25 @@ class UserRepositoryTest {
     @Test
     public void saveAndFindOne() {
         //given
-        User user1 = createUser("id1@123", "123");
-        User user2 = createUser("id2@123", "123");
+        User user1 = createUser("id1@1", "123");
+        User user2 = createUser("id2@2", "123");
 
         //when
         userRepository.save(user1);
         userRepository.save(user2);
-        User findUser1 = userRepository.findOne(user1.getId());
-        User findUser2 = userRepository.findOne(user2.getId());
+        User findUser1 = userRepository.findById(user1.getId());
+        User findUser2 = userRepository.findById(user2.getId());
+        User findUser3 = userRepository.findByEmailId(user1.getEmailId());
+        User findUser4 = userRepository.findByEmailId(user2.getEmailId());
+        User findUser5 = userRepository.findByEmailId("id3@3");
+
 
         //then
-        assertThat(findUser1.getEmailId()).isEqualTo("id1@123");
-        assertThat(findUser2.getEmailId()).isEqualTo("id2@123");
         assertThat(findUser1).isEqualTo(user1);
         assertThat(findUser2).isEqualTo(user2);
+        assertThat(findUser3).isEqualTo(user1);
+        assertThat(findUser4).isEqualTo(user2);
+        assertThat(findUser5).isEqualTo(null);
     }
 
     @Test

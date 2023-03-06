@@ -22,6 +22,10 @@ public class UpdateUserForm {
     private String password;
 
     @NotBlank
+    @Length(min = 2, max = 10)
+    private String nickName;
+
+    @NotBlank
     private String name;
 
     @NotNull

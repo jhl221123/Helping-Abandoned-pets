@@ -14,11 +14,14 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "user_emailId", unique = true)
+    @Column(name = "user_email_id", unique = true)
     private String emailId;
 
     @Column(name = "user_password")
     private String password;
+
+    @Column(name = "user_nickname")
+    private String nickName;
 
     @Column(name = "user_name")
     private String name;

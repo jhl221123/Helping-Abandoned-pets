@@ -7,7 +7,9 @@ import java.util.List;
 public interface UserRepository {
     public void save(User user);
 
-    public User findOne(Long no);
+    public User findById(Long id);
+
+    public User findByEmailId(String emailId);
 
     public List<User> findAll();
 }

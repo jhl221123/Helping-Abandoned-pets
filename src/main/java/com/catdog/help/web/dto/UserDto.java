@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Getter @Setter
@@ -16,6 +18,7 @@ public class UserDto {
     private Long id;
 
     @NotBlank
+    @Email
     private String emailId;
 
     @NotBlank
@@ -23,9 +26,14 @@ public class UserDto {
     private String password;
 
     @NotBlank
+    @Length(min = 2, max = 10)
+    private String nickName;
+
+    @NotBlank
     private String name;
 
     @NotNull
+    @Positive
     private int age;
 
     @NotNull

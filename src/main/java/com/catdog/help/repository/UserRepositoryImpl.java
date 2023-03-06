@@ -1,12 +1,14 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -17,8 +19,15 @@ public class UserRepositoryImpl implements UserRepository {
         em.persist(user);
     }
 
-    public User findOne(Long no) {
-        return em.find(User.class, no);
+    public User findById(Long id) {
+        return em.find(User.class, id);
+    }
+
+    public User findByEmailId(String emailId) {
+        List<User> findUser = em.createQuery("select u from User u where u.emailId = :emailId", User.class)
+                .setParameter("emailId", emailId)
+                .getResultList();
+        return findUser.stream().findAny().orElse(null);
     }
 
     public List<User> findAll() {
