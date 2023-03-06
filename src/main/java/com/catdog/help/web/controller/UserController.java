@@ -1,6 +1,5 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.domain.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
@@ -69,4 +68,12 @@ public class UserController {
         return "redirect:/";
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/";
+    }
 }

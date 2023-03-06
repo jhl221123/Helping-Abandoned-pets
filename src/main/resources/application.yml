@@ -24,7 +24,7 @@ spring:
 server:
   servlet:
     session:
-      tracking-modes=cookie:
+      tracking-modes: cookie
 
 logging.level:
   org.hibernate.SQL: debug
