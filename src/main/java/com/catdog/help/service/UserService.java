@@ -52,6 +52,24 @@ public class UserService {
         return findUserDto;
     }
 
+    public boolean checkEmailDuplication(String email) {
+        User findUser = userRepository.findByEmailId(email);
+        if (findUser == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean checkNickNameDuplication(String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        if (findUser == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * detach용으로 만들었는데 좀 더 공부해서 준영속이랑 같은 거면 detach로 로직을 변경하자.
      */

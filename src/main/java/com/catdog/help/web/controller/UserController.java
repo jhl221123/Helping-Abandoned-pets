@@ -39,7 +39,15 @@ public class UserController {
             return "users/joinForm";
         }
 
-        // TODO: 2023-03-06 이메일, 닉네임 중복회원 검증
+        if (userService.checkEmailDuplication(saveUserForm.getEmailId())) {
+            bindingResult.rejectValue("emailId", "duplicate", "이미 가입된 이메일 아이디입니다.");
+            return "users/joinForm";
+        }
+
+        if (userService.checkNickNameDuplication(saveUserForm.getNickName())) {
+            bindingResult.rejectValue("nickName", "duplicate", "이미 존재하는 닉네임입니다.");
+            return "users/joinForm";
+        }
 
         userService.join(saveUserForm);
         return "redirect:/";
