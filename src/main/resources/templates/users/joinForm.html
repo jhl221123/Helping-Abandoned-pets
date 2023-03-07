@@ -45,11 +45,11 @@
 		<div class="form-group">
 			<label th:for="gender">성별</label>
 			<div class="btn-group btn-group-toggle" data-toggle="buttons">
-				<label class="btn btn-secondary" active>
-					<input type="radio" th:field="*{gender}" value="man" checked> man
+				<label class="btn btn-secondary" th:classappend="${saveUserForm.gender == 'man'} ? 'active' : ''">
+					<input type="radio" th:field="*{gender}" value="man" th:checked="${gender eq 'man' ? 'checked' : ''}"> man
 				</label>
-				<label class="btn btn-secondary">
-					<input type="radio" th:field="*{gender}" value="woman"> woman
+				<label class="btn btn-secondary" th:classappend="${saveUserForm.gender == 'woman'} ? 'active' : ''">
+					<input type="radio" th:field="*{gender}" value="woman" th:checked="${gender eq 'woman' ? 'checked' : ''}"> woman
 				</label>
 			</div>
 			<p class="field-error" th:errors="*{gender}">성별 오류</p>
