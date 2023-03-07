@@ -18,7 +18,7 @@
 			<tr th:each="bulletinBoardDto : ${bulletinBoardDtos}">
 				<td th:text="${bulletinBoardDto.region}"></td>
 				<td th:text="${bulletinBoardDto.title}" th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|" style="cursor:pointer;"></td>
-				<td th:text="${bulletinBoardDto.user?.emailId}"></td>
+				<td th:text="${bulletinBoardDto.user.nickName}"></td>
 				<td th:text="${bulletinBoardDto.writeDate}"></td>
 			</tr>
 			</tbody>

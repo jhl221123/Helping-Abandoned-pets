@@ -12,6 +12,10 @@
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
 	<form role="form" th:object="${updateBoardForm}" th:method="post">
 		<div class="form-group">
+			<label th:for="nickName">닉네임</label>
+			<input type="text" th:field="*{user.nickName}" class="form-control" readonly>
+		</div>
+		<div class="form-group">
 			<label th:for="region">지역</label>
 			<input type="text" th:field="*{region}" th:errorclass="field-error" class="form-control" >
 			<p class="field-error" th:errors="*{region}">입력 오류</p>

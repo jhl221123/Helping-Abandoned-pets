@@ -1,35 +1,48 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.domain.User;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.service.BulletinBoardService;
+import com.catdog.help.service.UserService;
+import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
+    private final UserService userService;
     private final BulletinBoardRepository bulletinBoardRepository;
 
 
     @GetMapping("/boards/new")
-    public String createBulletinBoardForm(Model model) {
-        model.addAttribute("saveBoardForm", new SaveBulletinBoardForm());
+    public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) String nickName, Model model) {
+        if (nickName == null) {
+            return "redirect:/users/login"; // TODO: 2023-03-06 인터셉터 적용 후 제거, session required도 제거
+        }
+        UserDto findUserDto = userService.getUserDtoByNickName(nickName);
+        User sessionUser = userService.getUser(findUserDto); // TODO: 2023-03-06 엔티티 반환 안하려고 한건데 더 고민해봐야할 듯. 준영속으로 만드는 것도 찜찜해서..
+        SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
+        saveBoardForm.setUser(sessionUser);
+        model.addAttribute("saveBoardForm", saveBoardForm);
         return "bulletinBoard/create";
     }
+
+
 
     @PostMapping("/boards/new")
     public String createBulletinBoard(@Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,

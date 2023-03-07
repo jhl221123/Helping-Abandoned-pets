@@ -30,6 +30,13 @@ public class UserRepositoryImpl implements UserRepository {
         return findUser.stream().findAny().orElse(null);
     }
 
+    public User findByNickName(String nickName) {
+        List<User> findUser = em.createQuery("select u from User u where u.nickName = :nickName", User.class)
+                .setParameter("nickName", nickName)
+                .getResultList();
+        return findUser.stream().findAny().orElse(null);
+    }
+
     public List<User> findAll() {
         List<User> users = em.createQuery("select u from User u", User.class).getResultList();
         return users;

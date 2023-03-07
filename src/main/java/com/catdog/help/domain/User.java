@@ -20,7 +20,7 @@ public class User {
     @Column(name = "user_password")
     private String password;
 
-    @Column(name = "user_nickname")
+    @Column(name = "user_nickname", unique = true)
     private String nickName;
 
     @Column(name = "user_name")
@@ -38,4 +38,5 @@ public class User {
 
     @Column(name = "user_join_date")
     private LocalDateTime joinDate; //todo 2023-03-05 날짜 모음 값타입으로 수정
+
 }

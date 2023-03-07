@@ -43,6 +43,31 @@ public class UserService {
         return findUserDto;
     }
 
+    public UserDto getUserDtoByNickName(String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        if (findUser == null) {
+            // TODO: 2023-03-06 예외처리
+        }
+        UserDto findUserDto = getUserDto(findUser);
+        return findUserDto;
+    }
+
+    /**
+     * detach용으로 만들었는데 좀 더 공부해서 준영속이랑 같은 거면 detach로 로직을 변경하자.
+     */
+    public User getUser(UserDto findUserDto) {
+        User user = new User();
+        user.setId(findUserDto.getId());
+        user.setEmailId(findUserDto.getEmailId());
+        user.setPassword(findUserDto.getPassword());
+        user.setNickName(findUserDto.getNickName());
+        user.setName(findUserDto.getName());
+        user.setAge(findUserDto.getAge());
+        user.setReliability(findUserDto.getReliability());
+        user.setJoinDate(findUserDto.getJoinDate());
+        return user;
+    }
+
     private static UserDto getUserDto(User findUser) {
         UserDto UserDto = new UserDto();
         UserDto.setId(findUser.getId());

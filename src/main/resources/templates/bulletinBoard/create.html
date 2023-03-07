@@ -13,6 +13,10 @@
 	<form role="form" action="/boards/new" th:object="${saveBoardForm}"
 	      th:method="post">
 		<div class="form-group">
+			<label th:for="nickName">닉네임</label>
+			<input type="text" th:field="*{user.nickName}" class="form-control" readonly>
+		</div>
+		<div class="form-group">
 			<label th:for="region">지역</label>
 			<input type="text" th:field="*{region}" th:errorclass="field-error" class="form-control"
 			       placeholder="지역을 입력하세요">

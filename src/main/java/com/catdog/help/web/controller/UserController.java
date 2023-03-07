@@ -7,18 +7,17 @@ import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.LoginForm;
 import com.catdog.help.web.form.SaveUserForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+@Slf4j
 @Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -40,6 +39,8 @@ public class UserController {
             return "users/joinForm";
         }
 
+        // TODO: 2023-03-06 이메일, 닉네임 중복회원 검증
+
         userService.join(saveUserForm);
         return "redirect:/";
     }
@@ -51,8 +52,10 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(@Validated @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult,
+                        @RequestParam(defaultValue = "/") String redirectURL,
                         HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
+            bindingResult.reject("failLogin", "아이디와 비밀번호를 확인해주세요.");
             return "users/loginForm";
         }
 
@@ -64,8 +67,7 @@ public class UserController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginUserDto.getNickName());
-
-        return "redirect:/";
+        return "redirect:" + redirectURL;
     }
 
     @GetMapping("/logout")
