@@ -6,6 +6,7 @@ import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.LoginForm;
 import com.catdog.help.web.form.SaveUserForm;
+import com.catdog.help.web.form.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -90,9 +91,25 @@ public class UserController {
     @GetMapping("/detail")
     public String detail(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(false);
-        String loginUserNickName = (String)session.getAttribute(SessionConst.LOGIN_USER);
+        String loginUserNickName = (String) session.getAttribute(SessionConst.LOGIN_USER);
         UserDto userDto = userService.getUserDtoByNickName(loginUserNickName);
         model.addAttribute("userDto", userDto);
         return "users/detail";
+    }
+
+    @GetMapping("/detail/edit")
+    public String editForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
+        UpdateUserForm updateForm = userService.getUpdateForm(nickName);
+        model.addAttribute("updateForm", updateForm);
+        return "users/edit";
+    }
+
+    @PostMapping("/detail/edit")
+    public String edit(@Validated @ModelAttribute("updateForm") UpdateUserForm updateForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "users/edit";
+        }
+        userService.updateUserInfo(updateForm);
+        return "redirect:/users/detail";
     }
 }

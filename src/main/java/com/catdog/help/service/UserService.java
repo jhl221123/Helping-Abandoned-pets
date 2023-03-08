@@ -6,6 +6,7 @@ import com.catdog.help.web.form.SaveUserForm;
 import com.catdog.help.domain.Gender;
 import com.catdog.help.domain.User;
 import com.catdog.help.repository.UserRepositoryImpl;
+import com.catdog.help.web.form.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class UserService {
 
     @Transactional
     public Long join(SaveUserForm saveUserForm) {
-        User user = createUser(saveUserForm.getEmailId(),
+        User user = createUser(saveUserForm.getEmailId(), // TODO: 2023-03-08 ?? ㅋㅋ 수정필요
                 saveUserForm.getPassword(),
                 saveUserForm.getNickName(),
                 saveUserForm.getName(),
@@ -70,6 +71,28 @@ public class UserService {
         return true;
     }
 
+    public UpdateUserForm getUpdateForm(String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        if (findUser == null) {
+            // TODO: 2023-03-08 예외처리
+        }
+        UpdateUserForm updateForm = getUpdateUserForm(findUser);
+        return updateForm;
+    }
+
+    @Transactional
+    public Long updateUserInfo(UpdateUserForm updateForm) {
+        User findUser = userRepository.findByNickName(updateForm.getNickName());
+        findUser.setName(updateForm.getName());
+        findUser.setAge(updateForm.getAge());
+        if (updateForm.getGender().equals("남자")) {
+            findUser.setGender(Gender.MAN);
+        } else {
+            findUser.setGender(Gender.WOMAN);
+        }
+        return findUser.getId();
+    }
+
     /**
      * detach용으로 만들었는데 좀 더 공부해서 준영속이랑 같은 거면 detach로 로직을 변경하자.
      */
@@ -94,7 +117,11 @@ public class UserService {
         UserDto.setNickName(findUser.getNickName());
         UserDto.setName(findUser.getName());
         UserDto.setAge(findUser.getAge());
-        UserDto.setGender(findUser.getGender());
+        if (findUser.getGender() == Gender.MAN) {
+            UserDto.setGender("남자");
+        } else {
+            UserDto.setGender("여자");
+        }
         UserDto.setReliability(findUser.getReliability());
         UserDto.setJoinDate(findUser.getJoinDate());
         return UserDto;
@@ -115,5 +142,18 @@ public class UserService {
         user.setJoinDate(LocalDateTime.now());
         user.setReliability(0);
         return user;
+    }
+
+    private static UpdateUserForm getUpdateUserForm(User findUser) {
+        UpdateUserForm userForm = new UpdateUserForm();
+        userForm.setNickName(findUser.getNickName());
+        userForm.setName(findUser.getName());
+        userForm.setAge(findUser.getAge());
+        if (findUser.getGender() == Gender.MAN) {
+            userForm.setGender("남자");
+        } else {
+            userForm.setGender("여자");
+        }
+        return userForm;
     }
 }

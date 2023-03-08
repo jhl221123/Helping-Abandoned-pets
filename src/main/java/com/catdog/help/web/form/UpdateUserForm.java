@@ -11,16 +11,6 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter
 public class UpdateUserForm {
 
-    @NotNull
-    private Long id;
-
-    @NotBlank
-    private String emailId;
-
-    @NotBlank
-    @Length(min = 8, max = 16)
-    private String password;
-
     @NotBlank
     @Length(min = 2, max = 10)
     private String nickName;
@@ -32,7 +22,7 @@ public class UpdateUserForm {
     private int age;
 
     @NotNull
-    private Gender gender;
+    private String gender;
 
 
 }

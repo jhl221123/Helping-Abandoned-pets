@@ -26,14 +26,10 @@ public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
     private final UserService userService;
-    private final BulletinBoardRepository bulletinBoardRepository;
 
 
     @GetMapping("/boards/new")
-    public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) String nickName, Model model) {
-        if (nickName == null) {
-            return "redirect:/users/login"; // TODO: 2023-03-06 인터셉터 적용 후 제거, session required도 제거
-        }
+    public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
         UserDto findUserDto = userService.getUserDtoByNickName(nickName);
         User sessionUser = userService.getUser(findUserDto); // TODO: 2023-03-06 엔티티 반환 안하려고 한건데 더 고민해봐야할 듯. 준영속으로 만드는 것도 찜찜해서..
         SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
@@ -62,14 +58,22 @@ public class BulletinBoardController {
     }
 
     @GetMapping("/boards/{id}")
-    public String readBulletinBoard(@PathVariable("id") Long id, Model model) {
+    public String readBulletinBoard(@PathVariable("id") Long id, Model model,
+                                    @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
+        model.addAttribute("nickName", nickName);
         return "bulletinBoard/detail";
     }
 
     @GetMapping("/boards/{id}/edit")
-    public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model) {
+    public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model,
+                                          @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        //작성자 본인만 수정 가능
+        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
+        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+            return "redirect:/boards/{id}";
+        }
         UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
         model.addAttribute("updateBoardForm", updateBulletinBoardForm);
         return "bulletinBoard/update";
