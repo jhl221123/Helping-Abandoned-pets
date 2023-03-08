@@ -86,4 +86,13 @@ public class UserController {
         }
         return "redirect:/";
     }
+
+    @GetMapping("/detail")
+    public String detail(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        String loginUserNickName = (String)session.getAttribute(SessionConst.LOGIN_USER);
+        UserDto userDto = userService.getUserDtoByNickName(loginUserNickName);
+        model.addAttribute("userDto", userDto);
+        return "users/detail";
+    }
 }

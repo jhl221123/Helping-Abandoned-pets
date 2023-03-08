@@ -35,9 +35,12 @@
 		</div>
 		<div class="form-group">
 			<label th:for="image">이미지</label>
-			<input type="file"multiple th:field="*{image}" class="form-control-file">
+			<input type="file" multiple th:field="*{image}" class="form-control-file">
 		</div>
-		<button type="submit" class="btn btn-primary">작성</button>
+		<div class="float-right">
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">취소</button>
+			<button type="submit" class="btn btn-primary">작성</button>
+		</div>
 	</form>
 	<br/>
 	<div th:replace="fragments/footer :: footer" />

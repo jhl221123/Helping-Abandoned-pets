@@ -10,8 +10,8 @@
 			<tr>
 				<th>지역</th>
 				<th>제목</th>
-				<th>아이디</th>
-				<th>날짜</th>
+				<th>작성자</th>
+				<th>작성일</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -19,7 +19,7 @@
 				<td th:text="${bulletinBoardDto.region}"></td>
 				<td th:text="${bulletinBoardDto.title}" th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|" style="cursor:pointer;"></td>
 				<td th:text="${bulletinBoardDto.user.nickName}"></td>
-				<td th:text="${bulletinBoardDto.writeDate}"></td>
+				<td th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd')}"></td>
 			</tr>
 			</tbody>
 		</table>

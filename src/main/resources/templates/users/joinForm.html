@@ -54,7 +54,10 @@
 			</div>
 			<p class="field-error" th:errors="*{gender}">성별 오류</p>
 		</div>
-		<button type="submit" class="btn btn-primary">Submit</button>
+		<div class="float-right">
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">취소</button>
+			<button type="submit" class="btn btn-primary">완료</button>
+		</div>
 	</form>
 	<br/>
 	<div th:replace="fragments/footer :: footer" />
