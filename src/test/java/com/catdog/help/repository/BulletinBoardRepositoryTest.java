@@ -51,7 +51,7 @@ class BulletinBoardRepositoryTest {
         BulletinBoard board2 = createBulletinBoard("title2", user1);
         TimeUnit.SECONDS.sleep(1);
         BulletinBoard board3 = createBulletinBoard("title3", user2);
-        //로그인 기능 구현 후 Board.user -> CASCADE.ALL 설정하고 나서 수정하기
+        // TODO: 2023-03-09 Board.user -> CASCADE.ALL 이라서 수정필요
         userRepository.save(user1);
         userRepository.save(user2);
         //위 2줄

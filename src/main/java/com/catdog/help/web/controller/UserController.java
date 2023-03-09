@@ -1,6 +1,5 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.UserDto;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @GetMapping("/new")

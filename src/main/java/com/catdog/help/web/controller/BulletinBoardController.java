@@ -1,7 +1,6 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.domain.User;
-import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
