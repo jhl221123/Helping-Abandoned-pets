@@ -7,106 +7,159 @@ import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.SaveUserForm;
 import com.catdog.help.web.form.UpdateUserForm;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 class UserServiceTest {
 
-    @Mock
-    private UserRepository userRepository;
+    @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
 
-    @InjectMocks
-    private UserServiceImpl userServiceImpl;
+    @Test
+    void join() {
+        //given
+        SaveUserForm form = getSaveUserForm("user@123", "nickName", "12345");
 
+        //when
+        Long userId = userService.join(form);
 
-//    @Test
-//    void join() {
-//        //given
-//        SaveUserForm form = new SaveUserForm();
-//        doReturn(new Long(1L)).when(userRepository).save(new User());
-//
-//        //when
-//        userServiceImpl.join(form);
-//
-//        //then
-//
-//
-//    }
+        //then
+        assertThat(userId).isInstanceOf(Long.class);
+    }
+
+    @Test
+    void checkDuplication() {
+        //given
+        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+
+        //when
+        boolean duplicatedEmailId = userService.checkEmailDuplication("user@email");
+        boolean availableEmailId = userService.checkEmailDuplication("new@email");
+        boolean duplicatedNickName = userService.checkNickNameDuplication("nickName");
+        boolean availableNickName = userService.checkNickNameDuplication("newNickName");
+
+        //then
+        assertThat(duplicatedEmailId).isEqualTo(true);
+        assertThat(availableEmailId).isEqualTo(false);
+        assertThat(duplicatedNickName).isEqualTo(true);
+        assertThat(availableNickName).isEqualTo(false);
+    }
+
+    @Test
+    void login() {
+        //given
+        Long userId = userService.join(getSaveUserForm("user@email", "nickName", "password"));
+
+        //when
+        UserDto loginUserDto1 = userService.login("user@email", "password");    //정상 로그인
+        UserDto loginUserDto2 = userService.login("no@email", "password");      //존재하지 않는 아이디
+        UserDto loginUserDto3 = userService.login("user@email", "noPassword"); //비밀번호 불일치
+
+        //then
+        assertThat(loginUserDto1.getId()).isEqualTo(userId);
+        assertThat(loginUserDto2).isNull();
+        assertThat(loginUserDto3).isNull();
+    }
+
+    @Test
+    void getUser() {
+        //given
+        UserDto userDto = getUserDto();
+
+        //when
+        User user = userService.getUser(userDto);
+
+        //then
+        assertThat(user.getId()).isEqualTo(userDto.getId());
+        assertThat(user.getEmailId()).isEqualTo(userDto.getEmailId());
+        assertThat(user.getNickName()).isEqualTo(userDto.getNickName());
+    }
 
     @Test
     void getUserDtoByNickName() {
         //given
+        userService.join(getSaveUserForm("user@email", "nickName", "password"));
         String nickName = "nickName";
-        User user = new User();
-        user.setNickName("nickName");
-        doReturn(user).when(userRepository).findByNickName(nickName);
+        String nonexistentNickName = "nonexistentNickName";
 
         //when
-        UserDto userDto = userServiceImpl.getUserDtoByNickName(nickName);
+        UserDto userDto = userService.getUserDtoByNickName(nickName);
+        UserDto nullDto = userService.getUserDtoByNickName(nonexistentNickName);
 
         //then
+        assertThat(userDto.getEmailId()).isEqualTo("user@email");
         assertThat(userDto.getNickName()).isEqualTo(nickName);
+        assertThat(nullDto).isNull();
     }
 
     @Test
     void getUpdateForm() {
         //given
+        userService.join(getSaveUserForm("user@email", "nickName", "password"));
         String nickName = "nickName";
-        User user = new User();
-        user.setNickName(nickName);
-        doReturn(user).when(userRepository).findByNickName(nickName);
+        String nonexistentNickName = "nonexistentNickName";
 
         //when
-        UpdateUserForm updateForm = userServiceImpl.getUpdateForm(nickName);
+        UpdateUserForm form = userService.getUpdateForm(nickName);
+        UpdateUserForm nullForm = userService.getUpdateForm(nonexistentNickName);
 
         //then
-        assertThat(updateForm.getNickName()).isEqualTo(nickName);
-
+        assertThat(form.getNickName()).isEqualTo(nickName);
+        assertThat(nullForm).isNull();
     }
 
     @Test
     void updateUserInfo() {
         //given
-        UpdateUserForm updateForm = getUpdateUserForm("nickName", "name", 20, "man");
-        User user = new User();
-        user.setId(1L);
-        doReturn(user).when(userRepository).findByNickName(updateForm.getNickName());
+        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        UpdateUserForm form = new UpdateUserForm();
+        form.setNickName("nickName");
+        form.setName("newName");
+        form.setAge(10);
+        form.setGender("여자");
 
         //when
-        Long userId = userServiceImpl.updateUserInfo(updateForm);
+        Long userId = userService.updateUserInfo(form);
+        User findUser = userRepository.findById(userId);
 
         //then
-        assertThat(userId).isEqualTo(user.getId());
-
+        assertThat(findUser.getName()).isEqualTo("newName");
+        assertThat(findUser.getAge()).isEqualTo(10);
+        assertThat(findUser.getGender()).isEqualTo(Gender.WOMAN);
     }
 
-    /**========================= private method ========================================*/
 
-    private SaveUserForm createSaveUserForm(String emailId, String nickName) {
+    /**============================= private method ==============================*/
+
+    private SaveUserForm getSaveUserForm(String emailId, String nickName, String password) {
         SaveUserForm form = new SaveUserForm();
         form.setEmailId(emailId);
+        form.setPassword(password);
         form.setNickName(nickName);
-        form.setPassword("password");
         form.setName("name");
         form.setAge(20);
-        form.setGender("gender");
+        form.setGender("man");
         return form;
     }
 
-    private static UpdateUserForm getUpdateUserForm(String nickName, String name, int age, String gender) {
-        UpdateUserForm updateForm = new UpdateUserForm();
-        updateForm.setNickName(nickName);
-        updateForm.setName(name);
-        updateForm.setAge(age);
-        updateForm.setGender(gender);
-        return updateForm;
+    private UserDto getUserDto() {
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setEmailId("user@email");
+        userDto.setPassword("password");
+        userDto.setNickName("nickName");
+        userDto.setName("name");
+        userDto.setAge(20);
+        userDto.setGender("man");
+        userDto.setReliability(1);
+        userDto.setJoinDate(LocalDateTime.now());
+        return userDto;
     }
-
-
 }

@@ -21,8 +21,8 @@ class UserRepositoryTest {
     @Test
     public void saveAndFindOne() {
         //given
-        User user1 = createUser("id1@1", "123", "nickName1");
-        User user2 = createUser("id2@2", "123", "nickName2");
+        User user1 = createUser("user1@email", "password", "nickName1");
+        User user2 = createUser("user2@email", "password", "nickName2");
 
         //when
         userRepository.save(user1);
@@ -34,7 +34,7 @@ class UserRepositoryTest {
         User findUser5 = userRepository.findByNickName(user1.getNickName());
         User findUser6 = userRepository.findByNickName(user2.getNickName());
 
-        User findUser7 = userRepository.findByEmailId("id3@3");
+        User findUser7 = userRepository.findByEmailId("user3@email");
 
 
         //then
@@ -50,9 +50,9 @@ class UserRepositoryTest {
     @Test
     public void findAll() {
         //given
-        User user1 = createUser("id1", "123", "nickName1");
-        User user2 = createUser("id2", "123", "nickName2");
-        User user3 = createUser("id3", "123", "nickName3");
+        User user1 = createUser("user1@email", "password", "nickName1");
+        User user2 = createUser("user2@email", "password", "nickName2");
+        User user3 = createUser("user3@email", "password", "nickName3");
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);

@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserDtoByNickName(String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         if (findUser == null) {
-            // TODO: 2023-03-06 예외처리
+            return null; // TODO: 2023-03-08 예외처리
         }
         UserDto findUserDto = getUserDto(findUser);
         return findUserDto;
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     public UpdateUserForm getUpdateForm(String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         if (findUser == null) {
-            // TODO: 2023-03-08 예외처리
+            return null; // TODO: 2023-03-08 예외처리
         }
         UpdateUserForm updateForm = getUpdateUserForm(findUser);
         return updateForm;
