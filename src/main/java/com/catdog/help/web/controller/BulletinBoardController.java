@@ -1,11 +1,8 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.domain.User;
 import com.catdog.help.service.BulletinBoardService;
-import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.BulletinBoardDto;
-import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
@@ -24,28 +21,24 @@ import java.util.List;
 public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
-    private final UserService userService;
 
 
     @GetMapping("/boards/new")
     public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
-        UserDto findUserDto = userService.getUserDtoByNickName(nickName);
-        User sessionUser = userService.getUser(findUserDto); // TODO: 2023-03-06 엔티티 반환 안하려고 한건데 더 고민해봐야할 듯. 준영속으로 만드는 것도 찜찜해서..
         SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
-        saveBoardForm.setUser(sessionUser);
+        model.addAttribute("nickName", nickName);
         model.addAttribute("saveBoardForm", saveBoardForm);
         return "bulletinBoard/create";
     }
 
-
-
     @PostMapping("/boards/new")
-    public String createBulletinBoard(@Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
+    public String createBulletinBoard(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                      @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
                                       BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/create";
         }
-        bulletinBoardService.createBoard(saveBoardForm);
+        bulletinBoardService.createBoard(saveBoardForm, nickName);
         return "redirect:/boards";
     }
 
@@ -61,7 +54,7 @@ public class BulletinBoardController {
                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
-        model.addAttribute("nickName", nickName);
+        model.addAttribute("nickName", nickName); // detail 수정버튼
         return "bulletinBoard/detail";
     }
 
@@ -75,6 +68,7 @@ public class BulletinBoardController {
         }
         UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
         model.addAttribute("updateBoardForm", updateBulletinBoardForm);
+        model.addAttribute("nickName", nickName);
         return "bulletinBoard/update";
     }
 

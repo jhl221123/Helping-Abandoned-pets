@@ -29,9 +29,11 @@ class UserServiceTest {
 
         //when
         Long userId = userService.join(form);
+        User findUser = userRepository.findById(userId);
 
         //then
         assertThat(userId).isInstanceOf(Long.class);
+        assertThat(findUser.getEmailId()).isEqualTo(form.getEmailId());
     }
 
     @Test
@@ -66,20 +68,6 @@ class UserServiceTest {
         assertThat(loginUserDto1.getId()).isEqualTo(userId);
         assertThat(loginUserDto2).isNull();
         assertThat(loginUserDto3).isNull();
-    }
-
-    @Test
-    void getUser() {
-        //given
-        UserDto userDto = getUserDto();
-
-        //when
-        User user = userService.getUser(userDto);
-
-        //then
-        assertThat(user.getId()).isEqualTo(userDto.getId());
-        assertThat(user.getEmailId()).isEqualTo(userDto.getEmailId());
-        assertThat(user.getNickName()).isEqualTo(userDto.getNickName());
     }
 
     @Test

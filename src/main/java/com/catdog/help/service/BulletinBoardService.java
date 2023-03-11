@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface BulletinBoardService {
 
-    public Long createBoard(SaveBulletinBoardForm boardForm);
+    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName);
 
     public BulletinBoardDto readBoard(Long id);
 
-    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm);
-
     public List<BulletinBoardDto> readAll();
+
+    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm);
 
     public UpdateBulletinBoardForm getUpdateForm(Long id);
 }

@@ -59,22 +59,6 @@ public class UserServiceImpl implements UserService {
         return findUserDto;
     }
 
-    /**
-     * detach용으로 만들었는데 좀 더 공부해서 준영속이랑 같은 거면 detach로 로직을 변경하자.
-     */
-    public User getUser(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setEmailId(userDto.getEmailId());
-        user.setPassword(userDto.getPassword());
-        user.setNickName(userDto.getNickName());
-        user.setName(userDto.getName());
-        user.setAge(userDto.getAge());
-        user.setReliability(userDto.getReliability());
-        user.setJoinDate(userDto.getJoinDate());
-        return user;
-    }
-
     public UserDto getUserDtoByNickName(String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         if (findUser == null) {

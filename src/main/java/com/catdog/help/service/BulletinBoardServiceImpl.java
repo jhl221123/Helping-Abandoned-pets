@@ -26,8 +26,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long createBoard(SaveBulletinBoardForm boardForm) {
-        User findUser = userRepository.findByNickName(boardForm.getUser().getNickName());
+    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
         BulletinBoard board = createBulletinBoard(boardForm, findUser);
         bulletinBoardRepository.save(board);
         return board.getId();
@@ -36,23 +36,31 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     public BulletinBoardDto readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
         User user = findBoard.getUser();
-        log.info("==================User {}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
+        log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
         BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user);
         return bulletinBoardDto;
     }
 
+    public List<BulletinBoardDto> readAll() {
+        List<BulletinBoardDto> bulletinBoardDtos = new ArrayList<>();
+        List<BulletinBoard> boards = bulletinBoardRepository.findAll();
+        for (BulletinBoard board : boards) {
+            User user = board.getUser();
+            log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
+            bulletinBoardDtos.add(getBulletinBoardDto(board, user));
+        }
+        return bulletinBoardDtos;
+    }
+
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
-        User user = findBoard.getUser();
-        log.info("==================User {}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
         UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
         updateForm.setId(findBoard.getId());
-        updateForm.setUser(user);
         updateForm.setRegion(findBoard.getRegion());
         updateForm.setTitle(findBoard.getTitle());
         updateForm.setContent(findBoard.getContent());
         updateForm.setImage(findBoard.getImage());
-        updateForm.setWriteDate(findBoard.getWriteDate());
+        updateForm.setWriteDate(findBoard.getWriteDate()); //수정된 날짜로 변경
         return updateForm;
     }
 
@@ -63,16 +71,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         return findBoard.getId();
     }
 
-    public List<BulletinBoardDto> readAll() {//
-        List<BulletinBoardDto> bulletinBoardDtos = new ArrayList<>();
-        List<BulletinBoard> boards = bulletinBoardRepository.findAll();
-        for (BulletinBoard board : boards) {
-            User user = board.getUser();
-            log.info("==================User {}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
-            bulletinBoardDtos.add(getBulletinBoardDto(board, user));
-        }
-        return bulletinBoardDtos;
-    }
+
+    /**============================= private method ==============================*/
 
     private static BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
         BulletinBoard board = new BulletinBoard();

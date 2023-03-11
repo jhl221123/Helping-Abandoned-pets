@@ -14,8 +14,6 @@ public interface UserService {
 
     public UserDto login(String emailId, String password);
 
-    public User getUser(UserDto findUserDto);
-
     public UserDto getUserDtoByNickName(String nickName);
 
     public UpdateUserForm getUpdateForm(String nickName);

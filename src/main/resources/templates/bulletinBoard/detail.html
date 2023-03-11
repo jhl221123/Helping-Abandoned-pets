@@ -12,7 +12,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm">
-				<p class="text-left" th:text="${bulletinBoardDto.user.nickName}"></p>
+				<p class="text-left" th:text="${nickName}"></p>
 			</div>
 			<div class="col-sm">
 				<p class="text-right" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
