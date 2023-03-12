@@ -1,5 +1,6 @@
 package com.catdog.help.web.form.user;
 
+import com.catdog.help.domain.Gender;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -29,5 +30,5 @@ public class SaveUserForm {
     private int age;
 
     @NotNull
-    private String gender;
+    private Gender gender;
 }

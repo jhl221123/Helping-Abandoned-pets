@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.Gender;
 import com.catdog.help.domain.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
@@ -94,7 +95,7 @@ class MockUserServiceTest {
         form.setPassword("password");
         form.setName("name");
         form.setAge(20);
-        form.setGender("gender");
+        form.setGender(Gender.MAN);
         return form;
     }
 

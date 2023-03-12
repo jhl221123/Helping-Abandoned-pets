@@ -22,7 +22,7 @@ public class UpdateUserForm {
     private int age;
 
     @NotNull
-    private String gender;
+    private Gender gender;
 
 
 }

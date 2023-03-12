@@ -1,6 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.Board.BulletinBoard;
+import com.catdog.help.domain.Gender;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
@@ -95,7 +96,7 @@ class BulletinBoardServiceTest {
         form.setNickName(nickName);
         form.setName("name");
         form.setAge(20);
-        form.setGender("man");
+        form.setGender(Gender.MAN);
         return form;
     }
 

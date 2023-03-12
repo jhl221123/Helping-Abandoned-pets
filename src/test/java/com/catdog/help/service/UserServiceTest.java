@@ -111,7 +111,7 @@ class UserServiceTest {
         form.setNickName("nickName");
         form.setName("newName");
         form.setAge(10);
-        form.setGender("여자");
+        form.setGender(Gender.WOMAN);
 
         //when
         Long userId = userService.updateUserInfo(form);
@@ -133,7 +133,7 @@ class UserServiceTest {
         form.setNickName(nickName);
         form.setName("name");
         form.setAge(20);
-        form.setGender("man");
+        form.setGender(Gender.MAN);
         return form;
     }
 
@@ -145,7 +145,7 @@ class UserServiceTest {
         userDto.setNickName("nickName");
         userDto.setName("name");
         userDto.setAge(20);
-        userDto.setGender("man");
+//        userDto.setGender(Gender.MAN);
         userDto.setReliability(1);
         userDto.setJoinDate(LocalDateTime.now());
         return userDto;

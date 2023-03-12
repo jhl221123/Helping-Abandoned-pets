@@ -37,7 +37,7 @@ public class UserDto {
     private int age;
 
     @NotNull
-    private String gender;
+    private Gender gender;
 
     @NotNull
     private int reliability;

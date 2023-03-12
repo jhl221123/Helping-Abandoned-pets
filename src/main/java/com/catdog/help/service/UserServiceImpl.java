@@ -82,11 +82,7 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findByNickName(updateForm.getNickName());
         findUser.setName(updateForm.getName());
         findUser.setAge(updateForm.getAge());
-        if (updateForm.getGender().equals("남자")) {
-            findUser.setGender(Gender.MAN);
-        } else {
-            findUser.setGender(Gender.WOMAN);
-        }
+        findUser.setGender(updateForm.getGender());
         return findUser.getId();
     }
 
@@ -101,28 +97,20 @@ public class UserServiceImpl implements UserService {
         UserDto.setNickName(findUser.getNickName());
         UserDto.setName(findUser.getName());
         UserDto.setAge(findUser.getAge());
-        if (findUser.getGender() == Gender.MAN) {
-            UserDto.setGender("남자");
-        } else {
-            UserDto.setGender("여자");
-        }
+        UserDto.setGender(findUser.getGender());
         UserDto.setReliability(findUser.getReliability());
         UserDto.setJoinDate(findUser.getJoinDate());
         return UserDto;
     }
 
-    private static User createUser(String emailId, String password, String nickName, String name, int age, String gender) {
+    private static User createUser(String emailId, String password, String nickName, String name, int age, Gender gender) {
         User user = new User();
         user.setEmailId(emailId);
         user.setPassword(password);
         user.setNickName(nickName);
         user.setName(name);
         user.setAge(age);
-        if (gender.equals("man")) {
-            user.setGender(Gender.MAN);
-        } else {
-            user.setGender(Gender.WOMAN);
-        }
+        user.setGender(gender);
         user.setJoinDate(LocalDateTime.now());
         user.setReliability(0);
         return user;
@@ -133,11 +121,7 @@ public class UserServiceImpl implements UserService {
         userForm.setNickName(findUser.getNickName());
         userForm.setName(findUser.getName());
         userForm.setAge(findUser.getAge());
-        if (findUser.getGender() == Gender.MAN) {
-            userForm.setGender("남자");
-        } else {
-            userForm.setGender("여자");
-        }
+        userForm.setGender(findUser.getGender());
         return userForm;
     }
 }
