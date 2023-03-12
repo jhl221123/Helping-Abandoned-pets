@@ -1,18 +1,24 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.FileStore;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.BulletinBoardDto;
-import com.catdog.help.web.form.UpdateBulletinBoardForm;
-import com.catdog.help.web.form.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @Controller
@@ -21,6 +27,7 @@ import java.util.List;
 public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
+    private final FileStore fileStore;
 
 
     @GetMapping("/boards/new")
@@ -34,7 +41,7 @@ public class BulletinBoardController {
     @PostMapping("/boards/new")
     public String createBulletinBoard(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
                                       @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
-                                      BindingResult bindingResult) {
+                                      BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/create";
         }
@@ -44,8 +51,8 @@ public class BulletinBoardController {
 
     @GetMapping("/boards")
     public String BulletinBoardList(Model model) {
-        List<BulletinBoardDto> bulletinBoardDtos = bulletinBoardService.readAll();
-        model.addAttribute("bulletinBoardDtos", bulletinBoardDtos);
+        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readAll();
+        model.addAttribute("pageBoardForms", pageBoardForms);
         return "bulletinBoard/list";
     }
 
@@ -56,6 +63,12 @@ public class BulletinBoardController {
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
         model.addAttribute("nickName", nickName); // detail 수정버튼
         return "bulletinBoard/detail";
+    }
+
+    @ResponseBody
+    @GetMapping("/images/{fileName}")
+    public Resource downloadImage(@PathVariable String fileName) throws MalformedURLException {
+        return new UrlResource("file:" + fileStore.getFullPath(fileName));
     }
 
     @GetMapping("/boards/{id}/edit")
@@ -74,7 +87,7 @@ public class BulletinBoardController {
 
     @PostMapping("/boards/{id}/edit")
     public String updateBulletinBoard(@Validated @ModelAttribute("updateBoardForm") UpdateBulletinBoardForm updateBulletinBoardForm,
-                                      BindingResult bindingResult) {
+                                      BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/update";
         }

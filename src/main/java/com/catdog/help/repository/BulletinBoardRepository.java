@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface BulletinBoardRepository {
 
-    public void save(BulletinBoard bulletinBoard);
+    public Long save(BulletinBoard bulletinBoard);
 
     public BulletinBoard findOne(Long id);
 

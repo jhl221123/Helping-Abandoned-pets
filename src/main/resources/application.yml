@@ -21,6 +21,7 @@ spring:
       hibernate:
 #        show_sql: true  -> System.out
         format_sql: true
+
 server:
   servlet:
     session:
@@ -30,3 +31,5 @@ logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace #스프링 부트 2.x, hibernate5
 
+file:
+  dir: C:/Users/gur82/file/

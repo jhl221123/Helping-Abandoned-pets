@@ -2,10 +2,10 @@ package com.catdog.help.service;
 
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
-import com.catdog.help.web.form.SaveUserForm;
+import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.domain.Gender;
 import com.catdog.help.domain.User;
-import com.catdog.help.web.form.UpdateUserForm;
+import com.catdog.help.web.form.user.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

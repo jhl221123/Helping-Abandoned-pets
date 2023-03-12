@@ -10,7 +10,7 @@
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" th:object="${updateBoardForm}" th:method="post">
+	<form role="form" th:object="${updateBoardForm}" enctype="multipart/form-data" th:method="post">
 		<div class="form-group">
 			<label>닉네임</label>
 			<p type="text" th:text="${nickName}" class="form-control" readonly></p>
@@ -31,8 +31,8 @@
 			<p class="field-error" th:errors="*{content}">입력 오류</p>
 		</div>
 		<div class="form-group">
-			<label th:for="image">이미지</label>
-			<input type="text" th:field="*{image}" th:errorclass="field-error" class="form-control-file" >
+			<label th:for="images">이미지</label>
+			<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
 		</div>
 		<div class="float-right">
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/{id}(id=${updateBoardForm.id})}'|">취소</button>

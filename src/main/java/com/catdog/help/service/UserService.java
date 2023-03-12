@@ -1,9 +1,8 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.User;
 import com.catdog.help.web.dto.UserDto;
-import com.catdog.help.web.form.SaveUserForm;
-import com.catdog.help.web.form.UpdateUserForm;
+import com.catdog.help.web.form.user.SaveUserForm;
+import com.catdog.help.web.form.user.UpdateUserForm;
 
 public interface UserService {
     public Long join(SaveUserForm saveUserForm);

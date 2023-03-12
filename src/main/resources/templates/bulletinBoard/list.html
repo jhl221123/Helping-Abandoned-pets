@@ -15,11 +15,11 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="bulletinBoardDto : ${bulletinBoardDtos}">
-				<td th:text="${bulletinBoardDto.region}"></td>
-				<td th:text="${bulletinBoardDto.title}" th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|" style="cursor:pointer;"></td>
-				<td th:text="${bulletinBoardDto.user.nickName}"></td>
-				<td th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd')}"></td>
+			<tr th:each="pageBoardForms : ${pageBoardForms}">
+				<td th:text="${pageBoardForms.region}"></td>
+				<td th:text="${pageBoardForms.title}" th:onclick="|location.href='@{/boards/{id}(id=${pageBoardForms.id})}'|" style="cursor:pointer;"></td>
+				<td th:text="${pageBoardForms.userNickName}"></td>
+				<td th:text="${#temporals.format(pageBoardForms.writeDate, 'yyyy-MM-dd')}"></td>
 			</tr>
 			</tbody>
 		</table>

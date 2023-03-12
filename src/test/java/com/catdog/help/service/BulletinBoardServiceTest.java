@@ -3,14 +3,16 @@ package com.catdog.help.service;
 import com.catdog.help.domain.Board.BulletinBoard;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
-import com.catdog.help.web.form.SaveBulletinBoardForm;
-import com.catdog.help.web.form.SaveUserForm;
-import com.catdog.help.web.form.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.user.SaveUserForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -24,7 +26,7 @@ class BulletinBoardServiceTest {
     @Autowired UserService userService;
 
     @Test
-    void createBoard() {
+    void createBoard() throws IOException {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         Long userId = userService.join(userForm);
@@ -41,7 +43,7 @@ class BulletinBoardServiceTest {
     }
 
     @Test
-    void readBoards() {
+    void readBoards() throws IOException {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         userService.join(userForm);
@@ -50,16 +52,16 @@ class BulletinBoardServiceTest {
 
         //when
         BulletinBoardDto firstBoardDto = bulletinBoardService.readBoard(firstBoardId);
-        List<BulletinBoardDto> boardDtos = bulletinBoardService.readAll();
+        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readAll();
 
         //then
         assertThat(firstBoardDto.getTitle()).isEqualTo("firstTitle");
         assertThat(firstBoardDto.getUser().getNickName()).isEqualTo("nickName");
-        assertThat(boardDtos.size()).isEqualTo(2);
+        assertThat(pageBoardForms.size()).isEqualTo(2);
     }
 
     @Test
-    void getUpdateFormAndUpdateBoard() {
+    void getUpdateFormAndUpdateBoard() throws IOException {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         Long userId = userService.join(userForm);
@@ -80,7 +82,7 @@ class BulletinBoardServiceTest {
         assertThat(updateBoard.getTitle()).isEqualTo("updateTitle");
         assertThat(updateBoard.getContent()).isEqualTo("updateContent");
         assertThat(updateBoard.getRegion()).isEqualTo("updateRegion");
-        assertThat(updateBoard.getImage()).isEqualTo("updateImage");
+        assertThat(updateBoard.getImages()).isEqualTo("updateImage");
     }
 
 
@@ -102,7 +104,7 @@ class BulletinBoardServiceTest {
         boardForm.setTitle(title);
         boardForm.setContent("content");
         boardForm.setRegion("region");
-        boardForm.setImage("image");
+//        boardForm.setImages("image");
         return boardForm;
     }
 
@@ -110,6 +112,6 @@ class BulletinBoardServiceTest {
         updateForm.setTitle("updateTitle");
         updateForm.setContent("updateContent");
         updateForm.setRegion("updateRegion");
-        updateForm.setImage("updateImage");
+//        updateForm.setImage("updateImage");
     }
 }

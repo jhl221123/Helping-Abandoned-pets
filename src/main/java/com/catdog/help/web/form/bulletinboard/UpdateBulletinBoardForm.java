@@ -1,13 +1,16 @@
-package com.catdog.help.web.form;
+package com.catdog.help.web.form.bulletinboard;
 
 import com.catdog.help.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter
 public class UpdateBulletinBoardForm {
@@ -28,7 +31,7 @@ public class UpdateBulletinBoardForm {
     @Length(max = 3000)
     private String content;
 
-    private String image; //Blob으로 교체!
+    private List<MultipartFile> images = new ArrayList<>();
     private LocalDateTime writeDate;
     private int score;
 }

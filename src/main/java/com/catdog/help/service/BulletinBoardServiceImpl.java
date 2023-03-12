@@ -1,17 +1,22 @@
 package com.catdog.help.service;
 
+import com.catdog.help.FileStore;
+import com.catdog.help.domain.Board.UploadFile;
 import com.catdog.help.domain.User;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
-import com.catdog.help.web.form.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.domain.Board.BulletinBoard;
 import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.web.form.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,33 +28,39 @@ import java.util.List;
 public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     private final BulletinBoardRepository bulletinBoardRepository;
+    private final UploadFileRepository uploadFileRepository;
     private final UserRepository userRepository;
+    private final FileStore fileStore;
 
     @Transactional
-    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
+    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException {
         User findUser = userRepository.findByNickName(nickName);
         BulletinBoard board = createBulletinBoard(boardForm, findUser);
-        bulletinBoardRepository.save(board);
-        return board.getId();
+        Long boardId = bulletinBoardRepository.save(board);
+        for (UploadFile image : board.getImages()) {
+            uploadFileRepository.save(image);
+        }
+        return boardId;
     }
 
     public BulletinBoardDto readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
         User user = findBoard.getUser();
         log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
-        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user);
+        List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
+        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles);
         return bulletinBoardDto;
     }
 
-    public List<BulletinBoardDto> readAll() {
-        List<BulletinBoardDto> bulletinBoardDtos = new ArrayList<>();
+    public List<PageBulletinBoardForm> readAll() {
+        List<PageBulletinBoardForm> pageBoardForms = new ArrayList<>();
         List<BulletinBoard> boards = bulletinBoardRepository.findAll();
         for (BulletinBoard board : boards) {
             User user = board.getUser();
             log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
-            bulletinBoardDtos.add(getBulletinBoardDto(board, user));
+            pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
         }
-        return bulletinBoardDtos;
+        return pageBoardForms;
     }
 
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
@@ -59,14 +70,15 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         updateForm.setRegion(findBoard.getRegion());
         updateForm.setTitle(findBoard.getTitle());
         updateForm.setContent(findBoard.getContent());
-        updateForm.setImage(findBoard.getImage());
+        //images 는 생성과 동시에 초기화
         updateForm.setWriteDate(findBoard.getWriteDate()); //수정된 날짜로 변경
         return updateForm;
     }
 
     @Transactional
-    public Long updateBoard(UpdateBulletinBoardForm updateForm) {
+    public Long updateBoard(UpdateBulletinBoardForm updateForm) throws IOException {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(updateForm.getId());
+        List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
         updateBulletinBoard(findBoard, updateForm);  //변경감지 이용한 덕분에 user 값 변경없이 수정이 된다!
         return findBoard.getId();
     }
@@ -74,35 +86,54 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     /**============================= private method ==============================*/
 
-    private static BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
+    private BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) throws IOException {
         BulletinBoard board = new BulletinBoard();
         board.setUser(findUser);
         board.setRegion(boardForm.getRegion());
         board.setTitle(boardForm.getTitle());
         board.setContent(boardForm.getContent());
-        board.setImage(boardForm.getImage()); //todo -> 파일업로드 구현
+        if (!boardForm.getImages().isEmpty()) {
+            List<UploadFile> uploadFiles = fileStore.storeFiles(boardForm.getImages());
+            for (UploadFile uploadFile : uploadFiles) {
+                board.addImage(uploadFile); //uploadFile 에 board 주입
+            }
+        }
         board.setScore(0);
         board.setWriteDate(LocalDateTime.now());
         return board;
     }
 
-    private static BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user) {
+    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles) {
         BulletinBoardDto bulletinBoardDto = new BulletinBoardDto();
         bulletinBoardDto.setId(findBoard.getId());
         bulletinBoardDto.setUser(user);
         bulletinBoardDto.setRegion(findBoard.getRegion());
         bulletinBoardDto.setTitle(findBoard.getTitle());
         bulletinBoardDto.setContent(findBoard.getContent());
-        bulletinBoardDto.setImage(findBoard.getImage());
+        bulletinBoardDto.setImages(uploadFiles);
         bulletinBoardDto.setWriteDate(findBoard.getWriteDate());
         bulletinBoardDto.setScore(findBoard.getScore());
         return bulletinBoardDto;
     }
 
-    private static void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
+    private PageBulletinBoardForm getPageBulletinBoardForm(BulletinBoard board, String nickName) {
+        PageBulletinBoardForm boardForm = new PageBulletinBoardForm();
+        boardForm.setId(board.getId());
+        boardForm.setRegion(board.getRegion());
+        boardForm.setTitle(board.getTitle());
+        boardForm.setUserNickName(nickName);
+        boardForm.setWriteDate(board.getWriteDate());
+        return boardForm;
+    }
+
+    private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) throws IOException {
         findBoard.setRegion(updateForm.getRegion());
         findBoard.setTitle(updateForm.getTitle());
         findBoard.setContent(updateForm.getContent());
-        findBoard.setImage(updateForm.getImage());
+        List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getImages());
+        for (UploadFile uploadFile : uploadFiles) {
+            findBoard.addImage(uploadFile);
+            uploadFileRepository.save(uploadFile);
+        }
     }
 }

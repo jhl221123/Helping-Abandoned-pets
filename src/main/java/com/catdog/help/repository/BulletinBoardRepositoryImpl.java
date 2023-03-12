@@ -13,8 +13,9 @@ public class BulletinBoardRepositoryImpl implements BulletinBoardRepository{
     @PersistenceContext
     EntityManager em;
 
-    public void save(BulletinBoard board) {
+    public Long save(BulletinBoard board) {
         em.persist(board);
+        return board.getId();
     }
 
     public BulletinBoard findOne(Long no) {
