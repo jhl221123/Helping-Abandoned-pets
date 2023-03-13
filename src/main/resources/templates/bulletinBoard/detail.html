@@ -15,7 +15,7 @@
 				<p class="text-left" th:text="${nickName}"></p>
 			</div>
 			<div class="col-sm">
-				<p class="text-right" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
+				<p class="text-right text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
 			</div>
 		</div>
 	</div>
@@ -24,14 +24,15 @@
 		<textarea class="form-control" id="content" name="content" th:text="${bulletinBoardDto.content}" rows="12" readonly></textarea>
 	</div>
 	<div class="form-group">
-		<label for="images">이미지</label>
+		<p>이미지</p>
 		<img th:each="imageFile : ${bulletinBoardDto.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
-		<input type="text" id="images" name="images" th:value="${bulletinBoardDto.images}" class="form-control-file" >
 	</div>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards}'|">목록으로</button>
 		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/{id}/edit(id=${bulletinBoardDto.id})}'|">수정</button>
+		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/{id}/delete(id=${bulletinBoardDto.id})}'|">삭제</button>
 	</div>
+	<br/>
 	<br/>
 	<div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

@@ -36,7 +36,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException {
         User findUser = userRepository.findByNickName(nickName);
         BulletinBoard board = createBulletinBoard(boardForm, findUser);
-        Long boardId = bulletinBoardRepository.save(board);
+        Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
         for (UploadFile image : board.getImages()) {
             uploadFileRepository.save(image);
         }
@@ -81,6 +81,12 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
         updateBulletinBoard(findBoard, updateForm);  //변경감지 이용한 덕분에 user 값 변경없이 수정이 된다!
         return findBoard.getId();
+    }
+
+    @Transactional
+    public void deleteBoard(Long boardId) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        bulletinBoardRepository.delete(findBoard);
     }
 
 
@@ -136,4 +142,5 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
             uploadFileRepository.save(uploadFile);
         }
     }
+
 }

@@ -1,58 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
+<style>
+ .attribute-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+ .value {
+	       font-weight: bolder;
+        }
+</style>
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
 	<div class="jumbotron">
-		<h1>내 정보</h1>
+		<h1>개인 정보</h1>
+		</br>
+		</br>
+		</br>
 		<form th:object="${userDto}">
 			<div class="form-group row">
-				<label th:for="emailId" class="col-sm-2 col-form-label">이메일</label>
+				<label th:for="emailId" class="col-sm-2 col-form-label attribute-name">이메일</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{emailId}">
+					<p type="text" readonly class="form-control value" th:text="*{emailId}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="nickName" class="col-sm-2 col-form-label">닉네임</label>
+				<label th:for="nickName" class="col-sm-2 col-form-label attribute-name">닉네임</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{nickName}">
+					<p type="text" readonly class="form-control value" th:text="*{nickName}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="name" class="col-sm-2 col-form-label">이름</label>
+				<label th:for="name" class="col-sm-2 col-form-label attribute-name">이름</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{name}">
+					<p type="text" readonly class="form-control value" th:text="*{name}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="age" class="col-sm-2 col-form-label">나이</label>
+				<label th:for="age" class="col-sm-2 col-form-label attribute-name">나이</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{age}">
+					<p type="text" readonly class="form-control value" th:text="*{age}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="gender" class="col-sm-2 col-form-label">성별</label>
+				<label th:for="gender" class="col-sm-2 col-form-label attribute-name">성별</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{gender}">
+					<p type="text" readonly class="form-control value" th:text="*{gender}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="reliability" class="col-sm-2 col-form-label">신뢰도</label>
+				<label th:for="reliability" class="col-sm-2 col-form-label attribute-name">신뢰도</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{reliability}">
+					<p type="text" readonly class="form-control value" th:text="*{reliability}"></p>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label th:for="joinDate" class="col-sm-2 col-form-label">가입 날짜</label>
+				<label th:for="joinDate" class="col-sm-2 col-form-label attribute-name">가입 날짜</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" th:field="*{joinDate}">
+					<p type="text" readonly class="form-control value" th:text="*{#temporals.format(joinDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
 				</div>
 			</div>
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail/edit}'|">수정</button>
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
 		</form>
 	</div>
+	<div th:replace="fragments/footer :: footer" />
 </div>
 </body>
 </html>

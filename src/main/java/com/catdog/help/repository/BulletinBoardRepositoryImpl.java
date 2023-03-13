@@ -18,12 +18,16 @@ public class BulletinBoardRepositoryImpl implements BulletinBoardRepository{
         return board.getId();
     }
 
-    public BulletinBoard findOne(Long no) {
-        return em.find(BulletinBoard.class, no);
+    public BulletinBoard findOne(Long id) {
+        return em.find(BulletinBoard.class, id);
     }
 
     public List<BulletinBoard> findAll() {
         List<BulletinBoard> boards = em.createQuery("select b from BulletinBoard b order by board_date desc", BulletinBoard.class).getResultList();
         return boards;
+    }
+
+    public void delete(BulletinBoard board) {
+        em.remove(board);
     }
 }

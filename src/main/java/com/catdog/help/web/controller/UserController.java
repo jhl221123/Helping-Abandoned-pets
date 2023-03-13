@@ -97,17 +97,17 @@ public class UserController {
 
     @GetMapping("/detail/edit")
     public String editForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
-        UpdateUserForm updateForm = userService.getUpdateForm(nickName);
-        model.addAttribute("updateForm", updateForm);
+        UpdateUserForm updateUserForm = userService.getUpdateForm(nickName);
+        model.addAttribute("updateUserForm", updateUserForm);
         return "users/edit";
     }
 
     @PostMapping("/detail/edit")
-    public String edit(@Validated @ModelAttribute("updateForm") UpdateUserForm updateForm, BindingResult bindingResult) {
+    public String edit(@Validated @ModelAttribute("updateUserForm") UpdateUserForm updateUserForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "users/edit";
         }
-        userService.updateUserInfo(updateForm);
+        userService.updateUserInfo(updateUserForm);
         return "redirect:/users/detail";
     }
 }

@@ -23,7 +23,12 @@
 			</tr>
 			</tbody>
 		</table>
+		<div class="float-right">
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
+		</div>
 	</div>
+	<br/>
+	<br/>
 	<div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
 </body>

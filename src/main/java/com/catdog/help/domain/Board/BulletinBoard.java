@@ -15,7 +15,7 @@ public class BulletinBoard extends Board {
 
     private String region;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<UploadFile> images = new ArrayList<>();
 
     @Column(name = "board_score")

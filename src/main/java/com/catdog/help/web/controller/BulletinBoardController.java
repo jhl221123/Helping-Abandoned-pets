@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,12 +42,13 @@ public class BulletinBoardController {
     @PostMapping("/boards/new")
     public String createBulletinBoard(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
                                       @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
-                                      BindingResult bindingResult) throws IOException {
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/create";
         }
-        bulletinBoardService.createBoard(saveBoardForm, nickName);
-        return "redirect:/boards";
+        Long boardId = bulletinBoardService.createBoard(saveBoardForm, nickName);
+        redirectAttributes.addAttribute("id", boardId);
+        return "redirect:/boards/{id}";
     }
 
     @GetMapping("/boards")
@@ -88,10 +90,39 @@ public class BulletinBoardController {
     @PostMapping("/boards/{id}/edit")
     public String updateBulletinBoard(@Validated @ModelAttribute("updateBoardForm") UpdateBulletinBoardForm updateBulletinBoardForm,
                                       BindingResult bindingResult) throws IOException {
+        // TODO: 2023-03-12 여기도 작성자 외 접근 못하도록 막아야 할 듯
+
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/update";
         }
         bulletinBoardService.updateBoard(updateBulletinBoardForm);
         return "redirect:/boards/{id}";
+    }
+
+    @GetMapping("/boards/{id}/delete")
+    public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
+                                          @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        //작성자 본인만 접근 가능
+        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
+        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+            return "redirect:/boards/{id}";
+        }
+        String boardTitle = findBoardDto.getTitle();
+        model.addAttribute("boardId", id);
+        model.addAttribute("boardTitle", boardTitle);
+        model.addAttribute("nickName", nickName);
+        return "bulletinBoard/delete";
+    }
+
+    @PostMapping("/boards/{id}/delete")
+    public String deleteBulletinBoard(@PathVariable("id") Long id, Model model,
+                                      @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        //작성자 본인만 삭제 가능
+        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
+        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+            return "redirect:/boards/{id}";
+        }
+        bulletinBoardService.deleteBoard(id);
+        return "redirect:/boards";
     }
 }

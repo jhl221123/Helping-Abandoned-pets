@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.Board.BulletinBoard;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -19,4 +20,6 @@ public interface BulletinBoardService {
     public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm) throws IOException;
 
     public UpdateBulletinBoardForm getUpdateForm(Long id);
+
+    public void deleteBoard(Long boardId);
 }
