@@ -1,8 +1,10 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
+import com.catdog.help.domain.Board.LikeBoard;
 import com.catdog.help.domain.Board.UploadFile;
 import com.catdog.help.domain.User;
+import com.catdog.help.repository.LikeBoardRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
@@ -31,6 +33,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     private final UploadFileRepository uploadFileRepository;
     private final UserRepository userRepository;
     private final FileStore fileStore;
+    private final LikeBoardRepository likeBoardRepository;
 
     @Transactional
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException {
@@ -81,6 +84,31 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
         updateBulletinBoard(findBoard, updateForm);  //변경감지 이용한 덕분에 user 값 변경없이 수정이 된다!
         return findBoard.getId();
+    }
+
+    public boolean checkLike(Long boardId, String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        LikeBoard likeBoard = likeBoardRepository.findByIds(boardId, findUser.getId());
+        if (likeBoard == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Transactional
+    public boolean clickLike(Long boardId, String nickName) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        User findUser = userRepository.findByNickName(nickName);
+        LikeBoard findLikeBoard = likeBoardRepository.findByIds(findBoard.getId(), findUser.getId());
+        if (findLikeBoard == null) {
+            LikeBoard likeBoard = new LikeBoard(findBoard, findUser);
+            likeBoardRepository.save(likeBoard);
+            return true;
+        } else {
+            likeBoardRepository.delete(findLikeBoard);
+            return false;
+        }
     }
 
     @Transactional

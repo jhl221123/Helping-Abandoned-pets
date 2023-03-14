@@ -2,7 +2,6 @@ package com.catdog.help.domain.Board;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,8 +17,24 @@ public class BulletinBoard extends Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<UploadFile> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<LikeBoard> likeUsers;
+
+
+    /**
+     * score 보류
+     */
     @Column(name = "board_score")
     private int score;
+    
+//    public void plusScore() {
+//        ++score;
+//    }
+//
+//    public void minusScore() {
+//        --score;
+//    }
+
 
     //===== 연관 관계 편의 메서드 =====//
 

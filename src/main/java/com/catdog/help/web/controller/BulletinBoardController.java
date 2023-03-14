@@ -30,7 +30,7 @@ public class BulletinBoardController {
     private final BulletinBoardService bulletinBoardService;
     private final FileStore fileStore;
 
-
+    /***  create  ***/
     @GetMapping("/boards/new")
     public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
         SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
@@ -51,6 +51,7 @@ public class BulletinBoardController {
         return "redirect:/boards/{id}";
     }
 
+    /***  read  ***/
     @GetMapping("/boards")
     public String BulletinBoardList(Model model) {
         List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readAll();
@@ -62,6 +63,8 @@ public class BulletinBoardController {
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
+        boolean checkResult = bulletinBoardService.checkLike(id, nickName);
+        model.addAttribute("checkResult", checkResult);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
         model.addAttribute("nickName", nickName); // detail 수정버튼
         return "bulletinBoard/detail";
@@ -71,6 +74,15 @@ public class BulletinBoardController {
     @GetMapping("/images/{fileName}")
     public Resource downloadImage(@PathVariable String fileName) throws MalformedURLException {
         return new UrlResource("file:" + fileStore.getFullPath(fileName));
+    }
+
+
+    /***  update  ***/
+    @GetMapping("/boards/{id}/like")
+    public String changeScore(@PathVariable("id") Long id,
+                              @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        bulletinBoardService.clickLike(id, nickName);
+        return "redirect:/boards/{id}";
     }
 
     @GetMapping("/boards/{id}/edit")
@@ -99,6 +111,8 @@ public class BulletinBoardController {
         return "redirect:/boards/{id}";
     }
 
+
+    /***  delete  ***/
     @GetMapping("/boards/{id}/delete")
     public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
                                           @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {

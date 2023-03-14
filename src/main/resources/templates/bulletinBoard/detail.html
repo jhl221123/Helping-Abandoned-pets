@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
+<style>
+	button {
+		border: none;
+		background-color:transparent;
+	}
+</style>
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
@@ -9,10 +15,14 @@
 			<div class="col-sm">
 				<p th:text="${bulletinBoardDto.title}"></p>
 			</div>
+			<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
+				<img th:if="${!checkResult}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
+				<img th:if="${checkResult}" th:src="|/images/redHeart.png|" width="20" height="20"/>
+			</button>
 		</div>
 		<div class="row">
 			<div class="col-sm">
-				<p class="text-left" th:text="${nickName}"></p>
+				<p class="text-left" th:text="${bulletinBoardDto.user.nickName}"></p>
 			</div>
 			<div class="col-sm">
 				<p class="text-right text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></p>

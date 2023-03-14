@@ -1,10 +1,12 @@
 package com.catdog.help.domain;
 
+import com.catdog.help.domain.Board.LikeBoard;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -32,6 +34,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "user_gender")
     private Gender gender;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<LikeBoard> likeBoards;
 
     @Column(name = "user_reliability")
     private int reliability;
