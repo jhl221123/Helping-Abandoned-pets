@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
-import com.catdog.help.domain.Board.LikeBoard;
+import com.catdog.help.domain.LikeBoard;
 import com.catdog.help.domain.Board.UploadFile;
 import com.catdog.help.domain.User;
 import com.catdog.help.repository.LikeBoardRepository;
@@ -49,7 +49,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     public BulletinBoardDto readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
         User user = findBoard.getUser();
-        log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
+        log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
         BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles);
         return bulletinBoardDto;
@@ -60,7 +60,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         List<BulletinBoard> boards = bulletinBoardRepository.findAll();
         for (BulletinBoard board : boards) {
             User user = board.getUser();
-            log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출
+            log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
             pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
         }
         return pageBoardForms;

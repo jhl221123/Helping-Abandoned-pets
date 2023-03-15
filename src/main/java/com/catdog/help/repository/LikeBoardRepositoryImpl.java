@@ -1,6 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.Board.LikeBoard;
+import com.catdog.help.domain.LikeBoard;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

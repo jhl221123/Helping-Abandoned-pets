@@ -1,5 +1,6 @@
-package com.catdog.help.domain.Board;
+package com.catdog.help.domain;
 
+import com.catdog.help.domain.Board.Board;
 import com.catdog.help.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 public class LikeBoard {
 
     @Id @GeneratedValue
+    @Column(name = "like_board_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

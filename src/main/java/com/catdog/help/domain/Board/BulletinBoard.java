@@ -1,5 +1,6 @@
 package com.catdog.help.domain.Board;
 
+import com.catdog.help.domain.LikeBoard;
 import lombok.Getter;
 import lombok.Setter;
 
