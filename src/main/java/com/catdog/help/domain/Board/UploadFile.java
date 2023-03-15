@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class UploadFile {
 
     @Id @GeneratedValue
-    @Column(name = "file_id")
+    @Column(name = "upload_file_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
