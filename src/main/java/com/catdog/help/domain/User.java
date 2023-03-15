@@ -1,6 +1,6 @@
 package com.catdog.help.domain;
 
-import com.catdog.help.domain.Board.LikeBoard;
+import com.catdog.help.domain.Board.Comment;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +37,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<LikeBoard> likeBoards;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
 
     @Column(name = "user_reliability")
     private int reliability;

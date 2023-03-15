@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
@@ -25,6 +27,9 @@ public abstract class Board {
 
     @Column(name = "board_content")
     private String content;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
 
     @Column(name = "board_date")
     private LocalDateTime writeDate; //날짜모음 값타입으로 리팩토링 필요
