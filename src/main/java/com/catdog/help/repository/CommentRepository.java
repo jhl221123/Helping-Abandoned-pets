@@ -8,9 +8,9 @@ public interface CommentRepository {
 
     public Long save(Comment comment);
 
-    public Comment read(Long boardId);
+    public Comment findById(Long commentId);
 
-    public List<Comment> readAll(Long boardId);
+    public List<Comment> findAll(Long boardId);
 
-    public void delete(Long id);
+    public void delete(Comment comment);
 }

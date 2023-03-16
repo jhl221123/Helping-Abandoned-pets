@@ -1,18 +1,17 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
+import com.catdog.help.domain.Board.Comment;
 import com.catdog.help.domain.LikeBoard;
 import com.catdog.help.domain.Board.UploadFile;
 import com.catdog.help.domain.User;
-import com.catdog.help.repository.LikeBoardRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.*;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.domain.Board.BulletinBoard;
-import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.comment.CommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +29,13 @@ import java.util.List;
 public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     private final BulletinBoardRepository bulletinBoardRepository;
-    private final UploadFileRepository uploadFileRepository;
     private final UserRepository userRepository;
+    private final UploadFileRepository uploadFileRepository;
     private final FileStore fileStore;
     private final LikeBoardRepository likeBoardRepository;
+    private final CommentRepository commentRepository;
+
+    /** 게시글 로직 */
 
     @Transactional
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException {
@@ -86,6 +88,14 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         return findBoard.getId();
     }
 
+    @Transactional
+    public void deleteBoard(Long boardId) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        bulletinBoardRepository.delete(findBoard);
+    }
+
+    /** 좋아요 로직 */
+
     public boolean checkLike(Long boardId, String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         LikeBoard likeBoard = likeBoardRepository.findByIds(boardId, findUser.getId());
@@ -111,11 +121,61 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         }
     }
 
+    /** 댓글 로직 */
+
     @Transactional
-    public void deleteBoard(Long boardId) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
-        bulletinBoardRepository.delete(findBoard);
+    public Long createComment(CommentForm commentForm, Long parentCommentId) {
+
+        BulletinBoard board = bulletinBoardRepository.findOne(commentForm.getBoardId());
+        User user = userRepository.findByNickName(commentForm.getNickName());
+
+        if (parentCommentId == -1L) {
+            Comment parentComment = getComment(commentForm, board, user);
+            commentRepository.save(parentComment);
+            return parentComment.getId();
+        } else {
+            Comment findParentComment = commentRepository.findById(parentCommentId);
+            Comment childComment = getComment(commentForm, board, user);
+            childComment.addParent(findParentComment);
+            commentRepository.save(childComment);
+            return childComment.getId();
+        }
     }
+
+    public List<CommentForm> readComments(Long boardId) {
+        List<CommentForm> commentForms = new ArrayList<>();
+
+        List<Comment> comments = commentRepository.findAll(boardId);
+        if (comments == null) {
+            return null;
+        }
+        for (Comment comment : comments) {
+            log.info("{}",comment.getBoard());
+            log.info("{}",comment.getUser());
+            commentForms.add(getCommentForm(comment));
+        }
+        return commentForms;
+    }
+
+    private static CommentForm getCommentForm(Comment comment) {
+        CommentForm commentForm = new CommentForm();
+        commentForm.setBoardId(comment.getBoard().getId());
+        commentForm.setNickName(comment.getUser().getNickName());
+        commentForm.setContent(comment.getContent());
+        return commentForm;
+    }
+
+    @Transactional
+    public Long updateComment(CommentForm commentForm) {
+        return null;
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+
+    }
+
+
 
 
     /**============================= private method ==============================*/
@@ -171,4 +231,11 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         }
     }
 
+    private static Comment getComment(CommentForm commentForm, BulletinBoard board, User user) {
+        Comment comment = new Comment();
+        comment.setBoard(board);
+        comment.setUser(user);
+        comment.setContent(commentForm.getContent());
+        return comment;
+    }
 }

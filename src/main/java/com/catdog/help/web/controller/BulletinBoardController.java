@@ -1,12 +1,14 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.FileStore;
+import com.catdog.help.domain.Board.Comment;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.comment.CommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -51,6 +53,19 @@ public class BulletinBoardController {
         return "redirect:/boards/{id}";
     }
 
+    @PostMapping("/boards/{id}/comments/parent")
+    public String createComment(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                @Validated @ModelAttribute("commentForm") CommentForm commentForm,
+                                @PathVariable("id") Long boardId, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "bulletinBoard/detail";
+        }
+        commentForm.setBoardId(boardId);
+        commentForm.setNickName(nickName);
+        bulletinBoardService.createComment(commentForm, -1L);
+        return "redirect:/boards/{id}";
+    }
+
     /***  read  ***/
     @GetMapping("/boards")
     public String BulletinBoardList(Model model) {
@@ -62,11 +77,22 @@ public class BulletinBoardController {
     @GetMapping("/boards/{id}")
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        model.addAttribute("nickName", nickName); // detail 수정버튼
+
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
+        model.addAttribute("bulletinBoardDto", bulletinBoardDto);
+
         boolean checkResult = bulletinBoardService.checkLike(id, nickName);
         model.addAttribute("checkResult", checkResult);
-        model.addAttribute("bulletinBoardDto", bulletinBoardDto);
-        model.addAttribute("nickName", nickName); // detail 수정버튼
+
+        CommentForm commentForm = new CommentForm();
+        model.addAttribute("commentForm", commentForm);
+
+        List<CommentForm> commentForms = bulletinBoardService.readComments(id);
+        if (commentForms != null) {
+            model.addAttribute("commentForms", commentForms);
+        }
+
         return "bulletinBoard/detail";
     }
 

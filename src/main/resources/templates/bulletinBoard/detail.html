@@ -6,6 +6,10 @@
 		border: none;
 		background-color:transparent;
 	}
+	 .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
 </style>
 <body>
 <div class="container">
@@ -37,11 +41,37 @@
 		<p>이미지</p>
 		<img th:each="imageFile : ${bulletinBoardDto.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
 	</div>
+	<br/>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards}'|">목록으로</button>
-		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/{id}/edit(id=${bulletinBoardDto.id})}'|">수정</button>
-		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/{id}/delete(id=${bulletinBoardDto.id})}'|">삭제</button>
+		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/boards/{id}/edit(id=${bulletinBoardDto.id})}'|">수정</button>
+		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/boards/{id}/delete(id=${bulletinBoardDto.id})}'|">삭제</button>
 	</div>
+	<br/>
+	<p>댓글 작성</p>
+	<form role="form" th:action="@{/boards/{id}/comments/parent(id=${bulletinBoardDto.id})}" th:object="${commentForm}"
+	      th:method="post">
+		<div class="form-group row">
+			<p th:text="${nickName}" class="col-sm-2 col-form-label attribute-name">닉네임</p>
+			<div class="col-sm-10">
+				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>
+				<p class="field-error" th:errors="*{content}">입력 오류</p>
+			</div>
+		</div>
+		<div class="float-right">
+			<button type="submit" class="btn btn-primary">작성</button>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<tbody>
+		<tr th:each="commentForm : ${commentForms}">
+			<th scope="row" th:text="${commentForm.nickName}">nickName</th>
+			<td th:text="${commentForm.content}">content</td>
+		</tr>
+		</tbody>
+	</table>
 	<br/>
 	<br/>
 	<div th:replace="fragments/footer :: footer" />
