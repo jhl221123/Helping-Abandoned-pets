@@ -3,10 +3,13 @@ package com.catdog.help.domain.Board;
 import com.catdog.help.domain.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Entity
 @Getter @Setter
 public class Comment {
@@ -32,7 +35,13 @@ public class Comment {
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
-    private List<Comment> child;
+    private List<Comment> child = new ArrayList<>();
+
+    //===== 연관 관계 편의 메서드 =====//
+    public void addParent(Comment parent) {
+        this.setParent(parent);
+        parent.getChild().add(this);
+    }
 
     /**CAMD 생성 접근 수정 삭제 시간추가*/
 }
