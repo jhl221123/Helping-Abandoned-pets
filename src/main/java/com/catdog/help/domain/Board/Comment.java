@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class Comment {
 
     @Column(name = "comment_content")
     private String content;
+
+    @Column(name = "comment_write_date")
+    private LocalDateTime writeDate;
 
     //대댓글
     @ManyToOne(fetch = FetchType.LAZY) //fetch join으로 즉시로딩 효과
