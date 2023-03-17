@@ -130,10 +130,12 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         User user = userRepository.findByNickName(commentForm.getNickName());
 
         if (parentCommentId == -1L) {
+            //parent comment
             Comment parentComment = getComment(commentForm, board, user);
             commentRepository.save(parentComment);
             return parentComment.getId();
         } else {
+            //child comment
             Comment findParentComment = commentRepository.findById(parentCommentId);
             Comment childComment = getComment(commentForm, board, user);
             childComment.addParent(findParentComment);
@@ -149,20 +151,14 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         if (comments == null) {
             return null;
         }
+        log.info("======================================={}", comments);
         for (Comment comment : comments) {
             log.info("{}",comment.getBoard());
             log.info("{}",comment.getUser());
+            log.info("=========================================={}", comment.getChild());
             commentForms.add(getCommentForm(comment));
         }
         return commentForms;
-    }
-
-    private static CommentForm getCommentForm(Comment comment) {
-        CommentForm commentForm = new CommentForm();
-        commentForm.setBoardId(comment.getBoard().getId());
-        commentForm.setNickName(comment.getUser().getNickName());
-        commentForm.setContent(comment.getContent());
-        return commentForm;
     }
 
     @Transactional
@@ -236,6 +232,23 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         comment.setBoard(board);
         comment.setUser(user);
         comment.setContent(commentForm.getContent());
+        comment.setWriteDate(LocalDateTime.now());
         return comment;
+    }
+
+    private static CommentForm getCommentForm(Comment comment) {
+        CommentForm commentForm = new CommentForm();
+        commentForm.setId(comment.getId());
+        commentForm.setBoardId(comment.getBoard().getId());
+        commentForm.setNickName(comment.getUser().getNickName());
+        commentForm.setContent(comment.getContent());
+        if (!comment.getChild().isEmpty()) {
+            for (Comment child : comment.getChild()) {
+                CommentForm childCommentForm = getCommentForm(child);
+                commentForm.getChild().add(childCommentForm);
+            }
+        }
+        commentForm.setWriteDate(comment.getWriteDate());
+        return commentForm;
     }
 }

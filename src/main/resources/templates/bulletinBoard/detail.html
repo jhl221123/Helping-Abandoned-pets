@@ -6,38 +6,47 @@
 		border: none;
 		background-color:transparent;
 	}
-	 .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
+	.field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+    .division-line {
+	    border-top: 1px solid #E7E7E7;
+	    margin: 30px 0px;
+    }
+    .comment-box {
+    	border: 1px solid #E7E7E7;
+    	padding: 13px 10px;
+	}
 </style>
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<!--	start bulletin board   -->
 	<div class="container">
 		<div class="row">
 			<div class="col-sm">
-				<p th:text="${bulletinBoardDto.title}"></p>
+				<p th:text="${bulletinBoardDto.title}">제목</p>
 			</div>
 			<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
-				<img th:if="${!checkResult}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
-				<img th:if="${checkResult}" th:src="|/images/redHeart.png|" width="20" height="20"/>
+				<img th:if="${!checkLike}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
+				<img th:if="${checkLike}" th:src="|/images/redHeart.png|" width="20" height="20"/>
 			</button>
 		</div>
 		<div class="row">
 			<div class="col-sm">
-				<p class="text-left" th:text="${bulletinBoardDto.user.nickName}"></p>
+				<p class="text-left" th:text="${bulletinBoardDto.user.nickName}">작성자</p>
 			</div>
 			<div class="col-sm">
-				<p class="text-right text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
+				<p class="text-right text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
 			</div>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="content"></label>
-		<textarea class="form-control" id="content" name="content" th:text="${bulletinBoardDto.content}" rows="12" readonly></textarea>
+		<textarea class="form-control" id="content" name="content" th:text="${bulletinBoardDto.content}" rows="12" readonly>내용</textarea>
 	</div>
-	<div class="form-group">
+	<div th:if="${!bulletinBoardDto.images.isEmpty()}" class="form-group">
 		<p>이미지</p>
 		<img th:each="imageFile : ${bulletinBoardDto.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
 	</div>
@@ -49,29 +58,90 @@
 		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/delete(id=${bulletinBoardDto.id})}'|">삭제</button>
 	</div>
+
+<!--	end bulletin board   -->
+
 	<br/>
-	<p>댓글 작성</p>
+	<br/>
+	<br/>
+
+<!--    start comment list    -->
+
+	<div th:if="${commentForms != null}">
+		<p>댓글</p>
+		<div class="division-line"></div>
+	</div>
+
+	<!--       parent comment      -->
+
+	<div th:each="form : ${commentForms}">
+		<div class="row">
+			<p th:text="${form.nickName}">nickName</p>
+			<p class="text-left text-muted" th:text="${#temporals.format(form.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
+		</div>
+		<div>
+			<p th:text="${form.content}">content</p>
+		</div>
+		<a th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, clickChild=${form.id})}">답글 달기</a>
+		<div class="division-line"></div>
+
+	<!--    child comment create form   -->
+
+		<div th:if="${clickChild == form.id}" class="comment-box" >
+
+			<form role="form" th:action="@{/boards/{id}/comments/child(id=${bulletinBoardDto.id}, parentId=${form.id})}"
+			      th:object="${commentForm}" th:method="post">
+				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+				<div class="row">
+					<div class="col-sm-10">
+					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
+					          rows="2"></textarea>
+						<p class="field-error" th:errors="*{content}">입력 오류</p>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-primary">작성</button>
+					</div>
+				</div>
+			</form>
+
+		</div>
+
+	<!--       child comment list      -->
+
+		<div style="background-color: #F3F3F3" th:each="child : ${form.child}">
+			<div style="margin-left: 2em" class="row">
+				<p th:text="|┕ ${child.nickName}|">nickName</p>
+				<p class="text-left text-muted" th:text="${#temporals.format(child.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
+			</div>
+			<div style="margin-left: 4em" >
+				<p th:text="${child.content}">content</p>
+			</div>
+			<div class="division-line"></div>
+		</div>
+
+	</div>
+
+<!--	   end comment list        -->
+
+	<br/>
+	<br/>
+	<br/>
+
+<!--    parent comment create form   -->
+
 	<form role="form" th:action="@{/boards/{id}/comments/parent(id=${bulletinBoardDto.id})}" th:object="${commentForm}"
-	      th:method="post">
-		<div class="form-group row">
-			<p th:text="${nickName}" class="col-sm-2 col-form-label attribute-name">닉네임</p>
+	      th:method="post" class="comment-box">
+		<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+		<div class="row">
 			<div class="col-sm-10">
 				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>
 				<p class="field-error" th:errors="*{content}">입력 오류</p>
 			</div>
-		</div>
-		<div class="float-right">
-			<button type="submit" class="btn btn-primary">작성</button>
+			<div class="col-sm-2">
+				<button type="submit" class="btn btn-primary">작성</button>
+			</div>
 		</div>
 	</form>
-	<table class="table table-striped">
-		<tbody>
-		<tr th:each="commentForm : ${commentForms}">
-			<th scope="row" th:text="${commentForm.nickName}">nickName</th>
-			<td th:text="${commentForm.content}">content</td>
-		</tr>
-		</tbody>
-	</table>
 	<br/>
 	<br/>
 	<div th:replace="fragments/footer :: footer" />

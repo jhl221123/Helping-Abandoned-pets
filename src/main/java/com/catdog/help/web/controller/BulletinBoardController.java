@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -54,15 +55,29 @@ public class BulletinBoardController {
     }
 
     @PostMapping("/boards/{id}/comments/parent")
-    public String createComment(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
-                                @Validated @ModelAttribute("commentForm") CommentForm commentForm,
-                                @PathVariable("id") Long boardId, BindingResult bindingResult) {
+    public String createParentComment(@PathVariable("id") Long boardId, @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                    @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            //redirectAttribute 이용해서 검증하기
             return "bulletinBoard/detail";
         }
         commentForm.setBoardId(boardId);
         commentForm.setNickName(nickName);
         bulletinBoardService.createComment(commentForm, -1L);
+        return "redirect:/boards/{id}";
+    }
+
+    @PostMapping("/boards/{id}/comments/child")
+    public String createChildComment(@PathVariable("id") Long boardId, @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                     @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult,
+                                     @RequestParam("parentId") Long parentId) {
+        if (bindingResult.hasErrors()) {
+            //redirectAttribute 이용해서 검증하기
+            return "bulletinBoard/detail";
+        }
+        commentForm.setBoardId(boardId);
+        commentForm.setNickName(nickName);
+        bulletinBoardService.createComment(commentForm, parentId);
         return "redirect:/boards/{id}";
     }
 
@@ -76,14 +91,15 @@ public class BulletinBoardController {
 
     @GetMapping("/boards/{id}")
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
-                                    @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+                                    @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                    @RequestParam(name = "clickChild", required = false) Long clickChild) {
         model.addAttribute("nickName", nickName); // detail 수정버튼
 
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
 
-        boolean checkResult = bulletinBoardService.checkLike(id, nickName);
-        model.addAttribute("checkResult", checkResult);
+        boolean checkLike = bulletinBoardService.checkLike(id, nickName);
+        model.addAttribute("checkLike", checkLike);
 
         CommentForm commentForm = new CommentForm();
         model.addAttribute("commentForm", commentForm);
@@ -91,6 +107,11 @@ public class BulletinBoardController {
         List<CommentForm> commentForms = bulletinBoardService.readComments(id);
         if (commentForms != null) {
             model.addAttribute("commentForms", commentForms);
+        }
+
+        //대댓글 폼 열기
+        if (clickChild != null) {
+            model.addAttribute("clickChild", clickChild);
         }
 
         return "bulletinBoard/detail";

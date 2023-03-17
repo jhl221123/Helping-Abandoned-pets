@@ -26,7 +26,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public List<Comment> findAll(Long boardId) {
-        List<Comment> comments = em.createQuery("select c from Comment c left join fetch c.child where c.parent = null", Comment.class)
+        List<Comment> comments = em.createQuery("select distinct c from Comment c left join fetch c.child where c.parent = null", Comment.class)
                 .getResultList();
 
         if (comments.isEmpty()) {
