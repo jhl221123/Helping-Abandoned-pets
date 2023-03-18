@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Gender;
-import com.catdog.help.domain.User;
+import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.user.SaveUserForm;

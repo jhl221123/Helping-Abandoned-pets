@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Board.BulletinBoard;
-import com.catdog.help.domain.Gender;
+import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.user.Gender;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
@@ -85,6 +85,8 @@ class BulletinBoardServiceTest {
         assertThat(updateBoard.getRegion()).isEqualTo("updateRegion");
         assertThat(updateBoard.getImages()).isEqualTo("updateImage");
     }
+
+
 
 
     /**============================= private method ==============================*/

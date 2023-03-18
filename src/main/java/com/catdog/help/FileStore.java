@@ -1,6 +1,6 @@
 package com.catdog.help;
 
-import com.catdog.help.domain.Board.UploadFile;
+import com.catdog.help.domain.board.UploadFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

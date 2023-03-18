@@ -1,6 +1,5 @@
-package com.catdog.help.domain.Board;
+package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.LikeBoard;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,12 +21,12 @@ public class BulletinBoard extends Board {
     private List<LikeBoard> likeUsers;
 
 
-    /**
-     * score 보류
-     */
-    @Column(name = "board_score")
-    private int score;
-    
+//    /**
+//     * score 없어도 될 듯?
+//     */
+//    @Column(name = "board_score")
+//    private int score;
+//
 //    public void plusScore() {
 //        ++score;
 //    }

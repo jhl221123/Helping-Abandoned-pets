@@ -1,4 +1,4 @@
-package com.catdog.help.domain.Board;
+package com.catdog.help.domain.board;
 
 import lombok.Getter;
 import lombok.Setter;

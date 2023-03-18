@@ -1,6 +1,6 @@
-package com.catdog.help.domain.Board;
+package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.User;
+import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,4 +33,11 @@ public abstract class Board {
 
     @Column(name = "board_write_date")
     private LocalDateTime writeDate; //날짜모음 값타입으로 리팩토링 필요
+
+    @Column(name = "board_views")
+    private int views;
+
+    public void addViews() {
+        this.views++;
+    }
 }

@@ -1,6 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.User;
+import com.catdog.help.domain.user.User;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.Board.BulletinBoard;
+import com.catdog.help.domain.board.BulletinBoard;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.user;
 
-import com.catdog.help.domain.Gender;
+import com.catdog.help.domain.user.Gender;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;

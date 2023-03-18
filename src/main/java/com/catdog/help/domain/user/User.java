@@ -1,6 +1,7 @@
-package com.catdog.help.domain;
+package com.catdog.help.domain.user;
 
-import com.catdog.help.domain.Board.Comment;
+import com.catdog.help.domain.board.Comment;
+import com.catdog.help.domain.board.LikeBoard;
 import lombok.Getter;
 import lombok.Setter;
 

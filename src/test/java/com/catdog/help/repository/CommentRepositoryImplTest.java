@@ -1,10 +1,9 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.Board.BulletinBoard;
-import com.catdog.help.domain.Board.Comment;
-import com.catdog.help.domain.Gender;
-import com.catdog.help.domain.User;
-import org.assertj.core.api.Assertions;
+import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Comment;
+import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

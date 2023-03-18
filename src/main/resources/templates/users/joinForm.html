@@ -45,8 +45,8 @@
 		<div class="form-group">
 			<label th:for="gender">성별</label>
 			<p>
-				<input type="radio" th:field="*{gender}" value="MAN"  th:checked> 남자
-				<input type="radio" th:field="*{gender}" value="WOMAN" th:checked> 여자
+				<label><input type="radio" th:field="*{gender}" value="MAN"  th:checked> 남자</label>&nbsp;&nbsp;&nbsp;
+				<label><input type="radio" th:field="*{gender}" value="WOMAN" th:checked> 여자</label>
 			</p>
 			<p class="field-error" th:errors="*{gender}">성별 오류</p>
 		</div>
