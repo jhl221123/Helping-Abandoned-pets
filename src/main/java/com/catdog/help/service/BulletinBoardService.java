@@ -30,6 +30,8 @@ public interface BulletinBoardService {
 
     public Long createComment(CommentForm commentForm, Long parentCommentId);
 
+    public CommentForm readComment(Long commentId);
+
     public List<CommentForm> readComments(Long boardId);
 
     public Long updateComment(CommentForm commentForm);
