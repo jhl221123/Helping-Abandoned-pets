@@ -144,6 +144,11 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         }
     }
 
+    public CommentForm readComment(Long commentId) {
+        Comment findComment = commentRepository.findById(commentId);
+        return getCommentForm(findComment);
+    }
+
     public List<CommentForm> readComments(Long boardId) {
         List<CommentForm> commentForms = new ArrayList<>();
 
@@ -168,7 +173,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     @Transactional
     public void deleteComment(Long commentId) {
-
+        Comment findComment = commentRepository.findById(commentId);
+        commentRepository.delete(findComment);
     }
 
 

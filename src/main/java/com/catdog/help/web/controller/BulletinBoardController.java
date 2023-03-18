@@ -58,7 +58,7 @@ public class BulletinBoardController {
     public String createParentComment(@PathVariable("id") Long boardId, @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
                                     @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            //redirectAttribute 이용해서 검증하기
+            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
             return "bulletinBoard/detail";
         }
         commentForm.setBoardId(boardId);
@@ -72,7 +72,7 @@ public class BulletinBoardController {
                                      @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult,
                                      @RequestParam("parentId") Long parentId) {
         if (bindingResult.hasErrors()) {
-            //redirectAttribute 이용해서 검증하기
+            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
             return "bulletinBoard/detail";
         }
         commentForm.setBoardId(boardId);
@@ -185,5 +185,19 @@ public class BulletinBoardController {
         }
         bulletinBoardService.deleteBoard(id);
         return "redirect:/boards";
+    }
+
+    @GetMapping("/boards/{id}/comments/{commentId}/delete")
+    public String deleteComment(@PathVariable("commentId") Long commentId,
+                                @PathVariable("id") Long id,
+                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+        //본인 댓글만 삭제 가능
+        String commentNickName = bulletinBoardService.readComment(commentId).getNickName();
+        if (!commentNickName.equals(nickName)) {
+            return "redirect:/boards/{id}";
+        }
+
+        bulletinBoardService.deleteComment(commentId);
+        return "redirect:/boards/{id}";
     }
 }
