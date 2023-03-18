@@ -13,4 +13,5 @@ public class PageBulletinBoardForm {
     private String title;
     private String userNickName;
     private LocalDateTime writeDate;
+    private int views;
 }

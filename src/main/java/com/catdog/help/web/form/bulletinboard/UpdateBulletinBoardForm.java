@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.User;
+import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;

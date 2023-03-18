@@ -12,11 +12,15 @@
     }
     .division-line {
 	    border-top: 1px solid #E7E7E7;
-	    margin: 30px 0px;
+	    margin: 0px 0px 10px 0px;
     }
     .comment-box {
     	border: 1px solid #E7E7E7;
     	padding: 13px 10px;
+	}
+	.board-title {
+    	font-weight: bold;
+    	font-size: 20px;
 	}
 </style>
 <body>
@@ -25,21 +29,27 @@
 <!--	start bulletin board   -->
 	<div class="container">
 		<div class="row">
-			<div class="col-sm">
+			<div class="col-sm-11 board-title text-left" style="justify-content: start">
 				<p th:text="${bulletinBoardDto.title}">제목</p>
 			</div>
-			<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
-				<img th:if="${!checkLike}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
-				<img th:if="${checkLike}" th:src="|/images/redHeart.png|" width="20" height="20"/>
-			</button>
+			<div class="col-sm-1" style="justify-content: end">
+				<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
+					<img th:if="${!checkLike}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
+					<img th:if="${checkLike}" th:src="|/images/redHeart.png|" width="20" height="20"/>
+				</button>
+			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm">
-				<p class="text-left" th:text="${bulletinBoardDto.user.nickName}">작성자</p>
-			</div>
-			<div class="col-sm">
-				<p class="text-right text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
-			</div>
+		<div >
+			<div class="division-line"></div>
+				<div class="row">
+					<p th:text="${bulletinBoardDto.user.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
+					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
+					<p class="text-muted" th:text="${#temporals.format(bulletinBoardDto.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
+				</div>
+				<div class="row float-right">
+					<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${bulletinBoardDto.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
+					<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 수 : ${bulletinBoardDto.likeBoardSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
+				</div>
 		</div>
 	</div>
 	<div class="form-group">
@@ -77,7 +87,9 @@
 		<div class="row">
 			<p th:text="${form.nickName}">nickName</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<p class="text-left text-muted" th:text="${#temporals.format(form.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
-			<div>
+			<div class="row">
+				<a th:if="${form.nickName==nickName}" class="text-muted"
+				   th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, updateCommentId=${form.id})}">수정</a>
 				<a th:if="${form.nickName==nickName}" class="text-muted"
 				   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${bulletinBoardDto.id}, commentId=${form.id})}">삭제</a>
 			</div>
@@ -87,6 +99,27 @@
 		</div>
 		<a th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, clickChild=${form.id})}">답글 달기</a>
 		<div class="division-line"></div>
+
+		<!--    parent comment update form   -->
+
+		<div th:if="${updateCommentId == form.id}" class="comment-box" >
+
+			<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${bulletinBoardDto.id}, commentId=${form.id})}"
+			      th:object="${updateCommentForm}" th:method="post">
+				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+				<div class="row">
+					<div class="col-sm-10">
+					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
+					          rows="2"></textarea>
+						<p class="field-error" th:errors="*{content}">입력 오류</p>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-primary">수정</button>
+					</div>
+				</div>
+			</form>
+
+		</div>
 
 	<!--    child comment create form   -->
 
@@ -113,8 +146,8 @@
 
 		<div style="background-color: #F3F3F3" th:each="child : ${form.child}">
 			<div style="margin-left: 2em" class="row">
-				<p th:text="|┕ ${child.nickName}|">nickName</p>
-				<p class="text-left text-muted" th:text="${#temporals.format(child.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
+				<p th:text="|┕ ${child.nickName}|">nickName</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<p class="text-left text-muted" th:text="${#temporals.format(child.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
 					<a th:if="${child.nickName==nickName}" class="text-muted"
 					   th:href="@{/boards/{id}/comments/delete(id=${bulletinBoardDto.id}, commentId=${child.id})}">삭제</a>

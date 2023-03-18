@@ -7,19 +7,21 @@
 	<div>
 		<table class="table table-striped">
 			<thead>
-			<tr>
+			<tr style="text-align: center">
 				<th>지역</th>
 				<th>제목</th>
 				<th>작성자</th>
 				<th>작성일</th>
+				<th>조회수</th>
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="pageBoardForm : ${pageBoardForms}">
+			<tr th:each="pageBoardForm : ${pageBoardForms}" style="text-align: center">
 				<td th:text="${pageBoardForm.region}"></td>
 				<td th:text="${pageBoardForm.title}" th:onclick="|location.href='@{/boards/{id}(id=${pageBoardForm.id})}'|" style="cursor:pointer;"></td>
 				<td th:text="${pageBoardForm.userNickName}"></td>
 				<td th:text="${#temporals.format(pageBoardForm.writeDate, 'yyyy-MM-dd')}"></td>
+				<td th:text="${pageBoardForm.views}"></td>
 			</tr>
 			</tbody>
 		</table>

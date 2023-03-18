@@ -1,6 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.Board.Comment;
+import com.catdog.help.domain.board.Comment;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

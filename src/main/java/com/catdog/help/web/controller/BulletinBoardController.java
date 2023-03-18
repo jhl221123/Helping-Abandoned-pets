@@ -1,14 +1,15 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.FileStore;
-import com.catdog.help.domain.Board.Comment;
 import com.catdog.help.service.BulletinBoardService;
+import com.catdog.help.service.CommentService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -20,10 +21,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @Slf4j
@@ -32,6 +38,7 @@ public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
     private final FileStore fileStore;
+    private final CommentService commentService;
 
     /***  create  ***/
     @GetMapping("/boards/new")
@@ -54,32 +61,6 @@ public class BulletinBoardController {
         return "redirect:/boards/{id}";
     }
 
-    @PostMapping("/boards/{id}/comments/parent")
-    public String createParentComment(@PathVariable("id") Long boardId, @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
-                                    @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
-            return "bulletinBoard/detail";
-        }
-        commentForm.setBoardId(boardId);
-        commentForm.setNickName(nickName);
-        bulletinBoardService.createComment(commentForm, -1L);
-        return "redirect:/boards/{id}";
-    }
-
-    @PostMapping("/boards/{id}/comments/child")
-    public String createChildComment(@PathVariable("id") Long boardId, @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
-                                     @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult,
-                                     @RequestParam("parentId") Long parentId) {
-        if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
-            return "bulletinBoard/detail";
-        }
-        commentForm.setBoardId(boardId);
-        commentForm.setNickName(nickName);
-        bulletinBoardService.createComment(commentForm, parentId);
-        return "redirect:/boards/{id}";
-    }
 
     /***  read  ***/
     @GetMapping("/boards")
@@ -92,7 +73,39 @@ public class BulletinBoardController {
     @GetMapping("/boards/{id}")
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
-                                    @RequestParam(name = "clickChild", required = false) Long clickChild) {
+                                    @RequestParam(name = "clickChild", required = false) Long clickChildId,
+                                    @RequestParam(name = "updateCommentId", required = false) Long updateCommentId,
+                                    HttpServletRequest request, HttpServletResponse response) {
+
+        if (request.getCookies() != null) {
+            //로그인 사용자
+            Cookie viewCookie = Arrays.stream(request.getCookies())
+                    .filter(c -> c.getName().equals("view"))
+                    .findAny()
+                    .orElse(null);
+            log.info("cookie ===================================={}", viewCookie);
+            if (viewCookie != null) {
+                //조회한 게시글 이미 존재, 해당 게시글 조회 여부 확인
+                if (!viewCookie.getValue().contains(String.valueOf(id))) {
+                    //처음 조회한 게시글
+                    bulletinBoardService.addViews(id);
+                    viewCookie.setValue(viewCookie.getValue() + "_" + String.valueOf(id));
+                    viewCookie.setMaxAge(60 * 60 * 12);
+                    response.addCookie(viewCookie);
+                } else {
+                    //이미 조회 한 게시글
+                }
+            } else {
+                //조회한 게시글이 없어 view cookie 가 없는 경우
+                bulletinBoardService.addViews(id);
+                Cookie newViewCookie = new Cookie("view", String.valueOf(id));
+                newViewCookie.setMaxAge(60 * 60 * 12);
+                response.addCookie(newViewCookie);
+            }
+        } else {
+            // TODO: 2023-03-18 비회원 사용자
+        }
+
         model.addAttribute("nickName", nickName); // detail 수정버튼
 
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
@@ -104,14 +117,21 @@ public class BulletinBoardController {
         CommentForm commentForm = new CommentForm();
         model.addAttribute("commentForm", commentForm);
 
-        List<CommentForm> commentForms = bulletinBoardService.readComments(id);
+        List<CommentForm> commentForms = commentService.readComments(id);
         if (commentForms != null) {
             model.addAttribute("commentForms", commentForms);
         }
 
+        //수정 폼 열기
+        if (updateCommentId != null) {
+            UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(updateCommentId, nickName);
+            model.addAttribute("updateCommentId", updateCommentId);
+            model.addAttribute("updateCommentForm", updateCommentForm);
+        }
+
         //대댓글 폼 열기
-        if (clickChild != null) {
-            model.addAttribute("clickChild", clickChild);
+        if (clickChildId != null) {
+            model.addAttribute("clickChild", clickChildId);
         }
 
         return "bulletinBoard/detail";
@@ -187,17 +207,5 @@ public class BulletinBoardController {
         return "redirect:/boards";
     }
 
-    @GetMapping("/boards/{id}/comments/{commentId}/delete")
-    public String deleteComment(@PathVariable("commentId") Long commentId,
-                                @PathVariable("id") Long id,
-                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
-        //본인 댓글만 삭제 가능
-        String commentNickName = bulletinBoardService.readComment(commentId).getNickName();
-        if (!commentNickName.equals(nickName)) {
-            return "redirect:/boards/{id}";
-        }
 
-        bulletinBoardService.deleteComment(commentId);
-        return "redirect:/boards/{id}";
-    }
 }
