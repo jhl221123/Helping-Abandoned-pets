@@ -1,6 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.LikeBoard;
+import com.catdog.help.domain.board.LikeBoard;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,12 +18,19 @@ public class LikeBoardRepositoryImpl implements LikeBoardRepository{
         return likeBoard.getId();
     }
 
-    public LikeBoard findByIds(Long boardId, Long userId) {
+    public LikeBoard findOneByIds(Long boardId, Long userId) {
         List<LikeBoard> result = em.createQuery("select l from LikeBoard l where l.board.id = :boardId and l.user.id = :userId", LikeBoard.class)
                 .setParameter("boardId", boardId)
                 .setParameter("userId", userId)
                 .getResultList();
         return result.stream().findAny().orElse(null);
+    }
+
+    public List<LikeBoard> findByBoardId(Long boardId) {
+        List<LikeBoard> result = em.createQuery("select l from LikeBoard l where l.board.id = :boardId", LikeBoard.class)
+                .setParameter("boardId", boardId)
+                .getResultList();
+        return result;
     }
 
     public void delete(LikeBoard likeBoard) {
