@@ -1,6 +1,5 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Board.Comment;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -18,9 +17,9 @@ public interface BulletinBoardService {
 
     public List<PageBulletinBoardForm> readAll();
 
-    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm) throws IOException;
-
     public UpdateBulletinBoardForm getUpdateForm(Long id);
+
+    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm) throws IOException;
 
     public void deleteBoard(Long boardId);
 
@@ -28,13 +27,6 @@ public interface BulletinBoardService {
 
     public boolean clickLike(Long boardId, String nickName);
 
-    public Long createComment(CommentForm commentForm, Long parentCommentId);
+    public void addViews(Long boardId);
 
-    public CommentForm readComment(Long commentId);
-
-    public List<CommentForm> readComments(Long boardId);
-
-    public Long updateComment(CommentForm commentForm);
-
-    public void deleteComment(Long commentId);
 }

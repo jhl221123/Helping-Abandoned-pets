@@ -1,17 +1,15 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
-import com.catdog.help.domain.Board.Comment;
-import com.catdog.help.domain.LikeBoard;
-import com.catdog.help.domain.Board.UploadFile;
-import com.catdog.help.domain.User;
+import com.catdog.help.domain.board.LikeBoard;
+import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.*;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import com.catdog.help.domain.Board.BulletinBoard;
+import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.comment.CommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     private final UploadFileRepository uploadFileRepository;
     private final FileStore fileStore;
     private final LikeBoardRepository likeBoardRepository;
-    private final CommentRepository commentRepository;
+
 
     /** 게시글 로직 */
 
@@ -53,7 +51,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         User user = findBoard.getUser();
         log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
-        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles);
+        int likeBoardSize = likeBoardRepository.findByBoardId(id).size();
+        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeBoardSize);
         return bulletinBoardDto;
     }
 
@@ -98,7 +97,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     public boolean checkLike(Long boardId, String nickName) {
         User findUser = userRepository.findByNickName(nickName);
-        LikeBoard likeBoard = likeBoardRepository.findByIds(boardId, findUser.getId());
+        LikeBoard likeBoard = likeBoardRepository.findOneByIds(boardId, findUser.getId());
         if (likeBoard == null) {
             return false;
         } else {
@@ -110,7 +109,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     public boolean clickLike(Long boardId, String nickName) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
         User findUser = userRepository.findByNickName(nickName);
-        LikeBoard findLikeBoard = likeBoardRepository.findByIds(findBoard.getId(), findUser.getId());
+        LikeBoard findLikeBoard = likeBoardRepository.findOneByIds(findBoard.getId(), findUser.getId());
         if (findLikeBoard == null) {
             LikeBoard likeBoard = new LikeBoard(findBoard, findUser);
             likeBoardRepository.save(likeBoard);
@@ -121,64 +120,11 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         }
     }
 
-    /** 댓글 로직 */
-
     @Transactional
-    public Long createComment(CommentForm commentForm, Long parentCommentId) {
-
-        BulletinBoard board = bulletinBoardRepository.findOne(commentForm.getBoardId());
-        User user = userRepository.findByNickName(commentForm.getNickName());
-
-        if (parentCommentId == -1L) {
-            //parent comment
-            Comment parentComment = getComment(commentForm, board, user);
-            commentRepository.save(parentComment);
-            return parentComment.getId();
-        } else {
-            //child comment
-            Comment findParentComment = commentRepository.findById(parentCommentId);
-            Comment childComment = getComment(commentForm, board, user);
-            childComment.addParent(findParentComment);
-            commentRepository.save(childComment);
-            return childComment.getId();
-        }
+    public void addViews(Long boardId) {
+        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        findBoard.addViews();
     }
-
-    public CommentForm readComment(Long commentId) {
-        Comment findComment = commentRepository.findById(commentId);
-        return getCommentForm(findComment);
-    }
-
-    public List<CommentForm> readComments(Long boardId) {
-        List<CommentForm> commentForms = new ArrayList<>();
-
-        List<Comment> comments = commentRepository.findAll(boardId);
-        if (comments == null) {
-            return null;
-        }
-        log.info("======================================={}", comments);
-        for (Comment comment : comments) {
-            log.info("{}",comment.getBoard());
-            log.info("{}",comment.getUser());
-            log.info("=========================================={}", comment.getChild());
-            commentForms.add(getCommentForm(comment));
-        }
-        return commentForms;
-    }
-
-    @Transactional
-    public Long updateComment(CommentForm commentForm) {
-        return null;
-    }
-
-    @Transactional
-    public void deleteComment(Long commentId) {
-        Comment findComment = commentRepository.findById(commentId);
-        commentRepository.delete(findComment);
-    }
-
-
-
 
     /**============================= private method ==============================*/
 
@@ -194,12 +140,11 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
                 board.addImage(uploadFile); //uploadFile 에 board 주입
             }
         }
-        board.setScore(0);
         board.setWriteDate(LocalDateTime.now());
         return board;
     }
 
-    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles) {
+    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles, int likeBoardSize) {
         BulletinBoardDto bulletinBoardDto = new BulletinBoardDto();
         bulletinBoardDto.setId(findBoard.getId());
         bulletinBoardDto.setUser(user);
@@ -208,7 +153,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         bulletinBoardDto.setContent(findBoard.getContent());
         bulletinBoardDto.setImages(uploadFiles);
         bulletinBoardDto.setWriteDate(findBoard.getWriteDate());
-        bulletinBoardDto.setScore(findBoard.getScore());
+        bulletinBoardDto.setViews(findBoard.getViews());
+        bulletinBoardDto.setLikeBoardSize(likeBoardSize);
         return bulletinBoardDto;
     }
 
@@ -219,6 +165,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         boardForm.setTitle(board.getTitle());
         boardForm.setUserNickName(nickName);
         boardForm.setWriteDate(board.getWriteDate());
+        boardForm.setViews(board.getViews());
         return boardForm;
     }
 
@@ -231,30 +178,5 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
             findBoard.addImage(uploadFile);
             uploadFileRepository.save(uploadFile);
         }
-    }
-
-    private static Comment getComment(CommentForm commentForm, BulletinBoard board, User user) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(commentForm.getContent());
-        comment.setWriteDate(LocalDateTime.now());
-        return comment;
-    }
-
-    private static CommentForm getCommentForm(Comment comment) {
-        CommentForm commentForm = new CommentForm();
-        commentForm.setId(comment.getId());
-        commentForm.setBoardId(comment.getBoard().getId());
-        commentForm.setNickName(comment.getUser().getNickName());
-        commentForm.setContent(comment.getContent());
-        if (!comment.getChild().isEmpty()) {
-            for (Comment child : comment.getChild()) {
-                CommentForm childCommentForm = getCommentForm(child);
-                commentForm.getChild().add(childCommentForm);
-            }
-        }
-        commentForm.setWriteDate(comment.getWriteDate());
-        return commentForm;
     }
 }
