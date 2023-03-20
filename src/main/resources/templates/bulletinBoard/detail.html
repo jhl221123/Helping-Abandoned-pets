@@ -87,7 +87,7 @@
 		<div class="row">
 			<p th:text="${form.nickName}">nickName</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<p class="text-left text-muted" th:text="${#temporals.format(form.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
-			<div class="row">
+			<div>
 				<a th:if="${form.nickName==nickName}" class="text-muted"
 				   th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, updateCommentId=${form.id})}">수정</a>
 				<a th:if="${form.nickName==nickName}" class="text-muted"
@@ -114,7 +114,9 @@
 						<p class="field-error" th:errors="*{content}">입력 오류</p>
 					</div>
 					<div class="col-sm-2">
-						<button type="submit" class="btn btn-primary">수정</button>
+						<button type="submit" class="btn" style="background-color: #B2CFF1;">수정</button>
+						<button type="button" class="btn" style="background-color: #B2CFF1;"
+						        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
 					</div>
 				</div>
 			</form>
@@ -136,6 +138,8 @@
 					</div>
 					<div class="col-sm-2">
 						<button type="submit" class="btn btn-primary">작성</button>
+						<button type="button" class="btn" style="background-color: #B2CFF1;"
+						        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
 					</div>
 				</div>
 			</form>
@@ -150,13 +154,37 @@
 				<p class="text-left text-muted" th:text="${#temporals.format(child.writeDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
 					<a th:if="${child.nickName==nickName}" class="text-muted"
-					   th:href="@{/boards/{id}/comments/delete(id=${bulletinBoardDto.id}, commentId=${child.id})}">삭제</a>
+					   th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, updateCommentId=${child.id})}">수정</a>
+					<a th:if="${child.nickName==nickName}" class="text-muted"
+					   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${bulletinBoardDto.id}, commentId=${child.id})}">삭제</a>
 				</div>
 			</div>
 			<div style="margin-left: 4em" >
 				<p th:text="${child.content}">content</p>
 			</div>
 			<div class="division-line"></div>
+
+			<!--    child comment update form   -->
+
+			<div th:if="${updateCommentId == child.id}" class="comment-box" >
+				<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${bulletinBoardDto.id}, commentId=${child.id})}"
+				      th:object="${updateCommentForm}" th:method="post">
+					<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+					<div class="row">
+						<div class="col-sm-10">
+					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
+					          rows="2"></textarea>
+							<p class="field-error" th:errors="*{content}">입력 오류</p>
+						</div>
+						<div class="col-sm-2">
+							<button type="submit" class="btn" style="background-color: #B2CFF1;">수정</button>
+							<button type="button" class="btn" style="background-color: #B2CFF1;"
+							        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
+						</div>
+					</div>
+				</form>
+				<div class="division-line"></div>
+			</div>
 		</div>
 
 	</div>
