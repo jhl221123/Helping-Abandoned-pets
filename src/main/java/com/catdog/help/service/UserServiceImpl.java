@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public Long join(SaveUserForm form) {
-        User user = createUser(form.getEmailId(), // TODO: 2023-03-08 ?? ㅋㅋ 수정필요, 근데 setter 없으면 이게 맞는데..
+        User user = createUser(form.getEmailId(), // TODO: 2023-03-08 ?? builder로 수정
                 form.getPassword(),
                 form.getNickName(),
                 form.getName(),
@@ -78,17 +79,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public Long updateUserInfo(UpdateUserForm updateForm) {
+    public Long updateUserInfo(UpdateUserForm updateForm) { // TODO: 2023-03-20 builder로 수정 필요
         User findUser = userRepository.findByNickName(updateForm.getNickName());
         findUser.setName(updateForm.getName());
         findUser.setAge(updateForm.getAge());
         findUser.setGender(updateForm.getGender());
+        findUser.setDateList(new DateList(findUser.getDateList().getCreateDate(), LocalDateTime.now(), null));
         return findUser.getId();
     }
 
     /**
      * ================== private method ====================
      */
+
+    private static User createUser(String emailId, String password, String nickName, String name, int age, Gender gender) {
+        User user = new User();
+        user.setEmailId(emailId);
+        user.setPassword(password);
+        user.setNickName(nickName);
+        user.setName(name);
+        user.setAge(age);
+        user.setGender(gender);
+        user.setDateList(new DateList(LocalDateTime.now(), null, null));
+        user.setReliability(0);
+        return user;
+    }
+
     private static UserDto getUserDto(User findUser) {
         UserDto UserDto = new UserDto();
         UserDto.setId(findUser.getId());
@@ -99,21 +115,8 @@ public class UserServiceImpl implements UserService {
         UserDto.setAge(findUser.getAge());
         UserDto.setGender(findUser.getGender());
         UserDto.setReliability(findUser.getReliability());
-        UserDto.setJoinDate(findUser.getJoinDate());
+        UserDto.setDateList(findUser.getDateList());
         return UserDto;
-    }
-
-    private static User createUser(String emailId, String password, String nickName, String name, int age, Gender gender) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setNickName(nickName);
-        user.setName(name);
-        user.setAge(age);
-        user.setGender(gender);
-        user.setJoinDate(LocalDateTime.now());
-        user.setReliability(0);
-        return user;
     }
 
     private static UpdateUserForm getUpdateUserForm(User findUser) {

@@ -1,5 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,6 @@ public class UpdateBulletinBoardForm {
     private String content;
 
     private List<MultipartFile> images = new ArrayList<>();
-    private LocalDateTime writeDate;
+    private DateList dateList;
     private int score;
 }

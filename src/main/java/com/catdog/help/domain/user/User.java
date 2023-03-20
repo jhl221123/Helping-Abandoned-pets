@@ -1,5 +1,6 @@
 package com.catdog.help.domain.user;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class User {
     @Column(name = "user_reliability")
     private int reliability;
 
-    @Column(name = "user_join_date")
-    private LocalDateTime joinDate; //todo 2023-03-05 날짜 모음 값타입으로 수정
+    @Embedded
+    private DateList dateList;
 
 }

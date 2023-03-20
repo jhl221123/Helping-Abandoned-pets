@@ -1,11 +1,11 @@
 package com.catdog.help.domain.board;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,8 +31,8 @@ public abstract class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @Column(name = "board_write_date")
-    private LocalDateTime writeDate; //날짜모음 값타입으로 리팩토링 필요
+    @Embedded
+    private DateList dateList;
 
     @Column(name = "board_views")
     private int views;

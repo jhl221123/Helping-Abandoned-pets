@@ -1,5 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
+import com.catdog.help.domain.DateList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,6 @@ public class PageBulletinBoardForm {
     private String region;
     private String title;
     private String userNickName;
-    private LocalDateTime writeDate;
+    private DateList dateList;
     private int views;
 }

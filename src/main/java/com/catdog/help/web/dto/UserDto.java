@@ -1,5 +1,6 @@
 package com.catdog.help.web.dto;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.user.Gender;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,5 +44,5 @@ public class UserDto {
     private int reliability;
 
     @NotNull
-    private LocalDateTime joinDate; // TODO: 2023-03-05 날짜 모음 값타입으로 수정
+    private DateList dateList;
 }

@@ -1,6 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
@@ -75,7 +76,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         updateForm.setTitle(findBoard.getTitle());
         updateForm.setContent(findBoard.getContent());
         //images 는 생성과 동시에 초기화
-        updateForm.setWriteDate(findBoard.getWriteDate()); //수정된 날짜로 변경
+        updateForm.setDateList(findBoard.getDateList()); //수정된 날짜로 변경
         return updateForm;
     }
 
@@ -90,6 +91,11 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     @Transactional
     public void deleteBoard(Long boardId) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        log.info("before deleteDate={}",findBoard.getDateList().getDeleteDate());
+        //삭제 날짜 추가
+        findBoard.setDateList(new DateList(findBoard.getDateList().getCreateDate(),
+                findBoard.getDateList().getLastModifiedDate(), LocalDateTime.now()));
+        log.info("after deleteDate={}",findBoard.getDateList().getDeleteDate());
         bulletinBoardRepository.delete(findBoard);
     }
 
@@ -140,7 +146,8 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
                 board.addImage(uploadFile); //uploadFile 에 board 주입
             }
         }
-        board.setWriteDate(LocalDateTime.now());
+        DateList dateList = new DateList(LocalDateTime.now(), null, null);
+        board.setDateList(dateList);
         return board;
     }
 
@@ -152,7 +159,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         bulletinBoardDto.setTitle(findBoard.getTitle());
         bulletinBoardDto.setContent(findBoard.getContent());
         bulletinBoardDto.setImages(uploadFiles);
-        bulletinBoardDto.setWriteDate(findBoard.getWriteDate());
+        bulletinBoardDto.setDateList(findBoard.getDateList());
         bulletinBoardDto.setViews(findBoard.getViews());
         bulletinBoardDto.setLikeBoardSize(likeBoardSize);
         return bulletinBoardDto;
@@ -164,7 +171,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         boardForm.setRegion(board.getRegion());
         boardForm.setTitle(board.getTitle());
         boardForm.setUserNickName(nickName);
-        boardForm.setWriteDate(board.getWriteDate());
+        boardForm.setDateList(board.getDateList());
         boardForm.setViews(board.getViews());
         return boardForm;
     }
@@ -178,5 +185,6 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
             findBoard.addImage(uploadFile);
             uploadFileRepository.save(uploadFile);
         }
+        findBoard.setDateList(new DateList(findBoard.getDateList().getCreateDate(), LocalDateTime.now(), null));
     }
 }

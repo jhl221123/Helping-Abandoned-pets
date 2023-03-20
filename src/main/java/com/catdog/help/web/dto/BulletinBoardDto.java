@@ -1,5 +1,6 @@
 package com.catdog.help.web.dto;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
@@ -17,7 +18,7 @@ public class BulletinBoardDto {
     private User user;
     private String title;
     private String content;
-    private LocalDateTime writeDate;
+    private DateList dateList;
     private int views;
     private String region;
     private List<UploadFile> images = new ArrayList<>();
