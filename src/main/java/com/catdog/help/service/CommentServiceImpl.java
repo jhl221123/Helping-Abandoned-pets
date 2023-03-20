@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
@@ -80,6 +81,7 @@ public class CommentServiceImpl implements CommentService {
     public Long updateComment(UpdateCommentForm updateForm) {
         Comment findComment = commentRepository.findById(updateForm.getId());
         findComment.setContent(updateForm.getContent());
+        findComment.setDateList(new DateList(findComment.getDateList().getCreateDate(), LocalDateTime.now(), null));
         return findComment.getId();
     }
 
@@ -98,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setBoard(board);
         comment.setUser(user);
         comment.setContent(commentForm.getContent());
-        comment.setWriteDate(LocalDateTime.now());
+        comment.setDateList(new DateList(LocalDateTime.now(), null, null)); //댓글 생성에만 사용가능
         return comment;
     }
 
@@ -114,7 +116,7 @@ public class CommentServiceImpl implements CommentService {
                 commentForm.getChild().add(childCommentForm);
             }
         }
-        commentForm.setWriteDate(comment.getWriteDate());
+        commentForm.setDateList(comment.getDateList());
         return commentForm;
     }
 

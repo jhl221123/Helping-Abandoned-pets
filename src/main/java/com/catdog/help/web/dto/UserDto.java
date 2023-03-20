@@ -41,8 +41,5 @@ public class UserDto {
     private Gender gender;
 
     @NotNull
-    private int reliability;
-
-    @NotNull
     private DateList dateList;
 }

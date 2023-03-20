@@ -1,5 +1,6 @@
 package com.catdog.help.domain.board;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +31,8 @@ public class Comment {
     @Column(name = "comment_content")
     private String content;
 
-    @Column(name = "comment_write_date")
-    private LocalDateTime writeDate;
+    @Embedded
+    private DateList dateList;
 
     //대댓글
     @ManyToOne(fetch = FetchType.LAZY) //fetch join으로 즉시로딩 효과

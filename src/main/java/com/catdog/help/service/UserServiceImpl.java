@@ -101,7 +101,6 @@ public class UserServiceImpl implements UserService {
         user.setAge(age);
         user.setGender(gender);
         user.setDateList(new DateList(LocalDateTime.now(), null, null));
-        user.setReliability(0);
         return user;
     }
 
@@ -114,7 +113,6 @@ public class UserServiceImpl implements UserService {
         UserDto.setName(findUser.getName());
         UserDto.setAge(findUser.getAge());
         UserDto.setGender(findUser.getGender());
-        UserDto.setReliability(findUser.getReliability());
         UserDto.setDateList(findUser.getDateList());
         return UserDto;
     }

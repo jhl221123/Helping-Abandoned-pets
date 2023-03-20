@@ -1,9 +1,11 @@
 package com.catdog.help.web.form.comment;
 
+import com.catdog.help.domain.DateList;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +28,5 @@ public class CommentForm {
 
     private List<CommentForm> child = new ArrayList<>();
 
-    private LocalDateTime writeDate;
+    private DateList dateList;
 }
