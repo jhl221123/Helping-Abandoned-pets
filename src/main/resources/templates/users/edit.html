@@ -32,6 +32,7 @@
 					<input type="radio" th:field="*{gender}" value="WOMAN" th:checked> 여자
 				<p class="field-error" th:errors="*{gender}">성별 오류</p>
 			</div>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail/edit/password}'|">비밀번호 변경</button>
 			<div class="float-right">
 				<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail}'|">취소</button>
 				<button type="submit" class="btn btn-primary" >완료</button>

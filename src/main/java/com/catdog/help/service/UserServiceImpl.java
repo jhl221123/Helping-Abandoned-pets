@@ -3,6 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.DateList;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
+import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
@@ -86,6 +87,19 @@ public class UserServiceImpl implements UserService {
         findUser.setGender(updateForm.getGender());
         findUser.setDateList(new DateList(findUser.getDateList().getCreateDate(), LocalDateTime.now(), null));
         return findUser.getId();
+    }
+
+    @Transactional
+    public Long changePassword(ChangePasswordForm changeForm, String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        findUser.setPassword(changeForm.getAfterPassword());
+        return findUser.getId();
+    }
+
+    @Transactional
+    public void deleteUser(String nickName) {
+        User findUser = userRepository.findByNickName(nickName);
+        userRepository.delete(findUser); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
     }
 
     /**
