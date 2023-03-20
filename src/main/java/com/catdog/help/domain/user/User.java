@@ -1,13 +1,14 @@
 package com.catdog.help.domain.user;
 
 import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,10 +44,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @Column(name = "user_reliability")
-    private int reliability;
-
     @Embedded
     private DateList dateList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<BulletinBoard> bulletinBoards = new ArrayList<>();
 
 }

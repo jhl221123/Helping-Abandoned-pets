@@ -21,21 +21,6 @@ public class BulletinBoard extends Board {
     private List<LikeBoard> likeUsers;
 
 
-//    /**
-//     * score 없어도 될 듯?
-//     */
-//    @Column(name = "board_score")
-//    private int score;
-//
-//    public void plusScore() {
-//        ++score;
-//    }
-//
-//    public void minusScore() {
-//        --score;
-//    }
-
-
     //===== 연관 관계 편의 메서드 =====//
 
     public void addImage(UploadFile uploadFile) {

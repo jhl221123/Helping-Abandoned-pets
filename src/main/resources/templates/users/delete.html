@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+	<form role="form" th:method="post">
+		<p th:text="|${nickName} 님 정말로 탈퇴하시겠습니까?|"></p>
+		<p th:text="|(${nickName} 님이 작성하신 게시글과 댓글이 모두 삭제될 수 있습니다.)|"></p>
+		<div class="float-right">
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail}'|">취소</button>
+			<button type="submit" class="btn btn-primary" >완료</button>
+		</div>
+	</form>
+	<br/>
+	<br/>
+	<div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

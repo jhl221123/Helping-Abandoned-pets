@@ -12,5 +12,5 @@ public interface BulletinBoardRepository {
 
     public List<BulletinBoard> findAll();
 
-    public void delete(BulletinBoard board);
+    public Long delete(BulletinBoard board);
 }

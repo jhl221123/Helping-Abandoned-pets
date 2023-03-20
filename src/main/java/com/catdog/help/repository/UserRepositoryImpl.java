@@ -41,4 +41,9 @@ public class UserRepositoryImpl implements UserRepository {
         List<User> users = em.createQuery("select u from User u", User.class).getResultList();
         return users;
     }
+
+    public Long delete(User user) {
+        em.remove(user);
+        return user.getId();
+    }
 }

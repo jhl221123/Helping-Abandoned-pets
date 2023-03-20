@@ -91,12 +91,10 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     @Transactional
     public void deleteBoard(Long boardId) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
-        log.info("before deleteDate={}",findBoard.getDateList().getDeleteDate());
         //삭제 날짜 추가
         findBoard.setDateList(new DateList(findBoard.getDateList().getCreateDate(),
                 findBoard.getDateList().getLastModifiedDate(), LocalDateTime.now()));
-        log.info("after deleteDate={}",findBoard.getDateList().getDeleteDate());
-        bulletinBoardRepository.delete(findBoard);
+        bulletinBoardRepository.delete(findBoard); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
     }
 
     /** 좋아요 로직 */

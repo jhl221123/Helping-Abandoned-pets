@@ -14,4 +14,6 @@ public interface UserRepository {
     public User findByNickName(String nickName);
 
     public List<User> findAll();
+
+    public Long delete(User user);
 }

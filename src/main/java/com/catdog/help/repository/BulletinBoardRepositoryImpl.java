@@ -23,11 +23,12 @@ public class BulletinBoardRepositoryImpl implements BulletinBoardRepository{
     }
 
     public List<BulletinBoard> findAll() {
-        List<BulletinBoard> boards = em.createQuery("select b from BulletinBoard b order by board_write_date desc", BulletinBoard.class).getResultList();
+        List<BulletinBoard> boards = em.createQuery("select b from BulletinBoard b order by create_date desc", BulletinBoard.class).getResultList();
         return boards;
     }
 
-    public void delete(BulletinBoard board) {
+    public Long delete(BulletinBoard board) {
         em.remove(board);
+        return board.getId();
     }
 }
