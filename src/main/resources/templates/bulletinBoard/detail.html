@@ -34,8 +34,8 @@
 			</div>
 			<div class="col-sm-1" style="justify-content: end">
 				<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
-					<img th:if="${!checkLike}" th:src="|/images/빈 하트.png|" width="20" height="20"/>
-					<img th:if="${checkLike}" th:src="|/images/redHeart.png|" width="20" height="20"/>
+					<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
+					<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
 				</button>
 			</div>
 		</div>
