@@ -4,14 +4,12 @@ import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.comment.CommentForm;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface BulletinBoardService {
 
-    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException;
+    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName);
 
     public BulletinBoardDto readBoard(Long id);
 
@@ -19,7 +17,7 @@ public interface BulletinBoardService {
 
     public UpdateBulletinBoardForm getUpdateForm(Long id);
 
-    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm) throws IOException;
+    public Long updateBoard(UpdateBulletinBoardForm updateBulletinBoardForm);
 
     public void deleteBoard(Long boardId);
 

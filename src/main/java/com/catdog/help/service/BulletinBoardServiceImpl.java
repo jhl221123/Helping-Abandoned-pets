@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     /** 게시글 로직 */
 
     @Transactional
-    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) throws IOException {
+    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         BulletinBoard board = createBulletinBoard(boardForm, findUser);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
@@ -81,7 +80,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     }
 
     @Transactional
-    public Long updateBoard(UpdateBulletinBoardForm updateForm) throws IOException {
+    public Long updateBoard(UpdateBulletinBoardForm updateForm) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(updateForm.getId());
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
         updateBulletinBoard(findBoard, updateForm);  //변경감지 이용한 덕분에 user 값 변경없이 수정이 된다!
@@ -132,7 +131,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     /**============================= private method ==============================*/
 
-    private BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) throws IOException {
+    private BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
         BulletinBoard board = new BulletinBoard();
         board.setUser(findUser);
         board.setRegion(boardForm.getRegion());
@@ -174,7 +173,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         return boardForm;
     }
 
-    private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) throws IOException {
+    private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
         findBoard.setRegion(updateForm.getRegion());
         findBoard.setTitle(updateForm.getTitle());
         findBoard.setContent(updateForm.getContent());

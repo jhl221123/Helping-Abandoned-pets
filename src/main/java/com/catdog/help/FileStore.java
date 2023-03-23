@@ -17,17 +17,21 @@ public class FileStore {
     @Value("${file.dir}")
     private String fileDir;
 
-    public UploadFile storeFile(MultipartFile multipartFile) throws IOException {
+    public UploadFile storeFile(MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             return null;
         }
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
+        try {
+            multipartFile.transferTo(new File(getFullPath(storeFileName)));
+        } catch (IOException e) {
+            throw new RuntimeException(e); // TODO: 2023-03-23 예외 세분화 필요
+        }
         return new UploadFile(originalFilename, storeFileName);
     }
 
-    public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
+    public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) {
         List<UploadFile> uploadFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
