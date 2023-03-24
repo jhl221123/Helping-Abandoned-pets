@@ -1,13 +1,18 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.domain.DateList;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
+import com.catdog.help.repository.bulletinboard.JdbcTemplateBulletinBoardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +23,8 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class BulletinBoardRepositoryTest {
 
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    BulletinBoardRepository bulletinBoardRepository;
     @Autowired UserRepository userRepository;
 
     @Test
@@ -32,13 +38,14 @@ class BulletinBoardRepositoryTest {
         bulletinBoardRepository.save(board1);
         bulletinBoardRepository.save(board2);
         BulletinBoard findBoard1 = bulletinBoardRepository.findOne(board1.getId());
+        System.out.println("findBoard1 = " + findBoard1.getRegion());
         BulletinBoard findBoard2 = bulletinBoardRepository.findOne(board2.getId());
 
         //then
         assertThat(findBoard1.getTitle()).isEqualTo("title1");
         assertThat(findBoard2.getTitle()).isEqualTo("title2");
-        assertThat(findBoard1).isEqualTo(board1);
-        assertThat(findBoard2).isEqualTo(board2);
+//        assertThat(findBoard1).isEqualTo(board1);
+//        assertThat(findBoard2).isEqualTo(board2); todo jdbcTemplate 에서는 유효하지 않은 테스트.. 테스트 방향성을 고민해보자.
     }
 
     @Test
@@ -78,8 +85,7 @@ class BulletinBoardRepositoryTest {
         board.setContent("content");
         board.setRegion("region");
         board.setUser(user);
-        board.setScore(0);
-        board.setWriteDate(LocalDateTime.now());
+        board.setDateList(new DateList(LocalDateTime.now(), null, null));
         return board;
     }
 
@@ -90,8 +96,7 @@ class BulletinBoardRepositoryTest {
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);
-        user.setReliability(0);
-        user.setJoinDate(LocalDateTime.now());
+        user.setDateList(new DateList(LocalDateTime.now(), null, null));
         return user;
     }
 }
