@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;

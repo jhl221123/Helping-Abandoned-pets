@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,6 @@ public class UpdateBulletinBoardForm {
     private String content;
 
     private List<MultipartFile> images = new ArrayList<>();
-    private DateList dateList;
+    private Dates dates;
     private int score;
 }

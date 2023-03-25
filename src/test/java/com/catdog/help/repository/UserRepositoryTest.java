@@ -1,7 +1,9 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -16,7 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class UserRepositoryTest {
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void saveAndFindOne() {
@@ -38,12 +42,12 @@ class UserRepositoryTest {
 
 
         //then
-        assertThat(findUser1).isEqualTo(user1);
-        assertThat(findUser2).isEqualTo(user2);
-        assertThat(findUser3).isEqualTo(user1);
-        assertThat(findUser4).isEqualTo(user2);
-        assertThat(findUser5).isEqualTo(user1);
-        assertThat(findUser6).isEqualTo(user2);
+        assertThat(findUser1.getEmailId()).isEqualTo(user1.getEmailId());
+        assertThat(findUser2.getEmailId()).isEqualTo(user2.getEmailId());
+        assertThat(findUser3.getEmailId()).isEqualTo(user1.getEmailId());
+        assertThat(findUser4.getEmailId()).isEqualTo(user2.getEmailId());
+        assertThat(findUser5.getEmailId()).isEqualTo(user1.getEmailId());
+        assertThat(findUser6.getEmailId()).isEqualTo(user2.getEmailId());
         assertThat(findUser7).isEqualTo(null);
     }
 
@@ -62,9 +66,9 @@ class UserRepositoryTest {
 
         //then
         assertThat(users.size()).isEqualTo(3);
-        assertThat(users.get(0)).isEqualTo(user1);
-        assertThat(users.get(1)).isEqualTo(user2);
-        assertThat(users.get(2)).isEqualTo(user3);
+        assertThat(users.get(0).getEmailId()).isEqualTo("user1@email");
+        assertThat(users.get(1).getEmailId()).isEqualTo("user2@email");
+        assertThat(users.get(2).getEmailId()).isEqualTo("user3@email");
 
     }
 
@@ -76,8 +80,7 @@ class UserRepositoryTest {
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);
-        user.setReliability(0);
-        user.setJoinDate(LocalDateTime.now());
+        user.setDates(new Dates(LocalDateTime.now(), null, null));
         return user;
     }
 }

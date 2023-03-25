@@ -1,11 +1,10 @@
 package com.catdog.help.domain.user;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,9 +12,10 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@Table(name = "users")
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -38,16 +38,33 @@ public class User {
     @Column(name = "user_gender")
     private Gender gender;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<LikeBoard> likeBoards;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
-
     @Embedded
-    private DateList dateList;
+    private Dates dates;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BulletinBoard> bulletinBoards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<LikeBoard> likeBoards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
+
+    // TODO: 2023-03-25 빌더 더 알아보고 setter 닫기
+//    @Builder
+//    public User(Long id, String emailId, String password, String nickName, String name, int age, Gender gender,
+//                List<LikeBoard> likeBoards, List<Comment> comments, DateList dateList, List<BulletinBoard> bulletinBoards) {
+//        this.id = id;
+//        this.emailId = emailId;
+//        this.password = password;
+//        this.nickName = nickName;
+//        this.name = name;
+//        this.age = age;
+//        this.gender = gender;
+//        this.likeBoards = likeBoards;
+//        this.comments = comments;
+//        this.dateList = dateList;
+//        this.bulletinBoards = bulletinBoards;
+//    }
 }

@@ -1,13 +1,12 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class Comment {
     private String content;
 
     @Embedded
-    private DateList dateList;
+    private Dates dates;
 
     //대댓글
     @ManyToOne(fetch = FetchType.LAZY) //fetch join으로 즉시로딩 효과

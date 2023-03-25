@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.DateList;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.domain.Dates;
+import com.catdog.help.repository.user.UserRepository;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
         findUser.setName(updateForm.getName());
         findUser.setAge(updateForm.getAge());
         findUser.setGender(updateForm.getGender());
-        findUser.setDateList(new DateList(findUser.getDateList().getCreateDate(), LocalDateTime.now(), null));
+        findUser.setDates(new Dates(findUser.getDates().getCreateDate(), LocalDateTime.now(), null));
         return findUser.getId();
     }
 
@@ -114,7 +115,7 @@ public class UserServiceImpl implements UserService {
         user.setName(name);
         user.setAge(age);
         user.setGender(gender);
-        user.setDateList(new DateList(LocalDateTime.now(), null, null));
+        user.setDates(new Dates(LocalDateTime.now(), null, null));
         return user;
     }
 
@@ -127,7 +128,7 @@ public class UserServiceImpl implements UserService {
         UserDto.setName(findUser.getName());
         UserDto.setAge(findUser.getAge());
         UserDto.setGender(findUser.getGender());
-        UserDto.setDateList(findUser.getDateList());
+        UserDto.setDates(findUser.getDates());
         return UserDto;
     }
 

@@ -1,9 +1,12 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
+import com.catdog.help.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +22,10 @@ import static org.assertj.core.api.Assertions.*;
 class CommentRepositoryImplTest {
 
     @Autowired CommentRepository commentRepository;
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     void saveAndFindByIdAndDelete() {
@@ -81,8 +86,7 @@ class CommentRepositoryImplTest {
         board.setContent("content");
         board.setRegion("region");
         board.setUser(user);
-        board.setScore(0);
-        board.setWriteDate(LocalDateTime.now());
+        board.setDates(new Dates(LocalDateTime.now(), null, null));
         return board;
     }
 
@@ -93,8 +97,7 @@ class CommentRepositoryImplTest {
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);
-        user.setReliability(0);
-        user.setJoinDate(LocalDateTime.now());
+        user.setDates(new Dates(LocalDateTime.now(), null, null));
         return user;
     }
 

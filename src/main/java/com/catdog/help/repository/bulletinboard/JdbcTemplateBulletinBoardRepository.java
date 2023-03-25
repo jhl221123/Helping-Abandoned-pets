@@ -2,13 +2,9 @@ package com.catdog.help.repository.bulletinboard;
 
 import com.catdog.help.domain.board.BulletinBoard;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -18,26 +14,18 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
-@Repository
 @Slf4j
+//@Repository
 public class JdbcTemplateBulletinBoardRepository implements BulletinBoardRepository{
 
     private final NamedParameterJdbcTemplate template;
-    private final SimpleJdbcInsert jdbcInsert;
 
     public JdbcTemplateBulletinBoardRepository(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
-        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName("board")
-                .usingGeneratedKeyColumns("board_id");
     }
 
     @Override
     public Long save(BulletinBoard bulletinBoard) {
-//        SqlParameterSource param = new BeanPropertySqlParameterSource(bulletinBoard);
-//        Number key = jdbcInsert.executeAndReturnKey(param);
-//        return key.longValue();
-
         String sql = "insert into board(board_title, board_content, region, board_views, create_date, last_modified_date, delete_date, user_id, dtype) " +
                 "values (:title, :content, :region, :views, :create, :modified, :delete, :user_id, :dtype)";
 
@@ -46,9 +34,9 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
                 .addValue("content", bulletinBoard.getContent())
                 .addValue("region", bulletinBoard.getRegion())
                 .addValue("views", bulletinBoard.getViews())
-                .addValue("create", bulletinBoard.getDateList().getCreateDate())
-                .addValue("modified", bulletinBoard.getDateList().getLastModifiedDate())
-                .addValue("delete", bulletinBoard.getDateList().getDeleteDate())
+                .addValue("create", bulletinBoard.getDates().getCreateDate())
+                .addValue("modified", bulletinBoard.getDates().getLastModifiedDate())
+                .addValue("delete", bulletinBoard.getDates().getDeleteDate())
                 .addValue("user_id", bulletinBoard.getUser().getId())
                 .addValue("dtype", "Bulletin");
 
@@ -65,17 +53,13 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
         String sql = "select * from board where board_id = :id";
         Map<String, Object> param = Map.of("id", id);
         BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper());
-        log.info("===================board.title={}", board.getTitle());
+        // TODO: 2023-03-25 user , comment , likeBoard 주입
         return board;
-//        try {
-//        } catch (EmptyResultDataAccessException e) {
-//            return null;
-//        } Optional 추가 후 수정
     }
 
     @Override
     public List<BulletinBoard> findAll() {
-        String sql = "select * from board";
+        String sql = "select * from board order by create_date desc";
         return template.query(sql, bulletinBoardRowMapper());
     }
 
@@ -88,15 +72,21 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
     }
 
     private RowMapper<BulletinBoard> bulletinBoardRowMapper() {
-        return (((rs, rowNum) -> {
+        return ((rs, rowNum) -> {
             BulletinBoard board = new BulletinBoard();
             board.setId(rs.getLong("board_id"));
             board.setTitle(rs.getString("board_title"));
-            board.setRegion(rs.getString("region"));
             board.setContent(rs.getString("board_content"));
-            //파라미터 전부 추가
-            // TODO: 2023-03-24 BeanPropertyRowMapper 사용 시 상속받은 부모 프로퍼티는 파라미터로 접근이 안 되는 듯 하다. 블로그에 기술하자.
+//            board.setDates(Dates.builder()
+//                    .createDate(rs.getTimestamp("create_date").toLocalDateTime())
+//                    .lastModifiedDate(rs.getTimestamp("last_modified_date").toLocalDateTime())
+//                    .deleteDate(rs.getTimestamp("delete_date").toLocalDateTime())
+//                    .build());
+            board.setViews(rs.getInt("board_views"));
+            board.setRegion(rs.getString("region"));
+            //참조 타입은 각각 매퍼로 가져온 다음에 주입해 줘야할 듯
+            // TODO: 2023-03-24 BeanPropertyRowMapper 사용 시 상속받은 부모 프로퍼티는 파라미터로 접근이 안 되는 듯 하다. 블로그에 기술
             return board;
-        }));
+        });
     }
 }

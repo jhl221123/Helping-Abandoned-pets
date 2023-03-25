@@ -1,6 +1,6 @@
 package com.catdog.help.web.dto;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 
 @Getter @Setter
 public class UserDto {
@@ -41,5 +40,5 @@ public class UserDto {
     private Gender gender;
 
     @NotNull
-    private DateList dateList;
+    private Dates dates;
 }

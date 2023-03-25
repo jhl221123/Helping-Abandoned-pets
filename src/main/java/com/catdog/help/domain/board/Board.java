@@ -1,6 +1,6 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.List;
 @Getter @Setter
 public abstract class Board {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
     private Long id;
 
@@ -32,7 +32,7 @@ public abstract class Board {
     private List<Comment> comments;
 
     @Embedded
-    private DateList dateList;
+    private Dates dates;
 
     @Column(name = "board_views")
     private int views;

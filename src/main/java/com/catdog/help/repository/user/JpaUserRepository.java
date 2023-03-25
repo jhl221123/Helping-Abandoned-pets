@@ -1,4 +1,4 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.user;
 
 import com.catdog.help.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -7,10 +7,11 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
-@Repository
-public class UserRepositoryImpl implements UserRepository {
+//@Repository
+public class JpaUserRepository implements UserRepository {
 
     @PersistenceContext
     EntityManager em;

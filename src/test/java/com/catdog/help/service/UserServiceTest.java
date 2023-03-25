@@ -1,8 +1,9 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.user.UserRepository;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -146,8 +148,7 @@ class UserServiceTest {
         userDto.setName("name");
         userDto.setAge(20);
 //        userDto.setGender(Gender.MAN);
-        userDto.setReliability(1);
-        userDto.setJoinDate(LocalDateTime.now());
+        userDto.setDates(new Dates(LocalDateTime.now(), null, null));
         return userDto;
     }
 }

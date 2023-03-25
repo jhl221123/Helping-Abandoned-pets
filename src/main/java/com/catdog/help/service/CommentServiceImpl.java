@@ -1,12 +1,12 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
 import com.catdog.help.repository.CommentRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.user.UserRepository;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -81,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
     public Long updateComment(UpdateCommentForm updateForm) {
         Comment findComment = commentRepository.findById(updateForm.getId());
         findComment.setContent(updateForm.getContent());
-        findComment.setDateList(new DateList(findComment.getDateList().getCreateDate(), LocalDateTime.now(), null));
+        findComment.setDates(new Dates(findComment.getDates().getCreateDate(), LocalDateTime.now(), null));
         return findComment.getId();
     }
 
@@ -100,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setBoard(board);
         comment.setUser(user);
         comment.setContent(commentForm.getContent());
-        comment.setDateList(new DateList(LocalDateTime.now(), null, null)); //댓글 생성에만 사용가능
+        comment.setDates(new Dates(LocalDateTime.now(), null, null)); //댓글 생성에만 사용가능
         return comment;
     }
 
@@ -116,7 +117,7 @@ public class CommentServiceImpl implements CommentService {
                 commentForm.getChild().add(childCommentForm);
             }
         }
-        commentForm.setDateList(comment.getDateList());
+        commentForm.setDates(comment.getDates());
         return commentForm;
     }
 

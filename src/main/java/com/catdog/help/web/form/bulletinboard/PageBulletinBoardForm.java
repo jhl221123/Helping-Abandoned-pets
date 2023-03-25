@@ -1,10 +1,8 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.DateList;
+import com.catdog.help.domain.Dates;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter @Setter
 public class PageBulletinBoardForm {
@@ -13,6 +11,6 @@ public class PageBulletinBoardForm {
     private String region;
     private String title;
     private String userNickName;
-    private DateList dateList;
+    private Dates dates;
     private int views;
 }

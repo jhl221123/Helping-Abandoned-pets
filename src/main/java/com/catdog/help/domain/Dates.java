@@ -1,5 +1,6 @@
 package com.catdog.help.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.Column;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Embeddable
 @Getter
-public class DateList {
+public class Dates {
 
     @Column(name = "create_date")
     private LocalDateTime createDate;
@@ -19,10 +20,11 @@ public class DateList {
     @Column(name = "delete_date")
     private LocalDateTime deleteDate;
 
-    public DateList() { // 기본 생성자 필요
+    public Dates() {
     }
 
-    public DateList(LocalDateTime createDate, LocalDateTime lastModifiedDate, LocalDateTime deleteDate) {
+    @Builder
+    public Dates(LocalDateTime createDate, LocalDateTime lastModifiedDate, LocalDateTime deleteDate) {
         this.createDate = createDate;
         this.lastModifiedDate = lastModifiedDate;
         this.deleteDate = deleteDate;

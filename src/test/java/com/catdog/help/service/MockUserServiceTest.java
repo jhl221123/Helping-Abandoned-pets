@@ -2,7 +2,7 @@
 //
 //import com.catdog.help.domain.user.Gender;
 //import com.catdog.help.domain.user.User;
-//import com.catdog.help.repository.UserRepository;
+//import com.catdog.help.repository.user.UserRepository;
 //import com.catdog.help.web.dto.UserDto;
 //import com.catdog.help.web.form.user.SaveUserForm;
 //import com.catdog.help.web.form.user.UpdateUserForm;

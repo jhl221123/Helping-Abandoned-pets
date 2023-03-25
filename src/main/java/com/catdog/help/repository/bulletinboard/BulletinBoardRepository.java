@@ -1,4 +1,4 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.bulletinboard;
 
 import com.catdog.help.domain.board.BulletinBoard;
 
