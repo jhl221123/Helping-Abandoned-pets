@@ -6,6 +6,7 @@ import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
+import com.catdog.help.repository.comment.CommentRepository;
 import com.catdog.help.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,10 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class CommentRepositoryImplTest {
+class CommentRepositoryTest {
 
-    @Autowired CommentRepository commentRepository;
+    @Autowired
+    CommentRepository commentRepository;
     @Autowired
     BulletinBoardRepository bulletinBoardRepository;
     @Autowired
@@ -32,7 +34,11 @@ class CommentRepositoryImplTest {
         //given
         User user1 = createUser("id11@email", "password");
         User user2 = createUser("id22@email", "password");
+        userRepository.save(user1);
+        userRepository.save(user2);
+
         BulletinBoard board = createBulletinBoard("title", user1);
+        bulletinBoardRepository.save(board);
 
         Comment comment = getComment(user2, board, "comment");
 
@@ -41,7 +47,8 @@ class CommentRepositoryImplTest {
         Comment findComment = commentRepository.findById(comment.getId());
 
         //then
-        assertThat(comment).isEqualTo(findComment);
+        assertThat(comment.getContent()).isEqualTo(findComment.getContent());
+        assertThat(comment.getUser().getId()).isEqualTo(findComment.getUser().getId());
 
         //delete
         commentRepository.delete(comment);
@@ -56,28 +63,36 @@ class CommentRepositoryImplTest {
         User user2 = createUser("id22@email", "password");
         userRepository.save(user1);
         userRepository.save(user2);
-        BulletinBoard board = createBulletinBoard("title", user1);
-        bulletinBoardRepository.save(board);
 
-        Comment comment1 = getComment(user2, board, "comment1");
-        Comment comment2 = getComment(user2, board, "comment2");
-        Comment comment3 = getComment(user2, board, "comment3");
+        BulletinBoard board1 = createBulletinBoard("title1", user1);
+        BulletinBoard board2 = createBulletinBoard("title2", user2);
+        bulletinBoardRepository.save(board1);
+        bulletinBoardRepository.save(board2);
+
+        Comment comment1 = getComment(user2, board1, "comment1");
+        Comment comment2 = getComment(user2, board1, "comment2");
         commentRepository.save(comment1);
         commentRepository.save(comment2);
-        commentRepository.save(comment3);
-        comment3.addParent(comment1);
 
         //when
-        List<Comment> comments = commentRepository.findAll(board.getId());
+        Comment comment3 = getComment(user2, board1, "comment3");
+        comment3.addParent(comment1);
+        commentRepository.save(comment3);
+
+        List<Comment> comments = commentRepository.findAll(board1.getId());
         for (Comment comment : comments) {
-            System.out.println("comment.getContent() = " + comment.getChild());
+            System.out.println("comment.getContent() = " + comment.getChild()); // TODO: 2023-03-26 자식 댓글 포함시키기
         }
+
+        List<Comment> noComments = commentRepository.findAll(board2.getId());
 
         //then
         assertThat(comments.size()).isEqualTo(2);
-        assertThat(comment1).isIn(comments);
-        assertThat(comment2).isIn(comments);
-        assertThat(comment3).isNotIn(comments);
+        assertThat(comment1.getContent()).isEqualTo(comments.get(0).getContent());
+        assertThat(comment2.getContent()).isEqualTo(comments.get(1).getContent());
+        assertThat(comment3).isNotIn(comments); //부모 댓글만 조회되어야 한다.
+
+        assertThat(noComments).isEmpty();
     }
 
     private static BulletinBoard createBulletinBoard(String title, User user) {
@@ -106,6 +121,8 @@ class CommentRepositoryImplTest {
         comment.setBoard(board);
         comment.setUser(user2);
         comment.setContent(content);
+        comment.setParent(new Comment());
+        comment.setDates(new Dates(LocalDateTime.now(), null, null));
 
         return comment;
     }
