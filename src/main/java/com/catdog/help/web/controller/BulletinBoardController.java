@@ -75,6 +75,7 @@ public class BulletinBoardController {
                                     @RequestParam(name = "updateCommentId", required = false) Long updateCommentId,
                                     HttpServletRequest request, HttpServletResponse response) {
 
+        //start views using cookie
         if (request.getCookies() != null) {
             //로그인 사용자
             Cookie viewCookie = Arrays.stream(request.getCookies())
@@ -103,6 +104,7 @@ public class BulletinBoardController {
         } else {
             // TODO: 2023-03-18 비회원 사용자
         }
+        //end views using cookie
 
         model.addAttribute("nickName", nickName); // detail 수정버튼
 

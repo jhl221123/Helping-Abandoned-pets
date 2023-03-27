@@ -5,7 +5,7 @@ import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
-import com.catdog.help.repository.CommentRepository;
+import com.catdog.help.repository.comment.CommentRepository;
 import com.catdog.help.repository.user.UserRepository;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -60,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentForm> commentForms = new ArrayList<>();
 
         List<Comment> comments = commentRepository.findAll(boardId);
-        if (comments == null) {
+        if (comments.isEmpty()) {
             return null;
         }
         log.info("======================================={}", comments);

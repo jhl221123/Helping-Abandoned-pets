@@ -1,4 +1,4 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.comment;
 
 import com.catdog.help.domain.board.Comment;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class CommentRepositoryImpl implements CommentRepository {
+public class JpaCommentRepository implements CommentRepository {
 
     @PersistenceContext
     EntityManager em;
@@ -29,10 +29,6 @@ public class CommentRepositoryImpl implements CommentRepository {
         List<Comment> comments = em.createQuery("select distinct c from Comment c left join fetch c.child where c.parent = null and c.board.id = :boardId", Comment.class)
                 .setParameter("boardId", boardId)
                 .getResultList();
-
-        if (comments.isEmpty()) {
-            return null;
-        }
 
         return comments;
     }

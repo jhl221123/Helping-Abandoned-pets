@@ -88,7 +88,7 @@ class BulletinBoardRepositoryTest {
         board.setContent("content");
         board.setRegion("region");
         board.setUser(user);
-        board.setDates(Dates.builder().createDate(LocalDateTime.now()).build());
+        board.setDates(new Dates(LocalDateTime.now(), null, null));
         return board;
     }
 
@@ -100,7 +100,7 @@ class BulletinBoardRepositoryTest {
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);
-        user.setDates(Dates.builder().createDate(LocalDateTime.now()).build());
+        user.setDates(new Dates(LocalDateTime.now(), null, null));
         return user;
     }
 }

@@ -1,4 +1,4 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.comment;
 
 import com.catdog.help.domain.board.Comment;
 

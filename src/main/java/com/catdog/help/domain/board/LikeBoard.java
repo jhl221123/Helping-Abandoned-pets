@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class LikeBoard {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_board_id")
     private Long id;
 

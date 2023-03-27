@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Repository
+//@Repository
 public class JdbcTemplateCommentRepository implements CommentRepository{
 
     private final NamedParameterJdbcTemplate template;

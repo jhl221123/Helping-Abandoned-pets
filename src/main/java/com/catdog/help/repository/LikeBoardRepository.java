@@ -8,9 +8,11 @@ public interface LikeBoardRepository {
 
     public Long save(LikeBoard likeBoard);
 
-    public LikeBoard findOneByIds(Long boardId, Long userId);
+    public LikeBoard findById(Long likeBoardId);
 
-    public List<LikeBoard> findByBoardId(Long boardId);
+    public LikeBoard findByIds(Long boardId, Long userId);
+
+    public List<LikeBoard> findAllByBoardId(Long boardId);
 
     public void delete(LikeBoard likeBoard);
 }

@@ -1,5 +1,6 @@
 package com.catdog.help.repository.bulletinboard;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
@@ -52,7 +53,7 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
     public BulletinBoard findOne(Long id) {
         String sql = "select * from board where board_id = :id";
         Map<String, Object> param = Map.of("id", id);
-        BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper());
+        BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper()); // TODO: 2023-03-26 존재하지 않는 아이디로 조회시 null 반환하기때문에 try-catch 사용
         // TODO: 2023-03-25 user , comment , likeBoard 주입
         return board;
     }
@@ -77,11 +78,9 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
             board.setId(rs.getLong("board_id"));
             board.setTitle(rs.getString("board_title"));
             board.setContent(rs.getString("board_content"));
-//            board.setDates(Dates.builder()
-//                    .createDate(rs.getTimestamp("create_date").toLocalDateTime())
-//                    .lastModifiedDate(rs.getTimestamp("last_modified_date").toLocalDateTime())
-//                    .deleteDate(rs.getTimestamp("delete_date").toLocalDateTime())
-//                    .build());
+            board.setDates(new Dates(((rs.getTimestamp("create_date") != null) ? rs.getTimestamp("create_date").toLocalDateTime() : null),
+                                        (rs.getTimestamp("last_modified_date") != null) ? rs.getTimestamp("last_modified_date").toLocalDateTime() : null,
+                                        (rs.getTimestamp("delete_date") != null) ? rs.getTimestamp("delete_date").toLocalDateTime() : null));
             board.setViews(rs.getInt("board_views"));
             board.setRegion(rs.getString("region"));
             //참조 타입은 각각 매퍼로 가져온 다음에 주입해 줘야할 듯

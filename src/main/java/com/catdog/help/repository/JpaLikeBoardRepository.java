@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class LikeBoardRepositoryImpl implements LikeBoardRepository{
+public class JpaLikeBoardRepository implements LikeBoardRepository{
 
     @PersistenceContext
     EntityManager em;
@@ -18,7 +18,11 @@ public class LikeBoardRepositoryImpl implements LikeBoardRepository{
         return likeBoard.getId();
     }
 
-    public LikeBoard findOneByIds(Long boardId, Long userId) {
+    public LikeBoard findById(Long likeBoardId) {
+        return null; // TODO: 2023-03-26 spring data jpa 할 때 손보기
+    }
+
+    public LikeBoard findByIds(Long boardId, Long userId) {
         List<LikeBoard> result = em.createQuery("select l from LikeBoard l where l.board.id = :boardId and l.user.id = :userId", LikeBoard.class)
                 .setParameter("boardId", boardId)
                 .setParameter("userId", userId)
@@ -26,7 +30,7 @@ public class LikeBoardRepositoryImpl implements LikeBoardRepository{
         return result.stream().findAny().orElse(null);
     }
 
-    public List<LikeBoard> findByBoardId(Long boardId) {
+    public List<LikeBoard> findAllByBoardId(Long boardId) {
         List<LikeBoard> result = em.createQuery("select l from LikeBoard l where l.board.id = :boardId", LikeBoard.class)
                 .setParameter("boardId", boardId)
                 .getResultList();

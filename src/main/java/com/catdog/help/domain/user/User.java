@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@Table(name = "users")
+@Table(name = "users") //user -> h2 시스템명
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

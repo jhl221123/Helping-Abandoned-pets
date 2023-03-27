@@ -54,7 +54,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
         User user = findBoard.getUser();
         log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
-        int likeBoardSize = likeBoardRepository.findByBoardId(id).size();
+        int likeBoardSize = likeBoardRepository.findAllByBoardId(id).size();
         BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeBoardSize);
         return bulletinBoardDto;
     }
@@ -103,7 +103,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
 
     public boolean checkLike(Long boardId, String nickName) {
         User findUser = userRepository.findByNickName(nickName);
-        LikeBoard likeBoard = likeBoardRepository.findOneByIds(boardId, findUser.getId());
+        LikeBoard likeBoard = likeBoardRepository.findByIds(boardId, findUser.getId());
         if (likeBoard == null) {
             return false;
         } else {
@@ -115,7 +115,7 @@ public class BulletinBoardServiceImpl implements BulletinBoardService {
     public boolean clickLike(Long boardId, String nickName) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
         User findUser = userRepository.findByNickName(nickName);
-        LikeBoard findLikeBoard = likeBoardRepository.findOneByIds(findBoard.getId(), findUser.getId());
+        LikeBoard findLikeBoard = likeBoardRepository.findByIds(findBoard.getId(), findUser.getId());
         if (findLikeBoard == null) {
             LikeBoard likeBoard = new LikeBoard(findBoard, findUser);
             likeBoardRepository.save(likeBoard);

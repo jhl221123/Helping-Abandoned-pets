@@ -23,7 +23,6 @@ public class Dates {
     public Dates() {
     }
 
-    @Builder
     public Dates(LocalDateTime createDate, LocalDateTime lastModifiedDate, LocalDateTime deleteDate) {
         this.createDate = createDate;
         this.lastModifiedDate = lastModifiedDate;

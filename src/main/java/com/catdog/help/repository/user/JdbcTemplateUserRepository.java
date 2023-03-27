@@ -1,5 +1,6 @@
 package com.catdog.help.repository.user;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Repository
+//@Repository
 public class JdbcTemplateUserRepository implements UserRepository{
 
     private final NamedParameterJdbcTemplate template;
@@ -29,7 +30,7 @@ public class JdbcTemplateUserRepository implements UserRepository{
     @Override
     public void save(User user) {
         String sql = "insert into users(user_email_id, user_password, user_nickname, user_name, user_age, user_gender, create_date, last_modified_date, delete_date) " +
-                "values (:email, :password, :nickname, :name, :age, :gender, :create, :modified, :delete)";
+                "values (:email, :password, :nickname, :name, :age, :gender, :create, :modified, :delete)"; // users 주의
 
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("email", user.getEmailId())
@@ -107,11 +108,9 @@ public class JdbcTemplateUserRepository implements UserRepository{
             user.setName(rs.getString("user_name"));
             user.setAge(rs.getInt("user_age"));
             user.setGender(Gender.valueOf(rs.getString("user_gender")));
-//            user.setDates(Dates.builder()
-//                    .createDate(rs.getTimestamp("create_date").toLocalDateTime())
-//                    .lastModifiedDate(rs.getTimestamp("last_modified_date").toLocalDateTime())
-//                    .deleteDate(rs.getTimestamp("delete_date").toLocalDateTime())
-//                    .build());
+            user.setDates(new Dates(((rs.getTimestamp("create_date") != null) ? rs.getTimestamp("create_date").toLocalDateTime() : null),
+                                        (rs.getTimestamp("last_modified_date") != null) ? rs.getTimestamp("last_modified_date").toLocalDateTime() : null,
+                                        (rs.getTimestamp("delete_date") != null) ? rs.getTimestamp("delete_date").toLocalDateTime() : null));
             return user;
         });
     }

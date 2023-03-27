@@ -11,6 +11,7 @@ import com.catdog.help.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -121,7 +122,7 @@ class CommentRepositoryTest {
         comment.setBoard(board);
         comment.setUser(user2);
         comment.setContent(content);
-        comment.setParent(new Comment());
+//        comment.setParent(new Comment()); jpa 아니면 여기서 error
         comment.setDates(new Dates(LocalDateTime.now(), null, null));
 
         return comment;
