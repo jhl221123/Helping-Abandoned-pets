@@ -50,8 +50,9 @@ public class BulletinBoardController {
     @PostMapping("/boards/new")
     public String createBulletinBoard(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
                                       @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
-                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            // TODO: 2023-03-27 검증 에러 발생 시 create.html 에서 닉네임 값 사라짐. 수정 필요
             return "bulletinBoard/create";
         }
         Long boardId = bulletinBoardService.createBoard(saveBoardForm, nickName);
@@ -62,9 +63,12 @@ public class BulletinBoardController {
 
     /***  read  ***/
     @GetMapping("/boards")
-    public String BulletinBoardList(Model model) {
-        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readAll();
+    public String BulletinBoardList(@RequestParam(value = "page") int page, Model model) {
+        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readPage(page);
         model.addAttribute("pageBoardForms", pageBoardForms);
+
+        int lastPage = bulletinBoardService.getNumberOfPages();
+        model.addAttribute("lastPage", lastPage);
         return "bulletinBoard/list";
     }
 
@@ -204,7 +208,7 @@ public class BulletinBoardController {
             return "redirect:/boards/{id}";
         }
         bulletinBoardService.deleteBoard(id);
-        return "redirect:/boards";
+        return "redirect:/boards?page=1";
     }
 
 

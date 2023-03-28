@@ -25,6 +25,9 @@
 			</tr>
 			</tbody>
 		</table>
+
+		<button th:each="page : ${#numbers.sequence(1,lastPage)}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=${page})}'|" th:text="${page}"></button>
+
 		<div class="float-right">
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
 		</div>

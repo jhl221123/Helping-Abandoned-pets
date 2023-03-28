@@ -61,7 +61,7 @@
 		<img th:each="imageFile : ${bulletinBoardDto.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
 	</div>
 	<div class="float-right">
-		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards}'|">목록으로</button>
+		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=1)}'|">목록으로</button>
 		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/edit(id=${bulletinBoardDto.id})}'|">수정</button>
 		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
