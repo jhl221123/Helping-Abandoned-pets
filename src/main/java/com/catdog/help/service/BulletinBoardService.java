@@ -60,7 +60,7 @@ public class BulletinBoardService {
 
     public List<PageBulletinBoardForm> readPage(int page) {
         int start = page * 10 - 10;
-        int end = page * 10;
+        int end = 10;
 
         List<PageBulletinBoardForm> pageBoardForms = new ArrayList<>();
         List<BulletinBoard> boards = bulletinBoardRepository.findPage(start, end);
@@ -99,7 +99,8 @@ public class BulletinBoardService {
     public Long updateBoard(UpdateBulletinBoardForm updateForm) {
         BulletinBoard findBoard = bulletinBoardRepository.findOne(updateForm.getId());
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
-        updateBulletinBoard(findBoard, updateForm);  //변경감지 이용한 덕분에 user 값 변경없이 수정이 된다!
+        updateBulletinBoard(findBoard, updateForm);
+        // TODO: 2023-03-28 기존 이미지 있으면 지우고 새로 업데이트하도록
         return findBoard.getId();
     }
 
