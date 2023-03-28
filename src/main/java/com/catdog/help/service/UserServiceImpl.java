@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
-import com.catdog.help.repository.user.UserRepository;
+import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.dto.UserDto;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

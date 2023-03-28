@@ -1,8 +1,9 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.jdbcTemplate;
 
 import com.catdog.help.domain.board.LikeBoard;
-import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
-import com.catdog.help.repository.user.UserRepository;
+import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.LikeBoardRepository;
+import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Slf4j
 //@Repository
-public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository{
+public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
 
     private final NamedParameterJdbcTemplate template;
     private final BulletinBoardRepository bulletinBoardRepository;

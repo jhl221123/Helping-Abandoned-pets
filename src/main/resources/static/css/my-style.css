@@ -1,0 +1,5 @@
+.my-background{
+    height: 100vh;
+    background: url('../img/flowers-garden.jpg') no-repeat center;
+    background-size: cover;
+}

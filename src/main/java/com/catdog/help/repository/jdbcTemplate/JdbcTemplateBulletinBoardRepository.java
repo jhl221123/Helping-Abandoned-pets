@@ -1,15 +1,14 @@
-package com.catdog.help.repository.bulletinboard;
+package com.catdog.help.repository.jdbcTemplate;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.repository.BulletinBoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 //@Repository
-public class JdbcTemplateBulletinBoardRepository implements BulletinBoardRepository{
+public class JdbcTemplateBulletinBoardRepository implements BulletinBoardRepository {
 
     private final NamedParameterJdbcTemplate template;
 
@@ -56,6 +55,12 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
         BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper()); // TODO: 2023-03-26 존재하지 않는 아이디로 조회시 null 반환하기때문에 try-catch 사용
         // TODO: 2023-03-25 user , comment , likeBoard 주입
         return board;
+    }
+
+    @Override
+    public List<BulletinBoard> findPage(int start, int end) {
+        // TODO: 2023-03-27 페이징 처리
+        return null;
     }
 
     @Override

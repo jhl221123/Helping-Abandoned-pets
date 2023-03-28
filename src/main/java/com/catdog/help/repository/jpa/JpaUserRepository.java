@@ -1,13 +1,13 @@
-package com.catdog.help.repository.user;
+package com.catdog.help.repository.jpa;
 
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Repository

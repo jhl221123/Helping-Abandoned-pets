@@ -2,12 +2,9 @@ package com.catdog.help.repository;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
-import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
-import com.catdog.help.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

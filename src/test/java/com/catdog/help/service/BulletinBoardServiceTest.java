@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
+import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
@@ -27,7 +27,7 @@ class BulletinBoardServiceTest {
     @Autowired UserService userService;
 
     @Test
-    void createBoard() throws IOException {
+    void createBoard() {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         Long userId = userService.join(userForm);
@@ -44,7 +44,7 @@ class BulletinBoardServiceTest {
     }
 
     @Test
-    void readBoards() throws IOException {
+    void readBoards() {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         userService.join(userForm);
@@ -53,16 +53,15 @@ class BulletinBoardServiceTest {
 
         //when
         BulletinBoardDto firstBoardDto = bulletinBoardService.readBoard(firstBoardId);
-        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readAll();
+        // TODO: 2023-03-27   pageRead 추가
 
         //then
         assertThat(firstBoardDto.getTitle()).isEqualTo("firstTitle");
         assertThat(firstBoardDto.getUser().getNickName()).isEqualTo("nickName");
-        assertThat(pageBoardForms.size()).isEqualTo(2);
     }
 
     @Test
-    void getUpdateFormAndUpdateBoard() throws IOException {
+    void getUpdateFormAndUpdateBoard() {
         //given
         SaveUserForm userForm = getUserForm("nickName");
         Long userId = userService.join(userForm);

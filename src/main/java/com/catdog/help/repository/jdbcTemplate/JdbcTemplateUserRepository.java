@@ -1,8 +1,9 @@
-package com.catdog.help.repository.user;
+package com.catdog.help.repository.jdbcTemplate;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,16 +11,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 //@Repository
-public class JdbcTemplateUserRepository implements UserRepository{
+public class JdbcTemplateUserRepository implements UserRepository {
 
     private final NamedParameterJdbcTemplate template;
 

@@ -1,4 +1,4 @@
-package com.catdog.help.repository.user;
+package com.catdog.help.repository;
 
 import com.catdog.help.domain.user.User;
 

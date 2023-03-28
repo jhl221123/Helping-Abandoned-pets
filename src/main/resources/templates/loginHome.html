@@ -11,7 +11,7 @@
     background-size: cover;
 }
 </style>
-<body>
+<body class="my-background">
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader" />
 	<div class="jumbotron">
@@ -23,7 +23,7 @@
 		</p>
 		<p class="lead">게시판</p>
 		<p>
-			<a class="btn btn-lg btn-dark" href="/boards">게시글 목록</a>
+			<a class="btn btn-lg btn-dark" href="/boards?page=1">게시글 목록</a>
 			<a class="btn btn-lg btn-dark" href="/boards/new">게시글 작성</a>
 		</p>
 		<p class="lead">새 기능을 기대하시라</p>

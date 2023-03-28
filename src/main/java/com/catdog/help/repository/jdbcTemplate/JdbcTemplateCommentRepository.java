@@ -1,9 +1,10 @@
-package com.catdog.help.repository.comment;
+package com.catdog.help.repository.jdbcTemplate;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Comment;
-import com.catdog.help.repository.bulletinboard.BulletinBoardRepository;
-import com.catdog.help.repository.user.UserRepository;
+import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.CommentRepository;
+import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,16 +13,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 //@Repository
-public class JdbcTemplateCommentRepository implements CommentRepository{
+public class JdbcTemplateCommentRepository implements CommentRepository {
 
     private final NamedParameterJdbcTemplate template;
     private final BulletinBoardRepository bulletinBoardRepository;
