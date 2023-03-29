@@ -3,12 +3,17 @@ package com.catdog.help.repository.jdbcTemplate;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.CommentRepository;
+import com.catdog.help.repository.LikeBoardRepository;
+import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -19,9 +24,17 @@ import java.util.Map;
 public class JdbcTemplateBulletinBoardRepository implements BulletinBoardRepository {
 
     private final NamedParameterJdbcTemplate template;
+    private final UserRepository userRepository;
+//    private final CommentRepository commentRepository;
+//    private final LikeBoardRepository likeBoardRepository;
 
-    public JdbcTemplateBulletinBoardRepository(DataSource dataSource) {
+    @Autowired
+    public JdbcTemplateBulletinBoardRepository(DataSource dataSource, UserRepository userRepository) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
+        this.userRepository = userRepository;
+        // 의존관계 주입 시 순환 참조발생
+//        this.commentRepository = new JdbcTemplateCommentRepository(dataSource, this, userRepository);
+//        this.likeBoardRepository = new JdbcTemplateLikeBoardRepository(dataSource, this, userRepository);
     }
 
     @Override
@@ -53,7 +66,7 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
         String sql = "select * from board where board_id = :id";
         Map<String, Object> param = Map.of("id", id);
         BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper()); // TODO: 2023-03-26 존재하지 않는 아이디로 조회시 null 반환하기때문에 try-catch 사용
-        // TODO: 2023-03-25 user , comment , likeBoard 주입
+
         return board;
     }
 
@@ -88,7 +101,10 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
                                         (rs.getTimestamp("delete_date") != null) ? rs.getTimestamp("delete_date").toLocalDateTime() : null));
             board.setViews(rs.getInt("board_views"));
             board.setRegion(rs.getString("region"));
-            //참조 타입은 각각 매퍼로 가져온 다음에 주입해 줘야할 듯
+            board.setUser(userRepository.findById(rs.getLong("user_id")));
+//            board.setComments(commentRepository.findAll(rs.getLong("board_id"))); 순환참조 발생
+//            board.setLikeBoards(likeBoardRepository.findAllByBoardId(rs.getLong("board_id")));
+            // 1+n query -> join 사용해야할듯
             // TODO: 2023-03-24 BeanPropertyRowMapper 사용 시 상속받은 부모 프로퍼티는 파라미터로 접근이 안 되는 듯 하다. 블로그에 기술
             return board;
         });

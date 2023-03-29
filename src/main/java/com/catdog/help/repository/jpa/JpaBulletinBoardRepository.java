@@ -20,7 +20,7 @@ public class JpaBulletinBoardRepository implements BulletinBoardRepository {
     }
 
     public BulletinBoard findOne(Long id) {
-        return em.find(BulletinBoard.class, id); //Optional 처리 어떻게 해야하는지 알아보자
+        return em.find(BulletinBoard.class, id); //TODO: 2023-03-06 fetch 조인, Optional
     }
 
     public List<BulletinBoard> findPage(int start, int end) {

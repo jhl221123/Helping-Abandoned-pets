@@ -66,14 +66,13 @@ public class BulletinBoardService {
         List<BulletinBoard> boards = bulletinBoardRepository.findPage(start, end);
         for (BulletinBoard board : boards) {
             User user = board.getUser();
-            log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
             pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
         }
         return pageBoardForms;
     }
 
     public int getNumberOfPages() {
-        int totalBoards = bulletinBoardRepository.findAll().size();
+        int totalBoards = bulletinBoardRepository.findAll().size(); // TODO: 2023-03-28 카운트 쿼리로 대체 고려
         if (totalBoards <= 10) {
             return 1;
         } else if (totalBoards % 10 == 0) {

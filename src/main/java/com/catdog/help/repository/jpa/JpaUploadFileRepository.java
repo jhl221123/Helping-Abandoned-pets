@@ -1,6 +1,7 @@
-package com.catdog.help.repository;
+package com.catdog.help.repository.jpa;
 
 import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.repository.UploadFileRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -8,7 +9,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class UploadFileRepositoryImpl implements UploadFileRepository {
+public class JpaUploadFileRepository implements UploadFileRepository {
 
     @PersistenceContext
     EntityManager em;

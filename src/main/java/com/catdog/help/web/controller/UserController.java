@@ -80,7 +80,7 @@ public class UserController {
         return "redirect:" + redirectURL;
     }
 
-    @GetMapping("/logout") // TODO: 2023-03-20 Get or Post...
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class UploadFile {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "upload_file_id")
     private Long id;
 

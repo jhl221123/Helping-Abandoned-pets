@@ -113,10 +113,10 @@ class CommentRepositoryTest {
         return user;
     }
 
-    private static Comment getComment(User user2, BulletinBoard board, String content) {
+    private static Comment getComment(User user, BulletinBoard board, String content) {
         Comment comment = new Comment();
         comment.setBoard(board);
-        comment.setUser(user2);
+        comment.setUser(user);
         comment.setContent(content);
 //        comment.setParent(new Comment()); jpa 아니면 여기서 error
         comment.setDates(new Dates(LocalDateTime.now(), null, null));

@@ -18,7 +18,7 @@ public class BulletinBoard extends Board {
     private List<UploadFile> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<LikeBoard> likeUsers;
+    private List<LikeBoard> likeBoards;
 
 
     //===== 연관 관계 편의 메서드 =====//

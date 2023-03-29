@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,7 @@ public abstract class Board {
     private String content;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @Embedded
     private Dates dates;
