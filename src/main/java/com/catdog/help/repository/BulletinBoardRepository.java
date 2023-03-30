@@ -8,7 +8,7 @@ public interface BulletinBoardRepository {
 
     public Long save(BulletinBoard bulletinBoard);
 
-    public BulletinBoard findOne(Long id);
+    public BulletinBoard findById(Long id);
 
     public List<BulletinBoard> findPage(int start, int end);
 

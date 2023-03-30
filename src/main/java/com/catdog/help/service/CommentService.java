@@ -32,7 +32,7 @@ public class CommentService {
     @Transactional
     public Long createComment(CommentForm commentForm, Long parentCommentId) {
 
-        BulletinBoard board = bulletinBoardRepository.findOne(commentForm.getBoardId());
+        BulletinBoard board = bulletinBoardRepository.findById(commentForm.getBoardId());
         User user = userRepository.findByNickName(commentForm.getNickName());
 
         if (parentCommentId == -1L) {

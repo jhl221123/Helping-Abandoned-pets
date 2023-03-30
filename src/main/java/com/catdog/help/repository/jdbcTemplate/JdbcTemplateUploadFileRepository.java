@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -47,10 +46,20 @@ public class JdbcTemplateUploadFileRepository implements UploadFileRepository {
     }
 
     @Override
+    public UploadFile findById(Long id) {
+        return null;
+    }
+
+    @Override
     public List<UploadFile> findUploadFiles(Long boardId) {
         String sql = "select * from upload_file where board_id = :boardId";
         Map<String, Object> param = Map.of("boardId", boardId);
         return template.query(sql, param, uploadFileRowMapper());
+    }
+
+    @Override
+    public Long delete(UploadFile uploadFile) {
+        return null;
     }
 
     private RowMapper<UploadFile> uploadFileRowMapper() {
@@ -59,7 +68,7 @@ public class JdbcTemplateUploadFileRepository implements UploadFileRepository {
             uploadFile.setId(rs.getLong("upload_file_id"));
             uploadFile.setStoreFileName(rs.getString("store_file_name"));
             uploadFile.setUploadFileName(rs.getString("upload_file_name"));
-            uploadFile.setBoard(bulletinBoardRepository.findOne(rs.getLong("board_id")));
+            uploadFile.setBoard(bulletinBoardRepository.findById(rs.getLong("board_id")));
             return uploadFile;
         });
     }

@@ -62,7 +62,7 @@ public class JdbcTemplateBulletinBoardRepository implements BulletinBoardReposit
     }
 
     @Override
-    public BulletinBoard findOne(Long id) {
+    public BulletinBoard findById(Long id) {
         String sql = "select * from board where board_id = :id";
         Map<String, Object> param = Map.of("id", id);
         BulletinBoard board = template.queryForObject(sql, param, bulletinBoardRowMapper()); // TODO: 2023-03-26 존재하지 않는 아이디로 조회시 null 반환하기때문에 try-catch 사용

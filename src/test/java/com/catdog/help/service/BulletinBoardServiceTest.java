@@ -4,7 +4,6 @@ import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
-import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -12,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -36,7 +32,7 @@ class BulletinBoardServiceTest {
 
         //when
         Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickName());
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
 
         //then
         assertThat(findBoard.getTitle()).isEqualTo(boardForm.getTitle());
@@ -73,7 +69,7 @@ class BulletinBoardServiceTest {
         UpdateBulletinBoardForm updateForm = bulletinBoardService.getUpdateForm(boardId);
         update(updateForm);
         Long updateBoardId = bulletinBoardService.updateBoard(updateForm);
-        BulletinBoard updateBoard = bulletinBoardRepository.findOne(updateBoardId);
+        BulletinBoard updateBoard = bulletinBoardRepository.findById(updateBoardId);
 
         //then
         assertThat(updateForm.getId()).isEqualTo(boardId);

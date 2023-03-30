@@ -8,5 +8,9 @@ public interface UploadFileRepository {
 
     public Long save(UploadFile uploadFile);
 
+    public UploadFile findById(Long id);
+
     public List<UploadFile> findUploadFiles(Long boardId);
+
+    public Long delete(UploadFile uploadFile);
 }

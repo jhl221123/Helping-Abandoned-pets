@@ -19,10 +19,20 @@ public class JpaUploadFileRepository implements UploadFileRepository {
         return uploadFile.getId();
     }
 
+    @Override
+    public UploadFile findById(Long id) {
+        return em.find(UploadFile.class, id);
+    }
+
     public List<UploadFile> findUploadFiles(Long boardId) {
         return em.createQuery("select u from UploadFile u where u.board.id = :boardId", UploadFile.class)
                 .setParameter("boardId", boardId)
                 .getResultList();
     }
 
+    @Override
+    public Long delete(UploadFile uploadFile) {
+        em.remove(uploadFile);
+        return uploadFile.getId();
+    }
 }

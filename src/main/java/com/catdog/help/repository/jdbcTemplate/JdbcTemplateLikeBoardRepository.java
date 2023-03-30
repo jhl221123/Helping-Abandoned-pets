@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -92,7 +91,7 @@ public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
         return ((rs, rowNum) -> {
             LikeBoard likeBoard = new LikeBoard();
             likeBoard.setId(rs.getLong("like_board_id"));
-            likeBoard.setBoard(bulletinBoardRepository.findOne(rs.getLong("board_id")));
+            likeBoard.setBoard(bulletinBoardRepository.findById(rs.getLong("board_id")));
             likeBoard.setUser(userRepository.findById(rs.getLong("user_id")));
             return likeBoard;
         });

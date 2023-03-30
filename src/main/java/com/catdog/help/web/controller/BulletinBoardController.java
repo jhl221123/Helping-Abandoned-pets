@@ -1,6 +1,7 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.FileStore;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.web.SessionConst;
@@ -173,12 +174,12 @@ public class BulletinBoardController {
 
     @PostMapping("/boards/{id}/edit")
     public String updateBulletinBoard(@Validated @ModelAttribute("updateBoardForm") UpdateBulletinBoardForm updateBulletinBoardForm,
-                                      BindingResult bindingResult) throws IOException {
+                                      BindingResult bindingResult) {
         // TODO: 2023-03-12 여기도 작성자 외 접근 못하도록 막아야 할 듯
-
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/update";
         }
+
         bulletinBoardService.updateBoard(updateBulletinBoardForm);
         return "redirect:/boards/{id}";
     }

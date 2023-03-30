@@ -19,8 +19,11 @@ public class JpaBulletinBoardRepository implements BulletinBoardRepository {
         return board.getId();
     }
 
-    public BulletinBoard findOne(Long id) {
-        return em.find(BulletinBoard.class, id); //TODO: 2023-03-06 fetch 조인, Optional
+    public BulletinBoard findById(Long id) {
+        //게시글은 작성자 이름이 같이 따라다녀서 fetch join을 사용
+        return (BulletinBoard) em.createQuery("select b from BulletinBoard b join fetch b.user where board_id = :id")
+                .setParameter("id", id)
+                .getResultList().stream().findAny().orElse(null); //TODO: 2023-03-30 Optional
     }
 
     public List<BulletinBoard> findPage(int start, int end) {

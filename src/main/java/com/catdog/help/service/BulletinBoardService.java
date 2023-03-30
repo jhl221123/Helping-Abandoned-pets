@@ -49,9 +49,8 @@ public class BulletinBoardService {
     }
 
     public BulletinBoardDto readBoard(Long id) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(id);
         User user = findBoard.getUser();
-        log.info("User={}", user); // TODO: 2023-03-06 지연로딩 이라 일단 로그로 호출  -> fetch 조인 써야하네 여기!
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
         int likeBoardSize = likeBoardRepository.findAllByBoardId(id).size();
         BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeBoardSize);
@@ -83,29 +82,35 @@ public class BulletinBoardService {
     }
 
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(id);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(id);
         UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
         updateForm.setId(findBoard.getId());
         updateForm.setRegion(findBoard.getRegion());
         updateForm.setTitle(findBoard.getTitle());
         updateForm.setContent(findBoard.getContent());
-        //images 는 생성과 동시에 초기화
+        updateForm.setOldImages(uploadFileRepository.findUploadFiles(id));
         updateForm.setDates(findBoard.getDates()); //수정된 날짜로 변경
         return updateForm;
     }
 
     @Transactional
     public Long updateBoard(UpdateBulletinBoardForm updateForm) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(updateForm.getId());
-        List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
+        BulletinBoard findBoard = bulletinBoardRepository.findById(updateForm.getId());
+
+        //이미지 삭제
+        for (Integer id : updateForm.getDeleteImageIds()) {
+            UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
+            uploadFileRepository.delete(target);
+        }
+        
+        //게시글 내용 변경 및 이미지 추가
         updateBulletinBoard(findBoard, updateForm);
-        // TODO: 2023-03-28 기존 이미지 있으면 지우고 새로 업데이트하도록
         return findBoard.getId();
     }
 
     @Transactional
     public void deleteBoard(Long boardId) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
         //삭제 날짜 추가
         findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(),
                 findBoard.getDates().getLastModifiedDate(), LocalDateTime.now()));
@@ -126,7 +131,7 @@ public class BulletinBoardService {
 
     @Transactional
     public boolean clickLike(Long boardId, String nickName) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
         User findUser = userRepository.findByNickName(nickName);
         LikeBoard findLikeBoard = likeBoardRepository.findByIds(findBoard.getId(), findUser.getId());
         if (findLikeBoard == null) {
@@ -141,8 +146,9 @@ public class BulletinBoardService {
 
     @Transactional
     public void addViews(Long boardId) {
-        BulletinBoard findBoard = bulletinBoardRepository.findOne(boardId);
+        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
         findBoard.addViews();
+        // TODO: 2023-03-29 조회수만 업데이트 하는데 findOne(fetch join) 쿼리가 불편. 리팩토링 필요
     }
 
     /**============================= private method ==============================*/
@@ -193,7 +199,9 @@ public class BulletinBoardService {
         findBoard.setRegion(updateForm.getRegion());
         findBoard.setTitle(updateForm.getTitle());
         findBoard.setContent(updateForm.getContent());
-        List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getImages());
+        // TODO: 2023-03-29 기존 이미지 삭제 로직 -> storeName으로 이미지 삭제, id로 데이터 삭제
+
+        List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
         for (UploadFile uploadFile : uploadFiles) {
             findBoard.addImage(uploadFile);
             uploadFileRepository.save(uploadFile);

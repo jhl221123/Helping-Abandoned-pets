@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -87,7 +86,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
             Comment comment = new Comment();
             comment.setId(rs.getLong("comment_id"));
             comment.setContent(rs.getString("comment_content"));
-            comment.setBoard(bulletinBoardRepository.findOne(rs.getLong("board_id")));
+            comment.setBoard(bulletinBoardRepository.findById(rs.getLong("board_id")));
             comment.setUser(userRepository.findById(rs.getLong("user_id")));
             comment.setDates(new Dates(((rs.getTimestamp("create_date") != null) ? rs.getTimestamp("create_date").toLocalDateTime() : null),
                     (rs.getTimestamp("last_modified_date") != null) ? rs.getTimestamp("last_modified_date").toLocalDateTime() : null,

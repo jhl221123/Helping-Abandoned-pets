@@ -6,7 +6,6 @@ import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import lombok.Builder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,8 +50,8 @@ class BulletinBoardRepositoryTest {
         likeBoardRepository.save(likeBoard);
 
         //게시글 조회
-        BulletinBoard findBoard1 = bulletinBoardRepository.findOne(user1Board1.getId());
-        BulletinBoard findBoard2 = bulletinBoardRepository.findOne(user1Board2.getId());
+        BulletinBoard findBoard1 = bulletinBoardRepository.findById(user1Board1.getId());
+        BulletinBoard findBoard2 = bulletinBoardRepository.findById(user1Board2.getId());
 
         //title
         assertThat(findBoard1.getTitle()).isEqualTo("title1");
