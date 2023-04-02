@@ -42,9 +42,7 @@ public class BulletinBoardService {
         User findUser = userRepository.findByNickName(nickName);
         BulletinBoard board = createBulletinBoard(boardForm, findUser);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
-        for (UploadFile image : board.getImages()) {
-            uploadFileRepository.save(image);
-        }
+
         return boardId;
     }
 
@@ -59,10 +57,10 @@ public class BulletinBoardService {
 
     public List<PageBulletinBoardForm> readPage(int page) {
         int start = page * 10 - 10;
-        int end = 10;
+        int total = 10;
 
         List<PageBulletinBoardForm> pageBoardForms = new ArrayList<>();
-        List<BulletinBoard> boards = bulletinBoardRepository.findPage(start, end);
+        List<BulletinBoard> boards = bulletinBoardRepository.findPage(start, total);
         for (BulletinBoard board : boards) {
             User user = board.getUser();
             pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
@@ -117,33 +115,6 @@ public class BulletinBoardService {
         bulletinBoardRepository.delete(findBoard); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
     }
 
-    /** 좋아요 로직 */
-
-    public boolean checkLike(Long boardId, String nickName) {
-        User findUser = userRepository.findByNickName(nickName);
-        LikeBoard likeBoard = likeBoardRepository.findByIds(boardId, findUser.getId());
-        if (likeBoard == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Transactional
-    public boolean clickLike(Long boardId, String nickName) {
-        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
-        User findUser = userRepository.findByNickName(nickName);
-        LikeBoard findLikeBoard = likeBoardRepository.findByIds(findBoard.getId(), findUser.getId());
-        if (findLikeBoard == null) {
-            LikeBoard likeBoard = new LikeBoard(findBoard, findUser);
-            likeBoardRepository.save(likeBoard);
-            return true;
-        } else {
-            likeBoardRepository.delete(findLikeBoard);
-            return false;
-        }
-    }
-
     @Transactional
     public void addViews(Long boardId) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
@@ -162,7 +133,8 @@ public class BulletinBoardService {
         if (!boardForm.getImages().isEmpty()) {
             List<UploadFile> uploadFiles = fileStore.storeFiles(boardForm.getImages());
             for (UploadFile uploadFile : uploadFiles) {
-                board.addImage(uploadFile); //uploadFile 에 board 주입
+                board.addImage(uploadFile); //uploadFile 에 board 주입, 안하면 uploadFile저장 불가.
+                uploadFileRepository.save(uploadFile);
             }
         }
         Dates dates = new Dates(LocalDateTime.now(), null, null);

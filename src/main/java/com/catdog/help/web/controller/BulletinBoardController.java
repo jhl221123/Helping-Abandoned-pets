@@ -1,10 +1,8 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.FileStore;
-import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.service.CommentService;
-import com.catdog.help.web.SessionConst;
+import com.catdog.help.service.LikeService;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -13,8 +11,6 @@ import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,10 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.catdog.help.web.SessionConst.*;
 
 @Controller
 @Slf4j
@@ -36,12 +32,13 @@ import java.util.List;
 public class BulletinBoardController {
 
     private final BulletinBoardService bulletinBoardService;
-    private final FileStore fileStore;
     private final CommentService commentService;
+    private final LikeService likeService;
+
 
     /***  create  ***/
     @GetMapping("/boards/new")
-    public String createBulletinBoardForm(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
+    public String createBulletinBoardForm(@SessionAttribute(name = LOGIN_USER) String nickName, Model model) {
         SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
         model.addAttribute("nickName", nickName);
         model.addAttribute("saveBoardForm", saveBoardForm);
@@ -49,11 +46,11 @@ public class BulletinBoardController {
     }
 
     @PostMapping("/boards/new")
-    public String createBulletinBoard(@SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+    public String createBulletinBoard(@SessionAttribute(name = LOGIN_USER) String nickName, Model model,
                                       @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-27 검증 에러 발생 시 create.html 에서 닉네임 값 사라짐. 수정 필요
+            model.addAttribute("nickName", nickName);
             return "bulletinBoard/create";
         }
         Long boardId = bulletinBoardService.createBoard(saveBoardForm, nickName);
@@ -75,7 +72,7 @@ public class BulletinBoardController {
 
     @GetMapping("/boards/{id}")
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
-                                    @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                    @SessionAttribute(name = LOGIN_USER) String nickName,
                                     @RequestParam(name = "clickChild", required = false) Long clickChildId,
                                     @RequestParam(name = "updateCommentId", required = false) Long updateCommentId,
                                     HttpServletRequest request, HttpServletResponse response) {
@@ -116,7 +113,7 @@ public class BulletinBoardController {
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
 
-        boolean checkLike = bulletinBoardService.checkLike(id, nickName);
+        boolean checkLike = likeService.checkLike(id, nickName);
         model.addAttribute("checkLike", checkLike);
 
         // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
@@ -143,24 +140,18 @@ public class BulletinBoardController {
         return "bulletinBoard/detail";
     }
 
-    @ResponseBody
-    @GetMapping("/images/{fileName}")
-    public Resource downloadImage(@PathVariable String fileName) throws MalformedURLException {
-        return new UrlResource("file:" + fileStore.getFullPath(fileName));
-    }
-
 
     /***  update  ***/
     @GetMapping("/boards/{id}/like")
-    public String changeScore(@PathVariable("id") Long id,
-                              @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
-        bulletinBoardService.clickLike(id, nickName);
+    public String clickLike(@PathVariable("id") Long id,
+                              @SessionAttribute(name = LOGIN_USER) String nickName) {
+        likeService.clickLike(id, nickName);
         return "redirect:/boards/{id}";
     }
 
     @GetMapping("/boards/{id}/edit")
     public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model,
-                                          @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+                                          @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 수정 가능
         BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
         if (!findBoardDto.getUser().getNickName().equals(nickName)) {
@@ -188,7 +179,7 @@ public class BulletinBoardController {
     /***  delete  ***/
     @GetMapping("/boards/{id}/delete")
     public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
-                                          @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+                                          @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 접근 가능
         BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
         if (!findBoardDto.getUser().getNickName().equals(nickName)) {
@@ -202,8 +193,8 @@ public class BulletinBoardController {
     }
 
     @PostMapping("/boards/{id}/delete")
-    public String deleteBulletinBoard(@PathVariable("id") Long id, Model model,
-                                      @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+    public String deleteBulletinBoard(@PathVariable("id") Long id,
+                                      @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 삭제 가능
         BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
         if (!findBoardDto.getUser().getNickName().equals(nickName)) {
