@@ -49,10 +49,11 @@ public class BulletinBoardController {
     public String createBulletinBoard(@SessionAttribute(name = LOGIN_USER) String nickName, Model model,
                                       @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        model.addAttribute("nickName", nickName);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("nickName", nickName);
             return "bulletinBoard/create";
         }
+
         Long boardId = bulletinBoardService.createBoard(saveBoardForm, nickName);
         redirectAttributes.addAttribute("id", boardId);
         return "redirect:/boards/{id}";

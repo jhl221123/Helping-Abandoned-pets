@@ -94,15 +94,7 @@ public class BulletinBoardService {
     @Transactional
     public Long updateBoard(UpdateBulletinBoardForm updateForm) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(updateForm.getId());
-
-        //이미지 삭제
-        for (Integer id : updateForm.getDeleteImageIds()) {
-            UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
-            uploadFileRepository.delete(target);
-        }
-        
-        //게시글 내용 변경 및 이미지 추가
-        updateBulletinBoard(findBoard, updateForm);
+        updateBulletinBoard(findBoard, updateForm);//게시글 내용 변경 및 이미지 추가
         return findBoard.getId();
     }
 
@@ -171,12 +163,22 @@ public class BulletinBoardService {
         findBoard.setRegion(updateForm.getRegion());
         findBoard.setTitle(updateForm.getTitle());
         findBoard.setContent(updateForm.getContent());
-        // TODO: 2023-03-29 기존 이미지 삭제 로직 -> storeName으로 이미지 삭제, id로 데이터 삭제
 
-        List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
-        for (UploadFile uploadFile : uploadFiles) {
-            findBoard.addImage(uploadFile);
-            uploadFileRepository.save(uploadFile);
+        //이미지 삭제
+        for (Integer id : updateForm.getDeleteImageIds()) {
+            UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
+            uploadFileRepository.delete(target);
+        }
+
+        // TODO: 2023-04-02 file 경로에 있는 이미지 삭제 -> storeName으로
+
+        //이미지 추가
+        if (!updateForm.getNewImages().isEmpty()) {
+            List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
+            for (UploadFile uploadFile : uploadFiles) {
+                findBoard.addImage(uploadFile);
+                uploadFileRepository.save(uploadFile);
+            }
         }
         findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
     }

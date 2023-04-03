@@ -3,3 +3,36 @@
     background: url('../img/flowers-garden.jpg') no-repeat center;
     background-size: cover;
 }
+
+.my-btn-upload{
+    padding: 6px 25px;
+    background-color:#FF6600;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+button {
+		border: none;
+		background-color:transparent;
+	}
+
+.field-error {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.division-line {
+    border-top: 1px solid #E7E7E7;
+    margin: 0px 0px 10px 0px;
+}
+
+.comment-box {
+    border: 1px solid #E7E7E7;
+    padding: 13px 10px;
+}
+
+.board-title {
+    font-weight: bold;
+    font-size: 20px;
+}

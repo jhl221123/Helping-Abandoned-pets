@@ -13,11 +13,11 @@ import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.web.form.itemBoard.PageItemBoardForm;
 import com.catdog.help.web.form.itemBoard.ReadItemBoardForm;
 import com.catdog.help.web.form.itemBoard.SaveItemBoardForm;
+import com.catdog.help.web.form.itemBoard.UpdateItemBoardForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,7 +63,19 @@ public class ItemBoardService {
 
         return pageForms;
     }
-    
+
+    public UpdateItemBoardForm getUpdateForm(Long id) {
+        ItemBoard findBoard = itemBoardRepository.findById(id);
+        return getUpdateItemBoardForm(id, findBoard);
+    }
+
+    @Transactional
+    public void updateBoard(Long id, UpdateItemBoardForm updateForm) {
+        ItemBoard findBoard = itemBoardRepository.findById(id);
+        updateItemBoard(updateForm, findBoard);
+    }
+
+
     @Transactional
     public void deleteBoard(Long id) {
         ItemBoard findBoard = itemBoardRepository.findById(id);
@@ -101,7 +113,7 @@ public class ItemBoardService {
         return form;
     }
 
-    private static ReadItemBoardForm getReadForm(ItemBoard findBoard, List<UploadFile> uploadFiles) {
+    private ReadItemBoardForm getReadForm(ItemBoard findBoard, List<UploadFile> uploadFiles) {
         ReadItemBoardForm form = new ReadItemBoardForm();
         form.setId(findBoard.getId());
         form.setUser(findBoard.getUser());
@@ -113,5 +125,59 @@ public class ItemBoardService {
         form.setStatus(findBoard.getStatus());
         form.setImages(uploadFiles);
         return form;
+    }
+
+    private UpdateItemBoardForm getUpdateItemBoardForm(Long id, ItemBoard findBoard) {
+        UpdateItemBoardForm updateForm = new UpdateItemBoardForm();
+        updateForm.setId(findBoard.getId());
+        updateForm.setUser(findBoard.getUser());
+        updateForm.setTitle(findBoard.getTitle());
+        updateForm.setContent(findBoard.getContent());
+        updateForm.setItemName(findBoard.getItemName());
+        updateForm.setPrice(findBoard.getPrice());
+
+        List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
+        if (!uploadFiles.isEmpty()) {
+            updateForm.setOldLeadImage(uploadFiles.get(0));
+            for (int i = 1; i < uploadFiles.size(); i++) {
+                updateForm.getOldImages().add(uploadFiles.get(i));
+            } //첫 번째 사진 제외
+        }
+        return updateForm;
+    }
+
+    private void updateItemBoard(UpdateItemBoardForm updateForm, ItemBoard findBoard) {
+        findBoard.setTitle(updateForm.getTitle());
+        findBoard.setContent(updateForm.getContent());
+        findBoard.setItemName(updateForm.getItemName());
+        findBoard.setPrice(updateForm.getPrice());
+
+        //대표이미지 변경
+        if (!updateForm.getNewLeadImage().getResource().getFilename().isEmpty()) { //지금은 이름으로 검증하는게 최선;;
+            UploadFile newLeadImage = fileStore.storeFile(updateForm.getNewLeadImage());
+            List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
+            uploadFiles.get(0).setUploadFileName(newLeadImage.getUploadFileName());
+            uploadFiles.get(0).setStoreFileName(newLeadImage.getStoreFileName());
+            // TODO: 2023-04-02 이름 각각 덮어서 수정했는데 다른 방법도 강구해보자.
+        }
+
+        //선택 이미지 삭제
+        if (!updateForm.getDeleteImageIds().isEmpty()) {
+            for (Integer id : updateForm.getDeleteImageIds()) {
+                UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
+                uploadFileRepository.delete(target);
+            }
+        }
+        // TODO: 2023-04-02 file 경로에 있는 이미지 삭제 -> storeName으로
+
+        //새 이미지 추가
+        if (!updateForm.getNewImages().isEmpty()) {
+            List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
+            for (UploadFile uploadFile : uploadFiles) {
+                findBoard.addImage(uploadFile);
+                uploadFileRepository.save(uploadFile);
+            }
+        }
+        findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
     }
 }

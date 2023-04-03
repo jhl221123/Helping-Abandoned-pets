@@ -6,6 +6,7 @@ import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.itemBoard.PageItemBoardForm;
 import com.catdog.help.web.form.itemBoard.ReadItemBoardForm;
 import com.catdog.help.web.form.itemBoard.SaveItemBoardForm;
+import com.catdog.help.web.form.itemBoard.UpdateItemBoardForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -41,9 +42,8 @@ public class ItemBoardController {
     @PostMapping("/items/new")
     public String createItemBoard(@SessionAttribute(name = LOGIN_USER) String nickName, Model model,
                                   @Validated @ModelAttribute("saveForm") SaveItemBoardForm saveForm, BindingResult bindingResult) {
-
+        model.addAttribute("nickName", nickName);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("nickName", nickName);
             return "items/create";
         }
 
@@ -77,8 +77,8 @@ public class ItemBoardController {
 
         ReadItemBoardForm findReadForm = itemBoardService.readBoard(itemBoardId);
         model.addAttribute("readForm", findReadForm);
-        log.info("what status = {}", findReadForm.getStatus());
-
+        model.addAttribute("firstImage", findReadForm.getImages().get(0));
+        model.addAttribute("imageSize", findReadForm.getImages().size());
         model.addAttribute("nickName", nickName);
         return "items/detail";
     }
@@ -89,6 +89,21 @@ public class ItemBoardController {
     public String clickLike(@PathVariable("id") Long id,
                             @SessionAttribute(name = LOGIN_USER) String nickName) {
         likeService.clickLike(id, nickName);
+        return "redirect:/items/{id}";
+    }
+
+    @GetMapping("/items/{id}/edit")
+    public String updateForm(@PathVariable("id") Long id, Model model) {
+        UpdateItemBoardForm updateForm = itemBoardService.getUpdateForm(id);
+        model.addAttribute("updateForm", updateForm);
+        log.info("안들어있나={}", updateForm.getOldLeadImage().getUploadFileName());
+        return "items/update";
+    }
+
+    @PostMapping("/items/{id}/edit")
+    public String update(@PathVariable("id") Long id,
+                         @Validated @ModelAttribute("updateForm") UpdateItemBoardForm updateForm, BindingResult bindingResult) {
+        itemBoardService.updateBoard(id, updateForm);
         return "redirect:/items/{id}";
     }
 

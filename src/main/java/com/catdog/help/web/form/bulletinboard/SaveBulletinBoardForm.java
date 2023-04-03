@@ -20,7 +20,7 @@ public class SaveBulletinBoardForm {
     private String title;
 
     @NotBlank
-    @Length(max = 3000)
+    @Length(max = 250)
     private String content;
 
     private List<MultipartFile> images = new ArrayList<>();

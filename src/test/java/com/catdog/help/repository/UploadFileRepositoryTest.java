@@ -65,7 +65,7 @@ class UploadFileRepositoryTest {
         board.setTitle(title);
         board.setContent("content");
         board.setRegion("region");
-        board.setUser(new User()); //jpa 아니면 여기서 error
+//        board.setUser(new User()); //jpa 아니면 여기서 error
         board.setDates(new Dates(LocalDateTime.now(), null, null));
         return board;
     }

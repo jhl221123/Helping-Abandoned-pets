@@ -20,9 +20,7 @@ public class CommentForm {
     @NotBlank
     private String content;
 
-    /**
-     * child 추가!! detail.html에서 조회 안됨! 이 정도면 DTO로 바꾸는 것도 고민해보자!
-     */
+    // TODO: 2023-03-30 child 추가!! detail.html에서 조회 안됨!, 역할에 맞게 클래스명 변경 
 
     private List<CommentForm> child = new ArrayList<>();
 

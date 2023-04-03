@@ -42,7 +42,7 @@ class BulletinBoardRepositoryTest {
         bulletinBoardRepository.save(user1Board2);
 
         //댓글 생성
-        Comment comment = getComment(user1, user1Board1, "user1이 board1을 작성하다.");
+        Comment comment = getComment(user1, user1Board1, "user1이 board1에 작성하다.");
         commentRepository.save(comment);
 
         //좋아요 생성
@@ -63,9 +63,6 @@ class BulletinBoardRepositoryTest {
 
         //user
         assertThat(findBoard1.getUser().getEmailId()).isEqualTo("id1@123");
-
-        //comment
-        assertThat(findBoard1.getComments().stream().findAny()).isEqualTo(1); // TODO: 2023-03-28 게시글 조회 시 유저, 댓글 테이블 다중 조인 후 테스트
 
         // TODO: 2023-03-25 삭제 테스트 수행
 //        assertThat(findBoard1).isEqualTo(board1);
