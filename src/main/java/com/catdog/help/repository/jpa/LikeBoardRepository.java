@@ -1,7 +1,6 @@
 package com.catdog.help.repository.jpa;
 
 import com.catdog.help.domain.board.LikeBoard;
-import com.catdog.help.repository.LikeBoardRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -9,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class JpaLikeBoardRepository implements LikeBoardRepository {
+public class LikeBoardRepository {
 
     @PersistenceContext
     EntityManager em;
@@ -31,11 +30,14 @@ public class JpaLikeBoardRepository implements LikeBoardRepository {
         return result.stream().findAny().orElse(null);
     }
 
-    public List<LikeBoard> findAllByBoardId(Long boardId) {
-        List<LikeBoard> result = em.createQuery("select l from LikeBoard l where l.board.id = :boardId", LikeBoard.class)
+    public long countByBoardId(Long boardId) {
+        return em.createQuery("select count(l) from LikeBoard l where l.board.id = :boardId", Long.class)
                 .setParameter("boardId", boardId)
-                .getResultList();
-        return result;
+                .getResultList()
+                .stream()
+                .findAny()
+                .orElse(0L);
+
     }
 
     public void delete(LikeBoard likeBoard) {

@@ -2,12 +2,12 @@ package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
 import com.catdog.help.domain.Dates;
-import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.*;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.jpa.LikeBoardRepository;
 import com.catdog.help.web.dto.BulletinBoardDto;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -50,8 +50,8 @@ public class BulletinBoardService {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
         User user = findBoard.getUser();
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
-        int likeBoardSize = likeBoardRepository.findAllByBoardId(id).size();
-        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeBoardSize);
+        int likeSize = (int)likeBoardRepository.countByBoardId(id);
+        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeSize);
         return bulletinBoardDto;
     }
 
@@ -134,7 +134,7 @@ public class BulletinBoardService {
         return board;
     }
 
-    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles, int likeBoardSize) {
+    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles, int likeSize) {
         BulletinBoardDto bulletinBoardDto = new BulletinBoardDto();
         bulletinBoardDto.setId(findBoard.getId());
         bulletinBoardDto.setUser(user);
@@ -144,7 +144,7 @@ public class BulletinBoardService {
         bulletinBoardDto.setImages(uploadFiles);
         bulletinBoardDto.setDates(findBoard.getDates());
         bulletinBoardDto.setViews(findBoard.getViews());
-        bulletinBoardDto.setLikeBoardSize(likeBoardSize);
+        bulletinBoardDto.setLikeSize(likeSize);
         return bulletinBoardDto;
     }
 

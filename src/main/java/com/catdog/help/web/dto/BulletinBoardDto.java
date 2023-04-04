@@ -17,8 +17,8 @@ public class BulletinBoardDto {
     private String title;
     private String content;
     private Dates dates;
-    private int views;
     private String region;
     private List<UploadFile> images = new ArrayList<>();
-    private int likeBoardSize;
+    private int views;
+    private int likeSize;
 }

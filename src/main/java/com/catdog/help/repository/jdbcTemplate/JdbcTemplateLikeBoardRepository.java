@@ -2,7 +2,6 @@ package com.catdog.help.repository.jdbcTemplate;
 
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.repository.LikeBoardRepository;
 import com.catdog.help.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 @Slf4j
 //@Repository
-public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
+public class JdbcTemplateLikeBoardRepository{
 
     private final NamedParameterJdbcTemplate template;
     private final BulletinBoardRepository bulletinBoardRepository;
@@ -32,7 +31,6 @@ public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
         this.userRepository = userRepository;
     }
 
-    @Override
     public Long save(LikeBoard likeBoard) {
         String sql = "insert into like_board(board_id, user_id) values (:boardId, :userId)";
 
@@ -49,7 +47,6 @@ public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
         return likeBoard.getId();
     }
 
-    @Override
     public LikeBoard findById(Long likeBoardId) {
         String sql = "select * from like_board where like_board_id = :likeBoardId";
         Map<String, Object> param = Map.of("likeBoardId", likeBoardId);
@@ -60,7 +57,6 @@ public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
         }
     }
 
-    @Override
     public LikeBoard findByIds(Long boardId, Long userId) {
         String sql = "select * from like_board where board_id = :boardId and user_id = :userId";
         MapSqlParameterSource param = new MapSqlParameterSource()
@@ -73,14 +69,12 @@ public class JdbcTemplateLikeBoardRepository implements LikeBoardRepository {
         }
     }
 
-    @Override
-    public List<LikeBoard> findAllByBoardId(Long boardId) {
-        String sql = "select * from like_board where board_id = :boardId";
-        Map<String, Object> param = Map.of("boardId", boardId);
-        return template.query(sql, param, likeBoardRowMapper());
+    public List<LikeBoard> countByBoardId(Long boardId) {
+        String sql = "select count(*) from like_board where board_id = :boardId";
+        // TODO: 2023-04-03 카운트 쿼리로 교체
+        return null;
     }
 
-    @Override
     public void delete(LikeBoard likeBoard) {
         String sql = "delete from like_board where like_board_id = :id";
         Map<String, Object> param = Map.of("id", likeBoard.getId());

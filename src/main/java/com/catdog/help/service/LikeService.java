@@ -1,13 +1,12 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Board;
-import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.repository.LikeBoardRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
+import com.catdog.help.repository.jpa.LikeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

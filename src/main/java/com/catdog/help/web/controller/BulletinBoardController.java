@@ -109,7 +109,7 @@ public class BulletinBoardController {
         }
         //end views using cookie
 
-        model.addAttribute("nickName", nickName); // detail 수정버튼
+        model.addAttribute("nickName", nickName); // 수정버튼 본인확인
 
         BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
         model.addAttribute("bulletinBoardDto", bulletinBoardDto);
@@ -159,20 +159,25 @@ public class BulletinBoardController {
             return "redirect:/boards/{id}";
         }
         UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
-        model.addAttribute("updateBoardForm", updateBulletinBoardForm);
+        model.addAttribute("updateForm", updateBulletinBoardForm);
         model.addAttribute("nickName", nickName);
         return "bulletinBoard/update";
     }
 
     @PostMapping("/boards/{id}/edit")
-    public String updateBulletinBoard(@Validated @ModelAttribute("updateBoardForm") UpdateBulletinBoardForm updateBulletinBoardForm,
-                                      BindingResult bindingResult) {
-        // TODO: 2023-03-12 여기도 작성자 외 접근 못하도록 막아야 할 듯
+    public String updateBulletinBoard(@Validated @ModelAttribute("updateForm") UpdateBulletinBoardForm updateForm,
+                                      BindingResult bindingResult, @SessionAttribute(name = LOGIN_USER) String nickName) {
+        //작성자 본인만 수정 가능
+        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(updateForm.getId());
+        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+            return "redirect:/boards/{id}";
+        }
+
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/update";
         }
 
-        bulletinBoardService.updateBoard(updateBulletinBoardForm);
+        bulletinBoardService.updateBoard(updateForm);
         return "redirect:/boards/{id}";
     }
 
