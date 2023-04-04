@@ -34,7 +34,15 @@ public class JpaItemBoardRepository {
                 .getResultList();
     }
 
-    public List<ItemBoard> findAll() { // TODO: 2023-03-28 카운트 쿼리로 대체 고려
+    public long countAll() {
+        return em.createQuery("select count(i) from ItemBoard i", Long.class)
+                .getResultList()
+                .stream()
+                .findAny()
+                .orElse(0L);
+    }
+
+    public List<ItemBoard> findAll() {
         return em.createQuery("select i from ItemBoard i order by create_date desc", ItemBoard.class).getResultList();
     }
 

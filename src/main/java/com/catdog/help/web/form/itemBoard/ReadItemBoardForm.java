@@ -21,4 +21,6 @@ public class ReadItemBoardForm {
     private int price;
     private ItemStatus status;
     private List<UploadFile> images = new ArrayList<>();
+    private int views;
+    private int likeSize;
 }

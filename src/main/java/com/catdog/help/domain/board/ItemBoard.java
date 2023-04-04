@@ -3,10 +3,7 @@ package com.catdog.help.domain.board;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +16,7 @@ public class ItemBoard extends Board {
 
     private int price;
 
+    @Enumerated(value = EnumType.STRING)
     private ItemStatus status;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)

@@ -1,24 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-	button {
-		border: none;
-		background-color:transparent;
-	}
-	.field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-    .division-line {
-	    border-top: 1px solid #E7E7E7;
-	    margin: 0px 0px 10px 0px;
-    }
-	.board-title {
-    	font-weight: bold;
-    	font-size: 20px;
-	}
-</style>
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
@@ -37,52 +19,54 @@
 		</div>
 		<div >
 			<div class="division-line"></div>
-			<div class="row">
+			<div class="row" >
+				<p th:text="${readForm.user.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
+				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
+				<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
 				<p th:text="${readForm.itemName}">제품명</p>&nbsp;&nbsp;&nbsp;
 				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
 				<p th:text="${readForm.price}">가격</p>
 			</div>
 		</div>
-		<div >
-			<div class="division-line"></div>
-				<div class="row">
-					<p th:text="${readForm.user.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
-					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
-					<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
-				</div>
-		</div>
 	</div>
+
+	<div class="row float-right">
+		<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
+		<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
+	</div>
+
+		<!-- Carousel -->
+		<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+			<ol class="carousel-indicators">
+				<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
+				    th:classappend ="${num} == 0 ? active : ''"></li>
+			</ol>
+			<div class="carousel-inner">
+				<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
+					<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
+				</div>
+			</div>
+			<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		</div>
+
 	<div class="form-group">
 		<label for="content"></label>
 		<textarea class="form-control" id="content" name="content" th:text="${readForm.content}" rows="12" readonly>내용</textarea>
 	</div>
-
-	<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-		<ol class="carousel-indicators">
-		<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
-		    th:classappend ="${num} == 0 ? active : ''"></li>
-		</ol>
-		<div class="carousel-inner">
-			<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
-				<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
-			</div>
-		</div>
-		<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			<span class="sr-only">Previous</span>
-		</a>
-		<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-			<span class="carousel-control-next-icon" aria-hidden="true"></span>
-			<span class="sr-only">Next</span>
-		</a>
-	</div>
-
-	<div th:if="${!readForm.images.isEmpty()}" class="form-group">
-		<div class="division-line"></div>
-		<p>이미지</p>
-		<img th:each="imageFile : ${readForm.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
-	</div>
-	<button type="button" class="btn btn-primary" th:if="|${readForm.status} == STILL|" th:onclick="|location.href='@{/}'|">쪽지 보내기</button>
+	<br/>
+	<button th:if="${readForm.user.nickName != nickName} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
+	        th:onclick="|location.href='@{/}'|">쪽지 보내기</button>
+	<button th:if="${readForm.user.nickName == nickName}" type="button" class="btn btn-primary"
+	        th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
+	        th:onclick="|location.href='@{/items/{id}/status(id=${readForm.id})}'|">거래상태 변경</button>
+	<img th:if="${#strings.equals(readForm.status, 'COMP')}" th:src="|/img/sold_out.png|" width="50" height="50"></img>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=1)}'|">목록으로</button>
 		<button th:if="${readForm.user.nickName == nickName}" type="button" class="btn btn-primary"

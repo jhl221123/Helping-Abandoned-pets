@@ -6,10 +6,10 @@ import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.LikeBoardRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
+import com.catdog.help.repository.jpa.LikeBoardRepository;
 import com.catdog.help.web.form.itemBoard.PageItemBoardForm;
 import com.catdog.help.web.form.itemBoard.ReadItemBoardForm;
 import com.catdog.help.web.form.itemBoard.SaveItemBoardForm;
@@ -50,8 +50,8 @@ public class ItemBoardService {
     }
 
     public List<PageItemBoardForm> readPage(int page) {
-        int start = 0 + (page -1) * 9;
-        int total = 9;
+        int start = 0 + (page -1) * 6;
+        int total = 6;
 
         List<ItemBoard> boards = itemBoardRepository.findPage(start, total);
 
@@ -62,6 +62,17 @@ public class ItemBoardService {
         }
 
         return pageForms;
+    }
+
+    public int countPage() {
+        int total = (int)itemBoardRepository.countAll();
+        if (total <= 6) {
+            return 1;
+        } else if (total % 6 == 0) {
+            return total / 6;
+        } else {
+            return total / 6 + 1;
+        }
     }
 
     public UpdateItemBoardForm getUpdateForm(Long id) {
@@ -75,6 +86,22 @@ public class ItemBoardService {
         updateItemBoard(updateForm, findBoard);
     }
 
+    @Transactional
+    public void addViews(Long boardId) {
+        ItemBoard findBoard = itemBoardRepository.findById(boardId);
+        findBoard.addViews();
+        // TODO: 2023-03-29 조회수만 업데이트 하는데 findOne(fetch join) 쿼리가 불편. 리팩토링 필요
+    }
+
+    @Transactional
+    public void changeStatus(Long boardId) {
+        ItemBoard findBoard = itemBoardRepository.findById(boardId);
+        if (findBoard.getStatus() == ItemStatus.STILL) {
+            findBoard.setStatus(ItemStatus.COMP);
+        } else {
+            findBoard.setStatus(ItemStatus.STILL);
+        }
+    }
 
     @Transactional
     public void deleteBoard(Long id) {
@@ -124,6 +151,8 @@ public class ItemBoardService {
         form.setPrice(findBoard.getPrice());
         form.setStatus(findBoard.getStatus());
         form.setImages(uploadFiles);
+        form.setViews(findBoard.getViews());
+        form.setLikeSize((int) likeBoardRepository.countByBoardId(findBoard.getId()));
         return form;
     }
 

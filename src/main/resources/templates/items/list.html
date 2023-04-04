@@ -8,9 +8,9 @@
 
 		<div class="row row-cols-1 row-cols-md-3 g-4">
 			<div th:each="pageForm : ${pageForms}">
-				<div class="col">
-					<div class="card">
-						<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" width="150" height="150"
+				<div class="col" style="padding: 15px;">
+					<div class="card h-100 w-100">
+						<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" style="width: 320px; height: 200px"
 						     class="card-img-top" alt="대표 이미지">
 						<div class="card-body">
 							<h5 class="card-title" th:text="${pageForm.itemName}">제품명</h5>
