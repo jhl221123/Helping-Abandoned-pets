@@ -11,7 +11,9 @@
 				<p th:text="${readForm.title}">제목</p>
 			</div>
 			<div class="col-sm-1" style="justify-content: end">
-				<button type="button" class="btm_image" th:onclick="|location.href='@{/items/{id}/like(id=${readForm.id})}'|">
+				<img th:if="${#strings.equals(readForm.status, 'COMP')}" th:src="|/img/sold_out.png|" width="70" height="70">
+				<button th:if="${#strings.equals(readForm.status, 'STILL')}" type="button" class="btm_image"
+				        th:onclick="|location.href='@{/items/{id}/like(id=${readForm.id})}'|">
 					<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
 					<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
 				</button>
@@ -62,11 +64,10 @@
 	</div>
 	<br/>
 	<button th:if="${readForm.user.nickName != nickName} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
-	        th:onclick="|location.href='@{/}'|">쪽지 보내기</button>
+	        th:onclick="|location.href='@{/items/{id}/messages/new(boardId=${readForm.id}, senderNickName=${nickName}, recipientNickName=${readForm.user.nickName})}'|">쪽지 보내기</button>
 	<button th:if="${readForm.user.nickName == nickName}" type="button" class="btn btn-primary"
 	        th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
 	        th:onclick="|location.href='@{/items/{id}/status(id=${readForm.id})}'|">거래상태 변경</button>
-	<img th:if="${#strings.equals(readForm.status, 'COMP')}" th:src="|/img/sold_out.png|" width="50" height="50"></img>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=1)}'|">목록으로</button>
 		<button th:if="${readForm.user.nickName == nickName}" type="button" class="btn btn-primary"
