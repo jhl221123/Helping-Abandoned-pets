@@ -5,7 +5,6 @@ import com.catdog.help.domain.board.*;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.CommentRepository;
-import com.catdog.help.repository.LikeBoardRepository;
 import com.catdog.help.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ class JpaItemBoardRepositoryTest {
         userRepository.save(user1);
 
         //상품글 생성
-        ItemBoard itemBoard = createItemShareBoard("강아지 집", 0, user1);
+        ItemBoard itemBoard = createItemBoard("강아지 집", 0, user1);
         Long boardId = itemBoardRepository.save(itemBoard);
 //
 //        //댓글 생성
@@ -87,11 +86,11 @@ class JpaItemBoardRepositoryTest {
         userRepository.save(user1);
         userRepository.save(user2);
 
-        ItemBoard itemBoard1 = createItemShareBoard("강아지 집", 0, user1);
+        ItemBoard itemBoard1 = createItemBoard("강아지 집", 0, user1);
         TimeUnit.SECONDS.sleep(1);
-        ItemBoard itemBoard2 = createItemShareBoard("강아지 옷", 5000, user1);
+        ItemBoard itemBoard2 = createItemBoard("강아지 옷", 5000, user1);
         TimeUnit.SECONDS.sleep(1);
-        ItemBoard itemBoard3 = createItemShareBoard("장난감", 0, user2);
+        ItemBoard itemBoard3 = createItemBoard("장난감", 0, user2);
         itemBoardRepository.save(itemBoard1);
         itemBoardRepository.save(itemBoard2);
         itemBoardRepository.save(itemBoard3);
@@ -110,7 +109,7 @@ class JpaItemBoardRepositoryTest {
         assertThat(findBoards.size()).isEqualTo(2);
     }
 
-    private static ItemBoard createItemShareBoard(String itemName, int price, User user) {
+    private static ItemBoard createItemBoard(String itemName, int price, User user) {
         ItemBoard board = new ItemBoard();
         board.setItemName(itemName);
         board.setPrice(price);

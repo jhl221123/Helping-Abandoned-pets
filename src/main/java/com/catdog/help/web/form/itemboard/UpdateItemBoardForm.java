@@ -1,5 +1,8 @@
-package com.catdog.help.web.form.itemBoard;
+package com.catdog.help.web.form.itemboard;
 
+import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -12,7 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class SaveItemBoardForm {
+public class UpdateItemBoardForm {
+
+    @NotNull
+    private Long id;
 
     @NotBlank
     @Length(max = 25)
@@ -30,5 +36,13 @@ public class SaveItemBoardForm {
     @Max(10000)
     private int price;
 
-    private List<MultipartFile> images = new ArrayList<>();
+    private ReadUploadFileForm oldLeadImage;
+
+    private MultipartFile newLeadImage;
+
+    private List<ReadUploadFileForm> oldImages = new ArrayList<>();
+
+    private List<MultipartFile> newImages = new ArrayList<>();
+
+    private List<Integer> deleteImageIds = new ArrayList<>();
 }

@@ -4,7 +4,7 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.web.dto.UserDto;
+import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
 import org.junit.jupiter.api.Test;
@@ -61,14 +61,14 @@ class UserServiceTest {
         Long userId = userService.join(getSaveUserForm("user@email", "nickName", "password"));
 
         //when
-        UserDto loginUserDto1 = userService.login("user@email", "password");    //정상 로그인
-        UserDto loginUserDto2 = userService.login("no@email", "password");      //존재하지 않는 아이디
-        UserDto loginUserDto3 = userService.login("user@email", "noPassword"); //비밀번호 불일치
+        ReadUserForm loginReadUserForm1 = userService.login("user@email", "password");    //정상 로그인
+        ReadUserForm loginReadUserForm2 = userService.login("no@email", "password");      //존재하지 않는 아이디
+        ReadUserForm loginReadUserForm3 = userService.login("user@email", "noPassword"); //비밀번호 불일치
 
         //then
-        assertThat(loginUserDto1.getId()).isEqualTo(userId);
-        assertThat(loginUserDto2).isNull();
-        assertThat(loginUserDto3).isNull();
+        assertThat(loginReadUserForm1.getId()).isEqualTo(userId);
+        assertThat(loginReadUserForm2).isNull();
+        assertThat(loginReadUserForm3).isNull();
     }
 
     @Test
@@ -79,12 +79,12 @@ class UserServiceTest {
         String nonexistentNickName = "nonexistentNickName";
 
         //when
-        UserDto userDto = userService.getUserDtoByNickName(nickName);
-        UserDto nullDto = userService.getUserDtoByNickName(nonexistentNickName);
+        ReadUserForm readUserForm = userService.getUserDtoByNickName(nickName);
+        ReadUserForm nullDto = userService.getUserDtoByNickName(nonexistentNickName);
 
         //then
-        assertThat(userDto.getEmailId()).isEqualTo("user@email");
-        assertThat(userDto.getNickName()).isEqualTo(nickName);
+        assertThat(readUserForm.getEmailId()).isEqualTo("user@email");
+        assertThat(readUserForm.getNickName()).isEqualTo(nickName);
         assertThat(nullDto).isNull();
     }
 
@@ -138,16 +138,16 @@ class UserServiceTest {
         return form;
     }
 
-    private UserDto getUserDto() {
-        UserDto userDto = new UserDto();
-        userDto.setId(1L);
-        userDto.setEmailId("user@email");
-        userDto.setPassword("password");
-        userDto.setNickName("nickName");
-        userDto.setName("name");
-        userDto.setAge(20);
+    private ReadUserForm getUserDto() {
+        ReadUserForm readUserForm = new ReadUserForm();
+        readUserForm.setId(1L);
+        readUserForm.setEmailId("user@email");
+        readUserForm.setPassword("password");
+        readUserForm.setNickName("nickName");
+        readUserForm.setName("name");
+        readUserForm.setAge(20);
 //        userDto.setGender(Gender.MAN);
-        userDto.setDates(new Dates(LocalDateTime.now(), null, null));
-        return userDto;
+        readUserForm.setDates(new Dates(LocalDateTime.now(), null, null));
+        return readUserForm;
     }
 }

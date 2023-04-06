@@ -3,7 +3,7 @@ package com.catdog.help.web.controller;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
-import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
@@ -111,8 +111,8 @@ public class BulletinBoardController {
 
         model.addAttribute("nickName", nickName); // 수정버튼 본인확인
 
-        BulletinBoardDto bulletinBoardDto = bulletinBoardService.readBoard(id);
-        model.addAttribute("bulletinBoardDto", bulletinBoardDto);
+        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        model.addAttribute("readForm", readForm);
 
         boolean checkLike = likeService.checkLike(id, nickName);
         model.addAttribute("checkLike", checkLike);
@@ -154,8 +154,8 @@ public class BulletinBoardController {
     public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model,
                                           @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 수정 가능
-        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
-        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        if (!readForm.getReadUserForm().getNickName().equals(nickName)) {
             return "redirect:/boards/{id}";
         }
         UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
@@ -168,8 +168,8 @@ public class BulletinBoardController {
     public String updateBulletinBoard(@Validated @ModelAttribute("updateForm") UpdateBulletinBoardForm updateForm,
                                       BindingResult bindingResult, @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 수정 가능
-        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(updateForm.getId());
-        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(updateForm.getId());
+        if (!readForm.getReadUserForm().getNickName().equals(nickName)) {
             return "redirect:/boards/{id}";
         }
 
@@ -187,11 +187,11 @@ public class BulletinBoardController {
     public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
                                           @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 접근 가능
-        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
-        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        if (!readForm.getReadUserForm().getNickName().equals(nickName)) {
             return "redirect:/boards/{id}";
         }
-        String boardTitle = findBoardDto.getTitle();
+        String boardTitle = readForm.getTitle();
         model.addAttribute("boardId", id);
         model.addAttribute("boardTitle", boardTitle);
         model.addAttribute("nickName", nickName);
@@ -202,8 +202,8 @@ public class BulletinBoardController {
     public String deleteBulletinBoard(@PathVariable("id") Long id,
                                       @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 삭제 가능
-        BulletinBoardDto findBoardDto = bulletinBoardService.readBoard(id);
-        if (!findBoardDto.getUser().getNickName().equals(nickName)) {
+        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        if (!readForm.getReadUserForm().getNickName().equals(nickName)) {
             return "redirect:/boards/{id}";
         }
         bulletinBoardService.deleteBoard(id);

@@ -3,7 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
@@ -48,12 +48,12 @@ class BulletinBoardServiceTest {
         Long secondBoardId = bulletinBoardService.createBoard(getBoardForm("secondTitle"), "nickName");
 
         //when
-        BulletinBoardDto firstBoardDto = bulletinBoardService.readBoard(firstBoardId);
+        ReadBulletinBoardForm firstBoardDto = bulletinBoardService.readBoard(firstBoardId);
         // TODO: 2023-03-27   pageRead 추가
 
         //then
         assertThat(firstBoardDto.getTitle()).isEqualTo("firstTitle");
-        assertThat(firstBoardDto.getUser().getNickName()).isEqualTo("nickName");
+        assertThat(firstBoardDto.getReadUserForm().getNickName()).isEqualTo("nickName");
     }
 
     @Test

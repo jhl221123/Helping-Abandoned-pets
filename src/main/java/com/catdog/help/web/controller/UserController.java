@@ -1,8 +1,7 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.service.UserService;
-import com.catdog.help.web.SessionConst;
-import com.catdog.help.web.dto.UserDto;
+import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.LoginForm;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -69,14 +68,14 @@ public class UserController {
             return "users/loginForm";
         }
 
-        UserDto loginUserDto = userService.login(loginForm.getEmailId(), loginForm.getPassword());
-        if (loginUserDto == null) {
+        ReadUserForm loginReadUserForm = userService.login(loginForm.getEmailId(), loginForm.getPassword());
+        if (loginReadUserForm == null) {
             bindingResult.reject("failLogin", "아이디와 비밀번호를 확인해주세요.");
             return "users/loginForm";
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(LOGIN_USER, loginUserDto.getNickName());
+        session.setAttribute(LOGIN_USER, loginReadUserForm.getNickName());
         return "redirect:" + redirectURL;
     }
 
@@ -93,8 +92,8 @@ public class UserController {
     public String detail(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(false);
         String loginUserNickName = (String) session.getAttribute(LOGIN_USER);
-        UserDto userDto = userService.getUserDtoByNickName(loginUserNickName);
-        model.addAttribute("userDto", userDto);
+        ReadUserForm readUserForm = userService.getUserDtoByNickName(loginUserNickName);
+        model.addAttribute("readUserForm", readUserForm);
         return "users/detail";
     }
 

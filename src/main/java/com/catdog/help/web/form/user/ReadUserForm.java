@@ -1,4 +1,4 @@
-package com.catdog.help.web.dto;
+package com.catdog.help.web.form.user;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter @Setter
-public class UserDto {
+public class ReadUserForm {
 
     @NotNull
     private Long id;

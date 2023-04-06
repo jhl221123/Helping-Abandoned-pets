@@ -8,11 +8,13 @@ import com.catdog.help.repository.*;
 import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.LikeBoardRepository;
-import com.catdog.help.web.dto.BulletinBoardDto;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,19 +43,23 @@ public class BulletinBoardService {
     @Transactional
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
         User findUser = userRepository.findByNickName(nickName);
-        BulletinBoard board = createBulletinBoard(boardForm, findUser);
+        BulletinBoard board = getBulletinBoard(boardForm, findUser);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
 
         return boardId;
     }
 
-    public BulletinBoardDto readBoard(Long id) {
+    public ReadBulletinBoardForm readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
-        User user = findBoard.getUser();
+
+        ReadUserForm readUserForm = getReadUserForm(findBoard.getUser());
+
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
+        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFiles);
+
         int likeSize = (int)likeBoardRepository.countByBoardId(id);
-        BulletinBoardDto bulletinBoardDto = getBulletinBoardDto(findBoard, user, uploadFiles, likeSize);
-        return bulletinBoardDto;
+        ReadBulletinBoardForm readBulletinBoardForm = getReadBulletinBoardForm(findBoard, readUserForm, readUploadFileForms, likeSize);
+        return readBulletinBoardForm;
     }
 
     public List<PageBulletinBoardForm> readPage(int page) {
@@ -81,13 +88,7 @@ public class BulletinBoardService {
 
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
-        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
-        updateForm.setId(findBoard.getId());
-        updateForm.setRegion(findBoard.getRegion());
-        updateForm.setTitle(findBoard.getTitle());
-        updateForm.setContent(findBoard.getContent());
-        updateForm.setOldImages(uploadFileRepository.findUploadFiles(id));
-        updateForm.setDates(findBoard.getDates()); //수정된 날짜로 변경
+        UpdateBulletinBoardForm updateForm = getUpdateBulletinBoardForm(id, findBoard);
         return updateForm;
     }
 
@@ -116,7 +117,7 @@ public class BulletinBoardService {
 
     /**============================= private method ==============================*/
 
-    private BulletinBoard createBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
+    private BulletinBoard getBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
         BulletinBoard board = new BulletinBoard();
         board.setUser(findUser);
         board.setRegion(boardForm.getRegion());
@@ -134,18 +135,18 @@ public class BulletinBoardService {
         return board;
     }
 
-    private BulletinBoardDto getBulletinBoardDto(BulletinBoard findBoard, User user, List<UploadFile> uploadFiles, int likeSize) {
-        BulletinBoardDto bulletinBoardDto = new BulletinBoardDto();
-        bulletinBoardDto.setId(findBoard.getId());
-        bulletinBoardDto.setUser(user);
-        bulletinBoardDto.setRegion(findBoard.getRegion());
-        bulletinBoardDto.setTitle(findBoard.getTitle());
-        bulletinBoardDto.setContent(findBoard.getContent());
-        bulletinBoardDto.setImages(uploadFiles);
-        bulletinBoardDto.setDates(findBoard.getDates());
-        bulletinBoardDto.setViews(findBoard.getViews());
-        bulletinBoardDto.setLikeSize(likeSize);
-        return bulletinBoardDto;
+    private ReadBulletinBoardForm getReadBulletinBoardForm(BulletinBoard findBoard, ReadUserForm readForm, List<ReadUploadFileForm> readUploadFileForms, int likeSize) {
+        ReadBulletinBoardForm readBulletinBoardForm = new ReadBulletinBoardForm();
+        readBulletinBoardForm.setId(findBoard.getId());
+        readBulletinBoardForm.setReadUserForm(readForm);
+        readBulletinBoardForm.setRegion(findBoard.getRegion());
+        readBulletinBoardForm.setTitle(findBoard.getTitle());
+        readBulletinBoardForm.setContent(findBoard.getContent());
+        readBulletinBoardForm.setImages(readUploadFileForms);
+        readBulletinBoardForm.setDates(findBoard.getDates());
+        readBulletinBoardForm.setViews(findBoard.getViews());
+        readBulletinBoardForm.setLikeSize(likeSize);
+        return readBulletinBoardForm;
     }
 
     private PageBulletinBoardForm getPageBulletinBoardForm(BulletinBoard board, String nickName) {
@@ -157,6 +158,17 @@ public class BulletinBoardService {
         boardForm.setDates(board.getDates());
         boardForm.setViews(board.getViews());
         return boardForm;
+    }
+
+    private UpdateBulletinBoardForm getUpdateBulletinBoardForm(Long id, BulletinBoard findBoard) {
+        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
+        updateForm.setId(findBoard.getId());
+        updateForm.setRegion(findBoard.getRegion());
+        updateForm.setTitle(findBoard.getTitle());
+        updateForm.setContent(findBoard.getContent());
+        updateForm.setOldImages(getReadUploadFileForms(uploadFileRepository.findUploadFiles(id)));
+        updateForm.setDates(findBoard.getDates()); //수정된 날짜로 변경
+        return updateForm;
     }
 
     private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
@@ -181,5 +193,29 @@ public class BulletinBoardService {
             }
         }
         findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
+    }
+
+    private ReadUserForm getReadUserForm(User user) {
+        ReadUserForm readForm = new ReadUserForm();
+        readForm.setId(user.getId());
+        readForm.setEmailId(user.getEmailId());
+        readForm.setPassword(user.getPassword());
+        readForm.setNickName(user.getNickName());
+        readForm.setName(user.getName());
+        readForm.setAge(user.getAge());
+        readForm.setGender(user.getGender());
+        readForm.setDates(user.getDates());
+        return readForm;
+    }
+
+    private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
+        return uploadFiles.stream()
+                .map(u -> {
+                    ReadUploadFileForm readForm = new ReadUploadFileForm();
+                    readForm.setId(u.getId());
+                    readForm.setStoreFileName(u.getStoreFileName());
+                    readForm.setUploadFileName(u.getUploadFileName());
+                    return readForm;
+                }).collect(Collectors.toList());
     }
 }

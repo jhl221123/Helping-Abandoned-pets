@@ -2,10 +2,10 @@ package com.catdog.help.web.controller;
 
 import com.catdog.help.service.ItemBoardService;
 import com.catdog.help.service.LikeService;
-import com.catdog.help.web.form.itemBoard.PageItemBoardForm;
-import com.catdog.help.web.form.itemBoard.ReadItemBoardForm;
-import com.catdog.help.web.form.itemBoard.SaveItemBoardForm;
-import com.catdog.help.web.form.itemBoard.UpdateItemBoardForm;
+import com.catdog.help.web.form.itemboard.PageItemBoardForm;
+import com.catdog.help.web.form.itemboard.ReadItemBoardForm;
+import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
+import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -127,9 +127,11 @@ public class ItemBoardController {
 
     /***  update  ***/
     @GetMapping("/items/{id}/edit")
-    public String updateForm(@PathVariable("id") Long id, Model model) {
+    public String updateForm(@PathVariable("id") Long id, Model model,
+                             @SessionAttribute(name = LOGIN_USER) String nickName) {
         UpdateItemBoardForm updateForm = itemBoardService.getUpdateForm(id);
         model.addAttribute("updateForm", updateForm);
+        model.addAttribute("nickName", nickName);
         return "items/update";
     }
 
@@ -152,7 +154,7 @@ public class ItemBoardController {
                                    @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 수정 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUser().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickName().equals(nickName)) {
             return "redirect:/items/{id}";
         }
 
@@ -166,7 +168,7 @@ public class ItemBoardController {
                              @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUser().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickName().equals(nickName)) {
             return "redirect:/items/{id}";
         }
 
@@ -180,7 +182,7 @@ public class ItemBoardController {
                          @SessionAttribute(name = LOGIN_USER) String nickName) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUser().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickName().equals(nickName)) {
             return "redirect:/items/{id}";
         }
         itemBoardService.deleteBoard(id);

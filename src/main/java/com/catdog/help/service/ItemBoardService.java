@@ -10,10 +10,12 @@ import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.LikeBoardRepository;
-import com.catdog.help.web.form.itemBoard.PageItemBoardForm;
-import com.catdog.help.web.form.itemBoard.ReadItemBoardForm;
-import com.catdog.help.web.form.itemBoard.SaveItemBoardForm;
-import com.catdog.help.web.form.itemBoard.UpdateItemBoardForm;
+import com.catdog.help.web.form.itemboard.PageItemBoardForm;
+import com.catdog.help.web.form.itemboard.ReadItemBoardForm;
+import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
+import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
+import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -136,21 +139,21 @@ public class ItemBoardService {
         form.setItemName(board.getItemName());
         form.setPrice(board.getPrice());
         form.setStatus(board.getStatus());
-        form.setLeadImage(uploadFileRepository.findUploadFiles(board.getId()).get(0));
+        form.setLeadImage(getReadUploadFileForms(uploadFileRepository.findUploadFiles(board.getId())).get(0));
         return form;
     }
 
     private ReadItemBoardForm getReadForm(ItemBoard findBoard, List<UploadFile> uploadFiles) {
         ReadItemBoardForm form = new ReadItemBoardForm();
         form.setId(findBoard.getId());
-        form.setUser(findBoard.getUser());
+        form.setUserForm(getReadUserForm(findBoard.getUser()));
         form.setTitle(findBoard.getTitle());
         form.setContent(findBoard.getContent());
         form.setDates(findBoard.getDates());
         form.setItemName(findBoard.getItemName());
         form.setPrice(findBoard.getPrice());
         form.setStatus(findBoard.getStatus());
-        form.setImages(uploadFiles);
+        form.setImages(getReadUploadFileForms(uploadFiles));
         form.setViews(findBoard.getViews());
         form.setLikeSize((int) likeBoardRepository.countByBoardId(findBoard.getId()));
         return form;
@@ -159,7 +162,6 @@ public class ItemBoardService {
     private UpdateItemBoardForm getUpdateItemBoardForm(Long id, ItemBoard findBoard) {
         UpdateItemBoardForm updateForm = new UpdateItemBoardForm();
         updateForm.setId(findBoard.getId());
-        updateForm.setUser(findBoard.getUser());
         updateForm.setTitle(findBoard.getTitle());
         updateForm.setContent(findBoard.getContent());
         updateForm.setItemName(findBoard.getItemName());
@@ -167,10 +169,13 @@ public class ItemBoardService {
 
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
         if (!uploadFiles.isEmpty()) {
-            updateForm.setOldLeadImage(uploadFiles.get(0));
-            for (int i = 1; i < uploadFiles.size(); i++) {
-                updateForm.getOldImages().add(uploadFiles.get(i));
-            } //첫 번째 사진 제외
+            List<ReadUploadFileForm> readForms = getReadUploadFileForms(uploadFiles);
+            //대표이미지
+            updateForm.setOldLeadImage(readForms.get(0));
+            for (int i = 1; i < readForms.size(); i++) {
+                //대표이미지 제외
+                updateForm.getOldImages().add(readForms.get(i));
+            }
         }
         return updateForm;
     }
@@ -208,5 +213,29 @@ public class ItemBoardService {
             }
         }
         findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
+    }
+
+    private ReadUserForm getReadUserForm(User user) {
+        ReadUserForm readForm = new ReadUserForm();
+        readForm.setId(user.getId());
+        readForm.setEmailId(user.getEmailId());
+        readForm.setPassword(user.getPassword());
+        readForm.setNickName(user.getNickName());
+        readForm.setName(user.getName());
+        readForm.setAge(user.getAge());
+        readForm.setGender(user.getGender());
+        readForm.setDates(user.getDates());
+        return readForm;
+    }
+
+    private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
+        return uploadFiles.stream()
+                .map(u -> {
+                    ReadUploadFileForm readForm = new ReadUploadFileForm();
+                    readForm.setId(u.getId());
+                    readForm.setStoreFileName(u.getStoreFileName());
+                    readForm.setUploadFileName(u.getUploadFileName());
+                    return readForm;
+                }).collect(Collectors.toList());
     }
 }

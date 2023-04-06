@@ -1,8 +1,6 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.web.SessionConst;
-import com.catdog.help.web.dto.UserDto;
-import com.catdog.help.web.form.LoginForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

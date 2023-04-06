@@ -3,6 +3,7 @@ package com.catdog.help.web.form.bulletinboard;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -19,8 +20,6 @@ public class UpdateBulletinBoardForm {
     @NotNull
     private Long id;
 
-    private User user;
-
     @NotBlank
     private String region;
 
@@ -32,7 +31,7 @@ public class UpdateBulletinBoardForm {
     @Length(max = 250)
     private String content;
 
-    private List<UploadFile> oldImages = new ArrayList<>();
+    private List<ReadUploadFileForm> oldImages = new ArrayList<>();
     private List<MultipartFile> newImages = new ArrayList<>();
     private List<Integer> deleteImageIds = new ArrayList<>();
 

@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.web.dto.UserDto;
+import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.domain.user.Gender;
@@ -50,24 +50,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto login(String emailId, String password) {
+    public ReadUserForm login(String emailId, String password) {
         User findUser = userRepository.findByEmailId(emailId);
         if (findUser == null || !findUser.getPassword().equals(password)) {
             return null;
         }
 
-        UserDto findUserDto = getUserDto(findUser);
+        ReadUserForm findReadUserForm = getUserDto(findUser);
 
-        return findUserDto;
+        return findReadUserForm;
     }
 
-    public UserDto getUserDtoByNickName(String nickName) {
+    public ReadUserForm getUserDtoByNickName(String nickName) {
         User findUser = userRepository.findByNickName(nickName);
         if (findUser == null) {
             return null; // TODO: 2023-03-08 예외처리
         }
-        UserDto findUserDto = getUserDto(findUser);
-        return findUserDto;
+        ReadUserForm findReadUserForm = getUserDto(findUser);
+        return findReadUserForm;
     }
 
     public UpdateUserForm getUpdateForm(String nickName) {
@@ -118,17 +118,17 @@ public class UserService {
         return user;
     }
 
-    private static UserDto getUserDto(User findUser) {
-        UserDto UserDto = new UserDto();
-        UserDto.setId(findUser.getId());
-        UserDto.setEmailId(findUser.getEmailId());
-        UserDto.setPassword(findUser.getPassword());
-        UserDto.setNickName(findUser.getNickName());
-        UserDto.setName(findUser.getName());
-        UserDto.setAge(findUser.getAge());
-        UserDto.setGender(findUser.getGender());
-        UserDto.setDates(findUser.getDates());
-        return UserDto;
+    private static ReadUserForm getUserDto(User findUser) {
+        ReadUserForm ReadUserForm = new ReadUserForm();
+        ReadUserForm.setId(findUser.getId());
+        ReadUserForm.setEmailId(findUser.getEmailId());
+        ReadUserForm.setPassword(findUser.getPassword());
+        ReadUserForm.setNickName(findUser.getNickName());
+        ReadUserForm.setName(findUser.getName());
+        ReadUserForm.setAge(findUser.getAge());
+        ReadUserForm.setGender(findUser.getGender());
+        ReadUserForm.setDates(findUser.getDates());
+        return ReadUserForm;
     }
 
     private static UpdateUserForm getUpdateUserForm(User findUser) {

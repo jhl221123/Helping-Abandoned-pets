@@ -8,10 +8,10 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-11 board-title text-left" style="justify-content: start">
-				<p th:text="${bulletinBoardDto.title}">제목</p>
+				<p th:text="${readForm.title}">제목</p>
 			</div>
 			<div class="col-sm-1" style="justify-content: end">
-				<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${bulletinBoardDto.id})}'|">
+				<button type="button" class="btm_image" th:onclick="|location.href='@{/boards/{id}/like(id=${readForm.id})}'|">
 					<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
 					<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
 				</button>
@@ -20,30 +20,30 @@
 		<div >
 			<div class="division-line"></div>
 				<div class="row">
-					<p th:text="${bulletinBoardDto.user.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
+					<p th:text="${readForm.readUserForm.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
 					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
-					<p class="text-muted" th:text="${#temporals.format(bulletinBoardDto.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
+					<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
 				</div>
 				<div class="row float-right">
-					<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${bulletinBoardDto.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
-					<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${bulletinBoardDto.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
+					<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
+					<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
 				</div>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="content"></label>
-		<textarea class="form-control" id="content" name="content" th:text="${bulletinBoardDto.content}" rows="12" readonly>내용</textarea>
+		<textarea class="form-control" id="content" name="content" th:text="${readForm.content}" rows="12" readonly>내용</textarea>
 	</div>
-	<div th:if="${!bulletinBoardDto.images.isEmpty()}" class="form-group">
+	<div th:if="${!readForm.images.isEmpty()}" class="form-group">
 		<p>이미지</p>
-		<img th:each="imageFile : ${bulletinBoardDto.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
+		<img th:each="imageFile : ${readForm.images}" th:src="|/images/${imageFile.getStoreFileName()}|" width="300" height="300"/>
 	</div>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=1)}'|">목록으로</button>
-		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/boards/{id}/edit(id=${bulletinBoardDto.id})}'|">수정</button>
-		<button th:if="${bulletinBoardDto.user.nickName == nickName}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/boards/{id}/delete(id=${bulletinBoardDto.id})}'|">삭제</button>
+		<button th:if="${readForm.readUserForm.nickName == nickName}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/boards/{id}/edit(id=${readForm.id})}'|">수정</button>
+		<button th:if="${readForm.readUserForm.nickName == nickName}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/boards/{id}/delete(id=${readForm.id})}'|">삭제</button>
 	</div>
 
 <!--	end bulletin board   -->
@@ -67,22 +67,22 @@
 			<p class="text-left text-muted" th:text="${#temporals.format(form.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 			<div>
 				<a th:if="${form.nickName==nickName}" class="text-muted"
-				   th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, updateCommentId=${form.id})}">수정</a>
+				   th:href="@{/boards/{id}(id=${readForm.id}, updateCommentId=${form.id})}">수정</a>
 				<a th:if="${form.nickName==nickName}" class="text-muted"
-				   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${bulletinBoardDto.id}, commentId=${form.id})}">삭제</a>
+				   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${readForm.id}, commentId=${form.id})}">삭제</a>
 			</div>
 		</div>
 		<div>
 			<p th:text="${form.content}">content</p>
 		</div>
-		<a th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, clickChild=${form.id})}">답글 달기</a>
+		<a th:href="@{/boards/{id}(id=${readForm.id}, clickChild=${form.id})}">답글 달기</a>
 		<div class="division-line"></div>
 
 		<!--    parent comment update form   -->
 
 		<div th:if="${updateCommentId == form.id}" class="comment-box" >
 
-			<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${bulletinBoardDto.id}, commentId=${form.id})}"
+			<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${readForm.id}, commentId=${form.id})}"
 			      th:object="${updateCommentForm}" th:method="post">
 				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
@@ -94,7 +94,7 @@
 					<div class="col-sm-2">
 						<button type="submit" class="btn" style="background-color: #B2CFF1;">수정</button>
 						<button type="button" class="btn" style="background-color: #B2CFF1;"
-						        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
+						        th:onclick="|location.href='@{/boards/{id}(id=${readForm.id})}'|">취소</button>
 					</div>
 				</div>
 			</form>
@@ -105,7 +105,7 @@
 
 		<div th:if="${clickChild == form.id}" class="comment-box" >
 
-			<form role="form" th:action="@{/boards/{id}/comments/child(id=${bulletinBoardDto.id}, parentId=${form.id})}"
+			<form role="form" th:action="@{/boards/{id}/comments/child(id=${readForm.id}, parentId=${form.id})}"
 			      th:object="${commentForm}" th:method="post">
 				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
@@ -117,7 +117,7 @@
 					<div class="col-sm-2">
 						<button type="submit" class="btn btn-primary">작성</button>
 						<button type="button" class="btn" style="background-color: #B2CFF1;"
-						        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
+						        th:onclick="|location.href='@{/boards/{id}(id=${readForm.id})}'|">취소</button>
 					</div>
 				</div>
 			</form>
@@ -132,9 +132,9 @@
 				<p class="text-left text-muted" th:text="${#temporals.format(child.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
 					<a th:if="${child.nickName==nickName}" class="text-muted"
-					   th:href="@{/boards/{id}(id=${bulletinBoardDto.id}, updateCommentId=${child.id})}">수정</a>
+					   th:href="@{/boards/{id}(id=${readForm.id}, updateCommentId=${child.id})}">수정</a>
 					<a th:if="${child.nickName==nickName}" class="text-muted"
-					   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${bulletinBoardDto.id}, commentId=${child.id})}">삭제</a>
+					   th:href="@{/boards/{id}/comments/{commentId}/delete(id=${readForm.id}, commentId=${child.id})}">삭제</a>
 				</div>
 			</div>
 			<div style="margin-left: 4em" >
@@ -145,7 +145,7 @@
 			<!--    child comment update form   -->
 
 			<div th:if="${updateCommentId == child.id}" class="comment-box" >
-				<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${bulletinBoardDto.id}, commentId=${child.id})}"
+				<form role="form" th:action="@{/boards/{id}/comments/{commentId}/update(id=${readForm.id}, commentId=${child.id})}"
 				      th:object="${updateCommentForm}" th:method="post">
 					<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
 					<div class="row">
@@ -157,7 +157,7 @@
 						<div class="col-sm-2">
 							<button type="submit" class="btn" style="background-color: #B2CFF1;">수정</button>
 							<button type="button" class="btn" style="background-color: #B2CFF1;"
-							        th:onclick="|location.href='@{/boards/{id}(id=${bulletinBoardDto.id})}'|">취소</button>
+							        th:onclick="|location.href='@{/boards/{id}(id=${readForm.id})}'|">취소</button>
 						</div>
 					</div>
 				</form>
@@ -175,7 +175,7 @@
 
 <!--    parent comment create form   -->
 
-	<form role="form" th:action="@{/boards/{id}/comments/parent(id=${bulletinBoardDto.id})}" th:object="${commentForm}"
+	<form role="form" th:action="@{/boards/{id}/comments/parent(id=${readForm.id})}" th:object="${commentForm}"
 	      th:method="post" class="comment-box">
 		<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
 		<div class="row">
