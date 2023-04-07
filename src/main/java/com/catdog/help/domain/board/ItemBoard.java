@@ -1,5 +1,6 @@
 package com.catdog.help.domain.board;
 
+import com.catdog.help.domain.message.MessageRoom;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,9 @@ public class ItemBoard extends Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<LikeBoard> likeBoards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "itemBoard", cascade = CascadeType.REMOVE)
+    private List<MessageRoom> rooms = new ArrayList<>();
 
     //===== 연관 관계 편의 메서드 =====//
 
