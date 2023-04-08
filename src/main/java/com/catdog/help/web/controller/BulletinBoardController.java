@@ -3,10 +3,10 @@ package com.catdog.help.web.controller;
 import com.catdog.help.service.BulletinBoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.catdog.help.web.SessionConst.*;
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Controller
 @Slf4j
@@ -66,7 +66,7 @@ public class BulletinBoardController {
         List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readPage(page);
         model.addAttribute("pageBoardForms", pageBoardForms);
 
-        int lastPage = bulletinBoardService.getNumberOfPages();
+        int lastPage = bulletinBoardService.countPages();
         model.addAttribute("lastPage", lastPage);
         return "bulletinBoard/list";
     }

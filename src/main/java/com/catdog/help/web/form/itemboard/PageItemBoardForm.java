@@ -1,7 +1,6 @@
 package com.catdog.help.web.form.itemboard;
 
 import com.catdog.help.domain.board.ItemStatus;
-import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,5 @@
 package com.catdog.help.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.Column;

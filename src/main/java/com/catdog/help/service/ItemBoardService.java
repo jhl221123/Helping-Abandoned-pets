@@ -53,10 +53,10 @@ public class ItemBoardService {
     }
 
     public List<PageItemBoardForm> readPage(int page) {
-        int start = 0 + (page -1) * 6;
-        int total = 6;
+        int offset = 0 + (page -1) * 6;
+        int limit = 6;
 
-        List<ItemBoard> boards = itemBoardRepository.findPage(start, total);
+        List<ItemBoard> boards = itemBoardRepository.findPage(offset, limit);
 
         List<PageItemBoardForm> pageForms = new ArrayList<>();
         for (ItemBoard board : boards) {

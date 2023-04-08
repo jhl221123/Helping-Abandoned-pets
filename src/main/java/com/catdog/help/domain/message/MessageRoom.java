@@ -1,5 +1,6 @@
 package com.catdog.help.domain.message;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
@@ -28,6 +29,9 @@ public class MessageRoom {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
     private User recipient;
+
+    @Embedded
+    private Dates dates;
 
     @OneToMany(mappedBy = "messageRoom", cascade = CascadeType.REMOVE)
     private List<Message> messages = new ArrayList<>();

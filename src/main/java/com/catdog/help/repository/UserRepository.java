@@ -3,7 +3,6 @@ package com.catdog.help.repository;
 import com.catdog.help.domain.user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository {
     public void save(User user);

@@ -1,6 +1,5 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;

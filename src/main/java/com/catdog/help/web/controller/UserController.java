@@ -1,9 +1,9 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.service.UserService;
-import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.LoginForm;
 import com.catdog.help.web.form.user.ChangePasswordForm;
+import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static com.catdog.help.web.SessionConst.*;
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
 @Controller

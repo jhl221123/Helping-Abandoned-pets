@@ -1,8 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
 import com.catdog.help.domain.Dates;
-import com.catdog.help.domain.board.UploadFile;
-import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;

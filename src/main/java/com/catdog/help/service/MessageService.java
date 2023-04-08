@@ -7,7 +7,7 @@ import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.MessageRepository;
 import com.catdog.help.repository.jpa.MessageRoomRepository;
-import com.catdog.help.web.form.message.SaveMessageFrom;
+import com.catdog.help.web.form.message.SaveMessageForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class MessageService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createMessage(Long roomId, String senderNickName, SaveMessageFrom saveForm) {
+    public void createMessage(Long roomId, String senderNickName, SaveMessageForm saveForm) {
         MessageRoom findRoom = messageRoomRepository.findById(roomId);
         User sender = userRepository.findByNickName(senderNickName);
         Message message = new Message();

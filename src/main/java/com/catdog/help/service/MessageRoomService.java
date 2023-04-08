@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
@@ -8,12 +9,13 @@ import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.MessageRoomRepository;
 import com.catdog.help.web.form.message.ReadMessageForm;
-import com.catdog.help.web.form.message.ReadMessageRoomFrom;
+import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,21 +50,36 @@ public class MessageRoomService {
         }
     }
 
-    public ReadMessageRoomFrom readRoom(Long roomId) {
+    public ReadMessageRoomForm readRoom(Long roomId) {
         MessageRoom findRoom = messageRoomRepository.findWithRefers(roomId);
-        ReadMessageRoomFrom result = getReadMessageRoomFrom(findRoom);
+        ReadMessageRoomForm result = getReadMessageRoomFrom(findRoom);
         return result;
     }
 
-    public List<ReadMessageRoomFrom> readRoomsByNickName(String nickName) {
-        User findUser = userRepository.findByNickName(nickName);
-        List<MessageRoom> findRooms = messageRoomRepository.findAllByUserId(findUser.getId());
-        List<ReadMessageRoomFrom> readForms = findRooms.stream()
+    public List<ReadMessageRoomForm> readPageOfRooms(String nickName, int page) {
+        Long findUserId = userRepository.findByNickName(nickName).getId();
+        int offset = page * 10 - 10;
+        int limit = 10;
+
+        List<MessageRoom> findRooms = messageRoomRepository.findPageByUserId(findUserId, offset, limit);
+        List<ReadMessageRoomForm> readForms = findRooms.stream()
                 .map(messageRoom -> {
-                    ReadMessageRoomFrom form = getReadMessageRoomFrom(messageRoom);
+                    ReadMessageRoomForm form = getReadMessageRoomFrom(messageRoom);
                     return form;
                 }).collect(Collectors.toList());
         return readForms;
+    }
+
+    public int countPages(String nickName) {
+        Long findUserId = userRepository.findByNickName(nickName).getId();
+        int totalRooms = (int) messageRoomRepository.countAllByUserId(findUserId);
+        if (totalRooms <= 10) {
+            return 1;
+        } else if (totalRooms % 10 == 0) {
+            return totalRooms / 10;
+        } else {
+            return totalRooms / 10 + 1;
+        }
     }
 
 
@@ -78,16 +95,18 @@ public class MessageRoomService {
         messageRoom.setItemBoard(findBoard);
         messageRoom.setSender(sender);
         messageRoom.setRecipient(recipient);
+        messageRoom.setDates(new Dates(LocalDateTime.now(), null, null));
         return messageRoom;
     }
 
-    private ReadMessageRoomFrom getReadMessageRoomFrom(MessageRoom messageRoom) {
-        ReadMessageRoomFrom form = new ReadMessageRoomFrom();
+    private ReadMessageRoomForm getReadMessageRoomFrom(MessageRoom messageRoom) {
+        ReadMessageRoomForm form = new ReadMessageRoomForm();
         form.setId(messageRoom.getId());
         form.setItemBoardId(messageRoom.getItemBoard().getId());
         form.setItemName(messageRoom.getItemBoard().getItemName());
         form.setSenderNick(messageRoom.getSender().getNickName());
         form.setRecipientNick(messageRoom.getRecipient().getNickName());
+        form.setCreateDate(messageRoom.getDates().getCreateDate());
         List<ReadMessageForm> messageForms = getReadMessageForms(messageRoom);
         form.setMessages(messageForms);
         return form;
@@ -104,7 +123,7 @@ public class MessageRoomService {
 
     private static ReadMessageForm getReadMessageForm(Message message) {
         ReadMessageForm form = new ReadMessageForm();
-        form.setSenderNick(message.getSender().getNickName());
+        form.setSenderNick(message.getSender().getNickName()); //메시지 강제호출
         form.setContent(message.getContent());
         form.setCreateDate(message.getDates().getCreateDate());
         return form;

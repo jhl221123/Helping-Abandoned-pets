@@ -25,6 +25,7 @@ public class Message {
 
     private String content;
 
+    @Embedded
     private Dates dates;
 
     public void addMessage(MessageRoom messageRoom) {

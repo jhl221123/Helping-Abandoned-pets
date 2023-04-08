@@ -3,7 +3,10 @@ package com.catdog.help.domain.board;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +21,7 @@ public class BulletinBoard extends Board {
     private List<UploadFile> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<LikeBoard> likeBoards; // TODO: 2023-03-30 양방향 해야할 이유가 있나..?
+    private List<LikeBoard> likeBoards;
 
 
     //===== 연관 관계 편의 메서드 =====//

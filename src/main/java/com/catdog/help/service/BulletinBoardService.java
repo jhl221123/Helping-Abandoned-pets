@@ -2,17 +2,17 @@ package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
 import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.*;
 import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.LikeBoardRepository;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.RequiredArgsConstructor;
@@ -63,11 +63,11 @@ public class BulletinBoardService {
     }
 
     public List<PageBulletinBoardForm> readPage(int page) {
-        int start = page * 10 - 10;
-        int total = 10;
+        int offset = page * 10 - 10;
+        int limit = 10;
 
         List<PageBulletinBoardForm> pageBoardForms = new ArrayList<>();
-        List<BulletinBoard> boards = bulletinBoardRepository.findPage(start, total);
+        List<BulletinBoard> boards = bulletinBoardRepository.findPage(offset, limit);
         for (BulletinBoard board : boards) {
             User user = board.getUser();
             pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
@@ -75,7 +75,7 @@ public class BulletinBoardService {
         return pageBoardForms;
     }
 
-    public int getNumberOfPages() {
+    public int countPages() {
         int totalBoards = bulletinBoardRepository.findAll().size(); // TODO: 2023-03-28 카운트 쿼리로 대체 고려
         if (totalBoards <= 10) {
             return 1;
