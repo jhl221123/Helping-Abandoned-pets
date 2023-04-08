@@ -27,10 +27,10 @@ public class JpaItemBoardRepository {
                 .orElse(null);
     }
 
-    public List<ItemBoard> findPage(int start, int total) {
+    public List<ItemBoard> findPage(int offset, int limit) {
         return em.createQuery("select i from ItemBoard i order by create_date desc", ItemBoard.class)
-                .setFirstResult(start)
-                .setMaxResults(total)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 

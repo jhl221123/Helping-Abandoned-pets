@@ -26,10 +26,10 @@ public class JpaBulletinBoardRepository implements BulletinBoardRepository {
                 .getResultList().stream().findAny().orElse(null); //TODO: 2023-03-30 Optional
     }
 
-    public List<BulletinBoard> findPage(int start, int total) {
+    public List<BulletinBoard> findPage(int offset, int limit) {
         return em.createQuery("select b from BulletinBoard b order by create_date desc", BulletinBoard.class)
-                .setFirstResult(start)
-                .setMaxResults(total)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 
