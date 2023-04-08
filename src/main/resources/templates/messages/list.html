@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+	<div th:replace="fragments/bodyHeader :: bodyHeader" />
+	<div>
+		<table class="table table-striped">
+			<thead>
+			<tr style="text-align: center">
+				<th>제품명</th>
+				<th>제품 주인</th>
+				<th>나눔 희망</th>
+				<th>생성일</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="readForm : ${readForms}" style="text-align: center">
+				<td th:text="${readForm.itemName}" th:onclick="|location.href='@{/messages/{roomId}(roomId=${readForm.id}, boardId=${readForm.itemBoardId})}'|" style="cursor:pointer;"></td>
+				<td th:text="${readForm.recipientNick}">제품 주인</td>
+				<td th:text="${readForm.senderNick}">나눔 희망</td>
+				<td th:text="${#temporals.format(readForm.createDate, 'yyyy-MM-dd')}">생성일</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<button th:each="page : ${#numbers.sequence(1,lastPage)}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/messages(page=${page})}'|" th:text="${page}"></button>
+
+		<div class="float-right">
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
+		</div>
+	</div>
+	<br/>
+	<br/>
+	<div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

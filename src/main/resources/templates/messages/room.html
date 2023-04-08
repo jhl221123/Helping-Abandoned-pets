@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+	<p th:text="|${readForm.itemName} 나눔|"></p>
+	<p th:text="|${readForm.senderNick} 님과 ${readForm.recipientNick}님의 채팅방|"></p>
+
+	<!--   start messages    -->
+	<div th:each="message : ${readForm.messages}">
+		<div>
+			<div class="row">
+				<p th:text="${message.senderNick}">보낸 사람</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<p class="text-left text-muted" th:text="${#temporals.format(message.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
+			</div>
+			<div>
+				<p th:text="${message.content}">content</p>
+			</div>
+		</div>
+		<div class="division-line"></div>
+	</div>
+	<!--   end messages    -->
+
+	<form role="form" th:action="@{/messages/{roomId}(roomId=${readForm.id})}"
+	      th:object="${saveForm}" th:method="post" class="comment-box">
+		<p th:text="${sender}" class="col-form-label attribute-name">닉네임</p>
+		<div class="row">
+			<div class="col-sm-10">
+				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>
+				<p class="field-error" th:errors="*{content}">입력 오류</p>
+			</div>
+			<div class="col-sm-2">
+				<button type="submit" class="btn btn-primary">작성</button>
+			</div>
+		</div>
+	</form>
+
+	<div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>
