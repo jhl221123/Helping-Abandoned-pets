@@ -42,6 +42,10 @@ public class User {
     @Embedded
     private Dates dates;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "user_grade")
+    private Grade grade;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BulletinBoard> bulletinBoards = new ArrayList<>();
 

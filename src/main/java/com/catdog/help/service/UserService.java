@@ -2,6 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ChangePasswordForm;
@@ -23,12 +24,7 @@ public class UserService {
 
     @Transactional
     public Long join(SaveUserForm form) {
-        User user = createUser(form.getEmailId(), // TODO: 2023-03-08 ?? builder로 수정
-                form.getPassword(),
-                form.getNickName(),
-                form.getName(),
-                form.getAge(),
-                form.getGender());
+        User user = createUser(form);
         userRepository.save(user);
         return user.getId();
     }
@@ -106,15 +102,16 @@ public class UserService {
      * ================== private method ====================
      */
 
-    private static User createUser(String emailId, String password, String nickName, String name, int age, Gender gender) {
+    private static User createUser(SaveUserForm form) {
         User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setNickName(nickName);
-        user.setName(name);
-        user.setAge(age);
-        user.setGender(gender);
+        user.setEmailId(form.getEmailId());
+        user.setPassword(form.getPassword());
+        user.setNickName(form.getNickName());
+        user.setName(form.getName());
+        user.setAge(form.getAge());
+        user.setGender(form.getGender());
         user.setDates(new Dates(LocalDateTime.now(), null, null));
+        user.setGrade(Grade.BASIC);
         return user;
     }
 
