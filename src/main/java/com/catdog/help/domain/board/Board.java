@@ -30,7 +30,7 @@ public abstract class Board {
     private String content;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<Comment> comments = new ArrayList<>(); // TODO: 2023-03-30 이것도 양방향 할 필요 없을 듯 따로 가져오니까
+    private List<Comment> comments = new ArrayList<>();
 
     @Embedded
     private Dates dates;
