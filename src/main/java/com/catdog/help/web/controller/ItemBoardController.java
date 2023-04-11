@@ -111,7 +111,6 @@ public class ItemBoardController {
 
         ReadItemBoardForm findReadForm = itemBoardService.readBoard(id);
         model.addAttribute("readForm", findReadForm);
-        log.info("status 뭐냐={}", findReadForm.getStatus());
         model.addAttribute("firstImage", findReadForm.getImages().get(0));
         model.addAttribute("imageSize", findReadForm.getImages().size());
 

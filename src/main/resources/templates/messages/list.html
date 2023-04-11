@@ -16,9 +16,12 @@
 			</thead>
 			<tbody>
 			<tr th:each="readForm : ${readForms}" style="text-align: center">
-				<td th:text="${readForm.itemName}" th:onclick="|location.href='@{/messages/{roomId}(roomId=${readForm.id}, boardId=${readForm.itemBoardId})}'|" style="cursor:pointer;"></td>
-				<td th:text="${readForm.recipientNick}">제품 주인</td>
-				<td th:text="${readForm.senderNick}">나눔 희망</td>
+				<td th:text="${readForm.itemName}"
+				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${readForm.id}, boardId=${readForm.itemBoardId})}'|" style="cursor:pointer;"></td>
+				<td th:text="${readForm.recipientNick}"
+				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${readForm.id}, boardId=${readForm.itemBoardId})}'|" style="cursor:pointer;">제품 주인</td>
+				<td th:text="${readForm.senderNick}"
+				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${readForm.id}, boardId=${readForm.itemBoardId})}'|" style="cursor:pointer;">나눔 희망</td>
 				<td th:text="${#temporals.format(readForm.createDate, 'yyyy-MM-dd')}">생성일</td>
 			</tr>
 			</tbody>

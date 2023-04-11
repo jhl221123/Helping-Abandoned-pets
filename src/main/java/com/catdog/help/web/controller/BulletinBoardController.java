@@ -113,6 +113,8 @@ public class BulletinBoardController {
 
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
         model.addAttribute("readForm", readForm);
+        model.addAttribute("firstImage", readForm.getImages().get(0));
+        model.addAttribute("imageSize", readForm.getImages().size());
 
         boolean checkLike = likeService.checkLike(id, nickName);
         model.addAttribute("checkLike", checkLike);
