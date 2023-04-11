@@ -29,6 +29,10 @@ public class JpaInquiryRepository {
                 .getResultList();
     }
 
+    public long countAll() {
+        return em.createQuery("select count(i) from Inquiry i", Long.class).getSingleResult();
+    }
+
     public void delete(Inquiry inquiry) {
         em.remove(inquiry);
     }

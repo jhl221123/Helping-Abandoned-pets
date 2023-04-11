@@ -30,15 +30,34 @@ public class InquiryService {
         return inquiry.getId();
     }
 
-    public ReadInquiryForm readForm(Long id) {
+    public ReadInquiryForm readBoard(Long id) {
         Inquiry findBoard = inquiryRepository.findById(id);
         ReadInquiryForm readForm = getReadInquiryForm(findBoard);
         return readForm;
     }
 
-    public List<PageInquiryForm> readPage(int offset, int limit) {
-        List<Inquiry> page = inquiryRepository.findPage(offset, limit);
-        return page.stream().map(i -> new PageInquiryForm(i)).collect(Collectors.toList());
+    public List<PageInquiryForm> readPage(int page) {
+        int offset = page * 10 - 10;
+        int limit = 10;
+        List<Inquiry> findPage = inquiryRepository.findPage(offset, limit);
+        return findPage.stream().map(i -> new PageInquiryForm(i)).collect(Collectors.toList());
+    }
+
+    public int countPage() {
+        int total = (int)inquiryRepository.countAll();
+        if (total <= 10) {
+            return 1;
+        } else if (total % 10 == 0) {
+            return total / 10;
+        } else {
+            return total / 10 + 1;
+        }
+    }
+
+    @Transactional
+    public void deleteBoard(Long id) {
+        Inquiry findBoard = inquiryRepository.findById(id);
+        inquiryRepository.delete(findBoard);
     }
 
     /**============================= private method ==============================*/
