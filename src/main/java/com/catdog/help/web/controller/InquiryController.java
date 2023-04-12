@@ -1,7 +1,11 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.service.CommentService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.comment.UpdateCommentForm;
+import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
@@ -23,7 +27,7 @@ import static com.catdog.help.web.SessionConst.*;
 public class InquiryController {
 
     private final InquiryService inquiryService;
-    private final UserService userService;
+    private final CommentService commentService;
 
     @GetMapping("/inquiries/new")
     public String createBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
@@ -58,10 +62,89 @@ public class InquiryController {
 
     @GetMapping("/inquiries/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
-                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+                            @SessionAttribute(name = LOGIN_USER) String nickname,
+                            @RequestParam(name = "clickChild", required = false) Long clickChildId,
+                            @RequestParam(name = "updateCommentId", required = false) Long updateCommentId) {
         ReadInquiryForm readForm = inquiryService.readBoard(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);
+
+        //댓글
+        CommentForm commentForm = new CommentForm();
+        model.addAttribute("commentForm", commentForm);
+
+        List<CommentForm> commentForms = commentService.readComments(id);
+        if (commentForms != null) {
+            model.addAttribute("commentForms", commentForms);
+        }
+
+        //수정 폼 열기
+        if (updateCommentId != null) {
+            UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(updateCommentId, nickname);
+            model.addAttribute("updateCommentId", updateCommentId);
+            model.addAttribute("updateCommentForm", updateCommentForm);
+        }
+
+        //대댓글 폼 열기
+        if (clickChildId != null) {
+            model.addAttribute("clickChild", clickChildId);
+        }
+
         return "inquiries/detail";
+    }
+
+    @GetMapping("/inquiries/{id}/edit")
+    public String editBoardForm(@PathVariable("id") Long id, Model model,
+                                @SessionAttribute(name = LOGIN_USER) String nickname) {
+        EditInquiryForm editForm = inquiryService.getEditForm(id);
+
+        //작성자 외 접근제한
+        if (!editForm.getNickname().equals(nickname)) {
+            return "redirect:/inquiries/{id}";
+        }
+
+        model.addAttribute("editForm", editForm);
+        return "inquiries/edit";
+    }
+
+    @PostMapping("/inquiries/{id}/edit")
+    public String editBoard(@Validated @ModelAttribute("editForm") EditInquiryForm editForm, BindingResult bindingResult,
+                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+        //작성자 외 접근제한
+        if (!editForm.getNickname().equals(nickname)) {
+            return "redirect:/inquiries/{id}";
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "inquiries/edit";
+        }
+
+        inquiryService.updateBoard(editForm);
+        return "redirect:/inquiries/{id}";
+    }
+
+    @GetMapping("/inquiries/{id}/delete")
+    public String deleteBoardForm(@PathVariable("id") Long id, Model model,
+                                  @SessionAttribute(name = LOGIN_USER) String nickname) {
+
+        ReadInquiryForm readForm = inquiryService.readBoard(id);
+        //작성자 외 접근제한
+        if (!readForm.getNickname().equals(nickname)) {
+            return "redirect:/inquiries/{id}";
+        }
+
+        model.addAttribute("readForm", readForm);
+        return "inquiries/delete";
+    }
+
+    @PostMapping("/inquiries/{id}/delete")
+    public String deleteBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname) {
+        //작성자 외 접근제한
+        if (!inquiryService.readBoard(id).getNickname().equals(nickname)) {
+            return "redirect:/inquiries/{id}";
+        }
+
+        inquiryService.deleteBoard(id);
+        return "redirect:/inquiries?page=1";
     }
 }

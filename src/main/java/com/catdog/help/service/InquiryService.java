@@ -4,6 +4,7 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
+import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
@@ -54,9 +55,22 @@ public class InquiryService {
         }
     }
 
+    public EditInquiryForm getEditForm(Long id) {
+        Inquiry findBoard = inquiryRepository.findById(id);
+        return new EditInquiryForm(findBoard);
+    }
+
+    @Transactional
+    public void updateBoard(EditInquiryForm editForm) {
+        Inquiry findBoard = inquiryRepository.findById(editForm.getId());
+        findBoard.setTitle(editForm.getTitle());
+        findBoard.setContent(editForm.getContent());
+        findBoard.setSecret(editForm.getSecret());
+    }
+
     @Transactional
     public void deleteBoard(Long id) {
-        Inquiry findBoard = inquiryRepository.findById(id);
+        Inquiry findBoard = inquiryRepository.findById(id); //본인 검증 -> 영속성 컨텍스트에 이미 존재
         inquiryRepository.delete(findBoard);
     }
 
