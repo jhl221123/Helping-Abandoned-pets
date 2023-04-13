@@ -1,12 +1,12 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.BulletinBoardRepository;
 import com.catdog.help.repository.CommentRepository;
 import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.jpa.JpaBoardRepository;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +25,14 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final BulletinBoardRepository bulletinBoardRepository;
+    private final JpaBoardRepository boardRepository;
     private final UserRepository userRepository;
 
 
     @Transactional
     public Long createComment(CommentForm commentForm, Long parentCommentId) {
 
-        BulletinBoard board = bulletinBoardRepository.findById(commentForm.getBoardId());
+        Board board = boardRepository.findById(commentForm.getBoardId());
         User user = userRepository.findByNickName(commentForm.getNickName());
 
         if (parentCommentId == -1L) {
@@ -79,7 +79,7 @@ public class CommentService {
 
     @Transactional
     public Long updateComment(UpdateCommentForm updateForm) {
-        Comment findComment = commentRepository.findById(updateForm.getId());
+        Comment findComment = commentRepository.findById(updateForm.getCommentId());
         findComment.setContent(updateForm.getContent());
         findComment.setDates(new Dates(findComment.getDates().getCreateDate(), LocalDateTime.now(), null));
         return findComment.getId();
@@ -95,7 +95,7 @@ public class CommentService {
     /**============================= private method ==============================*/
 
 
-    private static Comment getComment(CommentForm commentForm, BulletinBoard board, User user) {
+    private static Comment getComment(CommentForm commentForm, Board board, User user) {
         Comment comment = new Comment();
         comment.setBoard(board);
         comment.setUser(user);
@@ -122,7 +122,7 @@ public class CommentService {
 
     private static UpdateCommentForm getUpdateForm(Comment findComment, String nickName) {
         UpdateCommentForm updateForm = new UpdateCommentForm();
-        updateForm.setId(findComment.getId());
+        updateForm.setCommentId(findComment.getId());
         updateForm.setNickName(nickName);
         updateForm.setContent(findComment.getContent());
         return updateForm;

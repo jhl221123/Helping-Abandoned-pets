@@ -63,32 +63,23 @@ public class InquiryController {
     @GetMapping("/inquiries/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @RequestParam(name = "clickChild", required = false) Long clickChildId,
-                            @RequestParam(name = "updateCommentId", required = false) Long updateCommentId) {
+                            @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
+                            @RequestParam(value = "clickReply", required = false) Long parentCommentId) {
         ReadInquiryForm readForm = inquiryService.readBoard(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);
-
-        //댓글
-        CommentForm commentForm = new CommentForm();
-        model.addAttribute("commentForm", commentForm);
 
         List<CommentForm> commentForms = commentService.readComments(id);
         if (commentForms != null) {
             model.addAttribute("commentForms", commentForms);
         }
 
-        //수정 폼 열기
-        if (updateCommentId != null) {
-            UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(updateCommentId, nickname);
-            model.addAttribute("updateCommentId", updateCommentId);
-            model.addAttribute("updateCommentForm", updateCommentForm);
-        }
+        //댓글
+        CommentForm commentForm = new CommentForm();
+        model.addAttribute("commentForm", commentForm);
 
-        //대댓글 폼 열기
-        if (clickChildId != null) {
-            model.addAttribute("clickChild", clickChildId);
-        }
+        //답글
+        model.addAttribute("clickReply", parentCommentId);
 
         return "inquiries/detail";
     }
