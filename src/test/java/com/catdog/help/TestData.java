@@ -1,6 +1,7 @@
 package com.catdog.help;
 
 import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 @Component
 public class TestData {
 
+    /** User */
+
     public User createUser(String emailId, String password, String nickname) {
         User user = new User();
         user.setEmailId(emailId);
@@ -22,6 +25,19 @@ public class TestData {
         user.setGender(Gender.MAN);
         user.setDates(new Dates(LocalDateTime.now(), null, null));
         return user;
+    }
+
+
+    /** BulletinBoard */
+
+    public BulletinBoard createBulletinBoard(String title, User user) {
+        BulletinBoard board = new BulletinBoard();
+        board.setTitle(title);
+        board.setContent("content");
+        board.setRegion("region");
+        board.setUser(user);
+        board.setDates(new Dates(LocalDateTime.now(), null, null));
+        return board;
     }
 
 

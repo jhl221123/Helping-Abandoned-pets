@@ -39,7 +39,7 @@
 			<p class="field-error" th:errors="*{images}">입력 오류</p>
 		</div>
 		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">취소</button>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items?page=1}'|">취소</button>
 			<button type="submit" class="btn btn-primary">작성</button>
 		</div>
 	</form>

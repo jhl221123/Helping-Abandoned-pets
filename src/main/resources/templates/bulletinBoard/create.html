@@ -32,7 +32,7 @@
 			<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
 		</div>
 		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">취소</button>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards?page=1}'|">취소</button>
 			<button type="submit" class="btn btn-primary">작성</button>
 		</div>
 	</form>
