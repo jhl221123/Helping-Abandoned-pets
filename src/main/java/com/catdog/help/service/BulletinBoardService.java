@@ -108,13 +108,6 @@ public class BulletinBoardService {
         bulletinBoardRepository.delete(findBoard); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
     }
 
-    @Transactional
-    public void addViews(Long boardId) {
-        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
-        findBoard.addViews();
-        // TODO: 2023-03-29 조회수만 업데이트 하는데 findOne(fetch join) 쿼리가 불편. 리팩토링 필요
-    }
-
     /**============================= private method ==============================*/
 
     private BulletinBoard getBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {

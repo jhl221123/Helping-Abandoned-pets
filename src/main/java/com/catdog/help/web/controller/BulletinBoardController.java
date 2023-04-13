@@ -34,6 +34,7 @@ public class BulletinBoardController {
     private final BulletinBoardService bulletinBoardService;
     private final CommentService commentService;
     private final LikeService likeService;
+    private final ViewUpdater viewUpdater;
 
 
     /***  create  ***/
@@ -74,71 +75,37 @@ public class BulletinBoardController {
     @GetMapping("/boards/{id}")
     public String readBulletinBoard(@PathVariable("id") Long id, Model model,
                                     @SessionAttribute(name = LOGIN_USER) String nickName,
-                                    @RequestParam(name = "clickChild", required = false) Long clickChildId,
-                                    @RequestParam(name = "updateCommentId", required = false) Long updateCommentId,
+                                    @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
+                                    @RequestParam(value = "clickReply", required = false) Long parentCommentId,
                                     HttpServletRequest request, HttpServletResponse response) {
-
-        //start views using cookie
-        if (request.getCookies() != null) {
-            //로그인 사용자
-            Cookie viewCookie = Arrays.stream(request.getCookies())
-                    .filter(c -> c.getName().equals("view"))
-                    .findAny()
-                    .orElse(null);
-            log.info("cookie ===================================={}", viewCookie);
-            if (viewCookie != null) {
-                //조회한 게시글 이미 존재, 해당 게시글 조회 여부 확인
-                if (!viewCookie.getValue().contains(String.valueOf(id))) {
-                    //처음 조회한 게시글
-                    bulletinBoardService.addViews(id);
-                    viewCookie.setValue(viewCookie.getValue() + "_" + String.valueOf(id));
-                    viewCookie.setMaxAge(60 * 60 * 12);
-                    response.addCookie(viewCookie);
-                } else {
-                    //이미 조회 한 게시글
-                }
-            } else {
-                //조회한 게시글이 없어 view cookie 가 없는 경우
-                bulletinBoardService.addViews(id);
-                Cookie newViewCookie = new Cookie("view", String.valueOf(id));
-                newViewCookie.setMaxAge(60 * 60 * 12);
-                response.addCookie(newViewCookie);
-            }
-        } else {
-            // TODO: 2023-03-18 비회원 사용자
-        }
-        //end views using cookie
+        //조회수 증가
+        viewUpdater.addView(id, request, response);
 
         model.addAttribute("nickName", nickName); // 수정버튼 본인확인
 
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
         model.addAttribute("readForm", readForm);
-        model.addAttribute("firstImage", readForm.getImages().get(0));
-        model.addAttribute("imageSize", readForm.getImages().size());
+
+        if (!readForm.getImages().isEmpty()) {
+            model.addAttribute("firstImage", readForm.getImages().get(0));
+            model.addAttribute("imageSize", readForm.getImages().size());
+        }
 
         boolean checkLike = likeService.checkLike(id, nickName);
         model.addAttribute("checkLike", checkLike);
-
-        // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
-        CommentForm commentForm = new CommentForm();
-        model.addAttribute("commentForm", commentForm);
 
         List<CommentForm> commentForms = commentService.readComments(id);
         if (commentForms != null) {
             model.addAttribute("commentForms", commentForms);
         }
+        // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
 
-        //수정 폼 열기
-        if (updateCommentId != null) {
-            UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(updateCommentId, nickName);
-            model.addAttribute("updateCommentId", updateCommentId);
-            model.addAttribute("updateCommentForm", updateCommentForm);
-        }
+        //댓글
+        CommentForm commentForm = new CommentForm();
+        model.addAttribute("commentForm", commentForm);
 
-        //대댓글 폼 열기
-        if (clickChildId != null) {
-            model.addAttribute("clickChild", clickChildId);
-        }
+        //답글
+        model.addAttribute("clickReply", parentCommentId);
 
         return "bulletinBoard/detail";
     }
