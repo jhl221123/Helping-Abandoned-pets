@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class MessageRoomRepository {
+public class JpaMessageRoomRepository {
 
     private final EntityManager em;
 

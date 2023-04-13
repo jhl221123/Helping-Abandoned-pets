@@ -4,7 +4,6 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.*;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.CommentRepository;
 import com.catdog.help.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +26,9 @@ class JpaItemBoardRepositoryTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    CommentRepository commentRepository;
+    JpaCommentRepository jpaCommentRepository;
     @Autowired
-    LikeBoardRepository likeBoardRepository;
+    JpaLikeBoardRepository jpaLikeBoardRepository;
 
     @Test
     void 저장_단건조회_삭제() {

@@ -5,10 +5,10 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.BulletinBoardRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
-import com.catdog.help.repository.jpa.LikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
+import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaUploadFileRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BulletinBoardService {
 
-    private final BulletinBoardRepository bulletinBoardRepository;
-    private final UserRepository userRepository;
-    private final UploadFileRepository uploadFileRepository;
+    private final JpaBulletinBoardRepository bulletinBoardRepository;
+    private final JpaUserRepository userRepository;
+    private final JpaUploadFileRepository uploadFileRepository;
     private final FileStore fileStore;
-    private final LikeBoardRepository likeBoardRepository;
+    private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
 
     /** 게시글 로직 */
@@ -57,7 +57,7 @@ public class BulletinBoardService {
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
         List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFiles);
 
-        int likeSize = (int)likeBoardRepository.countByBoardId(id);
+        int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
         ReadBulletinBoardForm readBulletinBoardForm = getReadBulletinBoardForm(findBoard, readUserForm, readUploadFileForms, likeSize);
         return readBulletinBoardForm;
     }

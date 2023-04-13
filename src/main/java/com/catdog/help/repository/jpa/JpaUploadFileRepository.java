@@ -1,7 +1,6 @@
 package com.catdog.help.repository.jpa;
 
 import com.catdog.help.domain.board.UploadFile;
-import com.catdog.help.repository.UploadFileRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -9,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class JpaUploadFileRepository implements UploadFileRepository {
+public class JpaUploadFileRepository {
 
     @PersistenceContext
     EntityManager em;
@@ -19,7 +18,6 @@ public class JpaUploadFileRepository implements UploadFileRepository {
         return uploadFile.getId();
     }
 
-    @Override
     public UploadFile findById(Long id) {
         return em.find(UploadFile.class, id);
     }
@@ -30,7 +28,6 @@ public class JpaUploadFileRepository implements UploadFileRepository {
                 .getResultList();
     }
 
-    @Override
     public Long delete(UploadFile uploadFile) {
         em.remove(uploadFile);
         return uploadFile.getId();

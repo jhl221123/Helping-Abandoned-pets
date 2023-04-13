@@ -1,7 +1,6 @@
 package com.catdog.help.repository.jpa;
 
 import com.catdog.help.domain.board.BulletinBoard;
-import com.catdog.help.repository.BulletinBoardRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -9,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class JpaBulletinBoardRepository implements BulletinBoardRepository {
+public class JpaBulletinBoardRepository{
 
     @PersistenceContext
     EntityManager em;

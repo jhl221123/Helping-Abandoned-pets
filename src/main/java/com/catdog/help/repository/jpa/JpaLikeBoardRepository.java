@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class LikeBoardRepository {
+public class JpaLikeBoardRepository {
 
     @PersistenceContext
     EntityManager em;

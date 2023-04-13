@@ -5,9 +5,9 @@ import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
-import com.catdog.help.repository.jpa.MessageRoomRepository;
+import com.catdog.help.repository.jpa.JpaMessageRoomRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.message.ReadMessageForm;
 import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import lombok.RequiredArgsConstructor;
@@ -25,20 +25,20 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MessageRoomService {
 
-    private final MessageRoomRepository messageRoomRepository;
+    private final JpaMessageRoomRepository jpaMessageRoomRepository;
     private final JpaItemBoardRepository itemBoardRepository;
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
 
     @Transactional
     public Long createRoom(Long itemBoardId, String senderNickName, String recipientNickName) {
         MessageRoom messageRoom = createMessageRoom(itemBoardId, senderNickName, recipientNickName);
-        messageRoomRepository.save(messageRoom);
+        jpaMessageRoomRepository.save(messageRoom);
         return messageRoom.getId();
     }
 
     public Long checkRoom(Long boardId, String senderNickName) {
         User findUser = userRepository.findByNickName(senderNickName);
-        List<MessageRoom> findRoom = messageRoomRepository.findAllByUserId(findUser.getId());
+        List<MessageRoom> findRoom = jpaMessageRoomRepository.findAllByUserId(findUser.getId());
         MessageRoom target = findRoom.stream()
                 .filter(m -> m.getItemBoard().getId() == boardId)
                 .findAny()
@@ -51,7 +51,7 @@ public class MessageRoomService {
     }
 
     public ReadMessageRoomForm readRoom(Long roomId) {
-        MessageRoom findRoom = messageRoomRepository.findWithRefers(roomId);
+        MessageRoom findRoom = jpaMessageRoomRepository.findWithRefers(roomId);
         ReadMessageRoomForm result = getReadMessageRoomFrom(findRoom);
         return result;
     }
@@ -61,7 +61,7 @@ public class MessageRoomService {
         int offset = page * 10 - 10;
         int limit = 10;
 
-        List<MessageRoom> findRooms = messageRoomRepository.findPageByUserId(findUserId, offset, limit);
+        List<MessageRoom> findRooms = jpaMessageRoomRepository.findPageByUserId(findUserId, offset, limit);
         List<ReadMessageRoomForm> readForms = findRooms.stream()
                 .map(messageRoom -> {
                     ReadMessageRoomForm form = getReadMessageRoomFrom(messageRoom);
@@ -72,7 +72,7 @@ public class MessageRoomService {
 
     public int countPages(String nickName) {
         Long findUserId = userRepository.findByNickName(nickName).getId();
-        int totalRooms = (int) messageRoomRepository.countAllByUserId(findUserId);
+        int totalRooms = (int) jpaMessageRoomRepository.countAllByUserId(findUserId);
         if (totalRooms <= 10) {
             return 1;
         } else if (totalRooms % 10 == 0) {

@@ -5,23 +5,24 @@ import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.jpa.LikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class LikeBoardRepositoryTest {
+class JpaLikeBoardRepositoryTest {
 
-    @Autowired LikeBoardRepository likeBoardRepository;
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    JpaLikeBoardRepository jpaLikeBoardRepository;
+    @Autowired
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired UserRepository userRepository;
 
     @Test
@@ -33,20 +34,20 @@ class LikeBoardRepositoryTest {
         userRepository.save(user2);
 
         BulletinBoard board = createBulletinBoard("title", user1);
-        bulletinBoardRepository.save(board);
+        jpaBulletinBoardRepository.save(board);
 
         LikeBoard likeBoard = getLikeBoard(user1, board);
 
         //when
-        likeBoardRepository.save(likeBoard);
-        LikeBoard findLikeBoard = likeBoardRepository.findByIds(board.getId(), user1.getId());
+        jpaLikeBoardRepository.save(likeBoard);
+        LikeBoard findLikeBoard = jpaLikeBoardRepository.findByIds(board.getId(), user1.getId());
 
         //then
         assertThat(findLikeBoard).isInstanceOf(LikeBoard.class);
 
         //delete
-        likeBoardRepository.delete(findLikeBoard);
-        LikeBoard deletedLikeBoard = likeBoardRepository.findById(findLikeBoard.getId());
+        jpaLikeBoardRepository.delete(findLikeBoard);
+        LikeBoard deletedLikeBoard = jpaLikeBoardRepository.findById(findLikeBoard.getId());
         assertThat(deletedLikeBoard).isNull();
     }
 
@@ -60,12 +61,12 @@ class LikeBoardRepositoryTest {
 
         BulletinBoard board1 = createBulletinBoard("title1", user1);
         BulletinBoard board2 = createBulletinBoard("title2", user2);
-        bulletinBoardRepository.save(board1);
-        bulletinBoardRepository.save(board2);
+        jpaBulletinBoardRepository.save(board1);
+        jpaBulletinBoardRepository.save(board2);
 
-        likeBoardRepository.save(getLikeBoard(user1, board1));
-        likeBoardRepository.save(getLikeBoard(user2, board1));
-        likeBoardRepository.save(getLikeBoard(user1, board2));
+        jpaLikeBoardRepository.save(getLikeBoard(user1, board1));
+        jpaLikeBoardRepository.save(getLikeBoard(user2, board1));
+        jpaLikeBoardRepository.save(getLikeBoard(user1, board2));
 
         //when
 ////        List<LikeBoard> result1 = likeBoardRepository.countByBoardId(board1.getId());

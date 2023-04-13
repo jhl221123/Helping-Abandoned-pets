@@ -6,10 +6,10 @@ import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
-import com.catdog.help.repository.jpa.LikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaUploadFileRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.itemboard.PageItemBoardForm;
 import com.catdog.help.web.form.itemboard.ReadItemBoardForm;
 import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
@@ -33,10 +33,10 @@ import java.util.stream.Collectors;
 public class ItemBoardService {
 
     private final JpaItemBoardRepository itemBoardRepository;
-    private final UserRepository userRepository;
-    private final UploadFileRepository uploadFileRepository;
+    private final JpaUserRepository userRepository;
+    private final JpaUploadFileRepository uploadFileRepository;
     private final FileStore fileStore;
-    private final LikeBoardRepository likeBoardRepository;
+    private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
     @Transactional
     public void createBoard(SaveItemBoardForm saveForm, String nickName) {
@@ -155,7 +155,7 @@ public class ItemBoardService {
         form.setStatus(findBoard.getStatus());
         form.setImages(getReadUploadFileForms(uploadFiles));
         form.setViews(findBoard.getViews());
-        form.setLikeSize((int) likeBoardRepository.countByBoardId(findBoard.getId()));
+        form.setLikeSize((int) jpaLikeBoardRepository.countByBoardId(findBoard.getId()));
         return form;
     }
 

@@ -5,6 +5,8 @@ import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
+import com.catdog.help.repository.jpa.JpaCommentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,12 +19,12 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class CommentRepositoryTest {
+class JpaCommentRepositoryTest {
 
     @Autowired
-    CommentRepository commentRepository;
+    JpaCommentRepository jpaCommentRepository;
     @Autowired
-    BulletinBoardRepository bulletinBoardRepository;
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired
     UserRepository userRepository;
 
@@ -35,21 +37,21 @@ class CommentRepositoryTest {
         userRepository.save(user2);
 
         BulletinBoard board = createBulletinBoard("title", user1);
-        bulletinBoardRepository.save(board);
+        jpaBulletinBoardRepository.save(board);
 
         Comment comment = getComment(user2, board, "comment");
 
         //when
-        commentRepository.save(comment);
-        Comment findComment = commentRepository.findById(comment.getId());
+        jpaCommentRepository.save(comment);
+        Comment findComment = jpaCommentRepository.findById(comment.getId());
 
         //then
         assertThat(comment.getContent()).isEqualTo(findComment.getContent());
         assertThat(comment.getUser().getId()).isEqualTo(findComment.getUser().getId());
 
         //delete
-        commentRepository.delete(comment);
-        Comment findCommentAfterDelete = commentRepository.findById(comment.getId());
+        jpaCommentRepository.delete(comment);
+        Comment findCommentAfterDelete = jpaCommentRepository.findById(comment.getId());
         assertThat(findCommentAfterDelete).isNull();
     }
 
@@ -63,25 +65,25 @@ class CommentRepositoryTest {
 
         BulletinBoard board1 = createBulletinBoard("title1", user1);
         BulletinBoard board2 = createBulletinBoard("title2", user2);
-        bulletinBoardRepository.save(board1);
-        bulletinBoardRepository.save(board2);
+        jpaBulletinBoardRepository.save(board1);
+        jpaBulletinBoardRepository.save(board2);
 
         Comment comment1 = getComment(user2, board1, "comment1");
         Comment comment2 = getComment(user2, board1, "comment2");
-        commentRepository.save(comment1);
-        commentRepository.save(comment2);
+        jpaCommentRepository.save(comment1);
+        jpaCommentRepository.save(comment2);
 
         //when
         Comment comment3 = getComment(user2, board1, "comment3");
         comment3.addParent(comment1);
-        commentRepository.save(comment3);
+        jpaCommentRepository.save(comment3);
 
-        List<Comment> comments = commentRepository.findAll(board1.getId());
+        List<Comment> comments = jpaCommentRepository.findAll(board1.getId());
         for (Comment comment : comments) {
             System.out.println("comment.getContent() = " + comment.getChild()); // TODO: 2023-03-26 자식 댓글 포함시키기
         }
 
-        List<Comment> noComments = commentRepository.findAll(board2.getId());
+        List<Comment> noComments = jpaCommentRepository.findAll(board2.getId());
 
         //then
         assertThat(comments.size()).isEqualTo(2);

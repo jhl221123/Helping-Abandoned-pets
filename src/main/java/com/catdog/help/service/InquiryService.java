@@ -2,8 +2,8 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Inquiry;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class InquiryService {
 
     private final JpaInquiryRepository inquiryRepository;
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
 
     @Transactional
     public Long saveBoard(SaveInquiryForm saveForm) {

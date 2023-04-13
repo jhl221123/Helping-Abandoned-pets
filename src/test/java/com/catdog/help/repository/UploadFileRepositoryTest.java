@@ -3,7 +3,6 @@ package com.catdog.help.repository;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
-import com.catdog.help.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,8 @@ import static org.assertj.core.api.Assertions.*;
 class UploadFileRepositoryTest {
 
     @Autowired UploadFileRepository uploadFileRepository;
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
 
     @Test
     void 저장_조회() {
@@ -29,9 +29,9 @@ class UploadFileRepositoryTest {
         BulletinBoard oneUploadFileBoard = createBulletinBoard("oneUploadFileBoard");
         BulletinBoard uploadFilesBoard = createBulletinBoard("uploadFilesBoard");
         BulletinBoard noUploadFileBoard = createBulletinBoard("noUploadFileBoard");
-        bulletinBoardRepository.save(oneUploadFileBoard);
-        bulletinBoardRepository.save(uploadFilesBoard);
-        bulletinBoardRepository.save(noUploadFileBoard);
+        jpaBulletinBoardRepository.save(oneUploadFileBoard);
+        jpaBulletinBoardRepository.save(uploadFilesBoard);
+        jpaBulletinBoardRepository.save(noUploadFileBoard);
 
         UploadFile uploadFile1 = getUploadFile(oneUploadFileBoard, "uploadName1");
         UploadFile uploadFile2 = getUploadFile(uploadFilesBoard, "uploadName2");

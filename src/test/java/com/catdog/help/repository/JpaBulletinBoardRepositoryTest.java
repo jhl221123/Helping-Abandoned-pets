@@ -6,7 +6,9 @@ import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.jpa.LikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
+import com.catdog.help.repository.jpa.JpaCommentRepository;
+import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,12 +22,15 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class BulletinBoardRepositoryTest {
+class JpaBulletinBoardRepositoryTest {
 
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired UserRepository userRepository;
-    @Autowired CommentRepository commentRepository;
-    @Autowired LikeBoardRepository likeBoardRepository;
+    @Autowired
+    JpaCommentRepository jpaCommentRepository;
+    @Autowired
+    JpaLikeBoardRepository jpaLikeBoardRepository;
 
     @Test
     void 저장_단건조회_삭제() {
@@ -39,20 +44,20 @@ class BulletinBoardRepositoryTest {
         //게시글 생성
         BulletinBoard user1Board1 = createBulletinBoard("title1", user1);
         BulletinBoard user1Board2 = createBulletinBoard("title2", user1);
-        bulletinBoardRepository.save(user1Board1);
-        bulletinBoardRepository.save(user1Board2);
+        jpaBulletinBoardRepository.save(user1Board1);
+        jpaBulletinBoardRepository.save(user1Board2);
 
         //댓글 생성
         Comment comment = getComment(user1, user1Board1, "user1이 board1에 작성하다.");
-        commentRepository.save(comment);
+        jpaCommentRepository.save(comment);
 
         //좋아요 생성
         LikeBoard likeBoard = getLikeBoard(user1, user1Board1);
-        likeBoardRepository.save(likeBoard);
+        jpaLikeBoardRepository.save(likeBoard);
 
         //게시글 조회
-        BulletinBoard findBoard1 = bulletinBoardRepository.findById(user1Board1.getId());
-        BulletinBoard findBoard2 = bulletinBoardRepository.findById(user1Board2.getId());
+        BulletinBoard findBoard1 = jpaBulletinBoardRepository.findById(user1Board1.getId());
+        BulletinBoard findBoard2 = jpaBulletinBoardRepository.findById(user1Board2.getId());
 
         //title
         assertThat(findBoard1.getTitle()).isEqualTo("title1");
@@ -84,12 +89,12 @@ class BulletinBoardRepositoryTest {
         userRepository.save(user1);
         userRepository.save(user2);
         //위 2줄
-        bulletinBoardRepository.save(board1);
-        bulletinBoardRepository.save(board2);
-        bulletinBoardRepository.save(board3);
+        jpaBulletinBoardRepository.save(board1);
+        jpaBulletinBoardRepository.save(board2);
+        jpaBulletinBoardRepository.save(board3);
 
         //when
-        List<BulletinBoard> findBoards = bulletinBoardRepository.findAll();
+        List<BulletinBoard> findBoards = jpaBulletinBoardRepository.findAll();
 
         //then
         //게시판 생성 날짜 기준으로 내림차순 정렬

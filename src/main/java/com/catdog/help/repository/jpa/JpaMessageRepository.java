@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class MessageRepository {
+public class JpaMessageRepository {
 
     private final EntityManager em;
 

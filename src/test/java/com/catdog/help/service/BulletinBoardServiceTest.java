@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.JpaBulletinBoardRepository;
 import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 class BulletinBoardServiceTest {
 
     @Autowired BulletinBoardService bulletinBoardService;
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired UserService userService;
 
     @Test
@@ -32,7 +33,7 @@ class BulletinBoardServiceTest {
 
         //when
         Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickName());
-        BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
+        BulletinBoard findBoard = jpaBulletinBoardRepository.findById(boardId);
 
         //then
         assertThat(findBoard.getTitle()).isEqualTo(boardForm.getTitle());
@@ -69,7 +70,7 @@ class BulletinBoardServiceTest {
         UpdateBulletinBoardForm updateForm = bulletinBoardService.getUpdateForm(boardId);
         update(updateForm);
         Long updateBoardId = bulletinBoardService.updateBoard(updateForm);
-        BulletinBoard updateBoard = bulletinBoardRepository.findById(updateBoardId);
+        BulletinBoard updateBoard = jpaBulletinBoardRepository.findById(updateBoardId);
 
         //then
         assertThat(updateForm.getId()).isEqualTo(boardId);

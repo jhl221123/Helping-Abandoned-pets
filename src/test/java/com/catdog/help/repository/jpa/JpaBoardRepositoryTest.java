@@ -5,9 +5,8 @@ import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.BulletinBoardRepository;
+import com.catdog.help.repository.JpaBulletinBoardRepository;
 import com.catdog.help.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -24,7 +22,8 @@ class JpaBoardRepositoryTest {
 
     @Autowired JpaBoardRepository boardRepository;
     @Autowired UserRepository userRepository;
-    @Autowired BulletinBoardRepository bulletinBoardRepository;
+    @Autowired
+    JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired JpaInquiryRepository inquiryRepository;
     @Autowired TestData testData;
     @Autowired EntityManager em;
@@ -36,7 +35,7 @@ class JpaBoardRepositoryTest {
         userRepository.save(user);
 
         BulletinBoard bulletinBoard = testData.createBulletinBoard("title", user);
-        bulletinBoardRepository.save(bulletinBoard);
+        jpaBulletinBoardRepository.save(bulletinBoard);
 
         Inquiry inquiry = testData.getInquiry(user, "title", true);
         inquiryRepository.save(inquiry);

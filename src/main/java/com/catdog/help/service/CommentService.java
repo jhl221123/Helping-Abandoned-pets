@@ -4,9 +4,9 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.CommentRepository;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaBoardRepository;
+import com.catdog.help.repository.jpa.JpaCommentRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class CommentService {
 
-    private final CommentRepository commentRepository;
+    private final JpaCommentRepository jpaCommentRepository;
     private final JpaBoardRepository boardRepository;
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
 
 
     @Transactional
@@ -38,27 +38,27 @@ public class CommentService {
         if (parentCommentId == -1L) {
             //parent comment
             Comment parentComment = getComment(commentForm, board, user);
-            commentRepository.save(parentComment);
+            jpaCommentRepository.save(parentComment);
             return parentComment.getId();
         } else {
             //child comment
-            Comment findParentComment = commentRepository.findById(parentCommentId);
+            Comment findParentComment = jpaCommentRepository.findById(parentCommentId);
             Comment childComment = getComment(commentForm, board, user);
             childComment.addParent(findParentComment);
-            commentRepository.save(childComment);
+            jpaCommentRepository.save(childComment);
             return childComment.getId();
         }
     }
 
     public CommentForm readComment(Long commentId) {
-        Comment findComment = commentRepository.findById(commentId);
+        Comment findComment = jpaCommentRepository.findById(commentId);
         return getCommentForm(findComment);
     }
 
     public List<CommentForm> readComments(Long boardId) {
         List<CommentForm> commentForms = new ArrayList<>();
 
-        List<Comment> comments = commentRepository.findAll(boardId);
+        List<Comment> comments = jpaCommentRepository.findAll(boardId);
         if (comments.isEmpty()) {
             return null;
         }
@@ -73,13 +73,13 @@ public class CommentService {
     }
 
     public UpdateCommentForm getUpdateCommentForm(Long commentId, String nickName) {
-        Comment findComment = commentRepository.findById(commentId);
+        Comment findComment = jpaCommentRepository.findById(commentId);
         return getUpdateForm(findComment, nickName);
     }
 
     @Transactional
     public Long updateComment(UpdateCommentForm updateForm) {
-        Comment findComment = commentRepository.findById(updateForm.getCommentId());
+        Comment findComment = jpaCommentRepository.findById(updateForm.getCommentId());
         findComment.setContent(updateForm.getContent());
         findComment.setDates(new Dates(findComment.getDates().getCreateDate(), LocalDateTime.now(), null));
         return findComment.getId();
@@ -87,8 +87,8 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId) {
-        Comment findComment = commentRepository.findById(commentId);
-        commentRepository.delete(findComment);
+        Comment findComment = jpaCommentRepository.findById(commentId);
+        jpaCommentRepository.delete(findComment);
     }
 
 

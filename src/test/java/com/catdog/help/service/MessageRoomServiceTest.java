@@ -9,8 +9,8 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
-import com.catdog.help.repository.jpa.MessageRepository;
-import com.catdog.help.repository.jpa.MessageRoomRepository;
+import com.catdog.help.repository.jpa.JpaMessageRepository;
+import com.catdog.help.repository.jpa.JpaMessageRoomRepository;
 import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,10 @@ import java.time.LocalDateTime;
 class MessageRoomServiceTest {
 
     @Autowired MessageRoomService messageRoomService;
-    @Autowired MessageRoomRepository messageRoomRepository;
-    @Autowired MessageRepository messageRepository;
+    @Autowired
+    JpaMessageRoomRepository jpaMessageRoomRepository;
+    @Autowired
+    JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
     @Autowired UserRepository userRepository;
 
@@ -42,15 +44,15 @@ class MessageRoomServiceTest {
         itemBoardRepository.save(itemBoardByA);
 
         MessageRoom roomAC = createMessageRoom(recipientA, senderC, itemBoardByA);
-        messageRoomRepository.save(roomAC);
+        jpaMessageRoomRepository.save(roomAC);
 
         Message messageCToA = createMessage(senderC, roomAC);
         Message messageAToC = createMessage(recipientA, roomAC);
-        messageRepository.save(messageCToA);
-        messageRepository.save(messageAToC);
+        jpaMessageRepository.save(messageCToA);
+        jpaMessageRepository.save(messageAToC);
 
         //when
-        messageRoomRepository.flushAndClear();
+        jpaMessageRoomRepository.flushAndClear();
         ReadMessageRoomForm roomFrom = messageRoomService.readRoom(roomAC.getId());
 
         //then

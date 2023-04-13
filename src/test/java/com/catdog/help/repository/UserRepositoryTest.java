@@ -3,6 +3,7 @@ package com.catdog.help.repository;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 class UserRepositoryTest {
 
     @Autowired
-    UserRepository userRepository;
+    JpaUserRepository userRepository;
 
     @Test
     public void saveAndFindOne() {

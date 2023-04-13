@@ -20,10 +20,12 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class MessageAndMessageRoomRepositoryTest {
+class MessageAndJpaMessageRoomRepositoryTest {
 
-    @Autowired MessageRoomRepository messageRoomRepository;
-    @Autowired MessageRepository messageRepository;
+    @Autowired
+    JpaMessageRoomRepository jpaMessageRoomRepository;
+    @Autowired
+    JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
     @Autowired UserRepository userRepository;
 
@@ -49,26 +51,26 @@ class MessageAndMessageRoomRepositoryTest {
         MessageRoom roomAD = createMessageRoom(recipientA, senderD, itemBoardByA);
         MessageRoom roomBC = createMessageRoom(recipientB, senderC, itemBoardByB);
 
-        messageRoomRepository.save(roomAC);
-        messageRoomRepository.save(roomAD);
-        messageRoomRepository.save(roomBC);
+        jpaMessageRoomRepository.save(roomAC);
+        jpaMessageRoomRepository.save(roomAD);
+        jpaMessageRoomRepository.save(roomBC);
 
         //메시지 생성
         Message messageCToA = createMessage(senderC, roomAC);
         Message messageAToC = createMessage(recipientA, roomAC);
         Message messageCToB = createMessage(senderC, roomBC);
         Message messageDToA = createMessage(senderD, roomAD);
-        messageRepository.save(messageCToA);
-        messageRepository.save(messageAToC);
-        messageRepository.save(messageCToB);
-        messageRepository.save(messageDToA);
+        jpaMessageRepository.save(messageCToA);
+        jpaMessageRepository.save(messageAToC);
+        jpaMessageRepository.save(messageCToB);
+        jpaMessageRepository.save(messageDToA);
 
 //        //when
-        List<MessageRoom> roomForC = messageRoomRepository.findAllByUserId(senderC.getId());
-        List<MessageRoom> roomForD = messageRoomRepository.findAllByUserId(senderD.getId());
-        List<Message> messageAAndC = messageRepository.findByRoomId(roomAC.getId());
-        List<Message> messageAAndD = messageRepository.findByRoomId(roomAD.getId());
-        List<Message> messageBAndC = messageRepository.findByRoomId(roomBC.getId());
+        List<MessageRoom> roomForC = jpaMessageRoomRepository.findAllByUserId(senderC.getId());
+        List<MessageRoom> roomForD = jpaMessageRoomRepository.findAllByUserId(senderD.getId());
+        List<Message> messageAAndC = jpaMessageRepository.findByRoomId(roomAC.getId());
+        List<Message> messageAAndD = jpaMessageRepository.findByRoomId(roomAD.getId());
+        List<Message> messageBAndC = jpaMessageRepository.findByRoomId(roomBC.getId());
 
         //then
         //룸
@@ -95,16 +97,16 @@ class MessageAndMessageRoomRepositoryTest {
         itemBoardRepository.save(itemBoardByA);
 
         MessageRoom roomAC = createMessageRoom(recipientA, senderC, itemBoardByA);
-        messageRoomRepository.save(roomAC);
+        jpaMessageRoomRepository.save(roomAC);
 
         Message messageCToA = createMessage(senderC, roomAC);
         Message messageAToC = createMessage(recipientA, roomAC);
-        messageRepository.save(messageCToA);
-        messageRepository.save(messageAToC);
+        jpaMessageRepository.save(messageCToA);
+        jpaMessageRepository.save(messageAToC);
 
         //when
-        messageRoomRepository.flushAndClear();
-        MessageRoom findRoom = messageRoomRepository.findWithRefers(roomAC.getId());
+        jpaMessageRoomRepository.flushAndClear();
+        MessageRoom findRoom = jpaMessageRoomRepository.findWithRefers(roomAC.getId());
 
         //then
         assertThat(findRoom).isNotNull();
