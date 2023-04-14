@@ -42,7 +42,7 @@ public class BulletinBoardService {
 
     @Transactional
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
-        User findUser = userRepository.findByNickName(nickName);
+        User findUser = userRepository.findByNickname(nickName);
         BulletinBoard board = getBulletinBoard(boardForm, findUser);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
 
@@ -70,7 +70,7 @@ public class BulletinBoardService {
         List<BulletinBoard> boards = bulletinBoardRepository.findPage(offset, limit);
         for (BulletinBoard board : boards) {
             User user = board.getUser();
-            pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickName())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
+            pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickname())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
         }
         return pageBoardForms;
     }
@@ -147,7 +147,7 @@ public class BulletinBoardService {
         boardForm.setId(board.getId());
         boardForm.setRegion(board.getRegion());
         boardForm.setTitle(board.getTitle());
-        boardForm.setUserNickName(nickName);
+        boardForm.setNickname(nickName);
         boardForm.setDates(board.getDates());
         boardForm.setViews(board.getViews());
         return boardForm;
@@ -193,7 +193,7 @@ public class BulletinBoardService {
         readForm.setId(user.getId());
         readForm.setEmailId(user.getEmailId());
         readForm.setPassword(user.getPassword());
-        readForm.setNickName(user.getNickName());
+        readForm.setNickname(user.getNickname());
         readForm.setName(user.getName());
         readForm.setAge(user.getAge());
         readForm.setGender(user.getGender());

@@ -34,8 +34,8 @@ class UserRepositoryTest {
         User findUser2 = userRepository.findById(user2.getId());
         User findUser3 = userRepository.findByEmailId(user1.getEmailId());
         User findUser4 = userRepository.findByEmailId(user2.getEmailId());
-        User findUser5 = userRepository.findByNickName(user1.getNickName());
-        User findUser6 = userRepository.findByNickName(user2.getNickName());
+        User findUser5 = userRepository.findByNickname(user1.getNickname());
+        User findUser6 = userRepository.findByNickname(user2.getNickname());
 
         User findUser7 = userRepository.findByEmailId("user3@email");
 
@@ -75,7 +75,7 @@ class UserRepositoryTest {
         User user = new User();
         user.setEmailId(emailId);
         user.setPassword(password);
-        user.setNickName(nickName);
+        user.setNickname(nickName);
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);

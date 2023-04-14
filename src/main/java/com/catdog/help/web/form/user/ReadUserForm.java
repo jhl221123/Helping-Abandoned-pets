@@ -27,7 +27,7 @@ public class ReadUserForm {
 
     @NotBlank
     @Length(min = 2, max = 10)
-    private String nickName;
+    private String nickname;
 
     @NotBlank
     private String name;

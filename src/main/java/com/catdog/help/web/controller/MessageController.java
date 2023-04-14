@@ -27,14 +27,14 @@ public class MessageController {
 
 
     @GetMapping("/messages/new")
-    public String checkMessageRoom(@SessionAttribute(name = LOGIN_USER) String senderNickName,
+    public String checkMessageRoom(@SessionAttribute(name = LOGIN_USER) String senderNickname,
                                    @RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
-                                   @RequestParam("recipientNickName") String recipientNickName) {
+                                   @RequestParam("recipientNickname") String recipientNickname) {
 
-        Long roomId = messageRoomService.checkRoom(boardId, senderNickName);
+        Long roomId = messageRoomService.checkRoom(boardId, senderNickname);
         
         if (roomId == -1L) { // message room 생성
-            Long newRoomId = messageRoomService.createRoom(boardId, senderNickName, recipientNickName);
+            Long newRoomId = messageRoomService.createRoom(boardId, senderNickname, recipientNickname);
             redirectAttributes.addAttribute("newRoomId", newRoomId);
             return "redirect:/messages/{newRoomId}";
         } else { // 기존 message room 입장
@@ -44,7 +44,7 @@ public class MessageController {
     }
 
     @GetMapping("/messages/{roomId}")
-    public String getMessageRoom(@SessionAttribute(name = LOGIN_USER) String senderNickName,
+    public String getMessageRoom(@SessionAttribute(name = LOGIN_USER) String senderNickname,
                                  @PathVariable("roomId") Long roomId, Model model) {
 
         ReadMessageRoomForm readForm = messageRoomService.readRoom(roomId);
@@ -53,26 +53,26 @@ public class MessageController {
         SaveMessageForm saveForm = new SaveMessageForm();
         model.addAttribute("saveForm", saveForm);
 
-        model.addAttribute("sender", senderNickName);
+        model.addAttribute("sender", senderNickname);
         return "messages/room";
     }
 
     @PostMapping("/messages/{roomId}")
-    public String sendMessage(@PathVariable("roomId") Long roomId, @SessionAttribute(name = LOGIN_USER) String senderNickName,
+    public String sendMessage(@PathVariable("roomId") Long roomId, @SessionAttribute(name = LOGIN_USER) String senderNickname,
                               @Validated @ModelAttribute("saveForm") SaveMessageForm saveForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             //검증
         }
-        messageService.createMessage(roomId, senderNickName, saveForm);
+        messageService.createMessage(roomId, senderNickname, saveForm);
         return "redirect:/messages/{roomId}";
     }
 
     @GetMapping("/messages")
-    public String getMessageRooms(@SessionAttribute(name = LOGIN_USER) String senderNickName,
+    public String getMessageRooms(@SessionAttribute(name = LOGIN_USER) String senderNickname,
                                   @RequestParam("page") int page, Model model) {
-        List<ReadMessageRoomForm> readPage = messageRoomService.readPageOfRooms(senderNickName, page);
+        List<ReadMessageRoomForm> readPage = messageRoomService.readPageOfRooms(senderNickname, page);
 
-        int lastPage = messageRoomService.countPages(senderNickName);
+        int lastPage = messageRoomService.countPages(senderNickname);
         model.addAttribute("readForms", readPage);
         model.addAttribute("lastPage", lastPage);
         // TODO: 2023-04-06 페이징 처리

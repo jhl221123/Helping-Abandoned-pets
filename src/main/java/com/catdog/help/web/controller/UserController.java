@@ -45,7 +45,7 @@ public class UserController {
             return "users/joinForm";
         }
 
-        if (userService.checkNickNameDuplication(saveUserForm.getNickName())) {
+        if (userService.checkNicknameDuplication(saveUserForm.getNickname())) {
             bindingResult.rejectValue("nickName", "duplicate", "이미 존재하는 닉네임입니다.");
             return "users/joinForm";
         }
@@ -75,7 +75,7 @@ public class UserController {
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(LOGIN_USER, loginReadUserForm.getNickName());
+        session.setAttribute(LOGIN_USER, loginReadUserForm.getNickname());
         return "redirect:" + redirectURL;
     }
 
@@ -91,8 +91,8 @@ public class UserController {
     @GetMapping("/detail")
     public String detail(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(false);
-        String loginUserNickName = (String) session.getAttribute(LOGIN_USER);
-        ReadUserForm readUserForm = userService.getUserDtoByNickName(loginUserNickName);
+        String loginUserNickname = (String) session.getAttribute(LOGIN_USER);
+        ReadUserForm readUserForm = userService.readByNickname(loginUserNickname);
         model.addAttribute("readUserForm", readUserForm);
         return "users/detail";
     }
@@ -148,7 +148,7 @@ public class UserController {
             return "users/editPassword";
         }
 
-        String findPassword = userService.getUserDtoByNickName(nickName).getPassword();
+        String findPassword = userService.readByNickname(nickName).getPassword();
         if (!findPassword.equals(changeForm.getBeforePassword())) {
             bindingResult.rejectValue("beforePassword", "inaccurate", "기존 비밀번호와 일치하지 않습니다.");
             return "users/editPassword";

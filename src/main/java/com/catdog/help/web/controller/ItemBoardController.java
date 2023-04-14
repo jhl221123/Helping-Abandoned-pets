@@ -15,10 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
@@ -35,17 +33,17 @@ public class ItemBoardController {
 
     /***  create  ***/
     @GetMapping("/items/new")
-    public String createItemBoardForm(@SessionAttribute(name = LOGIN_USER) String nickName, Model model) {
+    public String createItemBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         SaveItemBoardForm saveForm = new SaveItemBoardForm();
         model.addAttribute("saveForm", saveForm);
-        model.addAttribute("nickName", nickName);
+        model.addAttribute("nickname", nickname);
         return "items/create";
     }
 
     @PostMapping("/items/new")
-    public String createItemBoard(@SessionAttribute(name = LOGIN_USER) String nickName, Model model,
+    public String createItemBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                                   @Validated @ModelAttribute("saveForm") SaveItemBoardForm saveForm, BindingResult bindingResult) {
-        model.addAttribute("nickName", nickName);
+        model.addAttribute("nickname", nickname);
         if (bindingResult.hasErrors()) {
             return "items/create";
         }
@@ -57,7 +55,7 @@ public class ItemBoardController {
             }
         }
 
-        itemBoardService.createBoard(saveForm, nickName);
+        itemBoardService.createBoard(saveForm, nickname);
         return "redirect:/items?page=1";
     }
 
@@ -75,19 +73,19 @@ public class ItemBoardController {
 
     @GetMapping("/items/{id}")
     public String readItemBoard(@PathVariable("id") Long id, Model model,
-                                @SessionAttribute(name = LOGIN_USER) String nickName,
+                                @SessionAttribute(name = LOGIN_USER) String nickname,
                                 HttpServletRequest request, HttpServletResponse response) {
         //조회수 증가
         viewUpdater.addView(id, request, response);
 
-        model.addAttribute("nickName", nickName); // 수정버튼 본인확인
+        model.addAttribute("nickname", nickname); // 수정버튼 본인확인
 
         ReadItemBoardForm findReadForm = itemBoardService.readBoard(id);
         model.addAttribute("readForm", findReadForm);
         model.addAttribute("firstImage", findReadForm.getImages().get(0));
         model.addAttribute("imageSize", findReadForm.getImages().size());
 
-        boolean checkLike = likeService.checkLike(id, nickName);
+        boolean checkLike = likeService.checkLike(id, nickname);
         model.addAttribute("checkLike", checkLike);
 
         return "items/detail";
@@ -97,10 +95,10 @@ public class ItemBoardController {
     /***  update  ***/
     @GetMapping("/items/{id}/edit")
     public String updateForm(@PathVariable("id") Long id, Model model,
-                             @SessionAttribute(name = LOGIN_USER) String nickName) {
+                             @SessionAttribute(name = LOGIN_USER) String nickname) {
         UpdateItemBoardForm updateForm = itemBoardService.getUpdateForm(id);
         model.addAttribute("updateForm", updateForm);
-        model.addAttribute("nickName", nickName);
+        model.addAttribute("nickname", nickname);
         return "items/update";
     }
 
@@ -113,17 +111,17 @@ public class ItemBoardController {
 
     @GetMapping("/items/{id}/like")
     public String clickLike(@PathVariable("id") Long id,
-                            @SessionAttribute(name = LOGIN_USER) String nickName) {
-        likeService.clickLike(id, nickName);
+                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+        likeService.clickLike(id, nickname);
         return "redirect:/items/{id}";
     }
 
     @GetMapping("/items/{id}/status")
     public String changeItemStatus(@PathVariable("id") Long id,
-                                   @SessionAttribute(name = LOGIN_USER) String nickName) {
+                                   @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
 
@@ -134,24 +132,24 @@ public class ItemBoardController {
     /***  delete  ***/
     @GetMapping("/items/{id}/delete")
     public String deleteForm(@PathVariable("id") Long id, Model model,
-                             @SessionAttribute(name = LOGIN_USER) String nickName) {
+                             @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
 
-        model.addAttribute("nickName", nickName);
+        model.addAttribute("nickname", nickname);
         model.addAttribute("readForm", readForm);
         return "items/delete";
     }
 
     @PostMapping("/items/{id}/delete")
     public String delete(@PathVariable("id") Long id,
-                         @SessionAttribute(name = LOGIN_USER) String nickName) {
+                         @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickName().equals(nickName)) {
+        if (!readForm.getUserForm().getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
         itemBoardService.deleteBoard(id);

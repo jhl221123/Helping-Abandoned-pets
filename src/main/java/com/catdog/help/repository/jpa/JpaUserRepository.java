@@ -30,9 +30,9 @@ public class JpaUserRepository {
         return findUser.stream().findAny().orElse(null);
     }
 
-    public User findByNickName(String nickName) {
-        List<User> findUser = em.createQuery("select u from User u where u.nickName = :nickName", User.class)
-                .setParameter("nickName", nickName)
+    public User findByNickname(String nickname) {
+        List<User> findUser = em.createQuery("select u from User u where u.nickname = :nickname", User.class)
+                .setParameter("nickname", nickname)
                 .getResultList();
         return findUser.stream().findAny().orElse(null);
     }

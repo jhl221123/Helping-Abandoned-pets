@@ -10,7 +10,7 @@ public class PageBulletinBoardForm {
     private Long id;
     private String region;
     private String title;
-    private String userNickName;
+    private String nickname;
     private Dates dates;
     private int views;
 }

@@ -41,7 +41,7 @@ public class ItemBoardService {
     @Transactional
     public void createBoard(SaveItemBoardForm saveForm, String nickName) {
         ItemBoard itemBoard = getItemBoard(saveForm);
-        User findUser = userRepository.findByNickName(nickName);
+        User findUser = userRepository.findByNickname(nickName);
         itemBoard.setUser(findUser);
         itemBoardRepository.save(itemBoard);
     }
@@ -220,7 +220,7 @@ public class ItemBoardService {
         readForm.setId(user.getId());
         readForm.setEmailId(user.getEmailId());
         readForm.setPassword(user.getPassword());
-        readForm.setNickName(user.getNickName());
+        readForm.setNickname(user.getNickname());
         readForm.setName(user.getName());
         readForm.setAge(user.getAge());
         readForm.setGender(user.getGender());

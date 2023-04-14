@@ -13,7 +13,7 @@ import java.util.List;
 public class ReadBulletinBoardForm {
 
     private Long id;
-    private ReadUserForm readUserForm;
+    private ReadUserForm readUserForm; // TODO: 2023-04-13 닉네임만 있으면 되는 거 아님?
     private String title;
     private String content;
     private Dates dates;

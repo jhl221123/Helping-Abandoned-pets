@@ -32,7 +32,7 @@ class BulletinBoardServiceTest {
         SaveBulletinBoardForm boardForm = getBoardForm("title");
 
         //when
-        Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickName());
+        Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickname());
         BulletinBoard findBoard = jpaBulletinBoardRepository.findById(boardId);
 
         //then
@@ -54,7 +54,7 @@ class BulletinBoardServiceTest {
 
         //then
         assertThat(firstBoardDto.getTitle()).isEqualTo("firstTitle");
-        assertThat(firstBoardDto.getReadUserForm().getNickName()).isEqualTo("nickName");
+        assertThat(firstBoardDto.getReadUserForm().getNickname()).isEqualTo("nickName");
     }
 
     @Test
@@ -64,7 +64,7 @@ class BulletinBoardServiceTest {
         Long userId = userService.join(userForm);
 
         SaveBulletinBoardForm boardForm = getBoardForm("title");
-        Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickName());
+        Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickname());
 
         //when
         UpdateBulletinBoardForm updateForm = bulletinBoardService.getUpdateForm(boardId);
@@ -91,7 +91,7 @@ class BulletinBoardServiceTest {
         SaveUserForm form = new SaveUserForm();
         form.setEmailId("emailId");
         form.setPassword("password");
-        form.setNickName(nickName);
+        form.setNickname(nickName);
         form.setName("name");
         form.setAge(20);
         form.setGender(Gender.MAN);

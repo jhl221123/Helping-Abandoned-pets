@@ -27,7 +27,7 @@ public class User {
     private String password;
 
     @Column(name = "user_nickname", unique = true)
-    private String nickName;
+    private String nickname;
 
     @Column(name = "user_name")
     private String name;
@@ -55,21 +55,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-
-    // TODO: 2023-03-25 빌더 더 알아보고 setter 닫기
-//    @Builder
-//    public User(Long id, String emailId, String password, String nickName, String name, int age, Gender gender,
-//                List<LikeBoard> likeBoards, List<Comment> comments, DateList dateList, List<BulletinBoard> bulletinBoards) {
-//        this.id = id;
-//        this.emailId = emailId;
-//        this.password = password;
-//        this.nickName = nickName;
-//        this.name = name;
-//        this.age = age;
-//        this.gender = gender;
-//        this.likeBoards = likeBoards;
-//        this.comments = comments;
-//        this.dateList = dateList;
-//        this.bulletinBoards = bulletinBoards;
-//    }
 }

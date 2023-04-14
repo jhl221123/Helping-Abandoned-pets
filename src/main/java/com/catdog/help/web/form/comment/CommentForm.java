@@ -15,7 +15,7 @@ public class CommentForm {
 
     private Long boardId;
 
-    private String nickName;
+    private String nickname;
 
     @NotBlank
     private String content;

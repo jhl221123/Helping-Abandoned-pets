@@ -33,7 +33,7 @@ public class CommentService {
     public Long createComment(CommentForm commentForm, Long parentCommentId) {
 
         Board board = boardRepository.findById(commentForm.getBoardId());
-        User user = userRepository.findByNickName(commentForm.getNickName());
+        User user = userRepository.findByNickname(commentForm.getNickname());
 
         if (parentCommentId == -1L) {
             //parent comment
@@ -108,7 +108,7 @@ public class CommentService {
         CommentForm commentForm = new CommentForm();
         commentForm.setId(comment.getId());
         commentForm.setBoardId(comment.getBoard().getId());
-        commentForm.setNickName(comment.getUser().getNickName());
+        commentForm.setNickname(comment.getUser().getNickname());
         commentForm.setContent(comment.getContent());
         if (!comment.getChild().isEmpty()) {
             for (Comment child : comment.getChild()) {
@@ -123,7 +123,7 @@ public class CommentService {
     private static UpdateCommentForm getUpdateForm(Comment findComment, String nickName) {
         UpdateCommentForm updateForm = new UpdateCommentForm();
         updateForm.setCommentId(findComment.getId());
-        updateForm.setNickName(nickName);
+        updateForm.setNickname(nickName);
         updateForm.setContent(findComment.getContent());
         return updateForm;
     }

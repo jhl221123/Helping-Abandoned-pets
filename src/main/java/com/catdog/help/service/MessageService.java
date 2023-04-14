@@ -29,7 +29,7 @@ public class MessageService {
     @Transactional
     public void createMessage(Long roomId, String senderNickName, SaveMessageForm saveForm) {
         MessageRoom findRoom = jpaMessageRoomRepository.findById(roomId);
-        User sender = userRepository.findByNickName(senderNickName);
+        User sender = userRepository.findByNickname(senderNickName);
         Message message = new Message();
         message.setMessageRoom(findRoom);
         message.setSender(sender);

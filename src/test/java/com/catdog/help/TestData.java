@@ -19,7 +19,7 @@ public class TestData {
         User user = new User();
         user.setEmailId(emailId);
         user.setPassword(password);
-        user.setNickName(nickname);
+        user.setNickname(nickname);
         user.setName("name");
         user.setAge(28);
         user.setGender(Gender.MAN);

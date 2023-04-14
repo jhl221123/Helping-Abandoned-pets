@@ -10,7 +10,6 @@ import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ public class CommentController {
 
     @PostMapping("/comments/parent")
     public String createParentComment(@RequestParam("id") Long boardId, RedirectAttributes redirectAttributes,
-                                      @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                      @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
                                       @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         redirectAttributes.addAttribute("id", boardId);
 
@@ -35,7 +34,7 @@ public class CommentController {
             return "bulletinBoard/detail";
         }
         commentForm.setBoardId(boardId);
-        commentForm.setNickName(nickName);
+        commentForm.setNickname(nickname);
         commentService.createComment(commentForm, -1L);
 
         return targetBoard(boardId);
@@ -52,7 +51,7 @@ public class CommentController {
 
     @PostMapping("/comments/child")
     public String createChildComment(@RequestParam("id") Long boardId, RedirectAttributes redirectAttributes, @RequestParam("parentId") Long parentId,
-                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
                                      @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         redirectAttributes.addAttribute("id", boardId);
 
@@ -61,7 +60,7 @@ public class CommentController {
             return "bulletinBoard/detail";
         }
         commentForm.setBoardId(boardId);
-        commentForm.setNickName(nickName);
+        commentForm.setNickname(nickname);
         commentService.createComment(commentForm, parentId);
 
         return targetBoard(boardId);
@@ -69,13 +68,13 @@ public class CommentController {
 
     @GetMapping("/comments/{id}/edit")
     public String editCommentForm(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
-                                  @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName,
+                                  @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
                                   RedirectAttributes redirectAttributes) {
         redirectAttributes.addAttribute("id", boardId);
 
         // TODO: 2023-04-12 댓글 작성자 외 리턴
 
-        UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(id, nickName);
+        UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(id, nickname);
         redirectAttributes.addAttribute("updateCommentId", id);
         redirectAttributes.addFlashAttribute("updateCommentForm", updateCommentForm);
 
@@ -85,12 +84,12 @@ public class CommentController {
     @PostMapping("/comments/{id}/edit")
     public String editComment(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
                                 @Validated @ModelAttribute("updateCommentForm") UpdateCommentForm updateForm, BindingResult bindingResult,
-                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname) {
         redirectAttributes.addAttribute("id", boardId);
 
         //본인 댓글만 수정 가능
-        String commentNickName = commentService.readComment(id).getNickName();
-        if (!commentNickName.equals(nickName)) {
+        String commentNickname = commentService.readComment(id).getNickname();
+        if (!commentNickname.equals(nickname)) {
             return "redirect:/boards/{id}";
         }
 
@@ -109,12 +108,12 @@ public class CommentController {
     @GetMapping("/comments/{id}/delete")
     public String deleteComment(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
                                 RedirectAttributes redirectAttributes,
-                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName) {
+                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname) {
         redirectAttributes.addAttribute("id", boardId);
 
         //본인 댓글만 삭제 가능
-        String commentNickName = commentService.readComment(id).getNickName();
-        if (!commentNickName.equals(nickName)) {
+        String commentNickname = commentService.readComment(id).getNickname();
+        if (!commentNickname.equals(nickname)) {
             return "redirect:/boards/{id}";
         }
 

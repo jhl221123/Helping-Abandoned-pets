@@ -37,7 +37,7 @@ public class MessageRoomService {
     }
 
     public Long checkRoom(Long boardId, String senderNickName) {
-        User findUser = userRepository.findByNickName(senderNickName);
+        User findUser = userRepository.findByNickname(senderNickName);
         List<MessageRoom> findRoom = jpaMessageRoomRepository.findAllByUserId(findUser.getId());
         MessageRoom target = findRoom.stream()
                 .filter(m -> m.getItemBoard().getId() == boardId)
@@ -57,7 +57,7 @@ public class MessageRoomService {
     }
 
     public List<ReadMessageRoomForm> readPageOfRooms(String nickName, int page) {
-        Long findUserId = userRepository.findByNickName(nickName).getId();
+        Long findUserId = userRepository.findByNickname(nickName).getId();
         int offset = page * 10 - 10;
         int limit = 10;
 
@@ -71,7 +71,7 @@ public class MessageRoomService {
     }
 
     public int countPages(String nickName) {
-        Long findUserId = userRepository.findByNickName(nickName).getId();
+        Long findUserId = userRepository.findByNickname(nickName).getId();
         int totalRooms = (int) jpaMessageRoomRepository.countAllByUserId(findUserId);
         if (totalRooms <= 10) {
             return 1;
@@ -88,8 +88,8 @@ public class MessageRoomService {
 
     private MessageRoom createMessageRoom(Long itemBoardId, String senderNickName, String recipientNickName) {
         ItemBoard findBoard = itemBoardRepository.findById(itemBoardId);
-        User sender = userRepository.findByNickName(senderNickName);
-        User recipient = userRepository.findByNickName(recipientNickName);
+        User sender = userRepository.findByNickname(senderNickName);
+        User recipient = userRepository.findByNickname(recipientNickName);
 
         MessageRoom messageRoom = new MessageRoom();
         messageRoom.setItemBoard(findBoard);
@@ -104,8 +104,8 @@ public class MessageRoomService {
         form.setId(messageRoom.getId());
         form.setItemBoardId(messageRoom.getItemBoard().getId());
         form.setItemName(messageRoom.getItemBoard().getItemName());
-        form.setSenderNick(messageRoom.getSender().getNickName());
-        form.setRecipientNick(messageRoom.getRecipient().getNickName());
+        form.setSenderNick(messageRoom.getSender().getNickname());
+        form.setRecipientNick(messageRoom.getRecipient().getNickname());
         form.setCreateDate(messageRoom.getDates().getCreateDate());
         List<ReadMessageForm> messageForms = getReadMessageForms(messageRoom);
         form.setMessages(messageForms);
@@ -123,7 +123,7 @@ public class MessageRoomService {
 
     private static ReadMessageForm getReadMessageForm(Message message) {
         ReadMessageForm form = new ReadMessageForm();
-        form.setSenderNick(message.getSender().getNickName()); //메시지 강제호출
+        form.setSenderNick(message.getSender().getNickname()); //메시지 강제호출
         form.setContent(message.getContent());
         form.setCreateDate(message.getDates().getCreateDate());
         return form;

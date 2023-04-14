@@ -3,6 +3,8 @@ package com.catdog.help.repository;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
+import com.catdog.help.repository.jpa.JpaUploadFileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,8 @@ import static org.assertj.core.api.Assertions.*;
 @Slf4j
 class UploadFileRepositoryTest {
 
-    @Autowired UploadFileRepository uploadFileRepository;
+    @Autowired
+    JpaUploadFileRepository uploadFileRepository;
     @Autowired
     JpaBulletinBoardRepository jpaBulletinBoardRepository;
 

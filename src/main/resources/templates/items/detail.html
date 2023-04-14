@@ -22,7 +22,7 @@
 		<div >
 			<div class="division-line"></div>
 			<div class="row" >
-				<p th:text="${readForm.userForm.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
+				<p th:text="${readForm.userForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
 				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
 				<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
 				<p th:text="${readForm.itemName}">제품명</p>&nbsp;&nbsp;&nbsp;
@@ -63,16 +63,16 @@
 		<textarea class="form-control" id="content" name="content" th:text="${readForm.content}" rows="12" readonly>내용</textarea>
 	</div>
 	<br/>
-	<button th:if="${readForm.userForm.nickName != nickName} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
-	        th:onclick="|location.href='@{/messages/new(boardId=${readForm.id}, recipientNickName=${readForm.userForm.nickName})}'|">쪽지 보내기</button>
-	<button th:if="${readForm.userForm.nickName == nickName}" type="button" class="btn btn-primary"
+	<button th:if="${readForm.userForm.nickname != nickname} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
+	        th:onclick="|location.href='@{/messages/new(boardId=${readForm.id}, recipientNickname=${readForm.userForm.nickname})}'|">쪽지 보내기</button>
+	<button th:if="${readForm.userForm.nickname == nickname}" type="button" class="btn btn-primary"
 	        th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
 	        th:onclick="|location.href='@{/items/{id}/status(id=${readForm.id})}'|">거래상태 변경</button>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=1)}'|">목록으로</button>
-		<button th:if="${readForm.userForm.nickName == nickName}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.userForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/items/{id}/edit(id=${readForm.id})}'|">수정</button>
-		<button th:if="${readForm.userForm.nickName == nickName}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.userForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/items/{id}/delete(id=${readForm.id})}'|">삭제</button>
 	</div>
 

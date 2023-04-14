@@ -17,7 +17,7 @@ public class PageInquiryForm {
 
     public PageInquiryForm(Inquiry inquiry) {
         this.id = inquiry.getId();
-        this.nickname = inquiry.getUser().getNickName();
+        this.nickname = inquiry.getUser().getNickname();
         this.title = inquiry.getTitle();
         this.createDate = inquiry.getDates().getCreateDate();
         this.secret = inquiry.getSecret();

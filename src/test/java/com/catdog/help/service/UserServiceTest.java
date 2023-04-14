@@ -45,8 +45,8 @@ class UserServiceTest {
         //when
         boolean duplicatedEmailId = userService.checkEmailDuplication("user@email");
         boolean availableEmailId = userService.checkEmailDuplication("new@email");
-        boolean duplicatedNickName = userService.checkNickNameDuplication("nickName");
-        boolean availableNickName = userService.checkNickNameDuplication("newNickName");
+        boolean duplicatedNickName = userService.checkNicknameDuplication("nickName");
+        boolean availableNickName = userService.checkNicknameDuplication("newNickName");
 
         //then
         assertThat(duplicatedEmailId).isEqualTo(true);
@@ -79,12 +79,12 @@ class UserServiceTest {
         String nonexistentNickName = "nonexistentNickName";
 
         //when
-        ReadUserForm readUserForm = userService.getUserDtoByNickName(nickName);
-        ReadUserForm nullDto = userService.getUserDtoByNickName(nonexistentNickName);
+        ReadUserForm readUserForm = userService.readByNickname(nickName);
+        ReadUserForm nullDto = userService.readByNickname(nonexistentNickName);
 
         //then
         assertThat(readUserForm.getEmailId()).isEqualTo("user@email");
-        assertThat(readUserForm.getNickName()).isEqualTo(nickName);
+        assertThat(readUserForm.getNickname()).isEqualTo(nickName);
         assertThat(nullDto).isNull();
     }
 
@@ -100,7 +100,7 @@ class UserServiceTest {
         UpdateUserForm nullForm = userService.getUpdateForm(nonexistentNickName);
 
         //then
-        assertThat(form.getNickName()).isEqualTo(nickName);
+        assertThat(form.getNickname()).isEqualTo(nickName);
         assertThat(nullForm).isNull();
     }
 
@@ -109,7 +109,7 @@ class UserServiceTest {
         //given
         userService.join(getSaveUserForm("user@email", "nickName", "password"));
         UpdateUserForm form = new UpdateUserForm();
-        form.setNickName("nickName");
+        form.setNickname("nickName");
         form.setName("newName");
         form.setAge(10);
         form.setGender(Gender.WOMAN);
@@ -131,7 +131,7 @@ class UserServiceTest {
         SaveUserForm form = new SaveUserForm();
         form.setEmailId(emailId);
         form.setPassword(password);
-        form.setNickName(nickName);
+        form.setNickname(nickName);
         form.setName("name");
         form.setAge(20);
         form.setGender(Gender.MAN);
@@ -143,7 +143,7 @@ class UserServiceTest {
         readUserForm.setId(1L);
         readUserForm.setEmailId("user@email");
         readUserForm.setPassword("password");
-        readUserForm.setNickName("nickName");
+        readUserForm.setNickname("nickName");
         readUserForm.setName("name");
         readUserForm.setAge(20);
 //        userDto.setGender(Gender.MAN);

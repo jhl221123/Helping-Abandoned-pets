@@ -19,7 +19,7 @@
 			<tr th:each="pageBoardForm : ${pageBoardForms}" style="text-align: center">
 				<td th:text="${pageBoardForm.region}"></td>
 				<td th:text="${pageBoardForm.title}" th:onclick="|location.href='@{/boards/{id}(id=${pageBoardForm.id})}'|" style="cursor:pointer;"></td>
-				<td th:text="${pageBoardForm.userNickName}"></td>
+				<td th:text="${pageBoardForm.nickname}"></td>
 				<td th:text="${#temporals.format(pageBoardForm.dates.createDate, 'yyyy-MM-dd')}"></td>
 				<td th:text="${pageBoardForm.views}"></td>
 			</tr>

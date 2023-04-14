@@ -30,7 +30,7 @@ public class EditInquiryForm {
 
     public EditInquiryForm(Inquiry inquiry) {
         this.id = inquiry.getId();
-        this.nickname = inquiry.getUser().getNickName();
+        this.nickname = inquiry.getUser().getNickname();
         this.title = inquiry.getTitle();
         this.content = inquiry.getContent();
         this.secret = inquiry.getSecret();

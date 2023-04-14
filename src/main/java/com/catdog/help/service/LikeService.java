@@ -22,7 +22,7 @@ public class LikeService {
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
     public boolean checkLike(Long boardId, String nickName) {
-        User findUser = userRepository.findByNickName(nickName);
+        User findUser = userRepository.findByNickname(nickName);
         LikeBoard likeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());
         if (likeBoard == null) {
             return false;
@@ -39,7 +39,7 @@ public class LikeService {
         } else {
             findBoard = itemBoardRepository.findById(boardId);
         }
-        User findUser = userRepository.findByNickName(nickName);
+        User findUser = userRepository.findByNickname(nickName);
 
         LikeBoard findLikeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());
         if (findLikeBoard == null) {

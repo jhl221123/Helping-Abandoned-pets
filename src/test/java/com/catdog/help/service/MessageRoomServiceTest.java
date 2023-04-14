@@ -94,7 +94,7 @@ class MessageRoomServiceTest {
         user.setEmailId(emailId);
         user.setPassword(password);
         user.setName("name");
-        user.setNickName(nickName);
+        user.setNickname(nickName);
         user.setAge(28);
         user.setGender(Gender.MAN);
         user.setDates(new Dates(LocalDateTime.now(), null, null));

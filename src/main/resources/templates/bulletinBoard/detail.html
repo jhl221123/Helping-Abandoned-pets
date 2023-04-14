@@ -20,7 +20,7 @@
 		<div >
 			<div class="division-line"></div>
 				<div class="row">
-					<p th:text="${readForm.readUserForm.nickName}">작성자</p>&nbsp;&nbsp;&nbsp;
+					<p th:text="${readForm.readUserForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
 					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
 					<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
 				</div>
@@ -58,9 +58,9 @@
 	</div>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=1)}'|">목록으로</button>
-		<button th:if="${readForm.readUserForm.nickName == nickName}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.readUserForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/edit(id=${readForm.id})}'|">수정</button>
-		<button th:if="${readForm.readUserForm.nickName == nickName}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.readUserForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/delete(id=${readForm.id})}'|">삭제</button>
 	</div>
 
@@ -81,12 +81,12 @@
 
 	<div th:each="form : ${commentForms}">
 		<div class="row">
-			<p th:text="${form.nickName}">nickName</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<p th:text="${form.nickname}">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<p class="text-left text-muted" th:text="${#temporals.format(form.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 			<div>
-				<a th:if="${form.nickName==nickName}" class="text-muted"
+				<a th:if="${form.nickname==nickname}" class="text-muted"
 				   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
-				<a th:if="${form.nickName==nickName}" class="text-muted"
+				<a th:if="${form.nickname==nickname}" class="text-muted"
 				   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 
 			<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
 			      th:object="${updateCommentForm}" th:method="post">
-				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+				<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
 					<div class="col-sm-10">
 					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -125,7 +125,7 @@
 
 			<form role="form" th:action="@{/comments/child(id=${readForm.id}, parentId=${form.id})}"
 			      th:object="${commentForm}" th:method="post">
-				<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+				<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
 					<div class="col-sm-10">
 					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -146,12 +146,12 @@
 
 		<div style="background-color: #F3F3F3" th:each="child : ${form.child}">
 			<div style="margin-left: 2em" class="row">
-				<p th:text="|┕ ${child.nickName}|">nickName</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<p th:text="|┕ ${child.nickname}|">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<p class="text-left text-muted" th:text="${#temporals.format(child.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
-					<a th:if="${child.nickName==nickName}" class="text-muted"
+					<a th:if="${child.nickname==nickname}" class="text-muted"
 					   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
-					<a th:if="${child.nickName==nickName}" class="text-muted"
+					<a th:if="${child.nickname==nickname}" class="text-muted"
 					   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
 				</div>
 			</div>
@@ -165,7 +165,7 @@
 			<div th:if="${updateCommentForm.commentId == child.id}" class="comment-box" >
 				<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
 				      th:object="${updateCommentForm}" th:method="post">
-					<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+					<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 					<div class="row">
 						<div class="col-sm-10">
 					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -195,7 +195,7 @@
 
 	<form role="form" th:action="@{/comments/parent(id=${readForm.id})}" th:object="${commentForm}"
 	      th:method="post" class="comment-box">
-		<p th:text="${nickName}" class="col-form-label attribute-name">닉네임</p>
+		<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 		<div class="row">
 			<div class="col-sm-10">
 				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>

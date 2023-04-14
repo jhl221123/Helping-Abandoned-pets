@@ -78,7 +78,7 @@ public class InquiryService {
 
     private Inquiry getInquiry(SaveInquiryForm saveForm) {
         Inquiry inquiry = new Inquiry();
-        inquiry.setUser(userRepository.findByNickName(saveForm.getNickname()));
+        inquiry.setUser(userRepository.findByNickname(saveForm.getNickname()));
         inquiry.setTitle(saveForm.getTitle());
         inquiry.setContent(saveForm.getContent());
         inquiry.setDates(new Dates(LocalDateTime.now(), null, null));
@@ -89,7 +89,7 @@ public class InquiryService {
     private ReadInquiryForm getReadInquiryForm(Inquiry findBoard) {
         ReadInquiryForm readForm = new ReadInquiryForm();
         readForm.setId(findBoard.getId());
-        readForm.setNickname(findBoard.getUser().getNickName());
+        readForm.setNickname(findBoard.getUser().getNickname());
         readForm.setTitle(findBoard.getTitle());
         readForm.setContent(findBoard.getContent());
         readForm.setCreateDate(findBoard.getDates().getCreateDate());
