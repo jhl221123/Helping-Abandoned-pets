@@ -28,6 +28,7 @@ public class InquiryController {
 
     private final InquiryService inquiryService;
     private final CommentService commentService;
+    private final UserService userService;
 
     @GetMapping("/inquiries/new")
     public String createBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
@@ -50,6 +51,10 @@ public class InquiryController {
     @GetMapping("/inquiries")
     public String readPage(@RequestParam("page") int page, Model model,
                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+
+        Boolean isManager = userService.isManager(nickname);
+        model.addAttribute("isManager", isManager);
+
         List<PageInquiryForm> pageForms = inquiryService.readPage(page);
         model.addAttribute("pageForms", pageForms);
 
@@ -68,6 +73,8 @@ public class InquiryController {
         ReadInquiryForm readForm = inquiryService.readBoard(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);
+
+        // TODO: 2023-04-13 매니저, 작성자 제외 차단
 
         List<CommentForm> commentForms = commentService.readComments(id);
         if (commentForms != null) {

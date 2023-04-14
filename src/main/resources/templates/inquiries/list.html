@@ -17,8 +17,8 @@
 			<tbody>
 			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
 				<td ></td>
-				<td th:text="${pageForm.secret} and ${pageForm.nickname != nickname} ? '비밀글' : ${pageForm.title}"
-				    th:onclick="${pageForm.secret} and ${pageForm.nickname != nickname} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
+				<td th:text="${pageForm.secret} and ${pageForm.nickname != nickname} and ${!isManager} ? '비밀글' : ${pageForm.title}"
+				    th:onclick="${pageForm.secret} and ${pageForm.nickname != nickname} and ${!isManager} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
 				    style="cursor:pointer;"></td>
 				<td th:text="${pageForm.nickname}"></td>
 				<td th:text="${#temporals.format(pageForm.createDate, 'yyyy-MM-dd')}"></td>
