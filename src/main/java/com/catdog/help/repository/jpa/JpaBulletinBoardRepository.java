@@ -19,10 +19,9 @@ public class JpaBulletinBoardRepository{
     }
 
     public BulletinBoard findById(Long id) {
-        //게시글은 작성자 이름이 같이 따라다녀서 fetch join을 사용
-        return em.createQuery("select b from BulletinBoard b join fetch b.user where board_id = :id", BulletinBoard.class)
+        return em.createQuery("select b from BulletinBoard b where board_id = :id", BulletinBoard.class)
                 .setParameter("id", id)
-                .getResultList().stream().findAny().orElse(null); //TODO: 2023-03-30 Optional
+                .getResultList().stream().findAny().orElse(null);
     }
 
     public List<BulletinBoard> findPage(int offset, int limit) {
@@ -30,6 +29,10 @@ public class JpaBulletinBoardRepository{
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList();
+    }
+
+    public long countAll() {
+        return em.createQuery("select count(b) from BulletinBoard b", Long.class).getSingleResult();
     }
 
     public List<BulletinBoard> findAll() { // TODO: 2023-03-28 카운트 쿼리로 대체 고려
