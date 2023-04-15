@@ -20,7 +20,7 @@
 		<div >
 			<div class="division-line"></div>
 				<div class="row">
-					<p th:text="${readForm.readUserForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
+					<p th:text="${readForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
 					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
 					<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
 				</div>
@@ -58,9 +58,9 @@
 	</div>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=1)}'|">목록으로</button>
-		<button th:if="${readForm.readUserForm.nickname == nickname}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/edit(id=${readForm.id})}'|">수정</button>
-		<button th:if="${readForm.readUserForm.nickname == nickname}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/boards/{id}/delete(id=${readForm.id})}'|">삭제</button>
 	</div>
 

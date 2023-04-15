@@ -122,7 +122,7 @@ public class BulletinBoardController {
                                           @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
-        if (!readForm.getReadUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
         UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
@@ -136,7 +136,7 @@ public class BulletinBoardController {
                                       BindingResult bindingResult, @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(updateForm.getId());
-        if (!readForm.getReadUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
 
@@ -155,7 +155,7 @@ public class BulletinBoardController {
                                           @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 접근 가능
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
-        if (!readForm.getReadUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
         String boardTitle = readForm.getTitle();
@@ -170,7 +170,7 @@ public class BulletinBoardController {
                                       @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
         ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
-        if (!readForm.getReadUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
         bulletinBoardService.deleteBoard(id);

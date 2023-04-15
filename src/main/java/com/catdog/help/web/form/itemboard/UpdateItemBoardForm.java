@@ -1,5 +1,7 @@
 package com.catdog.help.web.form.itemboard;
 
+import com.catdog.help.domain.board.ItemBoard;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,4 +45,22 @@ public class UpdateItemBoardForm {
     private List<MultipartFile> newImages = new ArrayList<>();
 
     private List<Integer> deleteImageIds = new ArrayList<>();
+
+    public UpdateItemBoardForm() { //컨트롤러 파라미터 바인딩
+    }
+
+    public UpdateItemBoardForm(ItemBoard findBoard, List<ReadUploadFileForm> readForms) {
+        this.id = findBoard.getId();
+        this.title = findBoard.getTitle();
+        this.content = findBoard.getContent();
+        this.itemName = findBoard.getItemName();
+        this.price = findBoard.getPrice();
+
+        //대표이미지
+        this.oldLeadImage = readForms.get(0);
+        for (int i = 1; i < readForms.size(); i++) {
+            //대표이미지 제외
+            this.getOldImages().add(readForms.get(i));
+        }
+    }
 }

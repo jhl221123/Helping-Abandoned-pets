@@ -52,7 +52,7 @@ public class CommentService {
 
     public CommentForm readComment(Long commentId) {
         Comment findComment = jpaCommentRepository.findById(commentId);
-        return getCommentForm(findComment);
+        return new CommentForm(findComment);
     }
 
     public List<CommentForm> readComments(Long boardId) {
@@ -62,19 +62,15 @@ public class CommentService {
         if (comments.isEmpty()) {
             return null;
         }
-        log.info("======================================={}", comments);
         for (Comment comment : comments) {
-            log.info("{}",comment.getBoard());
-            log.info("{}",comment.getUser());
-            log.info("=========================================={}", comment.getChild());
-            commentForms.add(getCommentForm(comment));
+            commentForms.add(new CommentForm(comment));
         }
         return commentForms;
     }
 
     public UpdateCommentForm getUpdateCommentForm(Long commentId, String nickName) {
         Comment findComment = jpaCommentRepository.findById(commentId);
-        return getUpdateForm(findComment, nickName);
+        return new UpdateCommentForm(findComment, nickName);
     }
 
     @Transactional
@@ -102,29 +98,5 @@ public class CommentService {
         comment.setContent(commentForm.getContent());
         comment.setDates(new Dates(LocalDateTime.now(), null, null)); //댓글 생성에만 사용가능
         return comment;
-    }
-
-    private static CommentForm getCommentForm(Comment comment) {
-        CommentForm commentForm = new CommentForm();
-        commentForm.setId(comment.getId());
-        commentForm.setBoardId(comment.getBoard().getId());
-        commentForm.setNickname(comment.getUser().getNickname());
-        commentForm.setContent(comment.getContent());
-        if (!comment.getChild().isEmpty()) {
-            for (Comment child : comment.getChild()) {
-                CommentForm childCommentForm = getCommentForm(child);
-                commentForm.getChild().add(childCommentForm);
-            }
-        }
-        commentForm.setDates(comment.getDates());
-        return commentForm;
-    }
-
-    private static UpdateCommentForm getUpdateForm(Comment findComment, String nickName) {
-        UpdateCommentForm updateForm = new UpdateCommentForm();
-        updateForm.setCommentId(findComment.getId());
-        updateForm.setNickname(nickName);
-        updateForm.setContent(findComment.getContent());
-        return updateForm;
     }
 }

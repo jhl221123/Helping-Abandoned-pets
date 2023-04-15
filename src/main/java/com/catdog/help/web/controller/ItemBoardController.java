@@ -121,7 +121,7 @@ public class ItemBoardController {
                                    @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
 
@@ -135,7 +135,7 @@ public class ItemBoardController {
                              @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
 
@@ -149,7 +149,7 @@ public class ItemBoardController {
                          @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
         ReadItemBoardForm readForm = itemBoardService.readBoard(id);
-        if (!readForm.getUserForm().getNickname().equals(nickname)) {
+        if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/items/{id}";
         }
         itemBoardService.deleteBoard(id);

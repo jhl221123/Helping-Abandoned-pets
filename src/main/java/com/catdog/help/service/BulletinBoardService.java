@@ -14,7 +14,6 @@ import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
-import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,43 +51,41 @@ public class BulletinBoardService {
     public ReadBulletinBoardForm readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
 
-        ReadUserForm readUserForm = getReadUserForm(findBoard.getUser());
+        String nickname = findBoard.getUser().getNickname();
 
         List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
         List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFiles);
 
         int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
-        ReadBulletinBoardForm readBulletinBoardForm = getReadBulletinBoardForm(findBoard, readUserForm, readUploadFileForms, likeSize);
-        return readBulletinBoardForm;
+
+        ReadBulletinBoardForm readForm = new ReadBulletinBoardForm(findBoard, nickname, readUploadFileForms, likeSize);
+        return readForm;
     }
 
     public List<PageBulletinBoardForm> readPage(int page) {
         int offset = page * 10 - 10;
         int limit = 10;
 
-        List<PageBulletinBoardForm> pageBoardForms = new ArrayList<>();
         List<BulletinBoard> boards = bulletinBoardRepository.findPage(offset, limit);
-        for (BulletinBoard board : boards) {
-            User user = board.getUser();
-            pageBoardForms.add(getPageBulletinBoardForm(board, user.getNickname())); // TODO: 2023-03-12 작동 잘되면 User 대신 nickName으로 시도
-        }
-        return pageBoardForms;
+
+        return getPageBulletinBoardForms(boards);
     }
 
     public int countPages() {
-        int totalBoards = bulletinBoardRepository.findAll().size(); // TODO: 2023-03-28 카운트 쿼리로 대체 고려
-        if (totalBoards <= 10) {
+        int total = (int) bulletinBoardRepository.countAll();
+        if (total <= 10) {
             return 1;
-        } else if (totalBoards % 10 == 0) {
-            return totalBoards / 10;
+        } else if (total % 10 == 0) {
+            return total / 10;
         } else {
-            return totalBoards / 10 + 1;
+            return total / 10 + 1;
         }
     }
 
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
-        UpdateBulletinBoardForm updateForm = getUpdateBulletinBoardForm(id, findBoard);
+        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm(findBoard, readUploadFileForms);
         return updateForm;
     }
 
@@ -128,40 +125,11 @@ public class BulletinBoardService {
         return board;
     }
 
-    private ReadBulletinBoardForm getReadBulletinBoardForm(BulletinBoard findBoard, ReadUserForm readForm, List<ReadUploadFileForm> readUploadFileForms, int likeSize) {
-        ReadBulletinBoardForm readBulletinBoardForm = new ReadBulletinBoardForm();
-        readBulletinBoardForm.setId(findBoard.getId());
-        readBulletinBoardForm.setReadUserForm(readForm);
-        readBulletinBoardForm.setRegion(findBoard.getRegion());
-        readBulletinBoardForm.setTitle(findBoard.getTitle());
-        readBulletinBoardForm.setContent(findBoard.getContent());
-        readBulletinBoardForm.setImages(readUploadFileForms);
-        readBulletinBoardForm.setDates(findBoard.getDates());
-        readBulletinBoardForm.setViews(findBoard.getViews());
-        readBulletinBoardForm.setLikeSize(likeSize);
-        return readBulletinBoardForm;
-    }
-
-    private PageBulletinBoardForm getPageBulletinBoardForm(BulletinBoard board, String nickName) {
-        PageBulletinBoardForm boardForm = new PageBulletinBoardForm();
-        boardForm.setId(board.getId());
-        boardForm.setRegion(board.getRegion());
-        boardForm.setTitle(board.getTitle());
-        boardForm.setNickname(nickName);
-        boardForm.setDates(board.getDates());
-        boardForm.setViews(board.getViews());
-        return boardForm;
-    }
-
-    private UpdateBulletinBoardForm getUpdateBulletinBoardForm(Long id, BulletinBoard findBoard) {
-        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm();
-        updateForm.setId(findBoard.getId());
-        updateForm.setRegion(findBoard.getRegion());
-        updateForm.setTitle(findBoard.getTitle());
-        updateForm.setContent(findBoard.getContent());
-        updateForm.setOldImages(getReadUploadFileForms(uploadFileRepository.findUploadFiles(id)));
-        updateForm.setDates(findBoard.getDates()); //수정된 날짜로 변경
-        return updateForm;
+    private static List<PageBulletinBoardForm> getPageBulletinBoardForms(List<BulletinBoard> boards) {
+        return boards.stream().map(b -> {
+            PageBulletinBoardForm pageForm = new PageBulletinBoardForm(b, b.getUser().getNickname());
+            return pageForm;
+        }).collect(Collectors.toList());
     }
 
     private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
@@ -188,26 +156,10 @@ public class BulletinBoardService {
         findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
     }
 
-    private ReadUserForm getReadUserForm(User user) {
-        ReadUserForm readForm = new ReadUserForm();
-        readForm.setId(user.getId());
-        readForm.setEmailId(user.getEmailId());
-        readForm.setPassword(user.getPassword());
-        readForm.setNickname(user.getNickname());
-        readForm.setName(user.getName());
-        readForm.setAge(user.getAge());
-        readForm.setGender(user.getGender());
-        readForm.setDates(user.getDates());
-        return readForm;
-    }
-
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
                 .map(u -> {
-                    ReadUploadFileForm readForm = new ReadUploadFileForm();
-                    readForm.setId(u.getId());
-                    readForm.setStoreFileName(u.getStoreFileName());
-                    readForm.setUploadFileName(u.getUploadFileName());
+                    ReadUploadFileForm readForm = new ReadUploadFileForm(u);
                     return readForm;
                 }).collect(Collectors.toList());
     }

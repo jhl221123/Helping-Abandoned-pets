@@ -1,6 +1,7 @@
 package com.catdog.help.web.form.bulletinboard;
 
 import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,4 +35,16 @@ public class UpdateBulletinBoardForm {
     private List<Integer> deleteImageIds = new ArrayList<>();
 
     private Dates dates;
+
+    public UpdateBulletinBoardForm() { //컨트롤러 파라미터 바인딩
+    }
+
+    public UpdateBulletinBoardForm(BulletinBoard board, List<ReadUploadFileForm> oldImages) {
+        this.id = board.getId();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.oldImages = oldImages;
+        this.dates = board.getDates();
+        this.region = board.getRegion();
+    }
 }

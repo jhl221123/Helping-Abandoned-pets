@@ -1,6 +1,7 @@
 package com.catdog.help.web.form.user;
 
 import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -24,5 +25,13 @@ public class UpdateUserForm {
     @NotNull
     private Gender gender;
 
+    public UpdateUserForm() {
+    }
 
+    public UpdateUserForm(User user) {
+        this.nickname = user.getNickname();
+        this.name = user.getName();
+        this.age = user.getAge();
+        this.gender = user.getGender();
+    }
 }

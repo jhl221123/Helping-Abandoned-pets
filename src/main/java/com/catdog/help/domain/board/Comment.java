@@ -34,7 +34,7 @@ public class Comment {
     private Dates dates;
 
     //대댓글
-    @ManyToOne(fetch = FetchType.LAZY) //fetch join으로 즉시로딩 효과
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
@@ -46,6 +46,4 @@ public class Comment {
         this.setParent(parent);
         parent.getChild().add(this);
     }
-
-    /**CAMD 생성 접근 수정 삭제 시간추가*/
 }

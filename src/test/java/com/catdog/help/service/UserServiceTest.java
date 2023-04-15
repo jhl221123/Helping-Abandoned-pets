@@ -138,16 +138,16 @@ class UserServiceTest {
         return form;
     }
 
-    private ReadUserForm getUserDto() {
-        ReadUserForm readUserForm = new ReadUserForm();
-        readUserForm.setId(1L);
-        readUserForm.setEmailId("user@email");
-        readUserForm.setPassword("password");
-        readUserForm.setNickname("nickName");
-        readUserForm.setName("name");
-        readUserForm.setAge(20);
+//    private ReadUserForm getUserDto() {
+//        ReadUserForm readUserForm = new ReadUserForm();
+//        readUserForm.setId(1L);
+//        readUserForm.setEmailId("user@email");
+//        readUserForm.setPassword("password");
+//        readUserForm.setNickname("nickName");
+//        readUserForm.setName("name");
+//        readUserForm.setAge(20);
 //        userDto.setGender(Gender.MAN);
-        readUserForm.setDates(new Dates(LocalDateTime.now(), null, null));
-        return readUserForm;
-    }
+//        readUserForm.setDates(new Dates(LocalDateTime.now(), null, null));
+//        return readUserForm;
+//    }
 }

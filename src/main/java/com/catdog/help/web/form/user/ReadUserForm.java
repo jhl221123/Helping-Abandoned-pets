@@ -2,6 +2,7 @@ package com.catdog.help.web.form.user;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-@Getter @Setter
+@Getter
 public class ReadUserForm {
 
     @NotNull
@@ -41,4 +42,15 @@ public class ReadUserForm {
 
     @NotNull
     private Dates dates;
+
+    public ReadUserForm(User user) {
+        this.id = user.getId();
+        this.emailId = user.getEmailId();
+        this.password = user.getPassword();
+        this.nickname = user.getNickname();
+        this.name = user.getName();
+        this.age = user.getAge();
+        this.gender = user.getGender();
+        this.dates = user.getDates();
+    }
 }

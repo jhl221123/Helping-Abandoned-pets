@@ -2,6 +2,7 @@ package com.catdog.help.web.controller;
 
 import com.catdog.help.service.MessageRoomService;
 import com.catdog.help.service.MessageService;
+import com.catdog.help.web.form.message.PageMessageRoomForm;
 import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import com.catdog.help.web.form.message.SaveMessageForm;
 import lombok.RequiredArgsConstructor;
@@ -70,12 +71,11 @@ public class MessageController {
     @GetMapping("/messages")
     public String getMessageRooms(@SessionAttribute(name = LOGIN_USER) String senderNickname,
                                   @RequestParam("page") int page, Model model) {
-        List<ReadMessageRoomForm> readPage = messageRoomService.readPageOfRooms(senderNickname, page);
+        List<PageMessageRoomForm> pageForms = messageRoomService.readRoomPage(senderNickname, page);
 
         int lastPage = messageRoomService.countPages(senderNickname);
-        model.addAttribute("readForms", readPage);
+        model.addAttribute("pageForms", pageForms);
         model.addAttribute("lastPage", lastPage);
-        // TODO: 2023-04-06 페이징 처리
         return "messages/list";
     }
 }

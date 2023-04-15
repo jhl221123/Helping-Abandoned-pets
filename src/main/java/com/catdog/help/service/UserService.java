@@ -51,9 +51,7 @@ public class UserService {
             return null;
         }
 
-        ReadUserForm findReadForm = getReadUserForm(findUser);
-
-        return findReadForm;
+        return new ReadUserForm(findUser);
     }
 
     public Boolean isManager(String nickname) {
@@ -66,8 +64,7 @@ public class UserService {
         if (findUser == null) {
             return null; // TODO: 2023-03-08 예외처리
         }
-        ReadUserForm findReadUserForm = getReadUserForm(findUser);
-        return findReadUserForm;
+        return new ReadUserForm(findUser);
     }
 
     public UpdateUserForm getUpdateForm(String nickname) {
@@ -75,8 +72,7 @@ public class UserService {
         if (findUser == null) {
             return null; // TODO: 2023-03-08 예외처리
         }
-        UpdateUserForm updateForm = getUpdateUserForm(findUser);
-        return updateForm;
+        return new UpdateUserForm(findUser);
     }
 
     @Transactional
@@ -92,7 +88,7 @@ public class UserService {
     @Transactional
     public Long changePassword(ChangePasswordForm changeForm, String nickname) {
         User findUser = userRepository.findByNickname(nickname);
-        findUser.setPassword(changeForm.getAfterPassword());
+        findUser.changePassword(changeForm.getAfterPassword());
         return findUser.getId();
     }
 
@@ -117,27 +113,5 @@ public class UserService {
         user.setDates(new Dates(LocalDateTime.now(), null, null));
         user.setGrade(Grade.BASIC);
         return user;
-    }
-
-    private static ReadUserForm getReadUserForm(User findUser) {
-        ReadUserForm ReadUserForm = new ReadUserForm();
-        ReadUserForm.setId(findUser.getId());
-        ReadUserForm.setEmailId(findUser.getEmailId());
-        ReadUserForm.setPassword(findUser.getPassword());
-        ReadUserForm.setNickname(findUser.getNickname());
-        ReadUserForm.setName(findUser.getName());
-        ReadUserForm.setAge(findUser.getAge());
-        ReadUserForm.setGender(findUser.getGender());
-        ReadUserForm.setDates(findUser.getDates());
-        return ReadUserForm;
-    }
-
-    private static UpdateUserForm getUpdateUserForm(User findUser) {
-        UpdateUserForm userForm = new UpdateUserForm();
-        userForm.setNickname(findUser.getNickname());
-        userForm.setName(findUser.getName());
-        userForm.setAge(findUser.getAge());
-        userForm.setGender(findUser.getGender());
-        return userForm;
     }
 }

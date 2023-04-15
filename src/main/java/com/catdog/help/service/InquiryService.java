@@ -33,7 +33,7 @@ public class InquiryService {
 
     public ReadInquiryForm readBoard(Long id) {
         Inquiry findBoard = inquiryRepository.findById(id);
-        ReadInquiryForm readForm = getReadInquiryForm(findBoard);
+        ReadInquiryForm readForm = new ReadInquiryForm(findBoard);
         return readForm;
     }
 
@@ -84,16 +84,5 @@ public class InquiryService {
         inquiry.setDates(new Dates(LocalDateTime.now(), null, null));
         inquiry.setSecret(saveForm.getSecret());
         return inquiry;
-    }
-
-    private ReadInquiryForm getReadInquiryForm(Inquiry findBoard) {
-        ReadInquiryForm readForm = new ReadInquiryForm();
-        readForm.setId(findBoard.getId());
-        readForm.setNickname(findBoard.getUser().getNickname());
-        readForm.setTitle(findBoard.getTitle());
-        readForm.setContent(findBoard.getContent());
-        readForm.setCreateDate(findBoard.getDates().getCreateDate());
-        readForm.setSecret(findBoard.getSecret());
-        return readForm;
     }
 }

@@ -35,7 +35,6 @@ public class JpaMessageRoomRepository {
                 .stream()
                 .findAny()
                 .orElse(null);
-        log.info("타입보자=[{}]", messageRoom);
         return messageRoom;
     }
 

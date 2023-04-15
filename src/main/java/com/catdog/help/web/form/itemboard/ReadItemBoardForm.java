@@ -1,7 +1,9 @@
 package com.catdog.help.web.form.itemboard;
 
 import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.Getter;
@@ -10,10 +12,10 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
 public class ReadItemBoardForm {
     private Long id;
-    private ReadUserForm userForm;
+    private String nickname;
     private String title;
     private String content;
     private Dates dates;
@@ -23,4 +25,18 @@ public class ReadItemBoardForm {
     private List<ReadUploadFileForm> images = new ArrayList<>();
     private int views;
     private int likeSize;
+
+    public ReadItemBoardForm(ItemBoard findBoard, List<ReadUploadFileForm> images, int likeSize) {
+        this.id = findBoard.getId();
+        this.nickname = findBoard.getUser().getNickname();
+        this.title = findBoard.getTitle();
+        this.content = findBoard.getContent();
+        this.dates = findBoard.getDates();
+        this.itemName = findBoard.getItemName();
+        this.price = findBoard.getPrice();
+        this.status = findBoard.getStatus();
+        this.images = images;
+        this.views = findBoard.getViews();
+        this.likeSize = likeSize;
+    }
 }

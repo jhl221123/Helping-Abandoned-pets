@@ -148,7 +148,7 @@ public class UserController {
             return "users/editPassword";
         }
 
-        String findPassword = userService.readByNickname(nickName).getPassword();
+        String findPassword = userService.readByNickname(nickName).getPassword(); // TODO: 2023-04-14 서비스에서 해결하도록 수정
         if (!findPassword.equals(changeForm.getBeforePassword())) {
             bindingResult.rejectValue("beforePassword", "inaccurate", "기존 비밀번호와 일치하지 않습니다.");
             return "users/editPassword";

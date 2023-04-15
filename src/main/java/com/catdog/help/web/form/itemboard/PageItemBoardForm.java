@@ -1,5 +1,6 @@
 package com.catdog.help.web.form.itemboard;
 
+import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
@@ -17,4 +18,12 @@ public class PageItemBoardForm {
     private ReadUploadFileForm leadImage;
 
     private ItemStatus status;
+
+    public PageItemBoardForm(ItemBoard board, ReadUploadFileForm leadImage) {
+        this.id = board.getId();
+        this.itemName = board.getItemName();
+        this.price = board.getPrice();
+        this.status = board.getStatus();
+        this.leadImage = leadImage;
+    }
 }

@@ -2,12 +2,12 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
-import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.JpaMessageRoomRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
+import com.catdog.help.web.form.message.PageMessageRoomForm;
 import com.catdog.help.web.form.message.ReadMessageForm;
 import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import lombok.RequiredArgsConstructor;
@@ -52,22 +52,18 @@ public class MessageRoomService {
 
     public ReadMessageRoomForm readRoom(Long roomId) {
         MessageRoom findRoom = jpaMessageRoomRepository.findWithRefers(roomId);
-        ReadMessageRoomForm result = getReadMessageRoomFrom(findRoom);
+        List<ReadMessageForm> readMessageForms = getReadMessageForms(findRoom);
+        ReadMessageRoomForm result = new ReadMessageRoomForm(findRoom, readMessageForms);
         return result;
     }
 
-    public List<ReadMessageRoomForm> readPageOfRooms(String nickName, int page) {
+    public List<PageMessageRoomForm> readRoomPage(String nickName, int page) {
         Long findUserId = userRepository.findByNickname(nickName).getId();
         int offset = page * 10 - 10;
         int limit = 10;
 
         List<MessageRoom> findRooms = jpaMessageRoomRepository.findPageByUserId(findUserId, offset, limit);
-        List<ReadMessageRoomForm> readForms = findRooms.stream()
-                .map(messageRoom -> {
-                    ReadMessageRoomForm form = getReadMessageRoomFrom(messageRoom);
-                    return form;
-                }).collect(Collectors.toList());
-        return readForms;
+        return getPageMessageRoomForms(findRooms);
     }
 
     public int countPages(String nickName) {
@@ -99,33 +95,20 @@ public class MessageRoomService {
         return messageRoom;
     }
 
-    private ReadMessageRoomForm getReadMessageRoomFrom(MessageRoom messageRoom) {
-        ReadMessageRoomForm form = new ReadMessageRoomForm();
-        form.setId(messageRoom.getId());
-        form.setItemBoardId(messageRoom.getItemBoard().getId());
-        form.setItemName(messageRoom.getItemBoard().getItemName());
-        form.setSenderNick(messageRoom.getSender().getNickname());
-        form.setRecipientNick(messageRoom.getRecipient().getNickname());
-        form.setCreateDate(messageRoom.getDates().getCreateDate());
-        List<ReadMessageForm> messageForms = getReadMessageForms(messageRoom);
-        form.setMessages(messageForms);
-        return form;
+    private static List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
+        List<PageMessageRoomForm> pageForms = findRooms.stream()
+                .map(messageRoom -> {
+                    PageMessageRoomForm form = new PageMessageRoomForm(messageRoom);
+                    return form;
+                }).collect(Collectors.toList());
+        return pageForms;
     }
 
     private List<ReadMessageForm> getReadMessageForms(MessageRoom messageRoom) {
-        List<ReadMessageForm> messageForms = messageRoom.getMessages().stream()
+        return messageRoom.getMessages().stream()
                 .map(message -> {
-                    ReadMessageForm form = getReadMessageForm(message);
+                    ReadMessageForm form = new ReadMessageForm(message);
                     return form;
                 }).collect(Collectors.toList());
-        return messageForms;
-    }
-
-    private static ReadMessageForm getReadMessageForm(Message message) {
-        ReadMessageForm form = new ReadMessageForm();
-        form.setSenderNick(message.getSender().getNickname()); //메시지 강제호출
-        form.setContent(message.getContent());
-        form.setCreateDate(message.getDates().getCreateDate());
-        return form;
     }
 }
