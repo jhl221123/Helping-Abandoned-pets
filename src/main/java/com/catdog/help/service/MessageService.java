@@ -30,11 +30,7 @@ public class MessageService {
     public void createMessage(Long roomId, String senderNickName, SaveMessageForm saveForm) {
         MessageRoom findRoom = jpaMessageRoomRepository.findById(roomId);
         User sender = userRepository.findByNickname(senderNickName);
-        Message message = new Message();
-        message.setMessageRoom(findRoom);
-        message.setSender(sender);
-        message.setContent(saveForm.getContent());
-        message.setDates(new Dates(LocalDateTime.now(), null, null));
+        Message message = new Message(findRoom, sender, saveForm);
         jpaMessageRepository.save(message);
     }
 }

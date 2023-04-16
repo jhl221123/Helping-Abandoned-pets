@@ -62,7 +62,7 @@ public class MessageController {
     public String sendMessage(@PathVariable("roomId") Long roomId, @SessionAttribute(name = LOGIN_USER) String senderNickname,
                               @Validated @ModelAttribute("saveForm") SaveMessageForm saveForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            //검증
+            // TODO: 2023-04-16 검증
         }
         messageService.createMessage(roomId, senderNickname, saveForm);
         return "redirect:/messages/{roomId}";

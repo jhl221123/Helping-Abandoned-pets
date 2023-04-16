@@ -2,13 +2,17 @@ package com.catdog.help.domain.message;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.message.SaveMessageForm;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Entity
-@Getter @Setter
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
 
     @Id @GeneratedValue
@@ -28,8 +32,12 @@ public class Message {
     @Embedded
     private Dates dates;
 
-    public void addMessage(MessageRoom messageRoom) {
+
+    public Message(MessageRoom messageRoom, User sender, SaveMessageForm form) {
         this.messageRoom = messageRoom;
         messageRoom.getMessages().add(this);
+        this.sender = sender;
+        this.content = form.getContent();
+        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
     }
 }
