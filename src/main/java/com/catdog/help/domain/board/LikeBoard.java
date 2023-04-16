@@ -1,13 +1,14 @@
 package com.catdog.help.domain.board;
 
 import com.catdog.help.domain.user.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
-@Getter @Setter
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LikeBoard {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +23,6 @@ public class LikeBoard {
     @JoinColumn(name = "user_id")
     private User user;
 
-    
-    //Entity 생성용
-    public LikeBoard() {
-    }
 
     public LikeBoard(Board board, User user) {
         this.board = board;

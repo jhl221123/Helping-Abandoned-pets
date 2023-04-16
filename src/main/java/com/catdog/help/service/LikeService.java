@@ -24,11 +24,8 @@ public class LikeService {
     public boolean checkLike(Long boardId, String nickName) {
         User findUser = userRepository.findByNickname(nickName);
         LikeBoard likeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());
-        if (likeBoard == null) {
-            return false;
-        } else {
-            return true;
-        }
+
+        return likeBoard == null ? false : true;
     }
 
     @Transactional
