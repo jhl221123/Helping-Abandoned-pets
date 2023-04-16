@@ -1,16 +1,23 @@
 package com.catdog.help.domain.board;
 
 import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
+import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("Share")
-@Getter @Setter
 public class ItemBoard extends Board {
 
     private String itemName;
@@ -29,7 +36,24 @@ public class ItemBoard extends Board {
     @OneToMany(mappedBy = "itemBoard", cascade = CascadeType.REMOVE)
     private List<MessageRoom> rooms = new ArrayList<>();
 
-    //===== 연관 관계 편의 메서드 =====//
+
+    public ItemBoard(User user, SaveItemBoardForm form) {
+        super(user, form.getTitle(), form.getContent());
+        this.itemName = form.getItemName();
+        this.price = form.getPrice();
+        this.status = ItemStatus.STILL;
+    }
+
+
+    public void updateBoard(UpdateItemBoardForm form) {
+        super.updateBoard(form.getTitle(), form.getContent());
+        this.itemName = form.getItemName();
+        this.price = form.getPrice();
+    }
+
+    public void changeStatus(ItemStatus status) {
+        this.status = status;
+    }
 
     public void addImage(UploadFile uploadFile) {
         uploadFile.setBoard(this);

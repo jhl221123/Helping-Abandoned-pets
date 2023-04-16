@@ -2,6 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Inquiry;
+import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
@@ -26,7 +27,8 @@ public class InquiryService {
 
     @Transactional
     public Long saveBoard(SaveInquiryForm saveForm) {
-        Inquiry inquiry = getInquiry(saveForm);
+        User findUser = userRepository.findByNickname(saveForm.getNickname());
+        Inquiry inquiry = new Inquiry(findUser, saveForm);
         inquiryRepository.save(inquiry);
         return inquiry.getId();
     }
@@ -63,26 +65,12 @@ public class InquiryService {
     @Transactional
     public void updateBoard(EditInquiryForm editForm) {
         Inquiry findBoard = inquiryRepository.findById(editForm.getId());
-        findBoard.setTitle(editForm.getTitle());
-        findBoard.setContent(editForm.getContent());
-        findBoard.setSecret(editForm.getSecret());
+        findBoard.updateBoard(editForm);
     }
 
     @Transactional
     public void deleteBoard(Long id) {
         Inquiry findBoard = inquiryRepository.findById(id); //본인 검증 -> 영속성 컨텍스트에 이미 존재
         inquiryRepository.delete(findBoard);
-    }
-
-    /**============================= private method ==============================*/
-
-    private Inquiry getInquiry(SaveInquiryForm saveForm) {
-        Inquiry inquiry = new Inquiry();
-        inquiry.setUser(userRepository.findByNickname(saveForm.getNickname()));
-        inquiry.setTitle(saveForm.getTitle());
-        inquiry.setContent(saveForm.getContent());
-        inquiry.setDates(new Dates(LocalDateTime.now(), null, null));
-        inquiry.setSecret(saveForm.getSecret());
-        return inquiry;
     }
 }

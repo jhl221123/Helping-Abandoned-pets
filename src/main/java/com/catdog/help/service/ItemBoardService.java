@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +38,8 @@ public class ItemBoardService {
 
     @Transactional
     public void createBoard(SaveItemBoardForm saveForm, String nickName) {
-        ItemBoard itemBoard = getItemBoard(saveForm);
         User findUser = userRepository.findByNickname(nickName);
-        itemBoard.setUser(findUser);
+        ItemBoard itemBoard = getItemBoard(findUser, saveForm);
         itemBoardRepository.save(itemBoard);
     }
 
@@ -89,9 +87,9 @@ public class ItemBoardService {
     public void changeStatus(Long boardId) {
         ItemBoard findBoard = itemBoardRepository.findById(boardId);
         if (findBoard.getStatus() == ItemStatus.STILL) {
-            findBoard.setStatus(ItemStatus.COMP);
+            findBoard.changeStatus(ItemStatus.COMP);
         } else {
-            findBoard.setStatus(ItemStatus.STILL);
+            findBoard.changeStatus(ItemStatus.STILL);
         }
     }
 
@@ -103,22 +101,15 @@ public class ItemBoardService {
 
     /**============================= private method ==============================*/
 
-    private ItemBoard getItemBoard(SaveItemBoardForm saveForm) {
-        ItemBoard board = new ItemBoard();
-        board.setTitle(saveForm.getTitle());
-        board.setContent(saveForm.getContent());
-        board.setItemName(saveForm.getItemName());
-        board.setPrice(saveForm.getPrice());
-        board.setStatus(ItemStatus.STILL);
-        if (!saveForm.getImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(saveForm.getImages());
+    private ItemBoard getItemBoard(User user, SaveItemBoardForm form) {
+        ItemBoard board = new ItemBoard(user, form);
+        if (!form.getImages().isEmpty()) {
+            List<UploadFile> uploadFiles = fileStore.storeFiles(form.getImages());
             for (UploadFile uploadFile : uploadFiles) {
                 board.addImage(uploadFile);
                 uploadFileRepository.save(uploadFile);
             }
         }
-        Dates dates = new Dates(LocalDateTime.now(), null, null);
-        board.setDates(dates);
         return board;
     }
 
@@ -131,10 +122,7 @@ public class ItemBoardService {
     }
 
     private void updateItemBoard(UpdateItemBoardForm updateForm, ItemBoard findBoard) {
-        findBoard.setTitle(updateForm.getTitle());
-        findBoard.setContent(updateForm.getContent());
-        findBoard.setItemName(updateForm.getItemName());
-        findBoard.setPrice(updateForm.getPrice());
+        findBoard.updateBoard(updateForm);
 
         //대표이미지 변경
         if (!updateForm.getNewLeadImage().getResource().getFilename().isEmpty()) { //지금은 이름으로 검증하는게 최선;;
@@ -162,7 +150,6 @@ public class ItemBoardService {
                 uploadFileRepository.save(uploadFile);
             }
         }
-        findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
     }
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {

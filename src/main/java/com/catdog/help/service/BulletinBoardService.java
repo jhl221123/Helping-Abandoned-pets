@@ -42,7 +42,7 @@ public class BulletinBoardService {
     @Transactional
     public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
         User findUser = userRepository.findByNickname(nickName);
-        BulletinBoard board = getBulletinBoard(boardForm, findUser);
+        BulletinBoard board = getBulletinBoard(findUser, boardForm);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
 
         return boardId;
@@ -99,29 +99,21 @@ public class BulletinBoardService {
     @Transactional
     public void deleteBoard(Long boardId) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
-        //삭제 날짜 추가
-        findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(),
-                findBoard.getDates().getLastModifiedDate(), LocalDateTime.now()));
-        bulletinBoardRepository.delete(findBoard); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
+        // TODO: 2023-03-20 삭제 시 복구 가능성 염두
+        bulletinBoardRepository.delete(findBoard);
     }
 
     /**============================= private method ==============================*/
 
-    private BulletinBoard getBulletinBoard(SaveBulletinBoardForm boardForm, User findUser) {
-        BulletinBoard board = new BulletinBoard();
-        board.setUser(findUser);
-        board.setRegion(boardForm.getRegion());
-        board.setTitle(boardForm.getTitle());
-        board.setContent(boardForm.getContent());
-        if (!boardForm.getImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(boardForm.getImages());
+    private BulletinBoard getBulletinBoard(User user, SaveBulletinBoardForm form) {
+        BulletinBoard board = new BulletinBoard(user, form);
+        if (!form.getImages().isEmpty()) {
+            List<UploadFile> uploadFiles = fileStore.storeFiles(form.getImages());
             for (UploadFile uploadFile : uploadFiles) {
                 board.addImage(uploadFile); //uploadFile 에 board 주입, 안하면 uploadFile저장 불가.
                 uploadFileRepository.save(uploadFile);
             }
         }
-        Dates dates = new Dates(LocalDateTime.now(), null, null);
-        board.setDates(dates);
         return board;
     }
 
@@ -133,9 +125,7 @@ public class BulletinBoardService {
     }
 
     private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
-        findBoard.setRegion(updateForm.getRegion());
-        findBoard.setTitle(updateForm.getTitle());
-        findBoard.setContent(updateForm.getContent());
+        findBoard.updateBoard(updateForm);
 
         //이미지 삭제
         for (Integer id : updateForm.getDeleteImageIds()) {
@@ -153,7 +143,6 @@ public class BulletinBoardService {
                 uploadFileRepository.save(uploadFile);
             }
         }
-        findBoard.setDates(new Dates(findBoard.getDates().getCreateDate(), LocalDateTime.now(), null));
     }
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {

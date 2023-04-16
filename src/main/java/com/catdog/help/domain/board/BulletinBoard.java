@@ -1,6 +1,12 @@
 package com.catdog.help.domain.board;
 
+import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -10,9 +16,9 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("Bulletin")
-@Getter @Setter
 public class BulletinBoard extends Board {
 
     private String region; // TODO: 2023-03-30 지역이름 검증, 셀렉트박스
@@ -24,7 +30,16 @@ public class BulletinBoard extends Board {
     private List<LikeBoard> likeBoards;
 
 
-    //===== 연관 관계 편의 메서드 =====//
+    public BulletinBoard(User findUser, SaveBulletinBoardForm form) {
+        super(findUser, form.getTitle(), form.getContent());
+        this.region = form.getRegion();
+    }
+
+
+    public void updateBoard(UpdateBulletinBoardForm form) {
+        super.updateBoard(form.getTitle(), form.getContent());
+        this.region = form.getRegion();
+    }
 
     public void addImage(UploadFile uploadFile) {
         uploadFile.setBoard(this);
