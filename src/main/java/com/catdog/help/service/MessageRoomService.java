@@ -87,12 +87,7 @@ public class MessageRoomService {
         User sender = userRepository.findByNickname(senderNickName);
         User recipient = userRepository.findByNickname(recipientNickName);
 
-        MessageRoom messageRoom = new MessageRoom();
-        messageRoom.setItemBoard(findBoard);
-        messageRoom.setSender(sender);
-        messageRoom.setRecipient(recipient);
-        messageRoom.setDates(new Dates(LocalDateTime.now(), null, null));
-        return messageRoom;
+        return new MessageRoom(findBoard, sender, recipient, new Dates(LocalDateTime.now(), null, null));
     }
 
     private static List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {

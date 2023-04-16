@@ -7,7 +7,6 @@ import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +26,7 @@ class MessageAndJpaMessageRoomRepositoryTest {
     @Autowired
     JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired JpaUserRepository userRepository;
 
     @Test
     void 저장_조회() {
@@ -122,10 +121,7 @@ class MessageAndJpaMessageRoomRepositoryTest {
     }
 
     private static MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
-        MessageRoom messageRoomByAAndC = new MessageRoom();
-        messageRoomByAAndC.setRecipient(recipientA);
-        messageRoomByAAndC.setSender(senderC);
-        messageRoomByAAndC.setItemBoard(itemBoardByA);
+        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
         return messageRoomByAAndC;
     }
 

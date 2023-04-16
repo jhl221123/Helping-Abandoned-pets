@@ -7,10 +7,10 @@ import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.JpaMessageRepository;
 import com.catdog.help.repository.jpa.JpaMessageRoomRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.message.ReadMessageRoomForm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,8 @@ class MessageRoomServiceTest {
     @Autowired
     JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    JpaUserRepository userRepository;
 
     @Test
     void readRoom() {
@@ -70,10 +71,7 @@ class MessageRoomServiceTest {
     }
 
     private static MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
-        MessageRoom messageRoomByAAndC = new MessageRoom();
-        messageRoomByAAndC.setRecipient(recipientA);
-        messageRoomByAAndC.setSender(senderC);
-        messageRoomByAAndC.setItemBoard(itemBoardByA);
+        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
         return messageRoomByAAndC;
     }
 

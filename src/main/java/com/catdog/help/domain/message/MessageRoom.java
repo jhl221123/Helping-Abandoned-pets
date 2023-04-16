@@ -3,15 +3,16 @@ package com.catdog.help.domain.message;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.user.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter @Setter
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MessageRoom {
 
     @Id @GeneratedValue
@@ -35,4 +36,11 @@ public class MessageRoom {
 
     @OneToMany(mappedBy = "messageRoom", cascade = CascadeType.REMOVE)
     private List<Message> messages = new ArrayList<>();
+
+    public MessageRoom(ItemBoard itemBoard, User sender, User recipient, Dates dates) {
+        this.itemBoard = itemBoard;
+        this.sender = sender;
+        this.recipient = recipient;
+        this.dates = dates;
+    }
 }
