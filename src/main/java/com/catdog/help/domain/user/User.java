@@ -4,15 +4,19 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
+import com.catdog.help.web.form.user.SaveUserForm;
+import com.catdog.help.web.form.user.UpdateUserForm;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter @Setter
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users") //user -> h2 시스템명
 public class User {
 
@@ -56,8 +60,26 @@ public class User {
     private List<Comment> comments = new ArrayList<>();
 
 
+    public User(SaveUserForm form) {
+        this.emailId = form.getEmailId();
+        this.password = form.getPassword();
+        this.nickname = form.getNickname();
+        this.name = form.getName();
+        this.age = form.getAge();
+        this.gender = form.getGender();
+        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
+        this.grade = Grade.BASIC;
+    }
+
+
+    public void updateUser(UpdateUserForm form) {
+        this.name = form.getName();
+        this.age = form.getAge();
+        this.gender = form.getGender();
+        this.dates = new Dates(this.getDates().getCreateDate(), LocalDateTime.now(), null);
+    }
+
     public void changePassword(String afterPassword) {
         this.password = afterPassword;
     }
-
 }

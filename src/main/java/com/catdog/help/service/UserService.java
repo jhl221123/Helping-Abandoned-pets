@@ -1,6 +1,5 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaUserRepository;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,7 +21,7 @@ public class UserService {
 
     @Transactional
     public Long join(SaveUserForm form) {
-        User user = createUser(form);
+        User user = new User(form);
         userRepository.save(user);
         return user.getId();
     }
@@ -76,12 +74,9 @@ public class UserService {
     }
 
     @Transactional
-    public Long updateUserInfo(UpdateUserForm updateForm) { // TODO: 2023-03-20 builder로 수정 필요
+    public Long updateUserInfo(UpdateUserForm updateForm) {
         User findUser = userRepository.findByNickname(updateForm.getNickname());
-        findUser.setName(updateForm.getName());
-        findUser.setAge(updateForm.getAge());
-        findUser.setGender(updateForm.getGender());
-        findUser.setDates(new Dates(findUser.getDates().getCreateDate(), LocalDateTime.now(), null));
+        findUser.updateUser(updateForm);
         return findUser.getId();
     }
 
@@ -96,22 +91,5 @@ public class UserService {
     public void deleteUser(String nickname) {
         User findUser = userRepository.findByNickname(nickname);
         userRepository.delete(findUser); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
-    }
-
-    /**
-     * ================== private method ====================
-     */
-
-    private static User createUser(SaveUserForm form) {
-        User user = new User();
-        user.setEmailId(form.getEmailId());
-        user.setPassword(form.getPassword());
-        user.setNickname(form.getNickname());
-        user.setName(form.getName());
-        user.setAge(form.getAge());
-        user.setGender(form.getGender());
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        user.setGrade(Grade.BASIC);
-        return user;
     }
 }

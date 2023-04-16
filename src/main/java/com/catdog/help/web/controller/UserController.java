@@ -46,7 +46,7 @@ public class UserController {
         }
 
         if (userService.checkNicknameDuplication(saveUserForm.getNickname())) {
-            bindingResult.rejectValue("nickName", "duplicate", "이미 존재하는 닉네임입니다.");
+            bindingResult.rejectValue("nickname", "duplicate", "이미 존재하는 닉네임입니다.");
             return "users/joinForm";
         }
 
@@ -98,8 +98,8 @@ public class UserController {
     }
 
     @GetMapping("/detail/edit")
-    public String editForm(@SessionAttribute(name = LOGIN_USER) String nickName, Model model) {
-        UpdateUserForm updateUserForm = userService.getUpdateForm(nickName);
+    public String editForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+        UpdateUserForm updateUserForm = userService.getUpdateForm(nickname);
         model.addAttribute("updateUserForm", updateUserForm);
         return "users/edit";
     }
@@ -113,29 +113,6 @@ public class UserController {
         return "redirect:/users/detail";
     }
 
-//    @GetMapping("/detail/edit/check")
-//    public String checkPasswordForm(@ModelAttribute("loginForm") LoginForm loginForm) {
-//        return "users/checkPassword";
-//    }
-//
-//    @PostMapping("/detail/edit/check")
-//    public String checkPassword(@Validated @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult,
-//                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickName, Model model) {
-//        if (bindingResult.hasErrors()) {
-//            bindingResult.reject("failCheck", "아이디와 비밀번호를 확인해주세요.");
-//            return "users/checkPassword";
-//        }
-//
-//        UserDto findUser = userService.login(loginForm.getEmailId(), loginForm.getPassword());
-//        if (findUser == null || !findUser.getNickName().equals(nickName)) {
-//            bindingResult.reject("failCheck", "아이디 혹은 비밀번호가 일치하지 않습니다.");
-//            return "users/checkPassword";
-//        }
-//
-//        model.addAttribute("changePasswordForm", new ChangePasswordForm());
-//        return "users/editPassword";
-//    }
-
     @GetMapping("/detail/edit/password")
     public String changePasswordForm(@ModelAttribute ChangePasswordForm changeForm) {
         return "users/editPassword";
@@ -143,12 +120,12 @@ public class UserController {
 
     @PostMapping("/detail/edit/password")
     public String changePassword(@Validated @ModelAttribute ChangePasswordForm changeForm, BindingResult bindingResult,
-                                 @SessionAttribute(name = LOGIN_USER) String nickName) {
+                                 @SessionAttribute(name = LOGIN_USER) String nickname) {
         if (bindingResult.hasErrors()) {
             return "users/editPassword";
         }
 
-        String findPassword = userService.readByNickname(nickName).getPassword(); // TODO: 2023-04-14 서비스에서 해결하도록 수정
+        String findPassword = userService.readByNickname(nickname).getPassword(); // TODO: 2023-04-14 서비스에서 해결하도록 수정
         if (!findPassword.equals(changeForm.getBeforePassword())) {
             bindingResult.rejectValue("beforePassword", "inaccurate", "기존 비밀번호와 일치하지 않습니다.");
             return "users/editPassword";
@@ -160,20 +137,19 @@ public class UserController {
         }
 
         //변경 로직
-        userService.changePassword(changeForm, nickName);
+        userService.changePassword(changeForm, nickname);
         return "redirect:/users/detail";
     }
 
-
     @GetMapping("/detail/delete")
-    public String deleteForm(@SessionAttribute(name = LOGIN_USER) String nickName, Model model) {
-        model.addAttribute("nickName", nickName);
+    public String deleteForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+        model.addAttribute("nickname", nickname);
         return "users/delete";
     }
 
     @PostMapping("/detail/delete")
-    public String delete(@SessionAttribute(name = LOGIN_USER) String nickName) {
-        userService.deleteUser(nickName);
+    public String delete(@SessionAttribute(name = LOGIN_USER) String nickname) {
+        userService.deleteUser(nickname);
         return "redirect:/users/logout";
     }
 }
