@@ -1,5 +1,6 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
@@ -18,14 +19,14 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class UserRepositoryTest {
 
-    @Autowired
-    JpaUserRepository userRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired TestData testData;
 
     @Test
     public void saveAndFindOne() {
         //given
-        User user1 = createUser("user1@email", "password", "nickName1");
-        User user2 = createUser("user2@email", "password", "nickName2");
+        User user1 = testData.createUser("user1@email", "password", "nickName1");
+        User user2 = testData.createUser("user2@email", "password", "nickName2");
 
         //when
         userRepository.save(user1);
@@ -53,9 +54,9 @@ class UserRepositoryTest {
     @Test
     public void findAll() {
         //given
-        User user1 = createUser("user1@email", "password", "nickName1");
-        User user2 = createUser("user2@email", "password", "nickName2");
-        User user3 = createUser("user3@email", "password", "nickName3");
+        User user1 = testData.createUser("user1@email", "password", "nickName1");
+        User user2 = testData.createUser("user2@email", "password", "nickName2");
+        User user3 = testData.createUser("user3@email", "password", "nickName3");
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
@@ -69,17 +70,5 @@ class UserRepositoryTest {
         assertThat(users.get(1).getEmailId()).isEqualTo("user2@email");
         assertThat(users.get(2).getEmailId()).isEqualTo("user3@email");
 
-    }
-
-    private static User createUser(String emailId, String password, String nickName) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setNickname(nickName);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
     }
 }

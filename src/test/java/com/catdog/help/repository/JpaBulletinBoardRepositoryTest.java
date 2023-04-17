@@ -1,5 +1,6 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
@@ -9,6 +10,7 @@ import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
 import com.catdog.help.repository.jpa.JpaCommentRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,13 +26,11 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class JpaBulletinBoardRepositoryTest {
 
-    @Autowired
-    JpaBulletinBoardRepository jpaBulletinBoardRepository;
-    @Autowired UserRepository userRepository;
-    @Autowired
-    JpaCommentRepository jpaCommentRepository;
-    @Autowired
-    JpaLikeBoardRepository jpaLikeBoardRepository;
+    @Autowired JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired JpaCommentRepository jpaCommentRepository;
+    @Autowired JpaLikeBoardRepository jpaLikeBoardRepository;
+    @Autowired TestData testData;
 
     @Test
     void 저장_단건조회_삭제() {
@@ -38,21 +38,21 @@ class JpaBulletinBoardRepositoryTest {
          * comment, likeBoard 존재
          */
         //유저 생성
-        User user1 = createUser("id1@123", "123");
+        User user1 = testData.createUser("id1@123", "123", "nickname1");
         userRepository.save(user1);
 
         //게시글 생성
-        BulletinBoard user1Board1 = createBulletinBoard("title1", user1);
-        BulletinBoard user1Board2 = createBulletinBoard("title2", user1);
+        BulletinBoard user1Board1 = testData.createBulletinBoard("title1", user1);
+        BulletinBoard user1Board2 = testData.createBulletinBoard("title2", user1);
         jpaBulletinBoardRepository.save(user1Board1);
         jpaBulletinBoardRepository.save(user1Board2);
 
         //댓글 생성
-        Comment comment = getComment(user1, user1Board1, "user1이 board1에 작성하다.");
+        Comment comment = testData.getComment(user1, user1Board1, "user1이 board1에 작성하다.");
         jpaCommentRepository.save(comment);
 
         //좋아요 생성
-        LikeBoard likeBoard = getLikeBoard(user1, user1Board1);
+        LikeBoard likeBoard = testData.getLikeBoard(user1Board1, user1);
         jpaLikeBoardRepository.save(likeBoard);
 
         //게시글 조회
@@ -78,13 +78,13 @@ class JpaBulletinBoardRepositoryTest {
     @Test
     void findAll() throws InterruptedException {
         //given
-        User user1 = createUser("id1@123", "123");
-        User user2 = createUser("id2@123", "123");
-        BulletinBoard board1 = createBulletinBoard("title1", user1);
+        User user1 = testData.createUser("id1@123", "123", "nickname1");
+        User user2 = testData.createUser("id2@123", "123", "nickname2");
+        BulletinBoard board1 = testData.createBulletinBoard("title1", user1);
         TimeUnit.SECONDS.sleep(1);
-        BulletinBoard board2 = createBulletinBoard("title2", user1);
+        BulletinBoard board2 = testData.createBulletinBoard("title2", user1);
         TimeUnit.SECONDS.sleep(1);
-        BulletinBoard board3 = createBulletinBoard("title3", user2);
+        BulletinBoard board3 = testData.createBulletinBoard("title3", user2);
         // TODO: 2023-03-09 Board.user -> CASCADE.ALL 이라서 수정필요
         userRepository.save(user1);
         userRepository.save(user2);
@@ -104,44 +104,5 @@ class JpaBulletinBoardRepositoryTest {
 
         assertThat(findBoards.size()).isEqualTo(3);
 
-    }
-
-    private static BulletinBoard createBulletinBoard(String title, User user) {
-        BulletinBoard board = new BulletinBoard();
-        board.setTitle(title);
-        board.setContent("content");
-        board.setRegion("region");
-        board.setUser(user);
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
-    }
-
-    private static User createUser(String emailId, String password) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
-    }
-
-    private static Comment getComment(User user, BulletinBoard board, String content) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(content);
-//        comment.setParent(new Comment()); //jpa 아니면 여기서 error
-        comment.setDates(new Dates(LocalDateTime.now(), null, null));
-
-        return comment;
-    }
-
-    private static LikeBoard getLikeBoard(User user, BulletinBoard board) {
-        LikeBoard likeBoard = new LikeBoard();
-        likeBoard.setBoard(board);
-        likeBoard.setUser(user);
-        return likeBoard;
     }
 }

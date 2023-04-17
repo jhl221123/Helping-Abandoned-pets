@@ -1,9 +1,9 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Dates;
+import com.catdog.help.TestData;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,13 +19,15 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class UserServiceTest {
 
-    @Autowired private UserService userService;
-    @Autowired private UserRepository userRepository;
+    @Autowired UserService userService;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired TestData testData;
+
 
     @Test
     void join() {
         //given
-        SaveUserForm form = getSaveUserForm("user@123", "nickName", "12345");
+        SaveUserForm form = testData.getSaveUserForm("user@123", "nickName", "12345");
 
         //when
         Long userId = userService.join(form);
@@ -40,7 +41,7 @@ class UserServiceTest {
     @Test
     void checkDuplication() {
         //given
-        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        userService.join(testData.getSaveUserForm("user@email", "nickName", "password"));
 
         //when
         boolean duplicatedEmailId = userService.checkEmailDuplication("user@email");
@@ -58,7 +59,7 @@ class UserServiceTest {
     @Test
     void login() {
         //given
-        Long userId = userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        Long userId = userService.join(testData.getSaveUserForm("user@email", "password", "nickName"));
 
         //when
         ReadUserForm loginReadUserForm1 = userService.login("user@email", "password");    //정상 로그인
@@ -74,7 +75,7 @@ class UserServiceTest {
     @Test
     void getUserDtoByNickName() {
         //given
-        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        userService.join(testData.getSaveUserForm("user@email", "nickName", "password"));
         String nickName = "nickName";
         String nonexistentNickName = "nonexistentNickName";
 
@@ -91,7 +92,7 @@ class UserServiceTest {
     @Test
     void getUpdateForm() {
         //given
-        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        userService.join(testData.getSaveUserForm("user@email", "nickName", "password"));
         String nickName = "nickName";
         String nonexistentNickName = "nonexistentNickName";
 
@@ -107,7 +108,7 @@ class UserServiceTest {
     @Test
     void updateUserInfo() {
         //given
-        userService.join(getSaveUserForm("user@email", "nickName", "password"));
+        userService.join(testData.getSaveUserForm("user@email", "nickName", "password"));
         UpdateUserForm form = new UpdateUserForm();
         form.setNickname("nickName");
         form.setName("newName");
@@ -123,31 +124,4 @@ class UserServiceTest {
         assertThat(findUser.getAge()).isEqualTo(10);
         assertThat(findUser.getGender()).isEqualTo(Gender.WOMAN);
     }
-
-
-    /**============================= private method ==============================*/
-
-    private SaveUserForm getSaveUserForm(String emailId, String nickName, String password) {
-        SaveUserForm form = new SaveUserForm();
-        form.setEmailId(emailId);
-        form.setPassword(password);
-        form.setNickname(nickName);
-        form.setName("name");
-        form.setAge(20);
-        form.setGender(Gender.MAN);
-        return form;
-    }
-
-//    private ReadUserForm getUserDto() {
-//        ReadUserForm readUserForm = new ReadUserForm();
-//        readUserForm.setId(1L);
-//        readUserForm.setEmailId("user@email");
-//        readUserForm.setPassword("password");
-//        readUserForm.setNickname("nickName");
-//        readUserForm.setName("name");
-//        readUserForm.setAge(20);
-//        userDto.setGender(Gender.MAN);
-//        readUserForm.setDates(new Dates(LocalDateTime.now(), null, null));
-//        return readUserForm;
-//    }
 }

@@ -1,10 +1,10 @@
 package com.catdog.help.repository.jpa;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.*;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +21,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 class JpaItemBoardRepositoryTest {
 
-    @Autowired
-    JpaItemBoardRepository itemBoardRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    JpaCommentRepository jpaCommentRepository;
-    @Autowired
-    JpaLikeBoardRepository jpaLikeBoardRepository;
+    @Autowired JpaItemBoardRepository itemBoardRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired JpaCommentRepository jpaCommentRepository;
+    @Autowired JpaLikeBoardRepository jpaLikeBoardRepository;
+    @Autowired TestData testData;
+
 
     @Test
     void 저장_단건조회_삭제() {
@@ -36,11 +34,11 @@ class JpaItemBoardRepositoryTest {
          * comment, likeBoard 존재
          */
         //유저 생성
-        User user1 = createUser("id1@123", "123");
+        User user1 = testData.createUser("id1@123", "123", "nickname");
         userRepository.save(user1);
 
         //상품글 생성
-        ItemBoard itemBoard = createItemBoard("강아지 집", 0, user1);
+        ItemBoard itemBoard = testData.createItemBoard("강아지 집", 0, user1);
         Long boardId = itemBoardRepository.save(itemBoard);
 //
 //        //댓글 생성
@@ -80,16 +78,16 @@ class JpaItemBoardRepositoryTest {
     @Test
     void findPage() throws InterruptedException {
         //given
-        User user1 = createUser("id1@123", "123");
-        User user2 = createUser("id2@123", "123");
+        User user1 = testData.createUser("id1@123", "123", "nickname");
+        User user2 = testData.createUser("id2@123", "123", "nickname");
         userRepository.save(user1);
         userRepository.save(user2);
 
-        ItemBoard itemBoard1 = createItemBoard("강아지 집", 0, user1);
+        ItemBoard itemBoard1 = testData.createItemBoard("강아지 집", 0, user1);
         TimeUnit.SECONDS.sleep(1);
-        ItemBoard itemBoard2 = createItemBoard("강아지 옷", 5000, user1);
+        ItemBoard itemBoard2 = testData.createItemBoard("강아지 옷", 5000, user1);
         TimeUnit.SECONDS.sleep(1);
-        ItemBoard itemBoard3 = createItemBoard("장난감", 0, user2);
+        ItemBoard itemBoard3 = testData.createItemBoard("장난감", 0, user2);
         itemBoardRepository.save(itemBoard1);
         itemBoardRepository.save(itemBoard2);
         itemBoardRepository.save(itemBoard3);
@@ -106,46 +104,5 @@ class JpaItemBoardRepositoryTest {
         assertThatThrownBy(()->findBoards.get(2).getItemName()).isInstanceOf(IndexOutOfBoundsException.class);
 
         assertThat(findBoards.size()).isEqualTo(2);
-    }
-
-    private static ItemBoard createItemBoard(String itemName, int price, User user) {
-        ItemBoard board = new ItemBoard();
-        board.setItemName(itemName);
-        board.setPrice(price);
-        board.setTitle("title");
-        board.setContent("content");
-        board.setStatus(ItemStatus.STILL);
-        board.setUser(user);
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
-    }
-
-    private static User createUser(String emailId, String password) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
-    }
-
-    private static Comment getComment(User user, BulletinBoard board, String content) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(content);
-//        comment.setParent(new Comment()); //jpa 아니면 여기서 error
-        comment.setDates(new Dates(LocalDateTime.now(), null, null));
-
-        return comment;
-    }
-
-    private static LikeBoard getLikeBoard(User user, BulletinBoard board) {
-        LikeBoard likeBoard = new LikeBoard();
-        likeBoard.setBoard(board);
-        likeBoard.setUser(user);
-        return likeBoard;
     }
 }

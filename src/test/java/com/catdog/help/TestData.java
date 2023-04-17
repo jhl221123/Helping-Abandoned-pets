@@ -1,12 +1,15 @@
 package com.catdog.help;
 
 import com.catdog.help.domain.Dates;
-import com.catdog.help.domain.board.BulletinBoard;
-import com.catdog.help.domain.board.Inquiry;
+import com.catdog.help.domain.board.*;
+import com.catdog.help.domain.message.Message;
+import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
+import com.catdog.help.web.form.message.SaveMessageForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import org.springframework.stereotype.Component;
 
@@ -15,30 +18,63 @@ import java.time.LocalDateTime;
 @Component
 public class TestData {
 
-    /** User */
+    /** user */
 
-    public User createUser(String emailId, String password, String nickname) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setNickname(nickname);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
+    public User createUser(String emailId, String password, String nickName) {
+        SaveUserForm form = getSaveUserForm(emailId, password, nickName);
+        return new User(form);
+    }
+
+    public SaveUserForm getSaveUserForm(String emailId, String password, String nickName) {
+        SaveUserForm form = new SaveUserForm();
+        form.setEmailId(emailId);
+        form.setPassword(password);
+        form.setName("name");
+        form.setNickname(nickName);
+        form.setAge(28);
+        form.setGender(Gender.MAN);
+        return form;
     }
 
 
-    /** BulletinBoard */
+    /** bulletinBoard */
 
     public BulletinBoard createBulletinBoard(String title, User user) {
+        SaveBulletinBoardForm form = getSaveBulletinBoardForm(title);
+        BulletinBoard board = new BulletinBoard(user, form);
+        return board;
+    }
+
+    public BulletinBoard createBulletinBoardOnlyTitle(String title) {
+        SaveBulletinBoardForm form = getSaveBulletinBoardForm(title);
+        BulletinBoard board = new BulletinBoard(new User(new SaveUserForm()), form);
+        return board;
+    }
+
+    public SaveBulletinBoardForm getSaveBulletinBoardForm(String title) {
         SaveBulletinBoardForm form = new SaveBulletinBoardForm();
         form.setTitle(title);
         form.setContent("content");
         form.setRegion("region");
-        BulletinBoard board = new BulletinBoard(user, form);
+        return form;
+    }
+
+
+    /** itemBoard */
+
+    public static ItemBoard createItemBoard(String itemName, int price, User user) {
+        SaveItemBoardForm form = getSaveItemBoardForm(itemName, price);
+        ItemBoard board = new ItemBoard(user, form);
         return board;
+    }
+
+    public static SaveItemBoardForm getSaveItemBoardForm(String itemName, int price) {
+        SaveItemBoardForm form = new SaveItemBoardForm();
+        form.setItemName(itemName);
+        form.setPrice(price);
+        form.setTitle("title");
+        form.setContent("content");
+        return form;
     }
 
 
@@ -57,5 +93,49 @@ public class TestData {
         saveForm.setContent("content");
         saveForm.setSecret(secret);
         return saveForm;
+    }
+
+
+    /** likeBoard */
+
+    public LikeBoard getLikeBoard(BulletinBoard board, User user) {
+        LikeBoard likeBoard = new LikeBoard(board, user);
+        return likeBoard;
+    }
+
+
+    /** comment */
+
+    public Comment getComment(User user, BulletinBoard board, String content) {
+        Comment comment = new Comment();
+        comment.setBoard(board);
+        comment.setUser(user);
+        comment.setContent(content);
+        comment.setDates(new Dates(LocalDateTime.now(), null, null));
+
+        return comment;
+    }
+
+
+    /** message */
+
+    public Message createMessage(User senderC, MessageRoom roomByAAndC) {
+        return new Message(roomByAAndC, senderC, new SaveMessageForm("인형 얼마인가요?"));
+    }
+
+    public MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
+        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
+        return messageRoomByAAndC;
+    }
+
+
+    /** uploadFile */
+
+    public UploadFile getUploadFile(BulletinBoard board, String uploadName) {
+        UploadFile uploadFile = new UploadFile();
+        uploadFile.setUploadFileName(uploadName);
+        uploadFile.setStoreFileName("storeName");
+        uploadFile.setBoard(board);
+        return uploadFile;
     }
 }

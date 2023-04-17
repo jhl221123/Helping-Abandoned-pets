@@ -1,8 +1,9 @@
 package com.catdog.help.service;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.repository.JpaBulletinBoardRepository;
+import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
 import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -19,17 +20,18 @@ import static org.assertj.core.api.Assertions.*;
 class BulletinBoardServiceTest {
 
     @Autowired BulletinBoardService bulletinBoardService;
-    @Autowired
-    JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired UserService userService;
+    @Autowired TestData testData;
+
 
     @Test
     void createBoard() {
         //given
-        SaveUserForm userForm = getUserForm("nickName");
+        SaveUserForm userForm = testData.getSaveUserForm("nickName", "password", "nickname");
         Long userId = userService.join(userForm);
 
-        SaveBulletinBoardForm boardForm = getBoardForm("title");
+        SaveBulletinBoardForm boardForm = testData.getSaveBulletinBoardForm("title");
 
         //when
         Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickname());
@@ -43,32 +45,34 @@ class BulletinBoardServiceTest {
     @Test
     void readBoards() {
         //given
-        SaveUserForm userForm = getUserForm("nickName");
+        SaveUserForm userForm = testData.getSaveUserForm("nickName", "password", "nickname");
         userService.join(userForm);
-        Long firstBoardId = bulletinBoardService.createBoard(getBoardForm("firstTitle"), "nickName");
-        Long secondBoardId = bulletinBoardService.createBoard(getBoardForm("secondTitle"), "nickName");
+        Long firstBoardId = bulletinBoardService.createBoard(testData.getSaveBulletinBoardForm("firstTitle"), "nickName");
+        Long secondBoardId = bulletinBoardService.createBoard(testData.getSaveBulletinBoardForm("secondTitle"), "nickName");
 
         //when
-        ReadBulletinBoardForm firstBoardDto = bulletinBoardService.readBoard(firstBoardId);
+        ReadBulletinBoardForm findForm = bulletinBoardService.readBoard(firstBoardId);
         // TODO: 2023-03-27   pageRead 추가
 
         //then
-        assertThat(firstBoardDto.getTitle()).isEqualTo("firstTitle");
-        assertThat(firstBoardDto.getReadUserForm().getNickname()).isEqualTo("nickName");
+        assertThat(findForm.getTitle()).isEqualTo("firstTitle");
+        assertThat(findForm.getNickname()).isEqualTo("nickName");
     }
 
     @Test
     void getUpdateFormAndUpdateBoard() {
         //given
-        SaveUserForm userForm = getUserForm("nickName");
+        SaveUserForm userForm = testData.getSaveUserForm("nickName", "password", "nickname");
         Long userId = userService.join(userForm);
 
-        SaveBulletinBoardForm boardForm = getBoardForm("title");
+        SaveBulletinBoardForm boardForm = testData.getSaveBulletinBoardForm("secondTitle");
         Long boardId = bulletinBoardService.createBoard(boardForm, userForm.getNickname());
 
         //when
         UpdateBulletinBoardForm updateForm = bulletinBoardService.getUpdateForm(boardId);
-        update(updateForm);
+        updateForm.setTitle("updateTitle");
+        updateForm.setContent("updateContent");
+        updateForm.setRegion("updateRegion");
         Long updateBoardId = bulletinBoardService.updateBoard(updateForm);
         BulletinBoard updateBoard = jpaBulletinBoardRepository.findById(updateBoardId);
 
@@ -79,38 +83,5 @@ class BulletinBoardServiceTest {
         assertThat(updateBoard.getTitle()).isEqualTo("updateTitle");
         assertThat(updateBoard.getContent()).isEqualTo("updateContent");
         assertThat(updateBoard.getRegion()).isEqualTo("updateRegion");
-        assertThat(updateBoard.getImages()).isEqualTo("updateImage");
-    }
-
-
-
-
-    /**============================= private method ==============================*/
-
-    private SaveUserForm getUserForm(String nickName) {
-        SaveUserForm form = new SaveUserForm();
-        form.setEmailId("emailId");
-        form.setPassword("password");
-        form.setNickname(nickName);
-        form.setName("name");
-        form.setAge(20);
-        form.setGender(Gender.MAN);
-        return form;
-    }
-
-    private static SaveBulletinBoardForm getBoardForm(String title) {
-        SaveBulletinBoardForm boardForm = new SaveBulletinBoardForm();
-        boardForm.setTitle(title);
-        boardForm.setContent("content");
-        boardForm.setRegion("region");
-//        boardForm.setImages("image");
-        return boardForm;
-    }
-
-    private static void update(UpdateBulletinBoardForm updateForm) {
-        updateForm.setTitle("updateTitle");
-        updateForm.setContent("updateContent");
-        updateForm.setRegion("updateRegion");
-//        updateForm.setImage("updateImage");
     }
 }

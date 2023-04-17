@@ -3,8 +3,8 @@ package com.catdog.help.service;
 import com.catdog.help.TestData;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
@@ -24,7 +24,7 @@ class InquiryServiceTest {
 
     @Autowired InquiryService inquiryService;
     @Autowired JpaInquiryRepository inquiryRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired JpaUserRepository userRepository;
     @Autowired TestData testData;
     @Autowired EntityManager em;
 

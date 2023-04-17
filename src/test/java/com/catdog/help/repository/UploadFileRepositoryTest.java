@@ -1,5 +1,6 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
@@ -21,24 +22,23 @@ import static org.assertj.core.api.Assertions.*;
 @Slf4j
 class UploadFileRepositoryTest {
 
-    @Autowired
-    JpaUploadFileRepository uploadFileRepository;
-    @Autowired
-    JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired JpaUploadFileRepository uploadFileRepository;
+    @Autowired JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired TestData testData;
 
     @Test
     void 저장_조회() {
         //given
-        BulletinBoard oneUploadFileBoard = createBulletinBoard("oneUploadFileBoard");
-        BulletinBoard uploadFilesBoard = createBulletinBoard("uploadFilesBoard");
-        BulletinBoard noUploadFileBoard = createBulletinBoard("noUploadFileBoard");
+        BulletinBoard oneUploadFileBoard = testData.createBulletinBoardOnlyTitle("oneUploadFileBoard");
+        BulletinBoard uploadFilesBoard = testData.createBulletinBoardOnlyTitle("uploadFilesBoard");
+        BulletinBoard noUploadFileBoard = testData.createBulletinBoardOnlyTitle("noUploadFileBoard");
         jpaBulletinBoardRepository.save(oneUploadFileBoard);
         jpaBulletinBoardRepository.save(uploadFilesBoard);
         jpaBulletinBoardRepository.save(noUploadFileBoard);
 
-        UploadFile uploadFile1 = getUploadFile(oneUploadFileBoard, "uploadName1");
-        UploadFile uploadFile2 = getUploadFile(uploadFilesBoard, "uploadName2");
-        UploadFile uploadFile3 = getUploadFile(uploadFilesBoard, "uploadName3");
+        UploadFile uploadFile1 = testData.getUploadFile(oneUploadFileBoard, "uploadName1");
+        UploadFile uploadFile2 = testData.getUploadFile(uploadFilesBoard, "uploadName2");
+        UploadFile uploadFile3 = testData.getUploadFile(uploadFilesBoard, "uploadName3");
 
         //when
         uploadFileRepository.save(uploadFile1);
@@ -53,23 +53,5 @@ class UploadFileRepositoryTest {
         assertThat(uploadFiles.size()).isEqualTo(2);
         assertThat(noUploadFile.size()).isEqualTo(0);
 
-    }
-
-    private UploadFile getUploadFile(BulletinBoard board, String uploadName) {
-        UploadFile uploadFile = new UploadFile();
-        uploadFile.setUploadFileName(uploadName);
-        uploadFile.setStoreFileName("storeName");
-        uploadFile.setBoard(board);
-        return uploadFile;
-    }
-
-    private static BulletinBoard createBulletinBoard(String title) {
-        BulletinBoard board = new BulletinBoard();
-        board.setTitle(title);
-        board.setContent("content");
-        board.setRegion("region");
-//        board.setUser(new User()); //jpa 아니면 여기서 error
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
     }
 }

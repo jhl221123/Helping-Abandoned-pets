@@ -5,8 +5,6 @@ import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.JpaBulletinBoardRepository;
-import com.catdog.help.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,9 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 class JpaBoardRepositoryTest {
 
     @Autowired JpaBoardRepository boardRepository;
-    @Autowired UserRepository userRepository;
-    @Autowired
-    JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired JpaBulletinBoardRepository jpaBulletinBoardRepository;
     @Autowired JpaInquiryRepository inquiryRepository;
     @Autowired TestData testData;
     @Autowired EntityManager em;

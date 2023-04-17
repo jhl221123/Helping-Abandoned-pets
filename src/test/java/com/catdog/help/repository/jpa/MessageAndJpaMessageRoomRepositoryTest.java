@@ -1,5 +1,6 @@
 package com.catdog.help.repository.jpa;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
@@ -7,6 +8,7 @@ import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.web.form.message.SaveMessageForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,44 +23,43 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class MessageAndJpaMessageRoomRepositoryTest {
 
-    @Autowired
-    JpaMessageRoomRepository jpaMessageRoomRepository;
-    @Autowired
-    JpaMessageRepository jpaMessageRepository;
+    @Autowired JpaMessageRoomRepository jpaMessageRoomRepository;
+    @Autowired JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
     @Autowired JpaUserRepository userRepository;
+    @Autowired TestData testData;
 
     @Test
     void 저장_조회() {
         //given
-        User recipientA = createUser("recipientA@email", "password");
-        User recipientB = createUser("recipientB@email", "password");
-        User senderC = createUser("senderC@email", "password");
-        User senderD = createUser("senderD@email", "password");
+        User recipientA = testData.createUser("recipientA@email", "password", "recipientA");
+        User recipientB = testData.createUser("recipientB@email", "password", "recipientB");
+        User senderC = testData.createUser("senderC@email", "password", "senderC");
+        User senderD = testData.createUser("senderD@email", "password", "senderD");
         userRepository.save(recipientA);
         userRepository.save(recipientB);
         userRepository.save(senderC);
         userRepository.save(senderD);
 
-        ItemBoard itemBoardByA = createItemBoard("인형", 100, recipientA);
-        ItemBoard itemBoardByB = createItemBoard("강아지 집", 1000, recipientB);
+        ItemBoard itemBoardByA = testData.createItemBoard("인형", 100, recipientA);
+        ItemBoard itemBoardByB = testData.createItemBoard("강아지 집", 1000, recipientB);
         itemBoardRepository.save(itemBoardByA);
         itemBoardRepository.save(itemBoardByB);
 
         //메시지 룸 생성
-        MessageRoom roomAC = createMessageRoom(recipientA, senderC, itemBoardByA);
-        MessageRoom roomAD = createMessageRoom(recipientA, senderD, itemBoardByA);
-        MessageRoom roomBC = createMessageRoom(recipientB, senderC, itemBoardByB);
+        MessageRoom roomAC = testData.createMessageRoom(recipientA, senderC, itemBoardByA);
+        MessageRoom roomAD = testData.createMessageRoom(recipientA, senderD, itemBoardByA);
+        MessageRoom roomBC = testData.createMessageRoom(recipientB, senderC, itemBoardByB);
 
         jpaMessageRoomRepository.save(roomAC);
         jpaMessageRoomRepository.save(roomAD);
         jpaMessageRoomRepository.save(roomBC);
 
         //메시지 생성
-        Message messageCToA = createMessage(senderC, roomAC);
-        Message messageAToC = createMessage(recipientA, roomAC);
-        Message messageCToB = createMessage(senderC, roomBC);
-        Message messageDToA = createMessage(senderD, roomAD);
+        Message messageCToA = testData.createMessage(senderC, roomAC);
+        Message messageAToC = testData.createMessage(recipientA, roomAC);
+        Message messageCToB = testData.createMessage(senderC, roomBC);
+        Message messageDToA = testData.createMessage(senderD, roomAD);
         jpaMessageRepository.save(messageCToA);
         jpaMessageRepository.save(messageAToC);
         jpaMessageRepository.save(messageCToB);
@@ -87,19 +88,19 @@ class MessageAndJpaMessageRoomRepositoryTest {
     @Test
     void findWithRefers() {
         //given
-        User recipientA = createUser("recipientA@email", "password");
-        User senderC = createUser("senderC@email", "password");
+        User recipientA = testData.createUser("recipientA@email", "password", "recipientA");
+        User senderC = testData.createUser("senderC@email", "password", "senderC");
         userRepository.save(recipientA);
         userRepository.save(senderC);
 
-        ItemBoard itemBoardByA = createItemBoard("인형", 100, recipientA);
+        ItemBoard itemBoardByA = testData.createItemBoard("인형", 100, recipientA);
         itemBoardRepository.save(itemBoardByA);
 
-        MessageRoom roomAC = createMessageRoom(recipientA, senderC, itemBoardByA);
+        MessageRoom roomAC = testData.createMessageRoom(recipientA, senderC, itemBoardByA);
         jpaMessageRoomRepository.save(roomAC);
 
-        Message messageCToA = createMessage(senderC, roomAC);
-        Message messageAToC = createMessage(recipientA, roomAC);
+        Message messageCToA = testData.createMessage(senderC, roomAC);
+        Message messageAToC = testData.createMessage(recipientA, roomAC);
         jpaMessageRepository.save(messageCToA);
         jpaMessageRepository.save(messageAToC);
 
@@ -109,42 +110,5 @@ class MessageAndJpaMessageRoomRepositoryTest {
 
         //then
         assertThat(findRoom).isNotNull();
-    }
-
-    private Message createMessage(User senderC, MessageRoom roomByAAndC) {
-        Message messageBySenderC = new Message();
-        messageBySenderC.addMessage(roomByAAndC);
-        messageBySenderC.setSender(senderC);
-        messageBySenderC.setContent("인형 얼마인가요?");
-        messageBySenderC.setDates(new Dates(LocalDateTime.now(), null, null));
-        return messageBySenderC;
-    }
-
-    private static MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
-        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
-        return messageRoomByAAndC;
-    }
-
-    private static ItemBoard createItemBoard(String itemName, int price, User user) {
-        ItemBoard board = new ItemBoard();
-        board.setItemName(itemName);
-        board.setPrice(price);
-        board.setTitle("title");
-        board.setContent("content");
-        board.setStatus(ItemStatus.STILL);
-        board.setUser(user);
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
-    }
-
-    private static User createUser(String emailId, String password) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
     }
 }

@@ -1,11 +1,9 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Dates;
+import com.catdog.help.TestData;
 import com.catdog.help.domain.board.ItemBoard;
-import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MessageRoom;
-import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.JpaMessageRepository;
@@ -18,37 +16,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @SpringBootTest
 @Transactional
 class MessageRoomServiceTest {
 
     @Autowired MessageRoomService messageRoomService;
-    @Autowired
-    JpaMessageRoomRepository jpaMessageRoomRepository;
-    @Autowired
-    JpaMessageRepository jpaMessageRepository;
+    @Autowired JpaMessageRoomRepository jpaMessageRoomRepository;
+    @Autowired JpaMessageRepository jpaMessageRepository;
     @Autowired JpaItemBoardRepository itemBoardRepository;
-    @Autowired
-    JpaUserRepository userRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired TestData testData;
 
     @Test
     void readRoom() {
         //given
-        User recipientA = createUser("recipientA@email", "password", "nickName1");
-        User senderC = createUser("senderC@email", "password", "nickName2");
+        User recipientA = testData.createUser("recipientA@email", "password", "nickName1");
+        User senderC = testData.createUser("senderC@email", "password", "nickName2");
         userRepository.save(recipientA);
         userRepository.save(senderC);
 
-        ItemBoard itemBoardByA = createItemBoard("인형", 100, recipientA);
+        ItemBoard itemBoardByA = testData.createItemBoard("인형", 100, recipientA);
         itemBoardRepository.save(itemBoardByA);
 
-        MessageRoom roomAC = createMessageRoom(recipientA, senderC, itemBoardByA);
+        MessageRoom roomAC = testData.createMessageRoom(recipientA, senderC, itemBoardByA);
         jpaMessageRoomRepository.save(roomAC);
 
-        Message messageCToA = createMessage(senderC, roomAC);
-        Message messageAToC = createMessage(recipientA, roomAC);
+        Message messageCToA = testData.createMessage(senderC, roomAC);
+        Message messageAToC = testData.createMessage(recipientA, roomAC);
         jpaMessageRepository.save(messageCToA);
         jpaMessageRepository.save(messageAToC);
 
@@ -61,41 +56,5 @@ class MessageRoomServiceTest {
         Assertions.assertThat(roomFrom).isNotNull();
     }
 
-    private Message createMessage(User senderC, MessageRoom roomByAAndC) {
-        Message messageBySenderC = new Message();
-        messageBySenderC.addMessage(roomByAAndC);
-        messageBySenderC.setSender(senderC);
-        messageBySenderC.setContent("인형 얼마인가요?");
-        messageBySenderC.setDates(new Dates(LocalDateTime.now(), null, null));
-        return messageBySenderC;
-    }
 
-    private static MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
-        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
-        return messageRoomByAAndC;
-    }
-
-    private static ItemBoard createItemBoard(String itemName, int price, User user) {
-        ItemBoard board = new ItemBoard();
-        board.setItemName(itemName);
-        board.setPrice(price);
-        board.setTitle("title");
-        board.setContent("content");
-        board.setStatus(ItemStatus.STILL);
-        board.setUser(user);
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
-    }
-
-    private static User createUser(String emailId, String password, String nickName) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setName("name");
-        user.setNickname(nickName);
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
-    }
 }

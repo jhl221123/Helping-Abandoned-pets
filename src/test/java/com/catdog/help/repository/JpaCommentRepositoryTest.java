@@ -1,5 +1,6 @@
 package com.catdog.help.repository;
 
+import com.catdog.help.TestData;
 import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Comment;
@@ -7,6 +8,7 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
 import com.catdog.help.repository.jpa.JpaCommentRepository;
+import com.catdog.help.repository.jpa.JpaUserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,25 +23,23 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class JpaCommentRepositoryTest {
 
-    @Autowired
-    JpaCommentRepository jpaCommentRepository;
-    @Autowired
-    JpaBulletinBoardRepository jpaBulletinBoardRepository;
-    @Autowired
-    UserRepository userRepository;
+    @Autowired JpaCommentRepository jpaCommentRepository;
+    @Autowired JpaBulletinBoardRepository jpaBulletinBoardRepository;
+    @Autowired JpaUserRepository userRepository;
+    @Autowired TestData testData;
 
     @Test
     void saveAndFindByIdAndDelete() {
         //given
-        User user1 = createUser("id11@email", "password");
-        User user2 = createUser("id22@email", "password");
+        User user1 = testData.createUser("id11@email", "password", "nickname1");
+        User user2 = testData.createUser("id22@email", "password", "nickname2");
         userRepository.save(user1);
         userRepository.save(user2);
 
-        BulletinBoard board = createBulletinBoard("title", user1);
+        BulletinBoard board = testData.createBulletinBoard("title", user1);
         jpaBulletinBoardRepository.save(board);
 
-        Comment comment = getComment(user2, board, "comment");
+        Comment comment = testData.getComment(user2, board, "comment");
 
         //when
         jpaCommentRepository.save(comment);
@@ -58,23 +58,23 @@ class JpaCommentRepositoryTest {
     @Test
     void findAll() {
         //given
-        User user1 = createUser("id11@email", "password");
-        User user2 = createUser("id22@email", "password");
+        User user1 = testData.createUser("id11@email", "password", "nickname1");
+        User user2 = testData.createUser("id22@email", "password", "nickname2");
         userRepository.save(user1);
         userRepository.save(user2);
 
-        BulletinBoard board1 = createBulletinBoard("title1", user1);
-        BulletinBoard board2 = createBulletinBoard("title2", user2);
+        BulletinBoard board1 = testData.createBulletinBoard("title1", user1);
+        BulletinBoard board2 = testData.createBulletinBoard("title2", user2);
         jpaBulletinBoardRepository.save(board1);
         jpaBulletinBoardRepository.save(board2);
 
-        Comment comment1 = getComment(user2, board1, "comment1");
-        Comment comment2 = getComment(user2, board1, "comment2");
+        Comment comment1 = testData.getComment(user2, board1, "comment1");
+        Comment comment2 = testData.getComment(user2, board1, "comment2");
         jpaCommentRepository.save(comment1);
         jpaCommentRepository.save(comment2);
 
         //when
-        Comment comment3 = getComment(user2, board1, "comment3");
+        Comment comment3 = testData.getComment(user2, board1, "comment3");
         comment3.addParent(comment1);
         jpaCommentRepository.save(comment3);
 
@@ -92,37 +92,5 @@ class JpaCommentRepositoryTest {
         assertThat(comment3).isNotIn(comments); //부모 댓글만 조회되어야 한다.
 
         assertThat(noComments).isEmpty();
-    }
-
-    private static BulletinBoard createBulletinBoard(String title, User user) {
-        BulletinBoard board = new BulletinBoard();
-        board.setTitle(title);
-        board.setContent("content");
-        board.setRegion("region");
-        board.setUser(user);
-        board.setDates(new Dates(LocalDateTime.now(), null, null));
-        return board;
-    }
-
-    private static User createUser(String emailId, String password) {
-        User user = new User();
-        user.setEmailId(emailId);
-        user.setPassword(password);
-        user.setName("name");
-        user.setAge(28);
-        user.setGender(Gender.MAN);
-        user.setDates(new Dates(LocalDateTime.now(), null, null));
-        return user;
-    }
-
-    private static Comment getComment(User user, BulletinBoard board, String content) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(content);
-//        comment.setParent(new Comment()); jpa 아니면 여기서 error
-        comment.setDates(new Dates(LocalDateTime.now(), null, null));
-
-        return comment;
     }
 }
