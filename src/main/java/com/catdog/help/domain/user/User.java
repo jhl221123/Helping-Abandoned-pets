@@ -7,6 +7,7 @@ import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

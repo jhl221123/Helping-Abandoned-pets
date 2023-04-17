@@ -26,11 +26,21 @@ public class MessageService {
     private final JpaMessageRoomRepository jpaMessageRoomRepository;
     private final JpaUserRepository userRepository;
 
+
     @Transactional
-    public void createMessage(Long roomId, String senderNickName, SaveMessageForm saveForm) {
+    public void createMessage(Long roomId, String senderNickName, SaveMessageForm form) {
         MessageRoom findRoom = jpaMessageRoomRepository.findById(roomId);
         User sender = userRepository.findByNickname(senderNickName);
-        Message message = new Message(findRoom, sender, saveForm);
-        jpaMessageRepository.save(message);
+        jpaMessageRepository.save(getMessage(form, findRoom, sender));
+    }
+
+
+    private static Message getMessage(SaveMessageForm form, MessageRoom findRoom, User sender) {
+        Message message = Message.builder()
+                .messageRoom(findRoom)
+                .sender(sender)
+                .form(form)
+                .build();
+        return message;
     }
 }

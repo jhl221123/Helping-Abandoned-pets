@@ -30,20 +30,20 @@ public class CommentService {
 
 
     @Transactional
-    public Long createComment(CommentForm commentForm, Long parentCommentId) {
+    public Long createComment(CommentForm form, Long parentCommentId) {
 
-        Board board = boardRepository.findById(commentForm.getBoardId());
-        User user = userRepository.findByNickname(commentForm.getNickname());
+        Board board = boardRepository.findById(form.getBoardId());
+        User user = userRepository.findByNickname(form.getNickname());
 
         if (parentCommentId == -1L) {
             //parent comment
-            Comment parentComment = getComment(commentForm, board, user);
+            Comment parentComment = getComment(form, board, user);
             jpaCommentRepository.save(parentComment);
             return parentComment.getId();
         } else {
             //child comment
             Comment findParentComment = jpaCommentRepository.findById(parentCommentId);
-            Comment childComment = getComment(commentForm, board, user);
+            Comment childComment = getComment(form, board, user);
             childComment.addParent(findParentComment);
             jpaCommentRepository.save(childComment);
             return childComment.getId();
@@ -56,16 +56,13 @@ public class CommentService {
     }
 
     public List<CommentForm> readComments(Long boardId) {
-        List<CommentForm> commentForms = new ArrayList<>();
+        List<CommentForm> forms = new ArrayList<>();
 
         List<Comment> comments = jpaCommentRepository.findAll(boardId);
-        if (comments.isEmpty()) {
-            return null;
-        }
         for (Comment comment : comments) {
-            commentForms.add(new CommentForm(comment));
+            forms.add(new CommentForm(comment));
         }
-        return commentForms;
+        return forms;
     }
 
     public UpdateCommentForm getUpdateCommentForm(Long commentId, String nickName) {
@@ -74,10 +71,9 @@ public class CommentService {
     }
 
     @Transactional
-    public Long updateComment(UpdateCommentForm updateForm) {
-        Comment findComment = jpaCommentRepository.findById(updateForm.getCommentId());
-        findComment.setContent(updateForm.getContent());
-        findComment.setDates(new Dates(findComment.getDates().getCreateDate(), LocalDateTime.now(), null));
+    public Long updateComment(UpdateCommentForm form) {
+        Comment findComment = jpaCommentRepository.findById(form.getCommentId());
+        findComment.updateComment(form);
         return findComment.getId();
     }
 
@@ -91,12 +87,12 @@ public class CommentService {
     /**============================= private method ==============================*/
 
 
-    private static Comment getComment(CommentForm commentForm, Board board, User user) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(commentForm.getContent());
-        comment.setDates(new Dates(LocalDateTime.now(), null, null)); //댓글 생성에만 사용가능
+    private static Comment getComment(CommentForm form, Board board, User user) {
+        Comment comment = Comment.builder()
+                .board(board)
+                .user(user)
+                .form(form)
+                .build();
         return comment;
     }
 }

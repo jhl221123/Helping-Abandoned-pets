@@ -4,10 +4,12 @@ import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.user.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +39,12 @@ public class MessageRoom {
     @OneToMany(mappedBy = "messageRoom", cascade = CascadeType.REMOVE)
     private List<Message> messages = new ArrayList<>();
 
-    public MessageRoom(ItemBoard itemBoard, User sender, User recipient, Dates dates) {
+
+    @Builder
+    public MessageRoom(ItemBoard itemBoard, User sender, User recipient) {
         this.itemBoard = itemBoard;
         this.sender = sender;
         this.recipient = recipient;
-        this.dates = dates;
+        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
     }
 }

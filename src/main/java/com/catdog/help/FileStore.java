@@ -30,7 +30,10 @@ public class FileStore {
         } catch (IOException e) {
             throw new RuntimeException(e); // TODO: 2023-03-23 예외 세분화 필요
         }
-        return new UploadFile(originalFilename, storeFileName);
+        return UploadFile.builder()
+                .uploadFileName(originalFilename)
+                .storeFileName(storeFileName)
+                .build();
     }
 
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) {

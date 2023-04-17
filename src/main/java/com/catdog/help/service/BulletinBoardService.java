@@ -38,9 +38,9 @@ public class BulletinBoardService {
     /** 게시글 로직 */
 
     @Transactional
-    public Long createBoard(SaveBulletinBoardForm boardForm, String nickName) {
+    public Long createBoard(SaveBulletinBoardForm form, String nickName) {
         User findUser = userRepository.findByNickname(nickName);
-        BulletinBoard board = getBulletinBoard(findUser, boardForm);
+        BulletinBoard board = getBulletinBoard(findUser, form);
         Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
 
         return boardId;
@@ -88,9 +88,9 @@ public class BulletinBoardService {
     }
 
     @Transactional
-    public Long updateBoard(UpdateBulletinBoardForm updateForm) {
-        BulletinBoard findBoard = bulletinBoardRepository.findById(updateForm.getId());
-        updateBulletinBoard(findBoard, updateForm);//게시글 내용 변경 및 이미지 추가
+    public Long updateBoard(UpdateBulletinBoardForm form) {
+        BulletinBoard findBoard = bulletinBoardRepository.findById(form.getId());
+        updateBulletinBoard(findBoard, form);//게시글 내용 변경 및 이미지 추가
         return findBoard.getId();
     }
 
@@ -104,16 +104,18 @@ public class BulletinBoardService {
     /**============================= private method ==============================*/
 
     private BulletinBoard getBulletinBoard(User user, SaveBulletinBoardForm form) {
-        BulletinBoard board = new BulletinBoard(user, form);
+        BulletinBoard board = BulletinBoard.builder()
+                .user(user)
+                .form(form)
+                .build();
         imageService.addImage(board, form.getImages());
         return board;
     }
 
     private static List<PageBulletinBoardForm> getPageBulletinBoardForms(List<BulletinBoard> boards) {
-        return boards.stream().map(b -> {
-            PageBulletinBoardForm pageForm = new PageBulletinBoardForm(b, b.getUser().getNickname());
-            return pageForm;
-        }).collect(Collectors.toList());
+        return boards.stream()
+                .map(b -> new PageBulletinBoardForm(b, b.getUser().getNickname()))
+                .collect(Collectors.toList());
     }
 
     private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm form) {
@@ -123,9 +125,7 @@ public class BulletinBoardService {
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
-                .map(u -> {
-                    ReadUploadFileForm readForm = new ReadUploadFileForm(u);
-                    return readForm;
-                }).collect(Collectors.toList());
+                .map(ReadUploadFileForm::new)
+                .collect(Collectors.toList());
     }
 }

@@ -26,9 +26,12 @@ public class InquiryService {
     private final JpaUserRepository userRepository;
 
     @Transactional
-    public Long saveBoard(SaveInquiryForm saveForm) {
-        User findUser = userRepository.findByNickname(saveForm.getNickname());
-        Inquiry inquiry = new Inquiry(findUser, saveForm);
+    public Long saveBoard(SaveInquiryForm form) {
+        User findUser = userRepository.findByNickname(form.getNickname());
+        Inquiry inquiry = Inquiry.builder()
+                .user(findUser)
+                .form(form)
+                .build();
         inquiryRepository.save(inquiry);
         return inquiry.getId();
     }
@@ -43,7 +46,9 @@ public class InquiryService {
         int offset = page * 10 - 10;
         int limit = 10;
         List<Inquiry> findPage = inquiryRepository.findPage(offset, limit);
-        return findPage.stream().map(i -> new PageInquiryForm(i)).collect(Collectors.toList());
+        return findPage.stream()
+                .map(PageInquiryForm::new)
+                .collect(Collectors.toList());
     }
 
     public int countPage() {
@@ -63,9 +68,9 @@ public class InquiryService {
     }
 
     @Transactional
-    public void updateBoard(EditInquiryForm editForm) {
-        Inquiry findBoard = inquiryRepository.findById(editForm.getId());
-        findBoard.updateBoard(editForm);
+    public void updateBoard(EditInquiryForm form) {
+        Inquiry findBoard = inquiryRepository.findById(form.getId());
+        findBoard.updateBoard(form);
     }
 
     @Transactional

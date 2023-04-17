@@ -6,10 +6,7 @@ import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
 import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ public class ItemBoard extends Board {
     private List<MessageRoom> rooms = new ArrayList<>();
 
 
+    @Builder
     public ItemBoard(User user, SaveItemBoardForm form) {
         super(user, form.getTitle(), form.getContent());
         this.itemName = form.getItemName();

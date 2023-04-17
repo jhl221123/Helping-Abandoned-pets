@@ -7,6 +7,7 @@ import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
+import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
 import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
 import com.catdog.help.web.form.message.SaveMessageForm;
@@ -107,24 +108,29 @@ public class TestData {
     /** comment */
 
     public Comment getComment(User user, BulletinBoard board, String content) {
-        Comment comment = new Comment();
-        comment.setBoard(board);
-        comment.setUser(user);
-        comment.setContent(content);
-        comment.setDates(new Dates(LocalDateTime.now(), null, null));
-
+        Comment comment = Comment.builder()
+                .board(board)
+                .user(user)
+                .form(getCommentForm(content))
+                .build();
         return comment;
+    }
+
+    private CommentForm getCommentForm(String content) {
+        CommentForm commentForm = new CommentForm();
+        commentForm.setContent(content);
+        return commentForm;
     }
 
 
     /** message */
 
     public Message createMessage(User senderC, MessageRoom roomByAAndC) {
-        return new Message(roomByAAndC, senderC, new SaveMessageForm("인형 얼마인가요?"));
+        return new Message(roomByAAndC, senderC, new SaveMessageForm());
     }
 
     public MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {
-        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA, new Dates());
+        MessageRoom messageRoomByAAndC = new MessageRoom(itemBoardByA, senderC, recipientA);
         return messageRoomByAAndC;
     }
 
@@ -132,10 +138,11 @@ public class TestData {
     /** uploadFile */
 
     public UploadFile getUploadFile(BulletinBoard board, String uploadName) {
-        UploadFile uploadFile = new UploadFile();
-        uploadFile.setUploadFileName(uploadName);
-        uploadFile.setStoreFileName("storeName");
-        uploadFile.setBoard(board);
+        UploadFile uploadFile = UploadFile.builder()
+                .uploadFileName(uploadName)
+                .storeFileName("storeName")
+                .build();
+        uploadFile.addBoard(board);
         return uploadFile;
     }
 }

@@ -77,7 +77,7 @@ public class InquiryController {
         // TODO: 2023-04-13 매니저, 작성자 제외 차단
 
         List<CommentForm> commentForms = commentService.readComments(id);
-        if (commentForms != null) {
+        if (!commentForms.isEmpty()) {
             model.addAttribute("commentForms", commentForms);
         }
 

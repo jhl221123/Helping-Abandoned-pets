@@ -30,14 +30,14 @@ public class MessageRoomService {
     private final JpaUserRepository userRepository;
 
     @Transactional
-    public Long createRoom(Long itemBoardId, String senderNickName, String recipientNickName) {
-        MessageRoom messageRoom = createMessageRoom(itemBoardId, senderNickName, recipientNickName);
+    public Long createRoom(Long itemBoardId, String senderNick, String recipientNick) {
+        MessageRoom messageRoom = createMessageRoom(itemBoardId, senderNick, recipientNick);
         jpaMessageRoomRepository.save(messageRoom);
         return messageRoom.getId();
     }
 
-    public Long checkRoom(Long boardId, String senderNickName) {
-        User findUser = userRepository.findByNickname(senderNickName);
+    public Long checkRoom(Long boardId, String senderNick) {
+        User findUser = userRepository.findByNickname(senderNick);
         List<MessageRoom> findRoom = jpaMessageRoomRepository.findAllByUserId(findUser.getId());
         MessageRoom target = findRoom.stream()
                 .filter(m -> m.getItemBoard().getId() == boardId)
@@ -52,13 +52,13 @@ public class MessageRoomService {
 
     public ReadMessageRoomForm readRoom(Long roomId) {
         MessageRoom findRoom = jpaMessageRoomRepository.findWithRefers(roomId);
-        List<ReadMessageForm> readMessageForms = getReadMessageForms(findRoom);
-        ReadMessageRoomForm result = new ReadMessageRoomForm(findRoom, readMessageForms);
+        List<ReadMessageForm> forms = getReadMessageForms(findRoom);
+        ReadMessageRoomForm result = new ReadMessageRoomForm(findRoom, forms);
         return result;
     }
 
-    public List<PageMessageRoomForm> readRoomPage(String nickName, int page) {
-        Long findUserId = userRepository.findByNickname(nickName).getId();
+    public List<PageMessageRoomForm> readRoomPage(String nickname, int page) {
+        Long findUserId = userRepository.findByNickname(nickname).getId();
         int offset = page * 10 - 10;
         int limit = 10;
 
@@ -66,8 +66,8 @@ public class MessageRoomService {
         return getPageMessageRoomForms(findRooms);
     }
 
-    public int countPages(String nickName) {
-        Long findUserId = userRepository.findByNickname(nickName).getId();
+    public int countPages(String nickname) {
+        Long findUserId = userRepository.findByNickname(nickname).getId();
         int totalRooms = (int) jpaMessageRoomRepository.countAllByUserId(findUserId);
         if (totalRooms <= 10) {
             return 1;
@@ -82,28 +82,28 @@ public class MessageRoomService {
     /**============================= private method ==============================*/
 
 
-    private MessageRoom createMessageRoom(Long itemBoardId, String senderNickName, String recipientNickName) {
+    private MessageRoom createMessageRoom(Long itemBoardId, String senderNick, String recipientNick) {
         ItemBoard findBoard = itemBoardRepository.findById(itemBoardId);
-        User sender = userRepository.findByNickname(senderNickName);
-        User recipient = userRepository.findByNickname(recipientNickName);
+        User sender = userRepository.findByNickname(senderNick);
+        User recipient = userRepository.findByNickname(recipientNick);
 
-        return new MessageRoom(findBoard, sender, recipient, new Dates(LocalDateTime.now(), null, null));
+        return MessageRoom.builder()
+                .itemBoard(findBoard)
+                .sender(sender)
+                .recipient(recipient)
+                .build();
     }
 
     private static List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
         List<PageMessageRoomForm> pageForms = findRooms.stream()
-                .map(messageRoom -> {
-                    PageMessageRoomForm form = new PageMessageRoomForm(messageRoom);
-                    return form;
-                }).collect(Collectors.toList());
+                .map(PageMessageRoomForm::new)
+                .collect(Collectors.toList());
         return pageForms;
     }
 
     private List<ReadMessageForm> getReadMessageForms(MessageRoom messageRoom) {
         return messageRoom.getMessages().stream()
-                .map(message -> {
-                    ReadMessageForm form = new ReadMessageForm(message);
-                    return form;
-                }).collect(Collectors.toList());
+                .map(ReadMessageForm::new)
+                .collect(Collectors.toList());
     }
 }

@@ -1,19 +1,17 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter
@@ -27,8 +25,9 @@ public class BulletinBoard extends Board {
     private List<LikeBoard> likeBoards;
 
 
-    public BulletinBoard(User findUser, SaveBulletinBoardForm form) {
-        super(findUser, form.getTitle(), form.getContent());
+    @Builder
+    public BulletinBoard(User user, SaveBulletinBoardForm form) {
+        super(user, form.getTitle(), form.getContent());
         this.region = form.getRegion();
     }
 

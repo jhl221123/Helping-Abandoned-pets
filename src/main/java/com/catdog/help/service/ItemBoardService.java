@@ -1,7 +1,5 @@
 package com.catdog.help.service;
 
-import com.catdog.help.FileStore;
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.board.UploadFile;
@@ -20,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,17 +99,20 @@ public class ItemBoardService {
     /**============================= private method ==============================*/
 
     private ItemBoard getItemBoard(User user, SaveItemBoardForm form) {
-        ItemBoard board = new ItemBoard(user, form);
+        ItemBoard board = ItemBoard.builder()
+                .user(user)
+                .form(form)
+                .build();
         imageService.addImage(board, form.getImages());
         return board;
     }
 
     private List<PageItemBoardForm> getPageItemBoardForms(List<ItemBoard> boards) {
-        return boards.stream().map(b -> {
-            ReadUploadFileForm leadImage = getReadUploadFileForms(uploadFileRepository.findUploadFiles(b.getId())).get(0); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나감..
-            PageItemBoardForm form = new PageItemBoardForm(b, leadImage);
-            return form;
-        }).collect(Collectors.toList());
+        return boards.stream()
+                .map(b -> {
+                    ReadUploadFileForm leadImage = getReadUploadFileForms(uploadFileRepository.findUploadFiles(b.getId())).get(0); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나감..
+                    return new PageItemBoardForm(b, leadImage);
+                }).collect(Collectors.toList());
     }
 
     private void updateItemBoard(UpdateItemBoardForm form, ItemBoard findBoard) {
@@ -123,9 +123,7 @@ public class ItemBoardService {
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
-                .map(u -> {
-                    ReadUploadFileForm readForm = new ReadUploadFileForm(u);
-                    return readForm;
-                }).collect(Collectors.toList());
+                .map(ReadUploadFileForm::new)
+                .collect(Collectors.toList());
     }
 }

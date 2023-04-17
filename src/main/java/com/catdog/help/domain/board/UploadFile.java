@@ -1,12 +1,11 @@
 package com.catdog.help.domain.board;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
-@Getter @Setter
+@Entity @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UploadFile {
 
     @Id @GeneratedValue
@@ -18,11 +17,11 @@ public class UploadFile {
     private Board board;
 
     private String uploadFileName;
+
     private String storeFileName;
 
-    public UploadFile() { //기본생성자 필요
-    }
 
+    @Builder
     public UploadFile(String uploadFileName, String storeFileName) {
         this.uploadFileName = uploadFileName;
         this.storeFileName = storeFileName;
