@@ -24,9 +24,6 @@ public class BulletinBoard extends Board {
     private String region; // TODO: 2023-03-30 지역이름 검증, 셀렉트박스
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<UploadFile> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<LikeBoard> likeBoards;
 
 
@@ -39,10 +36,5 @@ public class BulletinBoard extends Board {
     public void updateBoard(UpdateBulletinBoardForm form) {
         super.updateBoard(form.getTitle(), form.getContent());
         this.region = form.getRegion();
-    }
-
-    public void addImage(UploadFile uploadFile) {
-        uploadFile.setBoard(this);
-        this.getImages().add(uploadFile);
     }
 }

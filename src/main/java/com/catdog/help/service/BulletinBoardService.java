@@ -1,7 +1,6 @@
 package com.catdog.help.service;
 
 import com.catdog.help.FileStore;
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
@@ -19,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +31,7 @@ public class BulletinBoardService {
     private final JpaBulletinBoardRepository bulletinBoardRepository;
     private final JpaUserRepository userRepository;
     private final JpaUploadFileRepository uploadFileRepository;
-    private final FileStore fileStore;
+    private final ImageService imageService;
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
 
@@ -107,13 +105,7 @@ public class BulletinBoardService {
 
     private BulletinBoard getBulletinBoard(User user, SaveBulletinBoardForm form) {
         BulletinBoard board = new BulletinBoard(user, form);
-        if (!form.getImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(form.getImages());
-            for (UploadFile uploadFile : uploadFiles) {
-                board.addImage(uploadFile); //uploadFile 에 board 주입, 안하면 uploadFile저장 불가.
-                uploadFileRepository.save(uploadFile);
-            }
-        }
+        imageService.addImage(board, form.getImages());
         return board;
     }
 
@@ -124,25 +116,9 @@ public class BulletinBoardService {
         }).collect(Collectors.toList());
     }
 
-    private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm updateForm) {
-        findBoard.updateBoard(updateForm);
-
-        //이미지 삭제
-        for (Integer id : updateForm.getDeleteImageIds()) {
-            UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
-            uploadFileRepository.delete(target);
-        }
-
-        // TODO: 2023-04-02 file 경로에 있는 이미지 삭제 -> storeName으로
-
-        //이미지 추가
-        if (!updateForm.getNewImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
-            for (UploadFile uploadFile : uploadFiles) {
-                findBoard.addImage(uploadFile);
-                uploadFileRepository.save(uploadFile);
-            }
-        }
+    private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm form) {
+        findBoard.updateBoard(form);
+        imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {

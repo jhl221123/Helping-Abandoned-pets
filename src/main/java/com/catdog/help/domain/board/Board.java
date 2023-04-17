@@ -35,6 +35,9 @@ public abstract class Board {
     private String content;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<UploadFile> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @Embedded

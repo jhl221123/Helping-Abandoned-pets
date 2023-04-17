@@ -28,9 +28,6 @@ public class ItemBoard extends Board {
     private ItemStatus status;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<UploadFile> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<LikeBoard> likeBoards = new ArrayList<>();
 
     @OneToMany(mappedBy = "itemBoard", cascade = CascadeType.REMOVE)
@@ -53,10 +50,5 @@ public class ItemBoard extends Board {
 
     public void changeStatus(ItemStatus status) {
         this.status = status;
-    }
-
-    public void addImage(UploadFile uploadFile) {
-        uploadFile.setBoard(this);
-        this.getImages().add(uploadFile);
     }
 }

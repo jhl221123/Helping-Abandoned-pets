@@ -33,7 +33,7 @@ public class ItemBoardService {
     private final JpaItemBoardRepository itemBoardRepository;
     private final JpaUserRepository userRepository;
     private final JpaUploadFileRepository uploadFileRepository;
-    private final FileStore fileStore;
+    private final ImageService imageService;
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
     @Transactional
@@ -103,13 +103,7 @@ public class ItemBoardService {
 
     private ItemBoard getItemBoard(User user, SaveItemBoardForm form) {
         ItemBoard board = new ItemBoard(user, form);
-        if (!form.getImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(form.getImages());
-            for (UploadFile uploadFile : uploadFiles) {
-                board.addImage(uploadFile);
-                uploadFileRepository.save(uploadFile);
-            }
-        }
+        imageService.addImage(board, form.getImages());
         return board;
     }
 
@@ -121,35 +115,10 @@ public class ItemBoardService {
         }).collect(Collectors.toList());
     }
 
-    private void updateItemBoard(UpdateItemBoardForm updateForm, ItemBoard findBoard) {
-        findBoard.updateBoard(updateForm);
-
-        //대표이미지 변경
-        if (!updateForm.getNewLeadImage().getResource().getFilename().isEmpty()) { //지금은 이름으로 검증하는게 최선;;
-            UploadFile newLeadImage = fileStore.storeFile(updateForm.getNewLeadImage());
-            List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(findBoard.getId());
-            uploadFiles.get(0).setUploadFileName(newLeadImage.getUploadFileName());
-            uploadFiles.get(0).setStoreFileName(newLeadImage.getStoreFileName());
-            // TODO: 2023-04-02 이름 각각 덮어서 수정했는데 다른 방법도 강구해보자.
-        }
-
-        //선택 이미지 삭제
-        if (!updateForm.getDeleteImageIds().isEmpty()) {
-            for (Integer id : updateForm.getDeleteImageIds()) {
-                UploadFile target = uploadFileRepository.findById(Long.valueOf(id));
-                uploadFileRepository.delete(target);
-            }
-        }
-        // TODO: 2023-04-02 file 경로에 있는 이미지 삭제 -> storeName으로
-
-        //새 이미지 추가
-        if (!updateForm.getNewImages().isEmpty()) {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(updateForm.getNewImages());
-            for (UploadFile uploadFile : uploadFiles) {
-                findBoard.addImage(uploadFile);
-                uploadFileRepository.save(uploadFile);
-            }
-        }
+    private void updateItemBoard(UpdateItemBoardForm form, ItemBoard findBoard) {
+        findBoard.updateBoard(form);
+        imageService.updateLeadImage(form.getNewLeadImage(), findBoard.getId());
+        imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {

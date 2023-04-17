@@ -27,4 +27,14 @@ public class UploadFile {
         this.uploadFileName = uploadFileName;
         this.storeFileName = storeFileName;
     }
+
+    public void changeLeadImage(UploadFile newLeadImage) {
+        this.uploadFileName = newLeadImage.getUploadFileName();
+        this.storeFileName = newLeadImage.getStoreFileName();
+    }
+
+    public void addBoard(Board board) {
+        this.board = board;
+        board.getImages().add(this);
+    }
 }
