@@ -4,15 +4,19 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class UploadFile {
 
     @Id @GeneratedValue
     @Column(name = "upload_file_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = LAZY, cascade = PERSIST)
     @JoinColumn(name = "board_id")
     private Board board;
 

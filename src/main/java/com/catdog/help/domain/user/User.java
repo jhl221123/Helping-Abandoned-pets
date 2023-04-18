@@ -1,12 +1,10 @@
 package com.catdog.help.domain.user;
 
 import com.catdog.help.domain.BaseEntity;
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.board.LikeBoard;
-import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,12 +12,16 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Table(name = "users") //user -> h2 시스템명
 public class User extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -46,31 +48,32 @@ public class User extends BaseEntity {
     @Column(name = "user_grade")
     private Grade grade;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<BulletinBoard> bulletinBoards = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = REMOVE)
+    private List<Board> bulletinBoards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = REMOVE)
     private List<LikeBoard> likeBoards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
 
-    public User(SaveUserForm form) {
-        this.emailId = form.getEmailId();
-        this.password = form.getPassword();
-        this.nickname = form.getNickname();
-        this.name = form.getName();
-        this.age = form.getAge();
-        this.gender = form.getGender();
+    @Builder
+    public User(String emailId, String password, String nickname, String name, int age, Gender gender) {
+        this.emailId = emailId;
+        this.password = password;
+        this.nickname = nickname;
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
         this.grade = Grade.BASIC;
     }
 
 
-    public void updateUser(UpdateUserForm form) {
-        this.name = form.getName();
-        this.age = form.getAge();
-        this.gender = form.getGender();
+    public void updateUser(String name, int age, Gender gender) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
     }
 
     public void changePassword(String afterPassword) {

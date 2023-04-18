@@ -1,26 +1,29 @@
 package com.catdog.help.domain.board;
 
 import com.catdog.help.domain.user.User;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class LikeBoard {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "like_board_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

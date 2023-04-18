@@ -41,7 +41,7 @@ public class LikeService {
     }
 
 
-    private static LikeBoard getLikeBoard(Board findBoard, User findUser) {
+    private LikeBoard getLikeBoard(Board findBoard, User findUser) {
         LikeBoard likeBoard = LikeBoard.builder()
                 .board(findBoard)
                 .user(findUser)

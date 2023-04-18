@@ -67,7 +67,7 @@ public class CommentService {
     @Transactional
     public void updateComment(UpdateCommentForm form) {
         Comment findComment = jpaCommentRepository.findById(form.getCommentId());
-        findComment.updateComment(form);
+        findComment.updateComment(form.getContent());
     }
 
     @Transactional
@@ -80,11 +80,11 @@ public class CommentService {
     /**============================= private method ==============================*/
 
 
-    private static Comment getComment(CommentForm form, Board board, User user) {
+    private Comment getComment(CommentForm form, Board board, User user) {
         Comment comment = Comment.builder()
                 .board(board)
                 .user(user)
-                .form(form)
+                .content(form.getContent())
                 .build();
         return comment;
     }

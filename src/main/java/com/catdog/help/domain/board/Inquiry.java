@@ -1,30 +1,31 @@
 package com.catdog.help.domain.board;
 
 import com.catdog.help.domain.user.User;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import com.catdog.help.web.form.inquiry.EditInquiryForm;
-import com.catdog.help.web.form.inquiry.SaveInquiryForm;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("inquiry")
 public class Inquiry extends Board{
     private Boolean secret;
 
 
     @Builder
-    public Inquiry(User user, SaveInquiryForm form) {
-        super(user, form.getTitle(), form.getContent());
-        this.secret = form.getSecret();
+    public Inquiry(User user, String title, String content, Boolean secret) {
+        super(user, title, content);
+        this.secret = secret;
     }
 
 
-    public void updateBoard(EditInquiryForm form) {
-        super.updateBoard(form.getTitle(), form.getContent());
-        this.secret = form.getSecret();
+    public void updateBoard(String title, String content, Boolean secret) {
+        super.updateBoard(title, content);
+        this.secret = secret;
     }
 }

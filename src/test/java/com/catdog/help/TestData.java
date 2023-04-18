@@ -83,7 +83,11 @@ public class TestData {
 
     public Inquiry getInquiry(User user, String title, boolean secret) {
         SaveInquiryForm form = getSaveInquiryForm(user.getNickname(), title, secret);
-        Inquiry inquiry = new Inquiry(user, form);
+        Inquiry inquiry = Inquiry.builder()
+                .user(user)
+                .title(title)
+                .secret(secret)
+                .build();
         return inquiry;
     }
 
@@ -111,7 +115,7 @@ public class TestData {
         Comment comment = Comment.builder()
                 .board(board)
                 .user(user)
-                .form(getCommentForm(content))
+                .content(getCommentForm(content).getContent())
                 .build();
         return comment;
     }
@@ -126,7 +130,7 @@ public class TestData {
     /** message */
 
     public Message createMessage(User senderC, MessageRoom roomByAAndC) {
-        return new Message(roomByAAndC, senderC, new SaveMessageForm());
+        return new Message(roomByAAndC, senderC, "message");
     }
 
     public MessageRoom createMessageRoom(User recipientA, User senderC, ItemBoard itemBoardByA) {

@@ -32,11 +32,11 @@ public class MessageService {
     }
 
 
-    private static Message getMessage(SaveMessageForm form, MessageRoom findRoom, User sender) {
+    private Message getMessage(SaveMessageForm form, MessageRoom findRoom, User sender) {
         return Message.builder()
                 .messageRoom(findRoom)
                 .sender(sender)
-                .form(form)
+                .content(form.getContent())
                 .build();
     }
 }

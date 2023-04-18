@@ -21,7 +21,14 @@ public class UserService {
 
     @Transactional
     public Long join(SaveUserForm form) {
-        User user = new User(form);
+        User user = User.builder()
+                .emailId(form.getEmailId())
+                .password(form.getPassword())
+                .nickname(form.getNickname())
+                .name(form.getName())
+                .age(form.getAge())
+                .gender(form.getGender())
+                .build();
         return userRepository.save(user);
     }
 
@@ -73,16 +80,16 @@ public class UserService {
     }
 
     @Transactional
-    public Long updateUserInfo(UpdateUserForm updateForm) {
-        User findUser = userRepository.findByNickname(updateForm.getNickname());
-        findUser.updateUser(updateForm);
+    public Long updateUserInfo(UpdateUserForm form) {
+        User findUser = userRepository.findByNickname(form.getNickname());
+        findUser.updateUser(form.getName(), form.getAge(), form.getGender());
         return findUser.getId();
     }
 
     @Transactional
-    public Long changePassword(ChangePasswordForm changeForm, String nickname) {
+    public Long changePassword(ChangePasswordForm form, String nickname) {
         User findUser = userRepository.findByNickname(nickname);
-        findUser.changePassword(changeForm.getAfterPassword());
+        findUser.changePassword(form.getAfterPassword());
         return findUser.getId();
     }
 

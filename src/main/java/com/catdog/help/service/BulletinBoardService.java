@@ -91,21 +91,23 @@ public class BulletinBoardService {
         User findUser = userRepository.findByNickname(nickname);
         BulletinBoard board = BulletinBoard.builder()
                 .user(findUser)
-                .form(form)
+                .title(form.getTitle())
+                .content(form.getContent())
+                .region(form.getRegion())
                 .build();
 
         imageService.addImage(board, form.getImages());
         return board;
     }
 
-    private static List<PageBulletinBoardForm> getPageBulletinBoardForms(List<BulletinBoard> boards) {
+    private List<PageBulletinBoardForm> getPageBulletinBoardForms(List<BulletinBoard> boards) {
         return boards.stream()
                 .map(PageBulletinBoardForm::new)
                 .collect(Collectors.toList());
     }
 
     private void updateBulletinBoard(BulletinBoard findBoard, UpdateBulletinBoardForm form) {
-        findBoard.updateBoard(form);
+        findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion());
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }
 

@@ -95,7 +95,10 @@ public class ItemBoardService {
         User findUser = userRepository.findByNickname(nickname);
         ItemBoard board = ItemBoard.builder()
                 .user(findUser)
-                .form(form)
+                .title(form.getTitle())
+                .content(form.getContent())
+                .itemName(form.getItemName())
+                .price(form.getPrice())
                 .build();
 
         imageService.addImage(board, form.getImages());
@@ -111,7 +114,7 @@ public class ItemBoardService {
     }
 
     private void updateItemBoard(UpdateItemBoardForm form, ItemBoard board) {
-        board.updateBoard(form);
+        board.updateBoard(form.getTitle(), form.getContent(), form.getItemName(), form.getPrice());
         imageService.updateLeadImage(form.getNewLeadImage(), board.getId());
         imageService.updateImage(board, form.getDeleteImageIds(), form.getNewImages());
     }

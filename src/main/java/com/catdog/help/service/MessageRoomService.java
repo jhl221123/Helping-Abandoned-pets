@@ -87,7 +87,7 @@ public class MessageRoomService {
                 .build();
     }
 
-    private static List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
+    private List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
         return findRooms.stream()
                 .map(PageMessageRoomForm::new)
                 .collect(Collectors.toList());

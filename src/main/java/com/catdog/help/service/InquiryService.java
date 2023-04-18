@@ -4,10 +4,7 @@ import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
-import com.catdog.help.web.form.inquiry.EditInquiryForm;
-import com.catdog.help.web.form.inquiry.PageInquiryForm;
-import com.catdog.help.web.form.inquiry.ReadInquiryForm;
-import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.inquiry.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +25,9 @@ public class InquiryService {
         User findUser = userRepository.findByNickname(form.getNickname());
         Inquiry inquiry = Inquiry.builder()
                 .user(findUser)
-                .form(form)
+                .title(form.getTitle())
+                .content(form.getContent())
+                .secret(form.getSecret())
                 .build();
         inquiryRepository.save(inquiry);
         return inquiry.getId();
@@ -64,7 +63,7 @@ public class InquiryService {
     @Transactional
     public void updateBoard(EditInquiryForm form) {
         Inquiry findBoard = inquiryRepository.findById(form.getId());
-        findBoard.updateBoard(form);
+        findBoard.updateBoard(form.getTitle(), form.getContent(), form.getSecret());
     }
 
     @Transactional

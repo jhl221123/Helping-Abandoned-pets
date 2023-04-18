@@ -2,18 +2,19 @@ package com.catdog.help.domain.board;
 
 import com.catdog.help.domain.message.MessageRoom;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
-import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.REMOVE;
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("Share")
 public class ItemBoard extends Board {
 
@@ -24,26 +25,26 @@ public class ItemBoard extends Board {
     @Enumerated(value = EnumType.STRING)
     private ItemStatus status;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = REMOVE)
     private List<LikeBoard> likeBoards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "itemBoard", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "itemBoard", cascade = REMOVE)
     private List<MessageRoom> rooms = new ArrayList<>();
 
 
     @Builder
-    public ItemBoard(User user, SaveItemBoardForm form) {
-        super(user, form.getTitle(), form.getContent());
-        this.itemName = form.getItemName();
-        this.price = form.getPrice();
+    public ItemBoard(User user, String title, String content, String itemName, int price) {
+        super(user, title, content);
+        this.itemName = itemName;
+        this.price = price;
         this.status = ItemStatus.STILL;
     }
 
 
-    public void updateBoard(UpdateItemBoardForm form) {
-        super.updateBoard(form.getTitle(), form.getContent());
-        this.itemName = form.getItemName();
-        this.price = form.getPrice();
+    public void updateBoard(String title, String content, String itemName, int price) {
+        super.updateBoard(title, content);
+        this.itemName = itemName;
+        this.price = price;
     }
 
     public void changeStatus(ItemStatus status) {
