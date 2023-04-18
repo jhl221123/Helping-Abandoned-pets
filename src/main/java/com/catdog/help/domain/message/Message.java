@@ -1,16 +1,18 @@
 package com.catdog.help.domain.message;
 
-import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.BaseEntity;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.message.SaveMessageForm;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Message {
+public class Message extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "message_id")
@@ -26,9 +28,6 @@ public class Message {
 
     private String content;
 
-    @Embedded
-    private Dates dates;
-
 
     @Builder
     public Message(MessageRoom messageRoom, User sender, SaveMessageForm form) {
@@ -36,6 +35,5 @@ public class Message {
         messageRoom.getMessages().add(this);
         this.sender = sender;
         this.content = form.getContent();
-        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
     }
 }

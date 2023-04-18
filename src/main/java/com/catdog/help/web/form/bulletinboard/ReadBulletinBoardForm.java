@@ -1,13 +1,11 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
-import com.catdog.help.web.form.user.ReadUserForm;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,21 +15,23 @@ public class ReadBulletinBoardForm {
     private String nickname;
     private String title;
     private String content;
-    private Dates dates;
+    private LocalDateTime createdDate;
     private String region;
-    private List<ReadUploadFileForm> images = new ArrayList<>();
+    private List<ReadUploadFileForm> images;
     private int views;
     private int likeSize;
 
-    public ReadBulletinBoardForm(BulletinBoard findBoard, String nickname, List<ReadUploadFileForm> readUploadFileForms, int likeSize) {
-        this.id = findBoard.getId();
-        this.nickname = nickname;
-        this.title = findBoard.getTitle();
-        this.content = findBoard.getContent();
-        this.dates = findBoard.getDates();
-        this.views = findBoard.getViews();
-        this. region = findBoard.getRegion();
-        this.images = readUploadFileForms;
+
+    @Builder
+    public ReadBulletinBoardForm(BulletinBoard board, List<ReadUploadFileForm> imageForms, int likeSize) {
+        this.id = board.getId();
+        this.nickname = board.getUser().getNickname();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.createdDate = board.getCreatedDate();
+        this.views = board.getViews();
+        this. region = board.getRegion();
+        this.images = imageForms;
         this.likeSize = likeSize;
     }
 }

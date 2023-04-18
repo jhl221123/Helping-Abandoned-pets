@@ -1,6 +1,5 @@
 package com.catdog.help.service;
 
-import com.catdog.help.FileStore;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
@@ -8,17 +7,13 @@ import com.catdog.help.repository.jpa.JpaBulletinBoardRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import com.catdog.help.repository.jpa.JpaUploadFileRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
-import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.*;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,38 +30,29 @@ public class BulletinBoardService {
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
 
-    /** 게시글 로직 */
-
     @Transactional
-    public Long createBoard(SaveBulletinBoardForm form, String nickName) {
-        User findUser = userRepository.findByNickname(nickName);
-        BulletinBoard board = getBulletinBoard(findUser, form);
-        Long boardId = bulletinBoardRepository.save(board); //cascade All 설정 후 리스트에 추가해서 보드만 저장해도 될듯!? 고민 필요
-
-        return boardId;
+    public Long createBoard(SaveBulletinBoardForm form, String nickname) {
+        BulletinBoard board = getBulletinBoard(nickname, form);
+        return bulletinBoardRepository.save(board);
     }
 
     public ReadBulletinBoardForm readBoard(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
-
-        String nickname = findBoard.getUser().getNickname();
-
-        List<UploadFile> uploadFiles = uploadFileRepository.findUploadFiles(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFiles);
-
+        List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
         int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
 
-        ReadBulletinBoardForm readForm = new ReadBulletinBoardForm(findBoard, nickname, readUploadFileForms, likeSize);
-        return readForm;
+        return ReadBulletinBoardForm.builder()
+                .board(findBoard)
+                .imageForms(imageForms)
+                .likeSize(likeSize)
+                .build();
     }
 
     public List<PageBulletinBoardForm> readPage(int page) {
         int offset = page * 10 - 10;
         int limit = 10;
 
-        List<BulletinBoard> boards = bulletinBoardRepository.findPage(offset, limit);
-
-        return getPageBulletinBoardForms(boards);
+        return getPageBulletinBoardForms(bulletinBoardRepository.findPage(offset, limit));
     }
 
     public int countPages() {
@@ -82,39 +68,39 @@ public class BulletinBoardService {
 
     public UpdateBulletinBoardForm getUpdateForm(Long id) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
-        UpdateBulletinBoardForm updateForm = new UpdateBulletinBoardForm(findBoard, readUploadFileForms);
-        return updateForm;
+        List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+
+        return new UpdateBulletinBoardForm(findBoard, oldImages);
     }
 
     @Transactional
-    public Long updateBoard(UpdateBulletinBoardForm form) {
+    public void updateBoard(UpdateBulletinBoardForm form) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(form.getId());
-        updateBulletinBoard(findBoard, form);//게시글 내용 변경 및 이미지 추가
-        return findBoard.getId();
+        updateBulletinBoard(findBoard, form);
     }
 
     @Transactional
     public void deleteBoard(Long boardId) {
         BulletinBoard findBoard = bulletinBoardRepository.findById(boardId);
-        // TODO: 2023-03-20 삭제 시 복구 가능성 염두
         bulletinBoardRepository.delete(findBoard);
     }
 
     /**============================= private method ==============================*/
 
-    private BulletinBoard getBulletinBoard(User user, SaveBulletinBoardForm form) {
+    private BulletinBoard getBulletinBoard(String nickname, SaveBulletinBoardForm form) {
+        User findUser = userRepository.findByNickname(nickname);
         BulletinBoard board = BulletinBoard.builder()
-                .user(user)
+                .user(findUser)
                 .form(form)
                 .build();
+
         imageService.addImage(board, form.getImages());
         return board;
     }
 
     private static List<PageBulletinBoardForm> getPageBulletinBoardForms(List<BulletinBoard> boards) {
         return boards.stream()
-                .map(b -> new PageBulletinBoardForm(b, b.getUser().getNickname()))
+                .map(PageBulletinBoardForm::new)
                 .collect(Collectors.toList());
     }
 

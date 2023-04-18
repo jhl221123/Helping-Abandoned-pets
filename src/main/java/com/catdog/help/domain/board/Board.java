@@ -1,30 +1,31 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.BaseEntity;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "dtype")
-public abstract class Board {
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.*;
+import static javax.persistence.InheritanceType.*;
+import static lombok.AccessLevel.PROTECTED;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Entity @Getter
+@NoArgsConstructor(access = PROTECTED)
+@Inheritance(strategy = SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
+public abstract class Board extends BaseEntity {
+
+    @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "board_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -34,14 +35,11 @@ public abstract class Board {
     @Column(name = "board_content")
     private String content;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = REMOVE)
     private List<UploadFile> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = REMOVE)
     private List<Comment> comments = new ArrayList<>();
-
-    @Embedded
-    private Dates dates;
 
     @Column(name = "board_views")
     private int views;
@@ -51,14 +49,12 @@ public abstract class Board {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
     }
 
 
     public void updateBoard(String title, String content) {
         this.title = title;
         this.content = content;
-        this.dates = new Dates(this.dates.getCreateDate(), LocalDateTime.now(), null);
     }
 
     public void addViews() {

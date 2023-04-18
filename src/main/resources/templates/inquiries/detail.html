@@ -16,7 +16,7 @@
 			<div class="row" >
 				<p th:text="${readForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
 				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
-				<p class="text-muted" th:text="${#temporals.format(readForm.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
+				<p class="text-muted" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
 			</div>
 		</div>
 	</div>
@@ -51,7 +51,7 @@
 	<div th:each="form : ${commentForms}">
 		<div class="row">
 			<p th:text="${form.nickname}">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<p class="text-left text-muted" th:text="${#temporals.format(form.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
+			<p class="text-left text-muted" th:text="${#temporals.format(form.dates.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 			<div>
 				<a th:if="${form.nickname==nickname}" class="text-muted"
 				   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
@@ -116,7 +116,7 @@
 		<div style="background-color: #F3F3F3" th:each="child : ${form.child}">
 			<div style="margin-left: 2em" class="row">
 				<p th:text="|┕ ${child.nickname}|">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<p class="text-left text-muted" th:text="${#temporals.format(child.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
+				<p class="text-left text-muted" th:text="${#temporals.format(child.dates.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
 					<a th:if="${child.nickname==nickname}" class="text-muted"
 					   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>

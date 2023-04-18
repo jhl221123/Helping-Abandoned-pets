@@ -1,9 +1,9 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.BulletinBoard;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class PageBulletinBoardForm {
@@ -11,15 +11,16 @@ public class PageBulletinBoardForm {
     private Long id;
     private String title;
     private String nickname;
-    private Dates dates;
+    private LocalDateTime createdDate;
     private int views;
     private String region;
 
-    public PageBulletinBoardForm(BulletinBoard board, String nickName) {
+
+    public PageBulletinBoardForm(BulletinBoard board) {
         this.id = board.getId();
         this.title = board.getTitle();
-        this.nickname = nickName;
-        this.dates = board.getDates();
+        this.nickname = board.getUser().getNickname();
+        this.createdDate = board.getCreatedDate();
         this.views = board.getViews();
         this.region = board.getRegion();
     }

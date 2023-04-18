@@ -2,7 +2,6 @@ package com.catdog.help.web.form.message;
 
 import com.catdog.help.domain.message.MessageRoom;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public class ReadMessageRoomForm {
     private String itemName;
     private String senderNick;
     private String recipientNick;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private List<ReadMessageForm> messages = new ArrayList<>();
 
     public ReadMessageRoomForm(MessageRoom messageRoom, List<ReadMessageForm> messageForms) {
@@ -25,7 +24,7 @@ public class ReadMessageRoomForm {
         this.itemName = messageRoom.getItemBoard().getItemName();
         this.senderNick = messageRoom.getSender().getNickname();
         this.recipientNick = messageRoom.getRecipient().getNickname();
-        this.createDate = messageRoom.getDates().getCreateDate();
+        this.createdDate = messageRoom.getCreatedDate();
         this.messages = messageForms;
     }
 }

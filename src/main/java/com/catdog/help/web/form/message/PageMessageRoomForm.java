@@ -12,7 +12,7 @@ public class PageMessageRoomForm {
     private String itemName;
     private String senderNick;
     private String recipientNick;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
 
     public PageMessageRoomForm(MessageRoom messageRoom) {
         this.id = messageRoom.getId();
@@ -20,6 +20,6 @@ public class PageMessageRoomForm {
         this.itemName = messageRoom.getItemBoard().getItemName();
         this.senderNick = messageRoom.getSender().getNickname();
         this.recipientNick = messageRoom.getRecipient().getNickname();
-        this.createDate = messageRoom.getDates().getCreateDate();
+        this.createdDate = messageRoom.getCreatedDate();
     }
 }

@@ -22,8 +22,7 @@ public class UserService {
     @Transactional
     public Long join(SaveUserForm form) {
         User user = new User(form);
-        userRepository.save(user);
-        return user.getId();
+        return userRepository.save(user);
     }
 
     public boolean checkEmailDuplication(String email) {// TODO: 2023-03-08 private으로 수정 후 join에서 처리하도록 수정

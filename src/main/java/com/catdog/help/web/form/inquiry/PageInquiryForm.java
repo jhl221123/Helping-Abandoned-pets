@@ -12,14 +12,14 @@ public class PageInquiryForm {
     private Long id;
     private String nickname;
     private String title;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private Boolean secret;
 
     public PageInquiryForm(Inquiry inquiry) {
         this.id = inquiry.getId();
         this.nickname = inquiry.getUser().getNickname();
         this.title = inquiry.getTitle();
-        this.createDate = inquiry.getDates().getCreateDate();
+        this.createdDate = inquiry.getCreatedDate();
         this.secret = inquiry.getSecret();
     }
 }

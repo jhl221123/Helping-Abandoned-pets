@@ -34,15 +34,14 @@ public class ItemBoardService {
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
     @Transactional
-    public void createBoard(SaveItemBoardForm saveForm, String nickName) {
-        User findUser = userRepository.findByNickname(nickName);
-        ItemBoard itemBoard = getItemBoard(findUser, saveForm);
+    public void createBoard(SaveItemBoardForm form, String nickname) {
+        ItemBoard itemBoard = getItemBoard(nickname, form);
         itemBoardRepository.save(itemBoard);
     }
 
-    public ReadItemBoardForm readBoard(Long itemBoardId) {
-        ItemBoard findBoard = itemBoardRepository.findById(itemBoardId);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(itemBoardId));
+    public ReadItemBoardForm readBoard(Long id) {
+        ItemBoard findBoard = itemBoardRepository.findById(id);
+        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
         int likeSize = (int)jpaLikeBoardRepository.countByBoardId(findBoard.getId());
 
         return new ReadItemBoardForm(findBoard, readUploadFileForms, likeSize);
@@ -52,9 +51,7 @@ public class ItemBoardService {
         int offset = 0 + (page -1) * 6;
         int limit = 6;
 
-        List<ItemBoard> boards = itemBoardRepository.findPage(offset, limit);
-
-        return getPageItemBoardForms(boards);
+        return getPageItemBoardForms(itemBoardRepository.findPage(offset, limit));
     }
 
     public int countPage() {
@@ -75,19 +72,15 @@ public class ItemBoardService {
     }
 
     @Transactional
-    public void updateBoard(Long id, UpdateItemBoardForm updateForm) {
+    public void updateBoard(Long id, UpdateItemBoardForm form) {
         ItemBoard findBoard = itemBoardRepository.findById(id);
-        updateItemBoard(updateForm, findBoard);
+        updateItemBoard(form, findBoard);
     }
 
     @Transactional
-    public void changeStatus(Long boardId) {
-        ItemBoard findBoard = itemBoardRepository.findById(boardId);
-        if (findBoard.getStatus() == ItemStatus.STILL) {
-            findBoard.changeStatus(ItemStatus.COMP);
-        } else {
-            findBoard.changeStatus(ItemStatus.STILL);
-        }
+    public void changeStatus(Long id) {
+        ItemBoard findBoard = itemBoardRepository.findById(id);
+        findBoard.changeStatus(findBoard.getStatus() == ItemStatus.STILL ? ItemStatus.COMP : ItemStatus.STILL);
     }
 
     @Transactional
@@ -98,11 +91,13 @@ public class ItemBoardService {
 
     /**============================= private method ==============================*/
 
-    private ItemBoard getItemBoard(User user, SaveItemBoardForm form) {
+    private ItemBoard getItemBoard(String nickname, SaveItemBoardForm form) {
+        User findUser = userRepository.findByNickname(nickname);
         ItemBoard board = ItemBoard.builder()
-                .user(user)
+                .user(findUser)
                 .form(form)
                 .build();
+
         imageService.addImage(board, form.getImages());
         return board;
     }
@@ -115,10 +110,10 @@ public class ItemBoardService {
                 }).collect(Collectors.toList());
     }
 
-    private void updateItemBoard(UpdateItemBoardForm form, ItemBoard findBoard) {
-        findBoard.updateBoard(form);
-        imageService.updateLeadImage(form.getNewLeadImage(), findBoard.getId());
-        imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
+    private void updateItemBoard(UpdateItemBoardForm form, ItemBoard board) {
+        board.updateBoard(form);
+        imageService.updateLeadImage(form.getNewLeadImage(), board.getId());
+        imageService.updateImage(board, form.getDeleteImageIds(), form.getNewImages());
     }
 
     private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {

@@ -22,7 +22,7 @@
 				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|" style="cursor:pointer;">나눔 하는 사람</td>
 				<td th:text="${pageForm.senderNick}"
 				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|" style="cursor:pointer;">나눔 받는 사람</td>
-				<td th:text="${#temporals.format(pageForm.createDate, 'yyyy-MM-dd')}">생성일</td>
+				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}">생성일</td>
 			</tr>
 			</tbody>
 		</table>

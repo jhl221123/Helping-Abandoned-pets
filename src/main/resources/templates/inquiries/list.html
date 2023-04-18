@@ -21,7 +21,7 @@
 				    th:onclick="${pageForm.secret} and ${pageForm.nickname != nickname} and ${!isManager} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
 				    style="cursor:pointer;"></td>
 				<td th:text="${pageForm.nickname}"></td>
-				<td th:text="${#temporals.format(pageForm.createDate, 'yyyy-MM-dd')}"></td>
+				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}"></td>
 			</tr>
 			</tbody>
 		</table>

@@ -13,7 +13,7 @@
 		<div>
 			<div class="row">
 				<p th:text="${message.senderNick}">보낸 사람</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<p class="text-left text-muted" th:text="${#temporals.format(message.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
+				<p class="text-left text-muted" th:text="${#temporals.format(message.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 			</div>
 			<div>
 				<p th:text="${message.content}">content</p>

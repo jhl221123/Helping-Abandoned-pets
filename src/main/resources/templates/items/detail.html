@@ -24,7 +24,7 @@
 			<div class="row" >
 				<p th:text="${readForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
 				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
-				<p class="text-muted" th:text="${#temporals.format(readForm.dates.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
+				<p class="text-muted" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;&nbsp;
 				<p th:text="${readForm.itemName}">제품명</p>&nbsp;&nbsp;&nbsp;
 				<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
 				<p th:text="${readForm.price}">가격</p>

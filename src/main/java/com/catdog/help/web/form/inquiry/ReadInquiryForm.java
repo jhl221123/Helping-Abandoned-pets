@@ -13,7 +13,7 @@ public class ReadInquiryForm {
     private String nickname;
     private String title;
     private String content;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private Boolean secret;
 
     public ReadInquiryForm(Inquiry findBoard) {
@@ -21,7 +21,7 @@ public class ReadInquiryForm {
         this.nickname = findBoard.getUser().getNickname();
         this.title = findBoard.getTitle();
         this.content = findBoard.getContent();
-        this.createDate = findBoard.getDates().getCreateDate();
+        this.createdDate = findBoard.getCreatedDate();
         this.secret = findBoard.getSecret();
     }
 }

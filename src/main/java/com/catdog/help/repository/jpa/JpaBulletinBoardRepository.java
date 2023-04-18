@@ -19,13 +19,13 @@ public class JpaBulletinBoardRepository{
     }
 
     public BulletinBoard findById(Long id) {
-        return em.createQuery("select b from BulletinBoard b where board_id = :id", BulletinBoard.class)
+        return em.createQuery("select b from BulletinBoard b where b.id = :id", BulletinBoard.class)
                 .setParameter("id", id)
                 .getResultList().stream().findAny().orElse(null);
     }
 
     public List<BulletinBoard> findPage(int offset, int limit) {
-        return em.createQuery("select b from BulletinBoard b order by create_date desc", BulletinBoard.class)
+        return em.createQuery("select b from BulletinBoard b order by b.createdDate desc", BulletinBoard.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList();
@@ -36,7 +36,7 @@ public class JpaBulletinBoardRepository{
     }
 
     public List<BulletinBoard> findAll() { // TODO: 2023-03-28 카운트 쿼리로 대체 고려
-        return em.createQuery("select b from BulletinBoard b order by create_date desc", BulletinBoard.class).getResultList();
+        return em.createQuery("select b from BulletinBoard b order by b.createdDate desc", BulletinBoard.class).getResultList();
     }
 
     public Long delete(BulletinBoard board) {

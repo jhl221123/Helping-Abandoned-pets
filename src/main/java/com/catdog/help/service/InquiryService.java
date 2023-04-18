@@ -1,6 +1,5 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaInquiryRepository;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,18 +35,14 @@ public class InquiryService {
     }
 
     public ReadInquiryForm readBoard(Long id) {
-        Inquiry findBoard = inquiryRepository.findById(id);
-        ReadInquiryForm readForm = new ReadInquiryForm(findBoard);
-        return readForm;
+        return new ReadInquiryForm(inquiryRepository.findById(id));
     }
 
     public List<PageInquiryForm> readPage(int page) {
         int offset = page * 10 - 10;
         int limit = 10;
-        List<Inquiry> findPage = inquiryRepository.findPage(offset, limit);
-        return findPage.stream()
-                .map(PageInquiryForm::new)
-                .collect(Collectors.toList());
+
+        return getPageInquiryForms(inquiryRepository.findPage(offset, limit));
     }
 
     public int countPage() {
@@ -77,5 +71,13 @@ public class InquiryService {
     public void deleteBoard(Long id) {
         Inquiry findBoard = inquiryRepository.findById(id); //본인 검증 -> 영속성 컨텍스트에 이미 존재
         inquiryRepository.delete(findBoard);
+    }
+
+    /**============================= private method ==============================*/
+
+    private List<PageInquiryForm> getPageInquiryForms(List<Inquiry> findPage) {
+        return findPage.stream()
+                .map(PageInquiryForm::new)
+                .collect(Collectors.toList());
     }
 }

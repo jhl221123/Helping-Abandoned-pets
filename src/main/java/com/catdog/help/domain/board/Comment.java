@@ -1,21 +1,23 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.Dates;
+import com.catdog.help.domain.BaseEntity;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -32,9 +34,6 @@ public class Comment {
     @Column(name = "comment_content")
     private String content;
 
-    @Embedded
-    private Dates dates;
-
     //대댓글
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -49,7 +48,6 @@ public class Comment {
         this.board = board;
         this.user = user;
         this.content = form.getContent();
-        this.dates = new Dates(LocalDateTime.now(), LocalDateTime.now(), null);
     }
 
 
@@ -58,9 +56,7 @@ public class Comment {
         parent.getChild().add(this);
     }
 
-
     public void updateComment(UpdateCommentForm form) {
         this.content = form.getContent();
-        this.dates = new Dates(this.dates.getCreateDate(), LocalDateTime.now(), null);
     }
 }

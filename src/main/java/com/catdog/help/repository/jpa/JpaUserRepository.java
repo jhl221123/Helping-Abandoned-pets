@@ -15,8 +15,9 @@ public class JpaUserRepository {
     @PersistenceContext
     EntityManager em;
 
-    public void save(User user) {
+    public Long save(User user) {
         em.persist(user);
+        return user.getId();
     }
 
     public User findById(Long id) {

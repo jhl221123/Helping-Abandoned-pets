@@ -1,16 +1,15 @@
 package com.catdog.help.web.form.user;
 
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 
 @Getter
 public class ReadUserForm {
@@ -41,7 +40,7 @@ public class ReadUserForm {
     private Gender gender;
 
     @NotNull
-    private Dates dates;
+    private LocalDateTime createdDate;
 
     public ReadUserForm(User user) {
         this.id = user.getId();
@@ -51,6 +50,6 @@ public class ReadUserForm {
         this.name = user.getName();
         this.age = user.getAge();
         this.gender = user.getGender();
-        this.dates = user.getDates();
+        this.createdDate = user.getCreatedDate();
     }
 }

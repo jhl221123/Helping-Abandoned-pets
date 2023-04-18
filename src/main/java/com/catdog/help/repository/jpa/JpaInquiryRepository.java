@@ -23,7 +23,7 @@ public class JpaInquiryRepository {
     }
 
     public List<Inquiry> findPage(int offset, int limit) {
-        return em.createQuery("select i from Inquiry i order by i.dates.createDate desc", Inquiry.class)
+        return em.createQuery("select i from Inquiry i order by i.createdDate desc", Inquiry.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList();

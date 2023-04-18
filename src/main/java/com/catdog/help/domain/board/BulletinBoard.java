@@ -3,25 +3,26 @@ package com.catdog.help.domain.board;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
 import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
 
+import static javax.persistence.CascadeType.REMOVE;
+import static lombok.AccessLevel.PROTECTED;
+
 @Entity @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("Bulletin")
 public class BulletinBoard extends Board {
 
-    private String region; // TODO: 2023-03-30 지역이름 검증, 셀렉트박스
+    private String region; // TODO: 2023-04-17 지역이름 검증, 셀렉트박스
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = REMOVE)
     private List<LikeBoard> likeBoards;
 
 

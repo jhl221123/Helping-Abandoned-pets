@@ -45,7 +45,7 @@ public class JpaMessageRoomRepository {
     }
 
     public List<MessageRoom> findPageByUserId(Long userId, int offset, int limit) {
-        return em.createQuery("select mr from MessageRoom mr where sender_id = :userId or recipient_id = :userId order by create_date desc", MessageRoom.class)
+        return em.createQuery("select mr from MessageRoom mr where sender_id = :userId or recipient_id = :userId order by mr.createdDate desc", MessageRoom.class)
                 .setParameter("userId", userId)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
@@ -57,10 +57,4 @@ public class JpaMessageRoomRepository {
                 .setParameter("userId", userId)
                 .getSingleResult();
     }
-
-    public void flushAndClear() {
-        em.flush();
-        em.clear();
-    }
-
 }

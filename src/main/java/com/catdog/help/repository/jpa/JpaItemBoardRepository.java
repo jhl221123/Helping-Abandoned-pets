@@ -19,7 +19,7 @@ public class JpaItemBoardRepository {
     }
 
     public ItemBoard findById(Long id) {
-        return em.createQuery("select i from ItemBoard i join fetch i.user where board_id = :id", ItemBoard.class)
+        return em.createQuery("select i from ItemBoard i join fetch i.user where i.id = :id", ItemBoard.class)
                 .setParameter("id", id)
                 .getResultList()
                 .stream()
@@ -28,7 +28,7 @@ public class JpaItemBoardRepository {
     }
 
     public List<ItemBoard> findPage(int offset, int limit) {
-        return em.createQuery("select i from ItemBoard i order by create_date desc", ItemBoard.class)
+        return em.createQuery("select i from ItemBoard i order by i.createdDate desc", ItemBoard.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList();
@@ -43,7 +43,7 @@ public class JpaItemBoardRepository {
     }
 
     public List<ItemBoard> findAll() {
-        return em.createQuery("select i from ItemBoard i order by create_date desc", ItemBoard.class).getResultList();
+        return em.createQuery("select i from ItemBoard i order by i.createdDate desc", ItemBoard.class).getResultList();
     }
 
     public Long delete(ItemBoard board) {
