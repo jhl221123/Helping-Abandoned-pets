@@ -3,6 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.NotFoundBoard;
 import com.catdog.help.repository.jpa.JpaBoardRepository;
 import com.catdog.help.repository.jpa.JpaCommentRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
@@ -30,7 +31,8 @@ public class CommentService {
     @Transactional
     public Long createComment(CommentForm form, Long parentCommentId) {
 
-        Board board = boardRepository.findById(form.getBoardId());
+        Board board = boardRepository.findById(form.getBoardId())
+                .orElseThrow(NotFoundBoard::new);
         User user = userRepository.findByNickname(form.getNickname());
 
         if (parentCommentId == -1L) {

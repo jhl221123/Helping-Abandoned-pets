@@ -3,6 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.LikeBoard;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.NotFoundBoard;
 import com.catdog.help.repository.jpa.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,8 @@ public class LikeService {
 
     @Transactional
     public boolean clickLike(Long boardId, String nickName) {
-        Board findBoard = boardRepository.findById(boardId);
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(NotFoundBoard::new);
         User findUser = userRepository.findByNickname(nickName);
 
         LikeBoard findLikeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());

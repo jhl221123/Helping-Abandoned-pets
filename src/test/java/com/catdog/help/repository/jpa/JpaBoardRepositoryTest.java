@@ -5,6 +5,7 @@ import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.BulletinBoard;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.NotFoundBoard;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,8 +39,10 @@ class JpaBoardRepositoryTest {
         inquiryRepository.save(inquiry);
 
         //when
-        Board findBulletin = boardRepository.findById(bulletinBoard.getId());
-        Board findInquiry = boardRepository.findById(inquiry.getId());
+        Board findBulletin = boardRepository.findById(bulletinBoard.getId())
+                .orElseThrow(NotFoundBoard::new);
+        Board findInquiry = boardRepository.findById(inquiry.getId())
+                .orElseThrow(NotFoundBoard::new);
 
         //then
         assertThat(findBulletin).isInstanceOf(BulletinBoard.class);
