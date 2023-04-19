@@ -1,8 +1,6 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.domain.board.Board;
-import com.catdog.help.domain.board.BulletinBoard;
-import com.catdog.help.repository.jpa.JpaBoardRepository;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.comment.CommentForm;
@@ -21,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CommentController {
 
     private final CommentService commentService;
-    private final JpaBoardRepository boardRepository;
+    private final BoardService boardService;
 
     @PostMapping("/comments/parent")
     public String createParentComment(@RequestParam("id") Long boardId, RedirectAttributes redirectAttributes,
@@ -123,9 +121,7 @@ public class CommentController {
     }
 
     private String targetBoard(Long boardId) {
-        Board findBoard = boardRepository.findById(boardId);
-        log.info("왜={}", findBoard.getClass());
-        if (findBoard instanceof BulletinBoard) {
+        if (boardService.isBulletin(boardId)) {
             return "redirect:/boards/{id}";
         }
         return "redirect:/inquiries/{id}";
