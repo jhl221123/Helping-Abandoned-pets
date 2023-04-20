@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -24,18 +25,18 @@ public class JpaUserRepository {
         return em.find(User.class, id);
     }
 
-    public User findByEmailId(String emailId) {
+    public Optional<User> findByEmailId(String emailId) {
         List<User> findUser = em.createQuery("select u from User u where u.emailId = :emailId", User.class)
                 .setParameter("emailId", emailId)
                 .getResultList();
-        return findUser.stream().findAny().orElse(null);
+        return findUser.stream().findAny();
     }
 
-    public User findByNickname(String nickname) {
+    public Optional<User> findByNickname(String nickname) {
         List<User> findUser = em.createQuery("select u from User u where u.nickname = :nickname", User.class)
                 .setParameter("nickname", nickname)
                 .getResultList();
-        return findUser.stream().findAny().orElse(null);
+        return findUser.stream().findAny();
     }
 
     public List<User> findAll() {
