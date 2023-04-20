@@ -2,8 +2,8 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.BulletinBoard;
-import com.catdog.help.exception.NotFoundBoard;
-import com.catdog.help.repository.jpa.JpaBoardRepository;
+import com.catdog.help.exception.NotFoundBoardException;
+import com.catdog.help.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
 
-    private final JpaBoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     public Boolean isBulletin(Long id) {
         Board findBoard = boardRepository.findById(id)
-                .orElseThrow(NotFoundBoard::new);
+                .orElseThrow(NotFoundBoardException::new);
         return findBoard instanceof BulletinBoard;
     }
 }

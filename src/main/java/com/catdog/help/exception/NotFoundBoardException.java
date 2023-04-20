@@ -1,14 +1,14 @@
 package com.catdog.help.exception;
 
-public class NotFoundBoard extends RuntimeException {
+public class NotFoundBoardException extends RuntimeException {
 
     private static final String MESSAGE = "존재하지 않는 글입니다.";
 
-    public NotFoundBoard() {
+    public NotFoundBoardException() {
         super(MESSAGE);
     }
 
-    public NotFoundBoard(Throwable cause) {
+    public NotFoundBoardException(Throwable cause) {
         super(MESSAGE, cause);
     }
 }
