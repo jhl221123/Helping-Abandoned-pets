@@ -1,5 +1,6 @@
 package com.catdog.help.service;
 
+import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.jpa.JpaUserRepository;
@@ -10,6 +11,8 @@ import com.catdog.help.web.form.user.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @Service
@@ -32,70 +35,61 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean checkEmailDuplication(String email) {// TODO: 2023-03-08 private으로 수정 후 join에서 처리하도록 수정
-        User findUser = userRepository.findByEmailId(email);
-        if (findUser == null) {
-            return false;
-        }
-        return true;
+    public boolean isEmailDuplication(String email) {
+        Optional<User> findUser = userRepository.findByEmailId(email);
+        return findUser.isPresent() ? true : false;
     }
 
-    public boolean checkNicknameDuplication(String nickname) {// TODO: 2023-03-08 private으로 수정 후 join에서 처리하도록 수정
-        User findUser = userRepository.findByNickname(nickname);
-        if (findUser == null) {
-            return false;
-        }
-        return true;
+    public boolean isNicknameDuplication(String nickname) {
+        Optional<User> findUser = userRepository.findByNickname(nickname);
+        return findUser.isPresent() ? true : false;
     }
 
     @Transactional
-    public ReadUserForm login(String emailId, String password) {
-        User findUser = userRepository.findByEmailId(emailId);
-        if (findUser == null || !findUser.getPassword().equals(password)) {
-            return null;
-        }
-
-        return new ReadUserForm(findUser);
+    public String login(String emailId, String password) {
+        Optional<User> findUser = userRepository.findByEmailId(emailId); // TODO: 2023-04-20 orElseGet(null) 사용 시 nullPointer 발생. get() 안 쓰도록 고민해보자.
+        return findUser.isEmpty() ? MyConst.FAIL_LOGIN :
+               findUser.get().getPassword().equals(password) ? findUser.get().getNickname() : MyConst.FAIL_LOGIN;
     }
 
     public Boolean isManager(String nickname) {
-        User findUser = userRepository.findByNickname(nickname);
-        return findUser.getGrade() == Grade.MANAGER ? true : false;
+        Optional<User> findUser = userRepository.findByNickname(nickname);
+        return findUser.get().getGrade() == Grade.MANAGER ? true : false;
     }
 
     public ReadUserForm readByNickname(String nickname) {
-        User findUser = userRepository.findByNickname(nickname);
+        Optional<User> findUser = userRepository.findByNickname(nickname);
         if (findUser == null) {
             return null; // TODO: 2023-03-08 예외처리
         }
-        return new ReadUserForm(findUser);
+        return new ReadUserForm(findUser.get());
     }
 
     public UpdateUserForm getUpdateForm(String nickname) {
-        User findUser = userRepository.findByNickname(nickname);
+        Optional<User> findUser = userRepository.findByNickname(nickname);
         if (findUser == null) {
             return null; // TODO: 2023-03-08 예외처리
         }
-        return new UpdateUserForm(findUser);
+        return new UpdateUserForm(findUser.get());
     }
 
     @Transactional
     public Long updateUserInfo(UpdateUserForm form) {
-        User findUser = userRepository.findByNickname(form.getNickname());
-        findUser.updateUser(form.getName(), form.getAge(), form.getGender());
-        return findUser.getId();
+        Optional<User> findUser = userRepository.findByNickname(form.getNickname());
+        findUser.get().updateUser(form.getName(), form.getAge(), form.getGender());
+        return findUser.get().getId();
     }
 
     @Transactional
     public Long changePassword(ChangePasswordForm form, String nickname) {
-        User findUser = userRepository.findByNickname(nickname);
-        findUser.changePassword(form.getAfterPassword());
-        return findUser.getId();
+        Optional<User> findUser = userRepository.findByNickname(nickname);
+        findUser.get().changePassword(form.getAfterPassword());
+        return findUser.get().getId();
     }
 
     @Transactional
     public void deleteUser(String nickname) {
-        User findUser = userRepository.findByNickname(nickname);
-        userRepository.delete(findUser); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
+        Optional<User> findUser = userRepository.findByNickname(nickname);
+        userRepository.delete(findUser.get()); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
     }
 }
