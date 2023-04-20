@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import static com.catdog.help.MyConst.FAIL_LOGIN;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
@@ -35,17 +36,16 @@ public class UserController {
 
     @PostMapping("/new")
     public String join(@Validated @ModelAttribute("saveUserForm") SaveUserForm saveUserForm, BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             return "users/joinForm";
         }
-
-        if (userService.checkEmailDuplication(saveUserForm.getEmailId())) {
+        // TODO: 2023-04-20 각 프로퍼티에 특수기호 사용불가 검증 특히 _
+        if (userService.isEmailDuplication(saveUserForm.getEmailId())){
             bindingResult.rejectValue("emailId", "duplicate", "이미 가입된 이메일 아이디입니다.");
             return "users/joinForm";
         }
 
-        if (userService.checkNicknameDuplication(saveUserForm.getNickname())) {
+        if (userService.isNicknameDuplication(saveUserForm.getNickname())) {
             bindingResult.rejectValue("nickname", "duplicate", "이미 존재하는 닉네임입니다.");
             return "users/joinForm";
         }
@@ -61,21 +61,19 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(@Validated @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult,
-                        @RequestParam(defaultValue = "/") String redirectURL,
-                        HttpServletRequest request) {
+                        @RequestParam(defaultValue = "/") String redirectURL, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
-            bindingResult.reject("failLogin", "아이디와 비밀번호를 확인해주세요.");
             return "users/loginForm";
         }
 
-        ReadUserForm loginReadUserForm = userService.login(loginForm.getEmailId(), loginForm.getPassword());
-        if (loginReadUserForm == null) {
+        String nickname = userService.login(loginForm.getEmailId(), loginForm.getPassword());
+        if (nickname.equals(FAIL_LOGIN)) {
             bindingResult.reject("failLogin", "아이디와 비밀번호를 확인해주세요.");
             return "users/loginForm";
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(LOGIN_USER, loginReadUserForm.getNickname());
+        session.setAttribute(LOGIN_USER, nickname);
         return "redirect:" + redirectURL;
     }
 
