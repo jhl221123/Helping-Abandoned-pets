@@ -21,8 +21,8 @@ public class JpaUserRepository {
         return user.getId();
     }
 
-    public User findById(Long id) {
-        return em.find(User.class, id);
+    public Optional<User> findById(Long id) {
+        return Optional.ofNullable(em.find(User.class, id));
     }
 
     public Optional<User> findByEmailId(String emailId) {

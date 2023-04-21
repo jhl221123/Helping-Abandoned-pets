@@ -79,4 +79,8 @@ public class User extends BaseEntity {
     public void changePassword(String afterPassword) {
         this.password = afterPassword;
     }
+
+    public void makeManager() {
+        this.grade = Grade.MANAGER;
+    }
 }

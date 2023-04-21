@@ -3,7 +3,8 @@ package com.catdog.help.service;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.jpa.JpaUserRepository;
+import com.catdog.help.exception.NotFoundUserException;
+import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final JpaUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Long join(SaveUserForm form) {
@@ -32,7 +33,7 @@ public class UserService {
                 .age(form.getAge())
                 .gender(form.getGender())
                 .build();
-        return userRepository.save(user);
+        return userRepository.save(user).getId();
     }
 
     public boolean isEmailDuplication(String email) {
@@ -45,51 +46,57 @@ public class UserService {
         return findUser.isPresent() ? true : false;
     }
 
-    @Transactional
     public String login(String emailId, String password) {
-        Optional<User> findUser = userRepository.findByEmailId(emailId); // TODO: 2023-04-20 orElseGet(null) 사용 시 nullPointer 발생. get() 안 쓰도록 고민해보자.
+        Optional<User> findUser = userRepository.findByEmailId(emailId);
         return findUser.isEmpty() ? MyConst.FAIL_LOGIN :
                findUser.get().getPassword().equals(password) ? findUser.get().getNickname() : MyConst.FAIL_LOGIN;
     }
 
     public Boolean isManager(String nickname) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        return findUser.get().getGrade() == Grade.MANAGER ? true : false;
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new);
+        return findUser.getGrade() == Grade.MANAGER ? true : false;
     }
 
     public ReadUserForm readByNickname(String nickname) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        if (findUser == null) {
-            return null; // TODO: 2023-03-08 예외처리
-        }
-        return new ReadUserForm(findUser.get());
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new);
+        return new ReadUserForm(findUser);
     }
 
     public UpdateUserForm getUpdateForm(String nickname) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        if (findUser == null) {
-            return null; // TODO: 2023-03-08 예외처리
-        }
-        return new UpdateUserForm(findUser.get());
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new);
+        return new UpdateUserForm(findUser);
     }
 
     @Transactional
     public Long updateUserInfo(UpdateUserForm form) {
-        Optional<User> findUser = userRepository.findByNickname(form.getNickname());
-        findUser.get().updateUser(form.getName(), form.getAge(), form.getGender());
-        return findUser.get().getId();
+        User findUser = userRepository.findByNickname(form.getNickname())
+                .orElseThrow(NotFoundUserException::new);
+        findUser.updateUser(form.getName(), form.getAge(), form.getGender());
+        return findUser.getId();
+    }
+
+    public Boolean isSamePassword(String password, String nickname) {
+        String target = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new)
+                .getPassword();
+        return password.equals(target) ? true : false;
     }
 
     @Transactional
     public Long changePassword(ChangePasswordForm form, String nickname) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        findUser.get().changePassword(form.getAfterPassword());
-        return findUser.get().getId();
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new);
+        findUser.changePassword(form.getAfterPassword());
+        return findUser.getId();
     }
 
     @Transactional
     public void deleteUser(String nickname) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        userRepository.delete(findUser.get()); // TODO: 2023-03-20 복구 가능성을 위해 서비스 계층에서 아이디 보관
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(NotFoundUserException::new);
+        userRepository.delete(findUser);
     }
 }
