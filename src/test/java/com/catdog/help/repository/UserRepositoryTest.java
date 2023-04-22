@@ -1,74 +1,89 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.TestData;
-import com.catdog.help.domain.Dates;
 import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.jpa.JpaUserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.Assertions.*;
-
-@SpringBootTest
-@Transactional
+@DataJpaTest
 class UserRepositoryTest {
 
-    @Autowired JpaUserRepository userRepository;
-    @Autowired TestData testData;
+    @Autowired UserRepository userRepository;
+
 
     @Test
-    public void saveAndFindOne() {
+    @DisplayName("사용자 추가")
+    void addUser() {
         //given
-        User user1 = testData.createUser("user1@email", "password", "nickName1");
-        User user2 = testData.createUser("user2@email", "password", "nickName2");
+        User user = getUser("test@test.test", "닉네임");
 
         //when
-        userRepository.save(user1);
-        userRepository.save(user2);
-        User findUser1 = userRepository.findById(user1.getId());
-        User findUser2 = userRepository.findById(user2.getId());
-        User findUser3 = userRepository.findByEmailId(user1.getEmailId());
-        User findUser4 = userRepository.findByEmailId(user2.getEmailId());
-        User findUser5 = userRepository.findByNickname(user1.getNickname());
-        User findUser6 = userRepository.findByNickname(user2.getNickname());
-
-        User findUser7 = userRepository.findByEmailId("user3@email");
-
+        User savedUser = userRepository.save(user);
 
         //then
-        assertThat(findUser1.getEmailId()).isEqualTo(user1.getEmailId());
-        assertThat(findUser2.getEmailId()).isEqualTo(user2.getEmailId());
-        assertThat(findUser3.getEmailId()).isEqualTo(user1.getEmailId());
-        assertThat(findUser4.getEmailId()).isEqualTo(user2.getEmailId());
-        assertThat(findUser5.getEmailId()).isEqualTo(user1.getEmailId());
-        assertThat(findUser6.getEmailId()).isEqualTo(user2.getEmailId());
-        assertThat(findUser7).isEqualTo(null);
+        assertThat(savedUser.getId()).isEqualTo(user.getId());
+        assertThat(savedUser.getEmailId()).isEqualTo(user.getEmailId());
+        assertThat(savedUser.getGrade()).isEqualTo(Grade.BASIC);
     }
 
     @Test
-    public void findAll() {
+    @DisplayName("이메일로 사용자 조회")
+    void findByEmail() {
         //given
-        User user1 = testData.createUser("user1@email", "password", "nickName1");
-        User user2 = testData.createUser("user2@email", "password", "nickName2");
-        User user3 = testData.createUser("user3@email", "password", "nickName3");
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
+        User user = getUser("test@test.test", "닉네임");
+        User savedUser = userRepository.save(user);
 
         //when
-        List<User> users = userRepository.findAll();
+        User findUser = userRepository.findByEmailId("test@test.test").get();
 
         //then
-        assertThat(users.size()).isEqualTo(3);
-        assertThat(users.get(0).getEmailId()).isEqualTo("user1@email");
-        assertThat(users.get(1).getEmailId()).isEqualTo("user2@email");
-        assertThat(users.get(2).getEmailId()).isEqualTo("user3@email");
+        assertThat(findUser).isEqualTo(user);
+    }
 
+    @Test
+    @DisplayName("닉네임으로 사용자 조회")
+    void findByNickname() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+        User savedUser = userRepository.save(user);
+
+        //when
+        User findUser = userRepository.findByNickname("닉네임").get();
+
+        //then
+        assertThat(findUser).isEqualTo(user);
+    }
+
+    @Test
+    @DisplayName("사용자 삭제")
+    void deleteUser() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+        User savedUser = userRepository.save(user);
+
+        assertThat(userRepository.count()).isEqualTo(1L);
+
+        //when
+        userRepository.delete(user);
+
+        //then
+        assertThat(userRepository.count()).isEqualTo(0L);
+    }
+
+
+    private User getUser(String emailId, String nickname) {
+        return User.builder()
+                .emailId(emailId)
+                .password("12345678")
+                .nickname(nickname)
+                .name("이름")
+                .age(20)
+                .gender(Gender.MAN)
+                .build();
     }
 }
