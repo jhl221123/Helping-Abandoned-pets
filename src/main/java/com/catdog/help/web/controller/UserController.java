@@ -129,7 +129,7 @@ public class UserController {
         }
 
         //변경 로직
-        userService.changePassword(changeForm, nickname);
+        userService.changePassword(changeForm.getAfterPassword(), nickname);
         return "redirect:/users/detail";
     }
 

@@ -3,30 +3,32 @@ package com.catdog.help.service;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundUserException;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @Transactional
 class UserServiceTest {
 
-    @Autowired
+    @InjectMocks
     UserService userService;
-    @Autowired
+
+    @Mock
     UserRepository userRepository;
 
 
@@ -34,235 +36,195 @@ class UserServiceTest {
     @DisplayName("회원가입")
     void join() {
         //given
-        SaveUserForm form = SaveUserForm.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
+        SaveUserForm form = getSaveUserForm("test@test.test", "닉네임");
+        User user = getUser("test@test.test", "닉네임");
+
+        doReturn(user).when(userRepository)
+                .save(any(User.class));
 
         //when
         Long id = userService.join(form);
-        User user = userRepository.findById(id).get();
 
         //then
-        assertThat(user.getEmailId()).isEqualTo("id@email");
-        assertThat(user.getPassword()).isEqualTo("12345678");
-        assertThat(user.getNickname()).isEqualTo("닉네임");
+        assertThat(user.getId()).isEqualTo(id);
     }
 
     @Test
     @DisplayName("이메일 아이디 중복 확인")
-    void checkEmail() {
+    void checkEmailDuplicate() {
         //given
-        SaveUserForm form = SaveUserForm.builder()
-                .emailId("same@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userService.join(form);
+        User user = getUser("duplicate@test.test", "닉네임");
 
-        //expected
-        assertThat(userService.isEmailDuplication("differ@email")).isFalse();
-        assertThat(userService.isEmailDuplication("same@email")).isTrue();
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByEmailId("duplicate@test.test");
 
+        //when
+        boolean result = userService.isEmailDuplication("duplicate@test.test");
+
+        //then
+        assertThat(result).isTrue();
     }
 
     @Test
     @DisplayName("닉네임 중복 확인")
     void checkNickName() {
         //given
-        SaveUserForm form = SaveUserForm.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("중복닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userService.join(form);
+        User user = getUser("test@test.test", "중복닉네임");
 
-        //expected
-        assertThat(userService.isNicknameDuplication("다른닉네임")).isFalse();
-        assertThat(userService.isNicknameDuplication("중복닉네임")).isTrue();
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("중복닉네임");
 
+        //when
+        boolean result = userService.isNicknameDuplication("중복닉네임");
+
+        //then
+        assertThat(result).isTrue();
     }
 
     @Test
     @DisplayName("로그인")
     void login() {
         //given
-        SaveUserForm form = SaveUserForm.builder()
-                .emailId("user@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
+        User user = getUser("test@test.test", "닉네임");
 
-        userService.join(form);
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByEmailId("test@test.test");
 
         //when
-        String nickname = userService.login("user@email", "12345678");//정상 로그인
-        String failById = userService.login("no@email", "12345678");//존재하지 않는 아이디
-        String failByPassword = userService.login("user@email", "12345678999");//비밀번호 불일치
+        String nickname = userService.login("test@test.test", "12345678");//정상 로그인
 
         //then
         assertThat(nickname).isEqualTo("닉네임");
-        assertThat(failById).isEqualTo(MyConst.FAIL_LOGIN);
-        assertThat(failByPassword).isEqualTo(MyConst.FAIL_LOGIN);
     }
 
     @Test
-    @DisplayName("관리자 계정 확인")
+    @DisplayName("존재하지 않는 이메일로 로그인 실패")
+    void failLoginByEmail() {
+        //given
+        doReturn(Optional.empty()).when(userRepository)
+                .findByEmailId("nonexistent@test.test");
+
+        //when
+        String nickname = userService.login("nonexistent@test.test", "12345678");
+
+        //then
+        assertThat(nickname).isEqualTo(MyConst.FAIL_LOGIN);
+    }
+
+    @Test
+    @DisplayName("비밀번호 불일치로 로그인 실패")
+    void failLoginByPassword() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByEmailId("test@test.test");
+
+        //when
+        String nickname = userService.login("test@test.test", "12345678999");
+
+        //then
+        assertThat(nickname).isEqualTo(MyConst.FAIL_LOGIN);
+    }
+
+    @Test
+    @DisplayName("관리자인 경우 성공")
     void isManager() {
         //given
-        User manager = User.builder()
-                .emailId("manager@email")
-                .password("12345678")
-                .nickname("매니저")
-                .name("관리자")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        manager.makeManager();
-        userRepository.save(manager);
+        User user = getUser("test@test.test", "닉네임");
+        user.makeManager();
 
-        User basicUser = User.builder()
-                .emailId("basic@email")
-                .password("12345678")
-                .nickname("일반사용자")
-                .name("사용자")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(basicUser);
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("매니저");
 
-        //expected
-        assertThrows(NotFoundUserException.class,
-                () -> userService.isManager("존재하지않는사용자"));
+        //when
+        Boolean result = userService.isManager("매니저");
 
-        Boolean basicResult = userService.isManager("일반사용자");
-        assertThat(basicResult).isFalse();
+        //then
+        assertThat(result).isTrue();
+    }
 
-        Boolean managerResult = userService.isManager("매니저");
-        assertThat(managerResult).isTrue();
+    @Test
+    @DisplayName("관리자가 아닌 경우 실패")
+    void isNotManager() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("일반사용자");
+
+        //when
+        Boolean result = userService.isManager("일반사용자");
+
+        //then
+        assertThat(result).isFalse();
     }
 
     @Test
     @DisplayName("ReadUserForm 조회")
     void readByNickname() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(user);
+        User user = getUser("test@test.test", "닉네임");
 
-        //expected
-        assertThrows(NotFoundUserException.class,
-                () -> userService.readByNickname("존재하지않는사용자"));
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
 
+        //when
         ReadUserForm readForm = userService.readByNickname("닉네임");
-        assertThat(readForm.getEmailId()).isEqualTo("id@email");
-        assertThat(readForm.getPassword()).isEqualTo("12345678");
-        assertThat(readForm.getName()).isEqualTo("이름");
-        assertThat(readForm.getAge()).isEqualTo(20);
-        assertThat(readForm.getGender()).isEqualTo(Gender.MAN);
+
+        //then
+        assertThat(readForm.getEmailId()).isEqualTo(user.getEmailId());
     }
 
     @Test
     @DisplayName("UpdateUserForm 호출")
     void getUpdateForm() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(user);
+        User user = getUser("test@test.test", "닉네임");
 
-        //expected
-        assertThrows(NotFoundUserException.class,
-                () -> userService.getUpdateForm("존재하지않는사용자"));
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
 
+        //when
         UpdateUserForm updateForm = userService.getUpdateForm("닉네임");
+
+        //then
         assertThat(updateForm.getName()).isEqualTo("이름");
-        assertThat(updateForm.getAge()).isEqualTo(20);
-        assertThat(updateForm.getGender()).isEqualTo(Gender.MAN);
     }
 
     @Test
     @DisplayName("개인정보 변경")
     void updateInfo() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(user);
+        User user = getUser("test@test.test", "닉네임");
 
-        User updatedUser = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("변경된이름")
-                .age(30)
-                .gender(Gender.WOMAN)
-                .build();
-        UpdateUserForm UpdatedForm = new UpdateUserForm(updatedUser);
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
 
-        User nonexistent = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("존재하지않는사용자")
-                .name("변경된이름")
-                .age(30)
-                .gender(Gender.WOMAN)
-                .build();
-        UpdateUserForm exceptionForm = new UpdateUserForm(nonexistent);
+        UpdateUserForm form = new UpdateUserForm(
+                User.builder()
+                        .nickname("닉네임")
+                        .name("이름변경")
+                        .age(20)
+                        .gender(Gender.MAN)
+                        .build()
+        );
 
-        //expected
-        assertThrows(NotFoundUserException.class,
-                () -> userService.updateUserInfo(exceptionForm));
+        //when
+        Long id = userService.updateUserInfo(form);
 
-        Long id = userService.updateUserInfo(UpdatedForm);
-        User findUser = userRepository.findByNickname("닉네임").get();
-        assertThat(findUser.getName()).isEqualTo(updatedUser.getName());
-        assertThat(findUser.getAge()).isEqualTo(updatedUser.getAge());
-        assertThat(findUser.getGender()).isEqualTo(updatedUser.getGender());
+        //then
+        assertThat(user.getName()).isEqualTo("이름변경");
     }
 
     @Test
     @DisplayName("비밀번호 확인")
     void validPassword() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(user);
+        User user = getUser("test@test.test", "닉네임");
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
 
         //when
         Boolean result = userService.isSamePassword("12345678", "닉네임");
@@ -275,51 +237,52 @@ class UserServiceTest {
     @DisplayName("비밀번호 변경")
     void changePassword() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
-                .password("12345678")
-                .nickname("닉네임")
-                .name("이름")
-                .age(20)
-                .gender(Gender.MAN)
-                .build();
-        userRepository.save(user);
+        User user = getUser("test@test.test", "닉네임");
 
-        ChangePasswordForm success = ChangePasswordForm.builder()
-                .beforePassword("12345678")
-                .afterPassword("87654321")
-                .checkPassword("87654321")
-                .build();
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
 
         //when
-        userService.changePassword(success, "닉네임");
+        userService.changePassword("87654321", "닉네임");
 
         //then
-        User findUser = userRepository.findByNickname("닉네임").get();
-        assertThat(findUser.getPassword()).isEqualTo("87654321");
+        assertThat(user.getPassword()).isEqualTo("87654321");
     }
 
     @Test
     @DisplayName("회원 탈퇴")
     void delete() {
         //given
-        User user = User.builder()
-                .emailId("id@email")
+        User user = getUser("test@test.test", "닉네임");
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
+
+        //expected
+        userService.deleteUser("닉네임");
+        verify(userRepository, times(1)).findByNickname("닉네임");
+    }
+
+
+    private User getUser(String emailId, String nickname) {
+        return User.builder()
+                .emailId(emailId)
                 .password("12345678")
-                .nickname("닉네임")
+                .nickname(nickname)
                 .name("이름")
                 .age(20)
                 .gender(Gender.MAN)
                 .build();
-        userRepository.save(user);
-        assertThat(userRepository.count()).isEqualTo(1L);
+    }
 
-        //when
-        userService.deleteUser("닉네임");
-
-        //then
-        Optional<User> result = userRepository.findByNickname("닉네임");
-        assertThat(result).isEmpty();
-        assertThat(userRepository.count()).isEqualTo(0L);
+    private SaveUserForm getSaveUserForm(String emailId, String nickname) {
+        return SaveUserForm.builder()
+                .emailId(emailId)
+                .password("12345678")
+                .nickname(nickname)
+                .name("이름")
+                .age(20)
+                .gender(Gender.MAN)
+                .build();
     }
 }

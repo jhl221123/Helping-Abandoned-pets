@@ -5,7 +5,6 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
-import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -299,7 +297,7 @@ class UserControllerTest {
                 .isSamePassword("before123", "닉네임");
 
         doReturn(1L).when(userService)
-                .changePassword(any(ChangePasswordForm.class), eq("닉네임"));
+                .changePassword("after123", "닉네임");
 
         //expected
         mockMvc.perform(post("/users/detail/edit/password")

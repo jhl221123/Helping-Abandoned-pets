@@ -5,7 +5,6 @@ import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.NotFoundUserException;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
@@ -86,10 +85,10 @@ public class UserService {
     }
 
     @Transactional
-    public Long changePassword(ChangePasswordForm form, String nickname) {
+    public Long changePassword(String afterPassword, String nickname) {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(NotFoundUserException::new);
-        findUser.changePassword(form.getAfterPassword());
+        findUser.changePassword(afterPassword);
         return findUser.getId();
     }
 
