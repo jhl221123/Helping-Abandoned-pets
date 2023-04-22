@@ -11,7 +11,7 @@
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
 		<h1 style="text-align: center">수정하기</h1>
-		<form role="form" th:action th:object="${updateUserForm}" method="post">
+		<form role="form" th:action th:object="${updateForm}" method="post">
 			<div class="form-group">
 				<label th:for="nickname">닉네임</label>
 					<input type="text" readonly class="form-control" th:field="*{nickname}">

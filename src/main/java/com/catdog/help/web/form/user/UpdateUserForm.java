@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,9 +18,11 @@ public class UpdateUserForm {
     private String nickname;
 
     @NotBlank
+    @Length(min = 1, max = 10)
     private String name;
 
     @NotNull
+    @Max(150)
     private int age;
 
     @NotNull

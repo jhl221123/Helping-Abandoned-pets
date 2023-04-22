@@ -2,10 +2,7 @@ package com.catdog.help.web.controller;
 
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.form.LoginForm;
-import com.catdog.help.web.form.user.ChangePasswordForm;
-import com.catdog.help.web.form.user.ReadUserForm;
-import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
+import com.catdog.help.web.form.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,27 +27,27 @@ public class UserController {
 
     @GetMapping("/new")
     public String joinForm(Model model) {
-        model.addAttribute("saveUserForm", new SaveUserForm());
+        model.addAttribute("saveForm", new SaveUserForm());
         return "users/joinForm";
     }
 
     @PostMapping("/new")
-    public String join(@Validated @ModelAttribute("saveUserForm") SaveUserForm saveUserForm, BindingResult bindingResult) {
+    public String join(@Validated @ModelAttribute("saveForm") SaveUserForm saveForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "users/joinForm";
         }
         // TODO: 2023-04-20 각 프로퍼티에 특수기호 사용불가 검증 특히 _
-        if (userService.isEmailDuplication(saveUserForm.getEmailId())){
+        if (userService.isEmailDuplication(saveForm.getEmailId())){
             bindingResult.rejectValue("emailId", "duplicate", "이미 가입된 이메일 아이디입니다.");
             return "users/joinForm";
         }
 
-        if (userService.isNicknameDuplication(saveUserForm.getNickname())) {
+        if (userService.isNicknameDuplication(saveForm.getNickname())) {
             bindingResult.rejectValue("nickname", "duplicate", "이미 존재하는 닉네임입니다.");
             return "users/joinForm";
         }
 
-        userService.join(saveUserForm);
+        userService.join(saveForm);
         return "redirect:/";
     }
 
@@ -87,27 +84,25 @@ public class UserController {
     }
 
     @GetMapping("/detail")
-    public String detail(HttpServletRequest request, Model model) {
-        HttpSession session = request.getSession(false);
-        String loginUserNickname = (String) session.getAttribute(LOGIN_USER);
-        ReadUserForm readUserForm = userService.readByNickname(loginUserNickname);
-        model.addAttribute("readUserForm", readUserForm);
+    public String detail(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+        ReadUserForm readForm = userService.readByNickname(nickname);
+        model.addAttribute("readForm", readForm);
         return "users/detail";
     }
 
     @GetMapping("/detail/edit")
     public String editForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
-        UpdateUserForm updateUserForm = userService.getUpdateForm(nickname);
-        model.addAttribute("updateUserForm", updateUserForm);
+        UpdateUserForm updateForm = userService.getUpdateForm(nickname);
+        model.addAttribute("updateForm", updateForm);
         return "users/edit";
     }
 
     @PostMapping("/detail/edit")
-    public String edit(@Validated @ModelAttribute("updateUserForm") UpdateUserForm updateUserForm, BindingResult bindingResult) {
+    public String edit(@Validated @ModelAttribute("updateForm") UpdateUserForm updateForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "users/edit";
         }
-        userService.updateUserInfo(updateUserForm);
+        userService.updateUserInfo(updateForm);
         return "redirect:/users/detail";
     }
 
@@ -123,14 +118,13 @@ public class UserController {
             return "users/editPassword";
         }
 
-        String findPassword = userService.readByNickname(nickname).getPassword(); // TODO: 2023-04-14 서비스에서 해결하도록 수정
-        if (!findPassword.equals(changeForm.getBeforePassword())) {
-            bindingResult.rejectValue("beforePassword", "inaccurate", "기존 비밀번호와 일치하지 않습니다.");
+        if (!changeForm.getAfterPassword().equals(changeForm.getCheckPassword())) {
+            bindingResult.reject("inaccurate", "새 비밀번호는 동일한 값을 가져야 합니다.");
             return "users/editPassword";
         }
 
-        if (!changeForm.getAfterPassword().equals(changeForm.getCheckPassword())) {
-            bindingResult.reject("inaccurate", "새 비밀번호는 동일한 값을 가져야 합니다.");
+        if (!userService.isSamePassword(changeForm.getBeforePassword(), nickname)) {
+            bindingResult.rejectValue("beforePassword", "inaccurate", "기존 비밀번호와 일치하지 않습니다.");
             return "users/editPassword";
         }
 
