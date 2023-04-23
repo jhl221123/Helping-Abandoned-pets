@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class ReadBulletinBoardForm {
+public class ReadBulletinForm {
 
     private Long id;
     private String nickname;
@@ -23,7 +23,7 @@ public class ReadBulletinBoardForm {
 
 
     @Builder
-    public ReadBulletinBoardForm(BulletinBoard board, List<ReadUploadFileForm> imageForms, int likeSize) {
+    public ReadBulletinForm(Bulletin board, List<ReadUploadFileForm> imageForms, int likeSize) {
         this.id = board.getId();
         this.nickname = board.getUser().getNickname();
         this.title = board.getTitle();

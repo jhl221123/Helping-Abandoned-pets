@@ -1,5 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -10,10 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class SaveBulletinBoardForm {
-
-    @NotBlank
-    private String region;
+public class SaveBulletinForm {
 
     @NotBlank
     @Length(max = 25)
@@ -23,5 +21,20 @@ public class SaveBulletinBoardForm {
     @Length(max = 250)
     private String content;
 
+    @NotBlank
+    private String region;
+
     private List<MultipartFile> images = new ArrayList<>();
+
+
+    public SaveBulletinForm() {
+    }
+
+    @Builder
+    public SaveBulletinForm(String title, String content, String region, List<MultipartFile> images) {
+        this.title = title;
+        this.content = content;
+        this.region = region;
+        this.images = images;
+    }
 }

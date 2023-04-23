@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class UpdateBulletinBoardForm {
+public class UpdateBulletinForm {
 
     @NotNull
     private Long id;
@@ -36,10 +36,10 @@ public class UpdateBulletinBoardForm {
     private List<Integer> deleteImageIds = new ArrayList<>();
 
 
-    public UpdateBulletinBoardForm() { //컨트롤러 파라미터 바인딩
+    public UpdateBulletinForm() { //컨트롤러 파라미터 바인딩
     }
 
-    public UpdateBulletinBoardForm(BulletinBoard board, List<ReadUploadFileForm> oldImages) {
+    public UpdateBulletinForm(Bulletin board, List<ReadUploadFileForm> oldImages) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();

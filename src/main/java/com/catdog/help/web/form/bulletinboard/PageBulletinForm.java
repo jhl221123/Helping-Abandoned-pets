@@ -1,12 +1,12 @@
 package com.catdog.help.web.form.bulletinboard;
 
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Bulletin;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class PageBulletinBoardForm {
+public class PageBulletinForm {
 
     private Long id;
     private String title;
@@ -16,7 +16,7 @@ public class PageBulletinBoardForm {
     private String region;
 
 
-    public PageBulletinBoardForm(BulletinBoard board) {
+    public PageBulletinForm(Bulletin board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.nickname = board.getUser().getNickname();

@@ -1,6 +1,6 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.BoardRepository;
 import org.assertj.core.api.Assertions;
@@ -31,7 +31,7 @@ class BoardServiceTest {
     @DisplayName("게시글인지 확인")
     void isBulletin() {
         //given
-        BulletinBoard bulletin = getBulletin();
+        Bulletin bulletin = getBulletin();
 
         doReturn(Optional.ofNullable(bulletin)).when(boardRepository)
                 .findById(bulletin.getId());
@@ -43,8 +43,8 @@ class BoardServiceTest {
         Assertions.assertThat(result).isTrue();
     }
 
-    private BulletinBoard getBulletin() {
-        return BulletinBoard.builder()
+    private Bulletin getBulletin() {
+        return Bulletin.builder()
                 .user(User.builder().build())
                 .title("제목")
                 .content("내용")

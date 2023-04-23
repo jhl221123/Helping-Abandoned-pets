@@ -1,7 +1,7 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Board;
-import com.catdog.help.domain.board.BulletinBoard;
+import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +20,7 @@ class BoardRepositoryTest {
     @DisplayName("Board 타입 단건 조회")
     void findBoard() {
         //given
-        BulletinBoard bulletin = getBulletin();
+        Bulletin bulletin = getBulletin();
         boardRepository.save(bulletin);
 
         //when
@@ -30,8 +30,8 @@ class BoardRepositoryTest {
         Assertions.assertThat(findBoard).isEqualTo(bulletin);
     }
 
-    private BulletinBoard getBulletin() {
-        return BulletinBoard.builder()
+    private Bulletin getBulletin() {
+        return Bulletin.builder()
                 .user(User.builder().build())
                 .title("제목")
                 .content("내용")

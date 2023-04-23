@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("Bulletin")
-public class BulletinBoard extends Board {
+public class Bulletin extends Board {
 
     private String region; // TODO: 2023-04-17 지역이름 검증, 셀렉트박스
 
@@ -25,7 +25,7 @@ public class BulletinBoard extends Board {
 
 
     @Builder
-    public BulletinBoard(User user, String title, String content, String region) {
+    public Bulletin(User user, String title, String content, String region) {
         super(user, title, content);
         this.region = region;
     }
