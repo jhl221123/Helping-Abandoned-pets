@@ -11,14 +11,12 @@ import com.catdog.help.repository.jpa.JpaUploadFileRepository;
 import com.catdog.help.web.form.bulletinboard.PageBulletinForm;
 import com.catdog.help.web.form.bulletinboard.ReadBulletinForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinForm;
+import com.catdog.help.web.form.bulletinboard.EditBulletinForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,9 +57,7 @@ public class BulletinService {
                 .build();
     }
 
-    public Page<PageBulletinForm> getPage(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.DESC, "id");
-
+    public Page<PageBulletinForm> getPage(Pageable pageable) {
         return bulletinRepository.findPageBy(pageable)
                 .map(PageBulletinForm::new);
 //        return getPageBulletinBoardForms(bulletinRepository.findPageBy(age(offset, limit));
@@ -78,16 +74,20 @@ public class BulletinService {
         }
     }
 
-    public UpdateBulletinForm getUpdateForm(Long id) {
+    public String getWriter(Long id) {
+        return bulletinRepository.findNicknameById(id);
+    }
+
+    public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(NotFoundBoardException::new);
         List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
 
-        return new UpdateBulletinForm(findBoard, oldImages);
+        return new EditBulletinForm(findBoard, oldImages);
     }
 
     @Transactional
-    public void update(UpdateBulletinForm form) {
+    public void update(EditBulletinForm form) {
         Bulletin findBoard = bulletinRepository.findById(form.getId())
                 .orElseThrow(NotFoundBoardException::new);
         updateBulletin(findBoard, form);
@@ -121,7 +121,7 @@ public class BulletinService {
                 .collect(Collectors.toList());
     }
 
-    private void updateBulletin(Bulletin findBoard, UpdateBulletinForm form) {
+    private void updateBulletin(Bulletin findBoard, EditBulletinForm form) {
         findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion());
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }

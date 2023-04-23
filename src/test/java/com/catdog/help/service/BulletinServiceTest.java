@@ -11,7 +11,7 @@ import com.catdog.help.repository.jpa.JpaUploadFileRepository;
 import com.catdog.help.web.form.bulletinboard.PageBulletinForm;
 import com.catdog.help.web.form.bulletinboard.ReadBulletinForm;
 import com.catdog.help.web.form.bulletinboard.SaveBulletinForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinForm;
+import com.catdog.help.web.form.bulletinboard.EditBulletinForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,7 +64,7 @@ class BulletinServiceTest {
         //given
         User user = getUser();
         Bulletin board = getBulletin("제목");
-        SaveBulletinForm form = getSaveBulletinForm();
+        SaveBulletinForm form = getSaveForm();
 
         doReturn(Optional.ofNullable(user)).when(userRepository)
                 .findByNickname("닉네임");
@@ -114,16 +116,29 @@ class BulletinServiceTest {
     @DisplayName("페이지 조회")
     void readPage() {
         //given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         Page<Bulletin> page = Page.empty();
 
         doReturn(page).when(bulletinRepository)
                 .findPageBy(any(Pageable.class));
 
         //when
-        Page<PageBulletinForm> forms = bulletinService.getPage(0);
+        Page<PageBulletinForm> forms = bulletinService.getPage(pageable);
 
         //verify
         verify(bulletinRepository, times(1)).findPageBy(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("작성자 닉네임 반환")
+    void getWriter() {
+        //given
+        doReturn("닉네임").when(bulletinRepository)
+                .findNicknameById(1L);
+
+        //expected
+        bulletinService.getWriter(1L);
+        verify(bulletinRepository, times(1)).findNicknameById(1L);
     }
 
     @Test
@@ -140,7 +155,7 @@ class BulletinServiceTest {
                 .findUploadFiles(board.getId());
 
         //when
-        UpdateBulletinForm form = bulletinService.getUpdateForm(board.getId());
+        EditBulletinForm form = bulletinService.getEditForm(board.getId());
 
         //then
         assertThat(form.getTitle()).isEqualTo("제목");
@@ -156,8 +171,7 @@ class BulletinServiceTest {
         //given
         Bulletin board = getBulletin("제목");
 
-        Bulletin updatedBoard = getBulletin("제목수정");
-        UpdateBulletinForm form = new UpdateBulletinForm(updatedBoard, new ArrayList<>());
+        EditBulletinForm form = getAfterEditForm();
 
         doReturn(Optional.ofNullable(board)).when(bulletinRepository)
                 .findById(form.getId());
@@ -219,7 +233,7 @@ class BulletinServiceTest {
                 .build();
     }
 
-    private SaveBulletinForm getSaveBulletinForm() {
+    private SaveBulletinForm getSaveForm() {
         List<MultipartFile> images = new ArrayList<>();
         return SaveBulletinForm.builder()
                 .title("제목")
@@ -227,5 +241,12 @@ class BulletinServiceTest {
                 .region("지역")
                 .images(images)
                 .build();
+    }
+
+    private EditBulletinForm getAfterEditForm() {
+        Bulletin updatedBoard = getBulletin("제목수정");
+        List<ReadUploadFileForm> oldImages = new ArrayList<>();
+        EditBulletinForm form = new EditBulletinForm(updatedBoard, oldImages);
+        return form;
     }
 }
