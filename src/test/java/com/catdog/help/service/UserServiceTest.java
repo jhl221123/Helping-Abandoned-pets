@@ -3,10 +3,12 @@ package com.catdog.help.service;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.NotFoundUserException;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.catdog.help.web.form.user.UpdateUserForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,9 @@ class UserServiceTest {
 
         //then
         assertThat(user.getId()).isEqualTo(id);
+
+        //verify
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
@@ -261,6 +266,18 @@ class UserServiceTest {
         //expected
         userService.deleteUser("닉네임");
         verify(userRepository, times(1)).findByNickname("닉네임");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 닉네임으로 사용자 조회 시 예외 발생")
+    void notFoundUserExceptionByNickname() {
+        //given
+        doReturn(Optional.empty()).when(userRepository)
+                .findByNickname("존재하지않는닉네임");
+
+        //expected
+        Assertions.assertThrows(NotFoundUserException.class,
+                () -> userService.readByNickname("존재하지않는닉네임"));
     }
 
 
