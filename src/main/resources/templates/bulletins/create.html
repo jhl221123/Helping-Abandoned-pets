@@ -4,7 +4,7 @@
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" action="/boards/new" th:object="${saveBoardForm}" enctype="multipart/form-data"
+	<form role="form" action="/boards/new" th:object="${saveForm}" enctype="multipart/form-data"
 	      th:method="post">
 		<div class="form-group">
 			<label>닉네임</label>

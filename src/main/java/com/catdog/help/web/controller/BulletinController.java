@@ -1,16 +1,17 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.service.BulletinBoardService;
+import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
-import com.catdog.help.web.form.bulletinboard.PageBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinBoardForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinBoardForm;
+import com.catdog.help.web.form.bulletinboard.PageBulletinForm;
+import com.catdog.help.web.form.bulletinboard.ReadBulletinForm;
+import com.catdog.help.web.form.bulletinboard.SaveBulletinForm;
+import com.catdog.help.web.form.bulletinboard.UpdateBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +30,7 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 @RequiredArgsConstructor
 public class BulletinBoardController {
 
-    private final BulletinBoardService bulletinBoardService;
+    private final BulletinService bulletinService;
     private final CommentService commentService;
     private final LikeService likeService;
     private final ViewUpdater viewUpdater;
@@ -38,7 +39,7 @@ public class BulletinBoardController {
     /***  create  ***/
     @GetMapping("/boards/new")
     public String createBulletinBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
-        SaveBulletinBoardForm saveBoardForm = new SaveBulletinBoardForm();
+        SaveBulletinForm saveBoardForm = new SaveBulletinForm();
         model.addAttribute("nickname", nickname);
         model.addAttribute("saveBoardForm", saveBoardForm);
         return "bulletinBoard/create";
@@ -46,14 +47,14 @@ public class BulletinBoardController {
 
     @PostMapping("/boards/new")
     public String createBulletinBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
-                                      @Validated @ModelAttribute("saveBoardForm") SaveBulletinBoardForm saveBoardForm,
+                                      @Validated @ModelAttribute("saveBoardForm") SaveBulletinForm saveBoardForm,
                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         model.addAttribute("nickname", nickname);
         if (bindingResult.hasErrors()) {
             return "bulletinBoard/create";
         }
 
-        Long boardId = bulletinBoardService.createBoard(saveBoardForm, nickname);
+        Long boardId = bulletinService.save(saveBoardForm, nickname);
         redirectAttributes.addAttribute("id", boardId);
         return "redirect:/boards/{id}";
     }
@@ -62,10 +63,10 @@ public class BulletinBoardController {
     /***  read  ***/
     @GetMapping("/boards")
     public String BulletinBoardList(@RequestParam(value = "page") int page, Model model) {
-        List<PageBulletinBoardForm> pageBoardForms = bulletinBoardService.readPage(page);
-        model.addAttribute("pageBoardForms", pageBoardForms);
+        Page<PageBulletinForm> pageBoardForms = bulletinService.getPage(page);
+        model.addAttribute("pageBoardForms", pageBoardForms.getContent()); // TODO: 2023-04-23 일단 getContent 함. 서비스 테스트 끝나고 Page에 맞게 수정
 
-        int lastPage = bulletinBoardService.countPages();
+        int lastPage = bulletinService.countPages();
         model.addAttribute("lastPage", lastPage);
         return "bulletinBoard/list";
     }
@@ -81,7 +82,7 @@ public class BulletinBoardController {
 
         model.addAttribute("nickname", nickname); // 수정버튼 본인확인
 
-        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        ReadBulletinForm readForm = bulletinService.read(id);
         model.addAttribute("readForm", readForm);
 
         if (!readForm.getImages().isEmpty()) {
@@ -121,21 +122,21 @@ public class BulletinBoardController {
     public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model,
                                           @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
-        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        ReadBulletinForm readForm = bulletinService.read(id);
         if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
-        UpdateBulletinBoardForm updateBulletinBoardForm = bulletinBoardService.getUpdateForm(id);
-        model.addAttribute("updateForm", updateBulletinBoardForm);
+        UpdateBulletinForm updateBulletinForm = bulletinService.getUpdateForm(id);
+        model.addAttribute("updateForm", updateBulletinForm);
         model.addAttribute("nickname", nickname);
         return "bulletinBoard/update";
     }
 
     @PostMapping("/boards/{id}/edit")
-    public String updateBulletinBoard(@Validated @ModelAttribute("updateForm") UpdateBulletinBoardForm updateForm,
+    public String updateBulletinBoard(@Validated @ModelAttribute("updateForm") UpdateBulletinForm updateForm,
                                       BindingResult bindingResult, @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
-        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(updateForm.getId());
+        ReadBulletinForm readForm = bulletinService.read(updateForm.getId());
         if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
@@ -144,7 +145,7 @@ public class BulletinBoardController {
             return "bulletinBoard/update";
         }
 
-        bulletinBoardService.updateBoard(updateForm);
+        bulletinService.update(updateForm);
         return "redirect:/boards/{id}";
     }
 
@@ -154,7 +155,7 @@ public class BulletinBoardController {
     public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
                                           @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 접근 가능
-        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        ReadBulletinForm readForm = bulletinService.read(id);
         if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
@@ -169,11 +170,11 @@ public class BulletinBoardController {
     public String deleteBulletinBoard(@PathVariable("id") Long id,
                                       @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
-        ReadBulletinBoardForm readForm = bulletinBoardService.readBoard(id);
+        ReadBulletinForm readForm = bulletinService.read(id);
         if (!readForm.getNickname().equals(nickname)) {
             return "redirect:/boards/{id}";
         }
-        bulletinBoardService.deleteBoard(id);
+        bulletinService.delete(id);
         return "redirect:/boards?page=1";
     }
 
