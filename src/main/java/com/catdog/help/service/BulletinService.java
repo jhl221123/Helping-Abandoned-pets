@@ -3,7 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundBoardException;
+import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.BulletinRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
@@ -45,7 +45,7 @@ public class BulletinService {
 
     public ReadBulletinForm read(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
-                .orElseThrow(NotFoundBoardException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
@@ -80,7 +80,7 @@ public class BulletinService {
 
     public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
-                .orElseThrow(NotFoundBoardException::new);
+                .orElseThrow(BoardNotFoundException::new);
         List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
 
         return new EditBulletinForm(findBoard, oldImages);
@@ -89,14 +89,14 @@ public class BulletinService {
     @Transactional
     public void update(EditBulletinForm form) {
         Bulletin findBoard = bulletinRepository.findById(form.getId())
-                .orElseThrow(NotFoundBoardException::new);
+                .orElseThrow(BoardNotFoundException::new);
         updateBulletin(findBoard, form);
     }
 
     @Transactional
     public void delete(Long boardId) {
         Bulletin findBoard = bulletinRepository.findById(boardId)
-                .orElseThrow(NotFoundBoardException::new);
+                .orElseThrow(BoardNotFoundException::new);
         bulletinRepository.delete(findBoard);
     }
 

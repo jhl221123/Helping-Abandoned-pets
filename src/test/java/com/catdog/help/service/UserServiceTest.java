@@ -3,7 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundUserException;
+import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -276,7 +276,7 @@ class UserServiceTest {
                 .findByNickname("존재하지않는닉네임");
 
         //expected
-        Assertions.assertThrows(NotFoundUserException.class,
+        Assertions.assertThrows(UserNotFoundException.class,
                 () -> userService.readByNickname("존재하지않는닉네임"));
     }
 

@@ -3,7 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Grade;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundUserException;
+import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -53,33 +53,33 @@ public class UserService {
 
     public Boolean isManager(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         return findUser.getGrade() == Grade.MANAGER ? true : false;
     }
 
     public ReadUserForm readByNickname(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         return new ReadUserForm(findUser);
     }
 
     public UpdateUserForm getUpdateForm(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         return new UpdateUserForm(findUser);
     }
 
     @Transactional
     public Long updateUserInfo(UpdateUserForm form) {
         User findUser = userRepository.findByNickname(form.getNickname())
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         findUser.updateUser(form.getName(), form.getAge(), form.getGender());
         return findUser.getId();
     }
 
     public Boolean isSamePassword(String password, String nickname) {
         String target = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new)
+                .orElseThrow(UserNotFoundException::new)
                 .getPassword();
         return password.equals(target) ? true : false;
     }
@@ -87,7 +87,7 @@ public class UserService {
     @Transactional
     public Long changePassword(String afterPassword, String nickname) {
         User findUser = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         findUser.changePassword(afterPassword);
         return findUser.getId();
     }
@@ -95,7 +95,7 @@ public class UserService {
     @Transactional
     public void deleteUser(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(UserNotFoundException::new);
         userRepository.delete(findUser);
     }
 }

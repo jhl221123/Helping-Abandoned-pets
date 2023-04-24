@@ -3,7 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundBoardException;
+import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.BulletinRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
@@ -208,7 +208,7 @@ class BulletinServiceTest {
                 .findById(1L);
 
         //expected
-        Assertions.assertThrows(NotFoundBoardException.class,
+        Assertions.assertThrows(BoardNotFoundException.class,
                 ()-> bulletinService.read(1L));
     }
 
