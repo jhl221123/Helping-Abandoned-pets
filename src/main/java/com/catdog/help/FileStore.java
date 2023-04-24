@@ -46,7 +46,7 @@ public class FileStore {
         return uploadFiles;
     }
 
-    public String getFullPath(String fileName) { // BulletinBoardController 에서 사용, public 유지
+    public String getFullPath(String fileName) {
         return fileDir + fileName;
     }
 
