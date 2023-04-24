@@ -1,4 +1,4 @@
-package com.catdog.help.web.form.bulletinboard;
+package com.catdog.help.web.form.bulletin;
 
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class UpdateBulletinForm {
+public class EditBulletinForm {
 
     @NotNull
     private Long id;
@@ -36,10 +36,10 @@ public class UpdateBulletinForm {
     private List<Integer> deleteImageIds = new ArrayList<>();
 
 
-    public UpdateBulletinForm() { //컨트롤러 파라미터 바인딩
+    public EditBulletinForm() { //컨트롤러 파라미터 바인딩
     }
 
-    public UpdateBulletinForm(Bulletin board, List<ReadUploadFileForm> oldImages) {
+    public EditBulletinForm(Bulletin board, List<ReadUploadFileForm> oldImages) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();

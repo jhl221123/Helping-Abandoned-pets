@@ -3,15 +3,16 @@ package com.catdog.help.web.controller;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
-import com.catdog.help.web.form.bulletinboard.PageBulletinForm;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinForm;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinForm;
-import com.catdog.help.web.form.bulletinboard.UpdateBulletinForm;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.bulletin.ReadBulletinForm;
+import com.catdog.help.web.form.bulletin.SaveBulletinForm;
+import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,8 +28,9 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Controller
 @Slf4j
+@RequestMapping("/bulletins")
 @RequiredArgsConstructor
-public class BulletinBoardController {
+public class BulletinController {
 
     private final BulletinService bulletinService;
     private final CommentService commentService;
@@ -37,46 +39,46 @@ public class BulletinBoardController {
 
 
     /***  create  ***/
-    @GetMapping("/boards/new")
-    public String createBulletinBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
-        SaveBulletinForm saveBoardForm = new SaveBulletinForm();
+    @GetMapping("/new")
+    public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+        SaveBulletinForm saveForm = new SaveBulletinForm();
         model.addAttribute("nickname", nickname);
-        model.addAttribute("saveBoardForm", saveBoardForm);
-        return "bulletinBoard/create";
+        model.addAttribute("saveForm", saveForm);
+        return "bulletins/create";
     }
 
-    @PostMapping("/boards/new")
-    public String createBulletinBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
-                                      @Validated @ModelAttribute("saveBoardForm") SaveBulletinForm saveBoardForm,
-                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        model.addAttribute("nickname", nickname);
+    @PostMapping("/new")
+    public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                            @Validated @ModelAttribute("saveForm") SaveBulletinForm saveForm,
+                            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        model.addAttribute("nickname", nickname); // TODO: 2023-04-23 이거 없어도 될텐데?
         if (bindingResult.hasErrors()) {
-            return "bulletinBoard/create";
+            return "bulletins/create";
         }
 
-        Long boardId = bulletinService.save(saveBoardForm, nickname);
+        Long boardId = bulletinService.save(saveForm, nickname);
         redirectAttributes.addAttribute("id", boardId);
-        return "redirect:/boards/{id}";
+        return "redirect:/bulletins/{id}";
     }
 
 
     /***  read  ***/
-    @GetMapping("/boards")
-    public String BulletinBoardList(@RequestParam(value = "page") int page, Model model) {
-        Page<PageBulletinForm> pageBoardForms = bulletinService.getPage(page);
-        model.addAttribute("pageBoardForms", pageBoardForms.getContent()); // TODO: 2023-04-23 일단 getContent 함. 서비스 테스트 끝나고 Page에 맞게 수정
+    @GetMapping
+    public String getList(Pageable pageable, Model model) {
+        Page<PageBulletinForm> pageForm = bulletinService.getPage(pageable);
+        model.addAttribute("pageForm", pageForm.getContent()); // TODO: 2023-04-23 일단 getContent 함. 서비스 테스트 끝나고 Page에 맞게 수정
 
-        int lastPage = bulletinService.countPages();
-        model.addAttribute("lastPage", lastPage);
-        return "bulletinBoard/list";
+        int totalPages = pageForm.getTotalPages();
+        model.addAttribute("lastPage", totalPages); //
+        return "bulletins/list";
     }
 
-    @GetMapping("/boards/{id}")
-    public String readBulletinBoard(@PathVariable("id") Long id, Model model,
-                                    @SessionAttribute(name = LOGIN_USER) String nickname,
-                                    @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
-                                    @RequestParam(value = "clickReply", required = false) Long parentCommentId,
-                                    HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/{id}")
+    public String readBoard(@PathVariable("id") Long id, Model model,
+                            @SessionAttribute(name = LOGIN_USER) String nickname,
+                            @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
+                            @RequestParam(value = "clickReply", required = false) Long parentCommentId,
+                            HttpServletRequest request, HttpServletResponse response) {
         //조회수 증가
         viewUpdater.addView(id, request, response);
 
@@ -90,7 +92,7 @@ public class BulletinBoardController {
             model.addAttribute("imageSize", readForm.getImages().size());
         }
 
-        boolean checkLike = likeService.checkLike(id, nickname);
+        boolean checkLike = likeService.isLike(id, nickname);
         model.addAttribute("checkLike", checkLike);
 
         List<CommentForm> commentForms = commentService.readComments(id);
@@ -106,77 +108,80 @@ public class BulletinBoardController {
         //답글
         model.addAttribute("clickReply", parentCommentId);
 
-        return "bulletinBoard/detail";
+        return "bulletins/detail";
     }
 
 
     /***  update  ***/
-    @GetMapping("/boards/{id}/like")
-    public String clickLike(@PathVariable("id") Long id,
-                              @SessionAttribute(name = LOGIN_USER) String nickname) {
+    @GetMapping("/{id}/like")
+    public String clickLike(@SessionAttribute(name = LOGIN_USER) String nickname,
+                            @PathVariable("id") Long id) {
         likeService.clickLike(id, nickname);
-        return "redirect:/boards/{id}";
+        return "redirect:/bulletins/{id}";
     }
 
-    @GetMapping("/boards/{id}/edit")
-    public String updateBulletinBoardForm(@PathVariable("id") Long id, Model model,
-                                          @SessionAttribute(name = LOGIN_USER) String nickname) {
+    @GetMapping("/{id}/edit")
+    public String getUpdateForm(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                @PathVariable("id") Long id, Model model) {
         //작성자 본인만 수정 가능
-        ReadBulletinForm readForm = bulletinService.read(id);
-        if (!readForm.getNickname().equals(nickname)) {
-            return "redirect:/boards/{id}";
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
-        UpdateBulletinForm updateBulletinForm = bulletinService.getUpdateForm(id);
-        model.addAttribute("updateForm", updateBulletinForm);
+        EditBulletinForm editForm = bulletinService.getEditForm(id);
+        model.addAttribute("updateForm", editForm);
         model.addAttribute("nickname", nickname);
-        return "bulletinBoard/update";
+        return "bulletins/edit";
     }
 
-    @PostMapping("/boards/{id}/edit")
-    public String updateBulletinBoard(@Validated @ModelAttribute("updateForm") UpdateBulletinForm updateForm,
-                                      BindingResult bindingResult, @SessionAttribute(name = LOGIN_USER) String nickname) {
+    @PostMapping("/{id}/edit")
+    public String editBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
+                            @Validated @ModelAttribute("editForm") EditBulletinForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
-        ReadBulletinForm readForm = bulletinService.read(updateForm.getId());
-        if (!readForm.getNickname().equals(nickname)) {
-            return "redirect:/boards/{id}";
+        if (!isWriter(editForm.getId(), nickname)) {
+            return "redirect:/";
         }
 
         if (bindingResult.hasErrors()) {
-            return "bulletinBoard/update";
+            return "bulletins/edit";
         }
 
-        bulletinService.update(updateForm);
-        return "redirect:/boards/{id}";
+        bulletinService.update(editForm);
+        return "redirect:/bulletins/{id}";
     }
 
 
     /***  delete  ***/
-    @GetMapping("/boards/{id}/delete")
-    public String deleteBulletinBoardForm(@PathVariable("id") Long id, Model model,
-                                          @SessionAttribute(name = LOGIN_USER) String nickname) {
+    @GetMapping("/{id}/delete")
+    public String getDeleteForm(@PathVariable("id") Long id, Model model,
+                                @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 접근 가능
-        ReadBulletinForm readForm = bulletinService.read(id);
-        if (!readForm.getNickname().equals(nickname)) {
-            return "redirect:/boards/{id}";
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
-        String boardTitle = readForm.getTitle();
-        model.addAttribute("boardId", id);
+
+        ReadBulletinForm form = bulletinService.read(id);
+        String boardTitle = form.getTitle();
+        model.addAttribute("boardId", id); // TODO: 2023-04-24 한 번에 처리할 수 있도록 해보자.
         model.addAttribute("boardTitle", boardTitle);
         model.addAttribute("nickname", nickname);
-        return "bulletinBoard/delete";
+        return "bulletins/delete";
     }
 
-    @PostMapping("/boards/{id}/delete")
-    public String deleteBulletinBoard(@PathVariable("id") Long id,
-                                      @SessionAttribute(name = LOGIN_USER) String nickname) {
+    @PostMapping("/{id}/delete")
+    public String deleteBoard(@PathVariable("id") Long id,
+                              @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
-        ReadBulletinForm readForm = bulletinService.read(id);
-        if (!readForm.getNickname().equals(nickname)) {
-            return "redirect:/boards/{id}";
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
+
         bulletinService.delete(id);
-        return "redirect:/boards?page=1";
+        return "redirect:/bulletins?page=0";
     }
 
 
+    private Boolean isWriter(Long id, String nickname) {
+        String writer = bulletinService.getWriter(id);
+        return writer.equals(nickname) ? true : false;
+    }
 }

@@ -1,4 +1,4 @@
-package com.catdog.help.web.form.bulletinboard;
+package com.catdog.help.web.form.bulletin;
 
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;

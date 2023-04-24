@@ -1,4 +1,4 @@
-package com.catdog.help.web.form.bulletinboard;
+package com.catdog.help.web.form.bulletin;
 
 import lombok.Builder;
 import lombok.Getter;

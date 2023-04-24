@@ -8,10 +8,7 @@ import com.catdog.help.repository.BulletinRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import com.catdog.help.repository.jpa.JpaUploadFileRepository;
-import com.catdog.help.web.form.bulletinboard.PageBulletinForm;
-import com.catdog.help.web.form.bulletinboard.ReadBulletinForm;
-import com.catdog.help.web.form.bulletinboard.SaveBulletinForm;
-import com.catdog.help.web.form.bulletinboard.EditBulletinForm;
+import com.catdog.help.web.form.bulletin.*;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -246,7 +243,6 @@ class BulletinServiceTest {
     private EditBulletinForm getAfterEditForm() {
         Bulletin updatedBoard = getBulletin("제목수정");
         List<ReadUploadFileForm> oldImages = new ArrayList<>();
-        EditBulletinForm form = new EditBulletinForm(updatedBoard, oldImages);
-        return form;
+        return new EditBulletinForm(updatedBoard, oldImages);
     }
 }
