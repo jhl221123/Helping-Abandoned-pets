@@ -33,7 +33,7 @@ public class EditBulletinForm {
 
     private List<MultipartFile> newImages = new ArrayList<>();
 
-    private List<Integer> deleteImageIds = new ArrayList<>();
+    private List<Long> deleteImageIds = new ArrayList<>();
 
 
     public EditBulletinForm() { //컨트롤러 파라미터 바인딩
