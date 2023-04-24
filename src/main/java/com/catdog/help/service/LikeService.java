@@ -1,53 +1,59 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Board;
-import com.catdog.help.domain.board.LikeBoard;
+import com.catdog.help.domain.board.Like;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundBoard;
-import com.catdog.help.repository.jpa.*;
+import com.catdog.help.exception.BoardNotFoundException;
+import com.catdog.help.exception.UserNotFoundException;
+import com.catdog.help.repository.BoardRepository;
+import com.catdog.help.repository.LikeRepository;
+import com.catdog.help.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LikeService {
 
-    private final JpaUserRepository userRepository;
-    private final JpaBoardRepository boardRepository;
-    private final JpaLikeBoardRepository jpaLikeBoardRepository;
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
+    private final LikeRepository likeRepository;
 
 
-    public boolean checkLike(Long boardId, String nickName) {
-        User findUser = userRepository.findByNickname(nickName);
-        LikeBoard likeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());
+    public boolean isLike(Long boardId, String nickName) {
+        User findUser = userRepository.findByNickname(nickName)
+                .orElseThrow(UserNotFoundException::new);
 
-        return likeBoard == null ? false : true;
+        Optional<Like> like = likeRepository.findByIds(boardId, findUser.getId());
+
+        return like.isPresent() ? true : false;
     }
 
     @Transactional
-    public boolean clickLike(Long boardId, String nickName) {
+    public void clickLike(Long boardId, String nickName) {
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(NotFoundBoard::new);
-        User findUser = userRepository.findByNickname(nickName);
+                .orElseThrow(BoardNotFoundException::new);
+        User findUser = userRepository.findByNickname(nickName)
+                .orElseThrow(UserNotFoundException::new); // TODO: 2023-04-23 테스트 작성하면서 isLike 로 수정하기
 
-        LikeBoard findLikeBoard = jpaLikeBoardRepository.findByIds(boardId, findUser.getId());
-        if (findLikeBoard == null) {
-            jpaLikeBoardRepository.save(getLikeBoard(findBoard, findUser));
-            return true;
+        Optional<Like> findLike = likeRepository.findByIds(boardId, findUser.getId());
+        if (findLike.isEmpty()) {
+            likeRepository.save(getLikeBoard(findBoard, findUser));
         } else {
-            jpaLikeBoardRepository.delete(findLikeBoard);
-            return false;
+            likeRepository.delete(findLike.get());
         }
     }
 
 
-    private LikeBoard getLikeBoard(Board findBoard, User findUser) {
-        LikeBoard likeBoard = LikeBoard.builder()
+    private Like getLikeBoard(Board findBoard, User findUser) {
+        Like like = Like.builder()
                 .board(findBoard)
                 .user(findUser)
                 .build();
-        return likeBoard;
+        return like;
     }
 }

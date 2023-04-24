@@ -5,9 +5,9 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.BulletinRepository;
+import com.catdog.help.repository.LikeRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
@@ -55,7 +55,7 @@ class BulletinServiceTest {
     UploadFileRepository uploadFileRepository;
 
     @Mock
-    JpaLikeBoardRepository likeBoardRepository;
+    LikeRepository likeRepository;
 
 
     @Test
@@ -100,7 +100,7 @@ class BulletinServiceTest {
         doReturn(imageForms).when(uploadFileRepository)
                 .findByBoardId(board.getId());
 
-        doReturn(3L).when(likeBoardRepository)
+        doReturn(3L).when(likeRepository)
                 .countByBoardId(board.getId());
 
         //when

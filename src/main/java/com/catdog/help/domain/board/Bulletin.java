@@ -21,7 +21,7 @@ public class Bulletin extends Board {
     private String region; // TODO: 2023-04-17 지역이름 검증, 셀렉트박스
 
     @OneToMany(mappedBy = "board", cascade = REMOVE)
-    private List<LikeBoard> likeBoards;
+    private List<Like> likes;
 
 
     @Builder

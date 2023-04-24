@@ -5,9 +5,9 @@ import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.BulletinRepository;
+import com.catdog.help.repository.LikeRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
@@ -34,7 +34,7 @@ public class BulletinService {
     private final UserRepository userRepository;
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
-    private final JpaLikeBoardRepository jpaLikeBoardRepository;
+    private final LikeRepository likeRepository;
 
 
     @Transactional
@@ -48,7 +48,7 @@ public class BulletinService {
                 .orElseThrow(BoardNotFoundException::new);
 
         List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
-        int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
+        int likeSize = Math.toIntExact(likeRepository.countByBoardId(id));
 
         return ReadBulletinForm.builder()
                 .board(findBoard)

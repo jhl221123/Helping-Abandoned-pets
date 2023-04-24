@@ -13,7 +13,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class LikeBoard {
+@Table(name = "likes")
+public class Like {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "like_board_id")
@@ -29,7 +30,7 @@ public class LikeBoard {
 
 
     @Builder
-    public LikeBoard(Board board, User user) {
+    public Like(Board board, User user) {
         this.board = board;
         this.user = user;
     }

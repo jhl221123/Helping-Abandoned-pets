@@ -3,7 +3,7 @@ package com.catdog.help.domain.user;
 import com.catdog.help.domain.BaseEntity;
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
-import com.catdog.help.domain.board.LikeBoard;
+import com.catdog.help.domain.board.Like;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +52,7 @@ public class User extends BaseEntity {
     private List<Board> bulletinBoards = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = REMOVE)
-    private List<LikeBoard> likeBoards = new ArrayList<>();
+    private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = REMOVE)
     private List<Comment> comments = new ArrayList<>();
