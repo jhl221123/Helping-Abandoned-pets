@@ -4,9 +4,9 @@ import com.catdog.help.domain.board.ItemBoard;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.jpa.JpaItemBoardRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
-import com.catdog.help.repository.jpa.JpaUploadFileRepository;
 import com.catdog.help.repository.jpa.JpaUserRepository;
 import com.catdog.help.web.form.itemboard.PageItemBoardForm;
 import com.catdog.help.web.form.itemboard.ReadItemBoardForm;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class ItemBoardService {
 
     private final JpaItemBoardRepository itemBoardRepository;
     private final JpaUserRepository userRepository;
-    private final JpaUploadFileRepository uploadFileRepository;
+    private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
@@ -41,7 +42,7 @@ public class ItemBoardService {
 
     public ReadItemBoardForm readBoard(Long id) {
         ItemBoard findBoard = itemBoardRepository.findById(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         int likeSize = (int)jpaLikeBoardRepository.countByBoardId(findBoard.getId());
 
         return new ReadItemBoardForm(findBoard, readUploadFileForms, likeSize);
@@ -67,7 +68,7 @@ public class ItemBoardService {
 
     public UpdateItemBoardForm getUpdateForm(Long id) {
         ItemBoard findBoard = itemBoardRepository.findById(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         return new UpdateItemBoardForm(findBoard, readUploadFileForms);
     }
 
@@ -92,9 +93,9 @@ public class ItemBoardService {
     /**============================= private method ==============================*/
 
     private ItemBoard getItemBoard(String nickname, SaveItemBoardForm form) {
-        User findUser = userRepository.findByNickname(nickname);
+        Optional<User> findUser = userRepository.findByNickname(nickname);
         ItemBoard board = ItemBoard.builder()
-                .user(findUser)
+                .user(findUser.get())
                 .title(form.getTitle())
                 .content(form.getContent())
                 .itemName(form.getItemName())
@@ -108,7 +109,7 @@ public class ItemBoardService {
     private List<PageItemBoardForm> getPageItemBoardForms(List<ItemBoard> boards) {
         return boards.stream()
                 .map(b -> {
-                    ReadUploadFileForm leadImage = getReadUploadFileForms(uploadFileRepository.findUploadFiles(b.getId())).get(0); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나감..
+                    ReadUploadFileForm leadImage = getReadUploadFileForms(uploadFileRepository.findByBoardId(b.getId())).get(0); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나감..
                     return new PageItemBoardForm(b, leadImage);
                 }).collect(Collectors.toList());
     }

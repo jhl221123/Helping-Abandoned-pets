@@ -5,10 +5,13 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.NotFoundBoardException;
 import com.catdog.help.repository.BulletinRepository;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
-import com.catdog.help.repository.jpa.JpaUploadFileRepository;
-import com.catdog.help.web.form.bulletin.*;
+import com.catdog.help.web.form.bulletin.EditBulletinForm;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.bulletin.ReadBulletinForm;
+import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +52,7 @@ class BulletinServiceTest {
     ImageService imageService;
 
     @Mock
-    JpaUploadFileRepository uploadFileRepository;
+    UploadFileRepository uploadFileRepository;
 
     @Mock
     JpaLikeBoardRepository likeBoardRepository;
@@ -95,7 +98,7 @@ class BulletinServiceTest {
                 .findById(board.getId());
 
         doReturn(imageForms).when(uploadFileRepository)
-                .findUploadFiles(board.getId());
+                .findByBoardId(board.getId());
 
         doReturn(3L).when(likeBoardRepository)
                 .countByBoardId(board.getId());
@@ -149,7 +152,7 @@ class BulletinServiceTest {
                 .findById(board.getId());
 
         doReturn(oldImages).when(uploadFileRepository)
-                .findUploadFiles(board.getId());
+                .findByBoardId(board.getId());
 
         //when
         EditBulletinForm form = bulletinService.getEditForm(board.getId());
@@ -159,7 +162,7 @@ class BulletinServiceTest {
 
         //verify
         verify(bulletinRepository, times(1)).findById(board.getId());
-        verify(uploadFileRepository, times(1)).findUploadFiles(board.getId());
+        verify(uploadFileRepository, times(1)).findByBoardId(board.getId());
     }
 
     @Test

@@ -5,10 +5,13 @@ import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.NotFoundBoardException;
 import com.catdog.help.repository.BulletinRepository;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
-import com.catdog.help.repository.jpa.JpaUploadFileRepository;
-import com.catdog.help.web.form.bulletin.*;
+import com.catdog.help.web.form.bulletin.EditBulletinForm;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.bulletin.ReadBulletinForm;
+import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +32,7 @@ public class BulletinService {
 
     private final BulletinRepository bulletinRepository;
     private final UserRepository userRepository;
-    private final JpaUploadFileRepository uploadFileRepository;
+    private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
     private final JpaLikeBoardRepository jpaLikeBoardRepository;
 
@@ -44,7 +47,7 @@ public class BulletinService {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(NotFoundBoardException::new);
 
-        List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+        List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         int likeSize = (int) jpaLikeBoardRepository.countByBoardId(id);
 
         return ReadBulletinForm.builder()
@@ -78,7 +81,7 @@ public class BulletinService {
     public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(NotFoundBoardException::new);
-        List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findUploadFiles(id));
+        List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
 
         return new EditBulletinForm(findBoard, oldImages);
     }
