@@ -1,8 +1,8 @@
-package com.catdog.help.web.form.itemboard;
+package com.catdog.help.web.form.item;
 
-import com.catdog.help.domain.board.ItemBoard;
+import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.board.ItemStatus;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class ReadItemBoardForm {
+public class ReadItemForm {
     private Long id;
     private String nickname;
     private String title;
@@ -19,11 +19,11 @@ public class ReadItemBoardForm {
     private String itemName;
     private int price;
     private ItemStatus status;
-    private List<ReadUploadFileForm> images = new ArrayList<>();
+    private List<ReadImageForm> images = new ArrayList<>();
     private int views;
     private int likeSize;
 
-    public ReadItemBoardForm(ItemBoard findBoard, List<ReadUploadFileForm> images, int likeSize) {
+    public ReadItemForm(Item findBoard, List<ReadImageForm> images, int likeSize) {
         this.id = findBoard.getId();
         this.nickname = findBoard.getUser().getNickname();
         this.title = findBoard.getTitle();

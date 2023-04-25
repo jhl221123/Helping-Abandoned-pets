@@ -1,13 +1,13 @@
-package com.catdog.help.web.form.itemboard;
+package com.catdog.help.web.form.item;
 
-import com.catdog.help.domain.board.ItemBoard;
+import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.board.ItemStatus;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class PageItemBoardForm {
+public class PageItemForm {
 
     private Long id;
 
@@ -15,11 +15,11 @@ public class PageItemBoardForm {
 
     private int price;
 
-    private ReadUploadFileForm leadImage;
+    private ReadImageForm leadImage;
 
     private ItemStatus status;
 
-    public PageItemBoardForm(ItemBoard board, ReadUploadFileForm leadImage) {
+    public PageItemForm(Item board, ReadImageForm leadImage) {
         this.id = board.getId();
         this.itemName = board.getItemName();
         this.price = board.getPrice();

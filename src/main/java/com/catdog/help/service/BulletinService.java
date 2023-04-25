@@ -12,7 +12,7 @@ import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,7 +47,7 @@ public class BulletinService {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);
 
-        List<ReadUploadFileForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
+        List<ReadImageForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         int likeSize = Math.toIntExact(likeRepository.countByBoardId(id));
 
         return ReadBulletinForm.builder()
@@ -62,17 +62,17 @@ public class BulletinService {
                 .map(PageBulletinForm::new);
 //        return getPageBulletinBoardForms(bulletinRepository.findPageBy(age(offset, limit));
     }
-
-    public int countPages() {
-        int total = (int) bulletinRepository.count();
-        if (total <= 10) {
-            return 1;
-        } else if (total % 10 == 0) {
-            return total / 10;
-        } else {
-            return total / 10 + 1;
-        }
-    }
+//
+//    public int countPages() {
+//        int total = (int) bulletinRepository.count();
+//        if (total <= 10) {
+//            return 1;
+//        } else if (total % 10 == 0) {
+//            return total / 10;
+//        } else {
+//            return total / 10 + 1;
+//        }
+//    }
 
     public String getWriter(Long id) {
         return bulletinRepository.findNicknameById(id);
@@ -81,7 +81,7 @@ public class BulletinService {
     public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);
-        List<ReadUploadFileForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
+        List<ReadImageForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
 
         return new EditBulletinForm(findBoard, oldImages);
     }
@@ -126,9 +126,9 @@ public class BulletinService {
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }
 
-    private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
+    private List<ReadImageForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
-                .map(ReadUploadFileForm::new)
+                .map(ReadImageForm::new)
                 .collect(Collectors.toList());
     }
 }

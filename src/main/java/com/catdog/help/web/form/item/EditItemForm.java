@@ -1,7 +1,8 @@
-package com.catdog.help.web.form.itemboard;
+package com.catdog.help.web.form.item;
 
-import com.catdog.help.domain.board.ItemBoard;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.domain.board.Item;
+import com.catdog.help.web.form.image.ReadImageForm;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class UpdateItemBoardForm {
+public class EditItemForm {
 
     @NotNull
     private Long id;
@@ -35,20 +36,22 @@ public class UpdateItemBoardForm {
     @Max(10000)
     private int price;
 
-    private ReadUploadFileForm oldLeadImage;
+    private ReadImageForm oldLeadImage;
 
     private MultipartFile newLeadImage;
 
-    private List<ReadUploadFileForm> oldImages = new ArrayList<>();
+    private List<ReadImageForm> oldImages = new ArrayList<>();
 
     private List<MultipartFile> newImages = new ArrayList<>();
 
     private List<Long> deleteImageIds = new ArrayList<>();
 
-    public UpdateItemBoardForm() { //컨트롤러 파라미터 바인딩
+
+    public EditItemForm() { //컨트롤러 파라미터 바인딩
     }
 
-    public UpdateItemBoardForm(ItemBoard findBoard, List<ReadUploadFileForm> readForms) {
+    @Builder
+    public EditItemForm(Item findBoard, List<ReadImageForm> readForms) {
         this.id = findBoard.getId();
         this.title = findBoard.getTitle();
         this.content = findBoard.getContent();

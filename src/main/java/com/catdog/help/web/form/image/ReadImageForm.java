@@ -1,11 +1,11 @@
-package com.catdog.help.web.form.uploadfile;
+package com.catdog.help.web.form.image;
 
 import com.catdog.help.domain.board.UploadFile;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ReadUploadFileForm {
+public class ReadImageForm {
 
     private Long id;
 
@@ -13,7 +13,7 @@ public class ReadUploadFileForm {
 
     private String storeFileName;
 
-    public ReadUploadFileForm(UploadFile uploadFile) {
+    public ReadImageForm(UploadFile uploadFile) {
         this.id = uploadFile.getId();
         this.uploadFileName = uploadFile.getUploadFileName();
         this.storeFileName = uploadFile.getStoreFileName();

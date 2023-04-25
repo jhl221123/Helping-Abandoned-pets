@@ -1,7 +1,7 @@
 package com.catdog.help.web.form.bulletin;
 
 import com.catdog.help.domain.board.Bulletin;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,13 +17,13 @@ public class ReadBulletinForm {
     private String content;
     private LocalDateTime createdDate;
     private String region;
-    private List<ReadUploadFileForm> images;
+    private List<ReadImageForm> images;
     private int views;
     private int likeSize;
 
 
     @Builder
-    public ReadBulletinForm(Bulletin board, List<ReadUploadFileForm> imageForms, int likeSize) {
+    public ReadBulletinForm(Bulletin board, List<ReadImageForm> imageForms, int likeSize) {
         this.id = board.getId();
         this.nickname = board.getUser().getNickname();
         this.title = board.getTitle();

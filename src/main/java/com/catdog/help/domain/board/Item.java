@@ -15,8 +15,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
-@DiscriminatorValue("Share")
-public class ItemBoard extends Board {
+@DiscriminatorValue("Item")
+public class Item extends Board {
 
     private String itemName;
 
@@ -26,14 +26,14 @@ public class ItemBoard extends Board {
     private ItemStatus status;
 
     @OneToMany(mappedBy = "board", cascade = REMOVE)
-    private List<LikeBoard> likeBoards = new ArrayList<>();
+    private List<Like> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "itemBoard", cascade = REMOVE)
+    @OneToMany(mappedBy = "item", cascade = REMOVE)
     private List<MessageRoom> rooms = new ArrayList<>();
 
 
     @Builder
-    public ItemBoard(User user, String title, String content, String itemName, int price) {
+    public Item(User user, String title, String content, String itemName, int price) {
         super(user, title, content);
         this.itemName = itemName;
         this.price = price;

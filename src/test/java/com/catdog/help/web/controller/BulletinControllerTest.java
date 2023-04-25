@@ -11,7 +11,7 @@ import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -321,7 +321,7 @@ class BulletinControllerTest {
 
     private EditBulletinForm getBeforeEditForm() {
         Bulletin board = getBulletin("제목");
-        List<ReadUploadFileForm> oldImages = new ArrayList<>();
+        List<ReadImageForm> oldImages = new ArrayList<>();
         EditBulletinForm form = new EditBulletinForm(board, oldImages);
         return form;
     }

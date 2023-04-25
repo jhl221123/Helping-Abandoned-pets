@@ -1,5 +1,6 @@
-package com.catdog.help.web.form.itemboard;
+package com.catdog.help.web.form.item;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class SaveItemBoardForm {
+public class SaveItemForm {
 
     @NotBlank
     @Length(max = 25)
@@ -31,4 +32,17 @@ public class SaveItemBoardForm {
     private int price;
 
     private List<MultipartFile> images = new ArrayList<>();
+
+
+    public SaveItemForm() {
+    }
+
+    @Builder
+    public SaveItemForm(String title, String content, String itemName, int price, List<MultipartFile> images) {
+        this.title = title;
+        this.content = content;
+        this.itemName = itemName;
+        this.price = price;
+        this.images = images;
+    }
 }
