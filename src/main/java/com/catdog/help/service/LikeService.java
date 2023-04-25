@@ -28,9 +28,9 @@ public class LikeService {
         User findUser = userRepository.findByNickname(nickName)
                 .orElseThrow(UserNotFoundException::new);
 
-        Optional<Like> like = likeRepository.findByIds(boardId, findUser.getId());
+        Optional<Like> findLike = likeRepository.findByIds(boardId, findUser.getId());
 
-        return like.isPresent() ? true : false;
+        return findLike.isPresent() ? true : false;
     }
 
     @Transactional
@@ -38,22 +38,21 @@ public class LikeService {
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
         User findUser = userRepository.findByNickname(nickName)
-                .orElseThrow(UserNotFoundException::new); // TODO: 2023-04-23 테스트 작성하면서 isLike 로 수정하기
+                .orElseThrow(UserNotFoundException::new);
 
         Optional<Like> findLike = likeRepository.findByIds(boardId, findUser.getId());
         if (findLike.isEmpty()) {
-            likeRepository.save(getLikeBoard(findBoard, findUser));
+            likeRepository.save(getLike(findBoard, findUser));
         } else {
             likeRepository.delete(findLike.get());
         }
     }
 
 
-    private Like getLikeBoard(Board findBoard, User findUser) {
-        Like like = Like.builder()
+    private Like getLike(Board findBoard, User findUser) {
+        return Like.builder()
                 .board(findBoard)
                 .user(findUser)
                 .build();
-        return like;
     }
 }
