@@ -1,101 +1,109 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.board.ItemBoard;
+import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.BoardNotFoundException;
+import com.catdog.help.exception.UserNotFoundException;
+import com.catdog.help.repository.ItemRepository;
+import com.catdog.help.repository.LikeRepository;
 import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.jpa.JpaItemBoardRepository;
-import com.catdog.help.repository.jpa.JpaLikeBoardRepository;
-import com.catdog.help.repository.jpa.JpaUserRepository;
-import com.catdog.help.web.form.itemboard.PageItemBoardForm;
-import com.catdog.help.web.form.itemboard.ReadItemBoardForm;
-import com.catdog.help.web.form.itemboard.SaveItemBoardForm;
-import com.catdog.help.web.form.itemboard.UpdateItemBoardForm;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.repository.UserRepository;
+import com.catdog.help.web.form.item.EditItemForm;
+import com.catdog.help.web.form.item.PageItemForm;
+import com.catdog.help.web.form.item.ReadItemForm;
+import com.catdog.help.web.form.item.SaveItemForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ItemBoardService {
+public class ItemService {
 
-    private final JpaItemBoardRepository itemBoardRepository;
-    private final JpaUserRepository userRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
-    private final JpaLikeBoardRepository jpaLikeBoardRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
-    public void createBoard(SaveItemBoardForm form, String nickname) {
-        ItemBoard itemBoard = getItemBoard(nickname, form);
-        itemBoardRepository.save(itemBoard);
+    public void save(SaveItemForm form, String nickname) {
+        Item item = getItem(nickname, form);
+        itemRepository.save(item);
     }
 
-    public ReadItemBoardForm readBoard(Long id) {
-        ItemBoard findBoard = itemBoardRepository.findById(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
-        int likeSize = (int)jpaLikeBoardRepository.countByBoardId(findBoard.getId());
+    public ReadItemForm read(Long id) {
+        Item findBoard = itemRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
+        List<ReadImageForm> readImageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
+        int likeSize = Math.toIntExact(likeRepository.countByBoardId(findBoard.getId()));
 
-        return new ReadItemBoardForm(findBoard, readUploadFileForms, likeSize);
+        return new ReadItemForm(findBoard, readImageForms, likeSize);
     }
 
-    public List<PageItemBoardForm> readPage(int page) {
-        int offset = 0 + (page -1) * 6;
-        int limit = 6;
-
-        return getPageItemBoardForms(itemBoardRepository.findPage(offset, limit));
+    public Page<PageItemForm> readPage(Pageable pageable) {
+        return itemRepository.findPageBy(pageable)
+                .map(item -> getPageItemForm(item));
     }
+//
+//    public int countPage() {
+//        int total = (int) itemRepository.count();
+//        if (total <= 6) {
+//            return 1;
+//        } else if (total % 6 == 0) {
+//            return total / 6;
+//        } else {
+//            return total / 6 + 1;
+//        }
+//    }
 
-    public int countPage() {
-        int total = (int)itemBoardRepository.countAll();
-        if (total <= 6) {
-            return 1;
-        } else if (total % 6 == 0) {
-            return total / 6;
-        } else {
-            return total / 6 + 1;
-        }
-    }
-
-    public UpdateItemBoardForm getUpdateForm(Long id) {
-        ItemBoard findBoard = itemBoardRepository.findById(id);
-        List<ReadUploadFileForm> readUploadFileForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
-        return new UpdateItemBoardForm(findBoard, readUploadFileForms);
+    public EditItemForm getEditForm(Long id) {
+        Item findBoard = itemRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
+        List<ReadImageForm> readImageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
+        return new EditItemForm(findBoard, readImageForms);
     }
 
     @Transactional
-    public void updateBoard(Long id, UpdateItemBoardForm form) {
-        ItemBoard findBoard = itemBoardRepository.findById(id);
-        updateItemBoard(form, findBoard);
+    public void update(EditItemForm form) {
+        Item findBoard = itemRepository.findById(form.getId())
+                .orElseThrow(BoardNotFoundException::new);
+        updateItem(form, findBoard);
     }
 
     @Transactional
     public void changeStatus(Long id) {
-        ItemBoard findBoard = itemBoardRepository.findById(id);
+        Item findBoard = itemRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
         findBoard.changeStatus(findBoard.getStatus() == ItemStatus.STILL ? ItemStatus.COMP : ItemStatus.STILL);
     }
 
     @Transactional
-    public void deleteBoard(Long id) {
-        ItemBoard findBoard = itemBoardRepository.findById(id);
-        itemBoardRepository.delete(findBoard);
+    public void delete(Long id) {
+        Item findBoard = itemRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
+        itemRepository.delete(findBoard);
     }
 
     /**============================= private method ==============================*/
 
-    private ItemBoard getItemBoard(String nickname, SaveItemBoardForm form) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
-        ItemBoard board = ItemBoard.builder()
-                .user(findUser.get())
+    private Item getItem(String nickname, SaveItemForm form) {
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new);
+
+        Item board = Item.builder()
+                .user(findUser)
                 .title(form.getTitle())
                 .content(form.getContent())
                 .itemName(form.getItemName())
@@ -106,23 +114,19 @@ public class ItemBoardService {
         return board;
     }
 
-    private List<PageItemBoardForm> getPageItemBoardForms(List<ItemBoard> boards) {
-        return boards.stream()
-                .map(b -> {
-                    ReadUploadFileForm leadImage = getReadUploadFileForms(uploadFileRepository.findByBoardId(b.getId())).get(0); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나감..
-                    return new PageItemBoardForm(b, leadImage);
-                }).collect(Collectors.toList());
+    private PageItemForm getPageItemForm(Item item) {
+        return new PageItemForm(item, new ReadImageForm(item.getImages().get(0))); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나가는지 확인하기..
     }
 
-    private void updateItemBoard(UpdateItemBoardForm form, ItemBoard board) {
+    private void updateItem(EditItemForm form, Item board) {
         board.updateBoard(form.getTitle(), form.getContent(), form.getItemName(), form.getPrice());
         imageService.updateLeadImage(form.getNewLeadImage(), board.getId());
         imageService.updateImage(board, form.getDeleteImageIds(), form.getNewImages());
     }
 
-    private List<ReadUploadFileForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
+    private List<ReadImageForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
-                .map(ReadUploadFileForm::new)
+                .map(ReadImageForm::new)
                 .collect(Collectors.toList());
     }
 }

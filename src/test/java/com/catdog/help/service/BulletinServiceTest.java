@@ -12,7 +12,7 @@ import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
-import com.catdog.help.web.form.uploadfile.ReadUploadFileForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -92,7 +92,7 @@ class BulletinServiceTest {
     void readBoards() {
         //given
         Bulletin board = getBulletin("제목");
-        List<ReadUploadFileForm> imageForms = new ArrayList<>();
+        List<ReadImageForm> imageForms = new ArrayList<>();
 
         doReturn(Optional.ofNullable(board)).when(bulletinRepository)
                 .findById(board.getId());
@@ -120,13 +120,11 @@ class BulletinServiceTest {
         Page<Bulletin> page = Page.empty();
 
         doReturn(page).when(bulletinRepository)
-                .findPageBy(any(Pageable.class));
+                .findPageBy(pageable);
 
-        //when
-        Page<PageBulletinForm> forms = bulletinService.getPage(pageable);
-
-        //verify
-        verify(bulletinRepository, times(1)).findPageBy(any(Pageable.class));
+        //expected
+        Page<PageBulletinForm> formPage = bulletinService.getPage(pageable);
+        verify(bulletinRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
     }
 
     @Test
@@ -143,10 +141,10 @@ class BulletinServiceTest {
 
     @Test
     @DisplayName("게시글 수정 양식 호출")
-    void getUpdateForm() {
+    void getEditForm() {
         //given
         Bulletin board = getBulletin("제목");
-        List<ReadUploadFileForm> oldImages = new ArrayList<>();
+        List<ReadImageForm> oldImages = new ArrayList<>();
 
         doReturn(Optional.ofNullable(board)).when(bulletinRepository)
                 .findById(board.getId());
@@ -171,7 +169,7 @@ class BulletinServiceTest {
         //given
         Bulletin board = getBulletin("제목");
 
-        EditBulletinForm form = getAfterEditForm();
+        EditBulletinForm form = getAfterEditForm("제목수정");
 
         doReturn(Optional.ofNullable(board)).when(bulletinRepository)
                 .findById(form.getId());
@@ -209,7 +207,7 @@ class BulletinServiceTest {
 
         //expected
         Assertions.assertThrows(BoardNotFoundException.class,
-                ()-> bulletinService.read(1L));
+                ()-> bulletinService.delete(1L));
     }
 
 
@@ -243,9 +241,9 @@ class BulletinServiceTest {
                 .build();
     }
 
-    private EditBulletinForm getAfterEditForm() {
-        Bulletin updatedBoard = getBulletin("제목수정");
-        List<ReadUploadFileForm> oldImages = new ArrayList<>();
+    private EditBulletinForm getAfterEditForm(String title) {
+        Bulletin updatedBoard = getBulletin(title);
+        List<ReadImageForm> oldImages = new ArrayList<>();
         return new EditBulletinForm(updatedBoard, oldImages);
     }
 }

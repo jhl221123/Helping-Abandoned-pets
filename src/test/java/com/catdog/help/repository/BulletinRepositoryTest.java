@@ -27,10 +27,10 @@ class BulletinRepositoryTest {
     @DisplayName("게시글 저장")
     void save() {
         //given
-        Bulletin bulletin = getBulletin();
+        Bulletin board = getBulletin();
 
         //when
-        Bulletin savedBulletin = bulletinRepository.save(bulletin);
+        Bulletin savedBulletin = bulletinRepository.save(board);
 
         //then
         assertThat(savedBulletin.getTitle()).isEqualTo("제목");
@@ -40,28 +40,28 @@ class BulletinRepositoryTest {
     @DisplayName("id로 단건 조회")
     void findById() {
         //given
-        Bulletin bulletin = getBulletin();
-        bulletinRepository.save(bulletin);
+        Bulletin board = getBulletin();
+        bulletinRepository.save(board);
 
         //when
-        Bulletin findBulletin = bulletinRepository.findById(bulletin.getId()).get();
+        Bulletin findBoard = bulletinRepository.findById(board.getId()).get();
 
         //then
-        assertThat(findBulletin.getTitle()).isEqualTo(bulletin.getTitle());
+        assertThat(findBoard.getTitle()).isEqualTo(board.getTitle());
     }
 
     @Test
     @DisplayName("id로 닉네임 조회")
     void findNicknameById() {
         //given
-        Bulletin bulletin = getBulletin();
-        Bulletin savedBoard = bulletinRepository.save(bulletin);
+        Bulletin board = getBulletin();
+        Bulletin savedBoard = bulletinRepository.save(board);
 
         //when
         String nickname = bulletinRepository.findNicknameById(savedBoard.getId());
 
         //then
-        assertThat(nickname).isEqualTo(bulletin.getUser().getNickname());
+        assertThat(nickname).isEqualTo(board.getUser().getNickname());
     }
 
     @Test
@@ -86,7 +86,7 @@ class BulletinRepositoryTest {
         setBulletinList();
 
         //when
-        long count = bulletinRepository.count();
+        Long count = bulletinRepository.count();
 
         //then
         assertThat(count).isEqualTo(5L);
@@ -96,12 +96,12 @@ class BulletinRepositoryTest {
     @DisplayName("게시글 삭제")
     void delete() {
         //given
-        Bulletin bulletin = getBulletin();
-        bulletinRepository.save(bulletin);
+        Bulletin board = getBulletin();
+        bulletinRepository.save(board);
         assertThat(bulletinRepository.count()).isEqualTo(1L);
 
         //when
-        bulletinRepository.delete(bulletin);
+        bulletinRepository.delete(board);
 
         //then
         assertThat(bulletinRepository.count()).isEqualTo(0L);
