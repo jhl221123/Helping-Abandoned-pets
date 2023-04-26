@@ -1,81 +1,150 @@
 package com.catdog.help.service;
 
-import com.catdog.help.TestData;
 import com.catdog.help.domain.board.Inquiry;
+import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.repository.jpa.JpaInquiryRepository;
-import com.catdog.help.repository.jpa.JpaUserRepository;
+import com.catdog.help.repository.InquiryRepository;
+import com.catdog.help.repository.UserRepository;
+import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
-import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import javax.persistence.EntityManager;
-import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class InquiryServiceTest {
 
-    @Autowired InquiryService inquiryService;
-    @Autowired JpaInquiryRepository inquiryRepository;
-    @Autowired JpaUserRepository userRepository;
-    @Autowired TestData testData;
-    @Autowired EntityManager em;
+    @InjectMocks
+    InquiryService inquiryService;
+
+    @Mock
+    InquiryRepository inquiryRepository;
+
+    @Mock
+    UserRepository userRepository;
+
 
     @Test
-    void 저장_조회_삭제() {
+    @DisplayName("문의글 단건 조회")
+    void readOne() {
         //given
-        User user = testData.createUser("user@email", "password", "nickname");
-        userRepository.save(user);
+        Inquiry board = getInquiry("제목");
 
-        SaveInquiryForm saveForm = testData.getSaveInquiryForm("nickname", "title", true);
+        doReturn(Optional.ofNullable(board)).when(inquiryRepository)
+                .findById(board.getId());
 
         //when
-        Long boardId = inquiryService.saveBoard(saveForm);
-        ReadInquiryForm readForm = inquiryService.readBoard(boardId);
+        ReadInquiryForm form = inquiryService.read(board.getId());
 
         //then
-        assertThat(readForm.getNickname()).isEqualTo("nickname");
-        assertThat(readForm.getTitle()).isEqualTo("title");
-        assertThat(readForm.getSecret()).isTrue();
+        assertThat(form.getTitle()).isEqualTo("제목");
+    }
 
-        //삭제
-        em.flush();
-        em.clear();
-        inquiryService.deleteBoard(boardId);
-        Inquiry findBoard = inquiryRepository.findById(boardId);
+    @Test
+    @DisplayName("페이지 조회")
+    void readPage() {
+        //given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page<Inquiry> page = Page.empty();
 
-        //삭제 결과
-        assertThat(findBoard).isNull();
+        doReturn(page).when(inquiryRepository)
+                .findPageBy(pageable);
+
+        //expected
+        Page<PageInquiryForm> formPage = inquiryService.getPage(pageable);
+        verify(inquiryRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
+
+    @Test
+    @DisplayName("문의글 수정 양식 호출")
+    void getEditForm() {
+        //given
+        Inquiry board = getInquiry("제목");
+
+        doReturn(Optional.ofNullable(board)).when(inquiryRepository)
+                .findById(board.getId());
+
+        //when
+        EditInquiryForm form = inquiryService.getEditForm(board.getId());
+
+        //then
+        assertThat(form.getTitle()).isEqualTo(board.getTitle());
+
+        //verify
+        verify(inquiryRepository, times(1)).findById(board.getId());
+    }
+
+    @Test
+    @DisplayName("게시글 수정")
+    void update() {
+        //given
+        Inquiry board = getInquiry("제목");
+
+        EditInquiryForm form = getAfterEditForm("제목수정");
+
+        doReturn(Optional.ofNullable(board)).when(inquiryRepository)
+                .findById(form.getId());
+
+        //when
+        inquiryService.update(form);
+
+        //then
+        assertThat(board.getTitle()).isEqualTo("제목수정");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void delete() {
+        //given
+        Inquiry board = getInquiry("제목");
+
+        doReturn(Optional.ofNullable(board)).when(inquiryRepository)
+                .findById(board.getId());
+
+        //expected
+        inquiryService.delete(board.getId());
+        verify(inquiryRepository, times(1)).delete(board);
     }
 
 
+    private EditInquiryForm getAfterEditForm(String title) {
+        Inquiry updatedBoard = getInquiry(title);
+        return new EditInquiryForm(updatedBoard);
+    }
 
-    @Test
-    void 페이지_조회() {
-        //given
-        User user = testData.createUser("user@email", "password", "nickname");
+    private Inquiry getInquiry(String title) {
+        User user = getUser();
         userRepository.save(user);
 
-        SaveInquiryForm saveFormA = testData.getSaveInquiryForm("nickname", "titleA", true);
-        SaveInquiryForm saveFormB = testData.getSaveInquiryForm("nickname", "titleB", false);
-        SaveInquiryForm saveFormC = testData.getSaveInquiryForm("nickname", "titleC", true);
-        inquiryService.saveBoard(saveFormA);
-        inquiryService.saveBoard(saveFormB);
-        inquiryService.saveBoard(saveFormC);
+        return Inquiry.builder()
+                .user(user)
+                .title(title)
+                .content("내용")
+                .secret(false)
+                .build();
+    }
 
-        //when
-        List<PageInquiryForm> pageForms = inquiryService.readPage(1);
-
-        //then
-        assertThat(pageForms.size()).isEqualTo(3);
-        assertThat(pageForms.get(1).getTitle()).isEqualTo("titleB");
-        assertThat(pageForms.get(1).getSecret()).isEqualTo(false);
+    private User getUser() {
+        return User.builder()
+                .emailId("test@test.test")
+                .password("12345678")
+                .nickname("닉네임")
+                .name("이름")
+                .age(20)
+                .gender(Gender.MAN)
+                .build();
     }
 }
