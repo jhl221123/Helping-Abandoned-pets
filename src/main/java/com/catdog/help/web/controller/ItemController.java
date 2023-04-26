@@ -65,7 +65,7 @@ public class ItemController {
 
     /***  read  ***/
     @GetMapping("/items")
-    public String getList(Pageable pageable, Model model) {
+    public String getPage(Pageable pageable, Model model) {
         Page<PageItemForm> pageForms = itemService.getPage(pageable);
         model.addAttribute("pageForms", pageForms);
 

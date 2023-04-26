@@ -1,16 +1,16 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.comment.UpdateCommentForm;
-import com.catdog.help.web.form.inquiry.EditInquiryForm;
-import com.catdog.help.web.form.inquiry.PageInquiryForm;
-import com.catdog.help.web.form.inquiry.ReadInquiryForm;
-import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.inquiry.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.catdog.help.web.SessionConst.*;
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
 @Controller
@@ -29,9 +29,10 @@ public class InquiryController {
     private final InquiryService inquiryService;
     private final CommentService commentService;
     private final UserService userService;
+    private final BoardService boardService;
 
     @GetMapping("/inquiries/new")
-    public String createBoardForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+    public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         SaveInquiryForm saveForm = new SaveInquiryForm();
         saveForm.setNickname(nickname);
         model.addAttribute("saveForm", saveForm);
@@ -39,26 +40,27 @@ public class InquiryController {
     }
 
     @PostMapping("/inquiries/new")
-    public String createBoard(@Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
-                              BindingResult bindingResult) {
+    public String saveBoard(@Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
+                            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "inquiries/create";
         }
-        inquiryService.saveBoard(saveForm);
-        return "redirect:/inquiries?page=1";
+        Long boardId = inquiryService.save(saveForm);
+        model.addAttribute("boardId", boardId);
+        return "redirect:/inquiries/{boardId}";
     }
 
     @GetMapping("/inquiries")
-    public String readPage(@RequestParam("page") int page, Model model,
-                           @SessionAttribute(name = LOGIN_USER) String nickname) {
+    public String getPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                          Pageable pageable, Model model) {
 
         Boolean isManager = userService.isManager(nickname);
         model.addAttribute("isManager", isManager);
 
-        List<PageInquiryForm> pageForms = inquiryService.readPage(page);
+        Page<PageInquiryForm> pageForms = inquiryService.getPage(pageable);
         model.addAttribute("pageForms", pageForms);
 
-        int lastPage = inquiryService.countPage();
+        int lastPage = pageForms.getTotalPages();
         model.addAttribute("lastPage", lastPage);
 
         model.addAttribute("nickname", nickname);
@@ -70,7 +72,7 @@ public class InquiryController {
                             @SessionAttribute(name = LOGIN_USER) String nickname,
                             @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
                             @RequestParam(value = "clickReply", required = false) Long parentCommentId) {
-        ReadInquiryForm readForm = inquiryService.readBoard(id);
+        ReadInquiryForm readForm = inquiryService.read(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);
 
@@ -92,15 +94,14 @@ public class InquiryController {
     }
 
     @GetMapping("/inquiries/{id}/edit")
-    public String editBoardForm(@PathVariable("id") Long id, Model model,
-                                @SessionAttribute(name = LOGIN_USER) String nickname) {
-        EditInquiryForm editForm = inquiryService.getEditForm(id);
-
-        //작성자 외 접근제한
-        if (!editForm.getNickname().equals(nickname)) {
-            return "redirect:/inquiries/{id}";
+    public String getEditForm(@PathVariable("id") Long id, Model model,
+                              @SessionAttribute(name = LOGIN_USER) String nickname) {
+        //작성자 본인만 수정 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
 
+        EditInquiryForm editForm = inquiryService.getEditForm(id);
         model.addAttribute("editForm", editForm);
         return "inquiries/edit";
     }
@@ -108,41 +109,46 @@ public class InquiryController {
     @PostMapping("/inquiries/{id}/edit")
     public String editBoard(@Validated @ModelAttribute("editForm") EditInquiryForm editForm, BindingResult bindingResult,
                             @SessionAttribute(name = LOGIN_USER) String nickname) {
-        //작성자 외 접근제한
-        if (!editForm.getNickname().equals(nickname)) {
-            return "redirect:/inquiries/{id}";
+        //작성자 본인만 수정 가능
+        if (!isWriter(editForm.getId(), nickname)) {
+            return "redirect:/";
         }
 
         if (bindingResult.hasErrors()) {
             return "inquiries/edit";
         }
 
-        inquiryService.updateBoard(editForm);
+        inquiryService.update(editForm);
         return "redirect:/inquiries/{id}";
     }
 
     @GetMapping("/inquiries/{id}/delete")
-    public String deleteBoardForm(@PathVariable("id") Long id, Model model,
+    public String getDeleteForm(@PathVariable("id") Long id, Model model,
                                   @SessionAttribute(name = LOGIN_USER) String nickname) {
-
-        ReadInquiryForm readForm = inquiryService.readBoard(id);
-        //작성자 외 접근제한
-        if (!readForm.getNickname().equals(nickname)) {
-            return "redirect:/inquiries/{id}";
+        //작성자 본인만 수정 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
 
+        ReadInquiryForm readForm = inquiryService.read(id);
         model.addAttribute("readForm", readForm);
         return "inquiries/delete";
     }
 
     @PostMapping("/inquiries/{id}/delete")
     public String deleteBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname) {
-        //작성자 외 접근제한
-        if (!inquiryService.readBoard(id).getNickname().equals(nickname)) {
-            return "redirect:/inquiries/{id}";
+        //작성자 본인만 수정 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
 
-        inquiryService.deleteBoard(id);
-        return "redirect:/inquiries?page=1";
+        inquiryService.delete(id);
+        return "redirect:/inquiries?page=0";
+    }
+
+
+    private Boolean isWriter(Long id, String nickname) {
+        String writer = boardService.getWriter(id);
+        return writer.equals(nickname) ? true : false;
     }
 }

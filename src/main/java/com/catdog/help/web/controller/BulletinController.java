@@ -64,7 +64,7 @@ public class BulletinController {
 
     /***  read  ***/
     @GetMapping
-    public String getList(Pageable pageable, Model model) {
+    public String getPage(Pageable pageable, Model model) {
         Page<PageBulletinForm> pageForm = bulletinService.getPage(pageable);
         model.addAttribute("pageForm", pageForm.getContent()); // TODO: 2023-04-23 일단 getContent 함. 서비스 테스트 끝나고 Page에 맞게 수정
 
