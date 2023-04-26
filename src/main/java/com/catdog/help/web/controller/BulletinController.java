@@ -121,8 +121,8 @@ public class BulletinController {
     }
 
     @GetMapping("/{id}/edit")
-    public String getUpdateForm(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                @PathVariable("id") Long id, Model model) {
+    public String getEditForm(@SessionAttribute(name = LOGIN_USER) String nickname,
+                              @PathVariable("id") Long id, Model model) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {
             return "redirect:/";

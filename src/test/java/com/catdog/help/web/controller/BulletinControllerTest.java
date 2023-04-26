@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -90,18 +90,18 @@ class BulletinControllerTest {
     @DisplayName("게시글 저장 성공")
     void save() throws Exception {
         //given
-        doReturn(1L).when(bulletinService)
+        doReturn(2L).when(bulletinService)
                 .save(any(SaveBulletinForm.class), eq("닉네임"));
 
         //expected
         mockMvc.perform(post("/bulletins/new")
-                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .contentType(MULTIPART_FORM_DATA)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(TITLE, "제목")
                         .param(CONTENT, "내용")
                         .param(REGION, "지역")
                 )
-                .andExpect(redirectedUrl("/bulletins/" + 1));
+                .andExpect(redirectedUrl("/bulletins/" + 2));
     }
 
     @Test
@@ -137,29 +137,28 @@ class BulletinControllerTest {
 
     @Test
     @DisplayName("게시글 단건 조회")
-    void readById() throws Exception {
+    void readOne() throws Exception {
         //given
         doNothing().when(viewUpdater)
-                .addView(eq(1L), any(HttpServletRequest.class), any(HttpServletResponse.class));
+                .addView(eq(2L), any(HttpServletRequest.class), any(HttpServletResponse.class));
 
         ReadBulletinForm form = getReadBulletinForm();
         doReturn(form).when(bulletinService)
-                .read(1L);
+                .read(2L);
 
         doReturn(false).when(likeService)
-                .isLike(1L, "닉네임");
+                .isLike(2L, "닉네임");
 
         List<CommentForm> forms = new ArrayList<>();
         doReturn(forms).when(commentService)
-                .readComments(1L);
+                .readComments(2L);
 
         //expected
-        mockMvc.perform(get("/bulletins/{id}", 1)
+        mockMvc.perform(get("/bulletins/{id}", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
-                .andExpect(view().name("bulletins/detail"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(view().name("bulletins/detail"));
     }
 
     @Test
@@ -167,14 +166,14 @@ class BulletinControllerTest {
     void clickLikeButton() throws Exception {
         //given
         doNothing().when(likeService)
-                .clickLike(1L, "닉네임");
+                .clickLike(2L, "닉네임");
 
         //expected
-        mockMvc.perform(get("/bulletins/{id}/like", 1)
+        mockMvc.perform(get("/bulletins/{id}/like", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
-                .andExpect(redirectedUrl("/bulletins/" + 1));
+                .andExpect(redirectedUrl("/bulletins/" + 2));
     }
 
     @Test
@@ -184,13 +183,13 @@ class BulletinControllerTest {
         EditBulletinForm form = getBeforeEditForm();
 
         doReturn("닉네임").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         doReturn(form).when(bulletinService)
-                .getEditForm(1L);
+                .getEditForm(2L);
 
         //expected
-        mockMvc.perform(get("/bulletins/{id}/edit", 1)
+        mockMvc.perform(get("/bulletins/{id}/edit", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
@@ -202,20 +201,20 @@ class BulletinControllerTest {
     void edit() throws Exception {
         //given
         doReturn("닉네임").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         doNothing().when(bulletinService)
                 .update(any(EditBulletinForm.class));
 
         //expected
-        mockMvc.perform(post("/bulletins/{id}/edit", 1L)
+        mockMvc.perform(post("/bulletins/{id}/edit", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(TITLE, "제목")
                         .param(CONTENT, "내용")
                         .param(REGION, "지역")
                 )
-                .andExpect(redirectedUrl("/bulletins/" + 1));
+                .andExpect(redirectedUrl("/bulletins/" + 2));
     }
 
     @Test
@@ -223,10 +222,10 @@ class BulletinControllerTest {
     void failEditByValidate() throws Exception {
         //given
         doReturn("닉네임").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         //expected
-        mockMvc.perform(post("/bulletins/{id}/edit", 1L)
+        mockMvc.perform(post("/bulletins/{id}/edit", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(TITLE, "")
@@ -243,13 +242,13 @@ class BulletinControllerTest {
         ReadBulletinForm form = getReadBulletinForm();
 
         doReturn("닉네임").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         doReturn(form).when(bulletinService)
-                .read(1L);
+                .read(2L);
 
         //expected
-        mockMvc.perform(get("/bulletins/{id}/delete", 1L)
+        mockMvc.perform(get("/bulletins/{id}/delete", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
@@ -261,13 +260,13 @@ class BulletinControllerTest {
     void delete() throws Exception {
         //given
         doReturn("닉네임").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         doNothing().when(bulletinService)
-                .delete(1L);
+                .delete(2L);
 
         //expected
-        mockMvc.perform(post("/bulletins/{id}/delete", 1L)
+        mockMvc.perform(post("/bulletins/{id}/delete", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
@@ -279,15 +278,14 @@ class BulletinControllerTest {
     void failRequestWriterDiscord() throws Exception {
         //given
         doReturn("작성자").when(bulletinService)
-                .getWriter(1L);
+                .getWriter(2L);
 
         //expected
-        mockMvc.perform(get("/bulletins/{id}/edit", 1)
+        mockMvc.perform(get("/bulletins/{id}/edit", 2)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "다른사용자")
                 )
-                .andExpect(redirectedUrl("/"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(redirectedUrl("/"));
     }
 
 

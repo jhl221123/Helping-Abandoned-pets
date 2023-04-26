@@ -3,6 +3,7 @@ package com.catdog.help.web.form.item;
 import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.board.ItemStatus;
 import com.catdog.help.web.form.image.ReadImageForm;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,8 @@ public class ReadItemForm {
     private int views;
     private int likeSize;
 
+
+    @Builder
     public ReadItemForm(Item findBoard, List<ReadImageForm> images, int likeSize) {
         this.id = findBoard.getId();
         this.nickname = findBoard.getUser().getNickname();
