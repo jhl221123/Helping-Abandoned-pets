@@ -102,7 +102,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("나눔글 페이지 조회")
-    void readPage() {
+    void getPage() {
         //given
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         Page<Item> page = Page.empty();
@@ -111,7 +111,7 @@ class ItemServiceTest {
                 .findPageBy(pageable);
 
         //expected
-        Page<PageItemForm> formPage = itemService.readPage(pageable);
+        Page<PageItemForm> formPage = itemService.getPage(pageable);
         verify(itemRepository, times(1)).findPageBy(pageable);
     }
 

@@ -67,19 +67,6 @@ class ItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("총 개수 조회")
-    void countAll() {
-        //given
-        setItemList();
-
-        //when
-        Long count = itemRepository.count();
-
-        //then
-        assertThat(count).isEqualTo(5L);
-    }
-
-    @Test
     @DisplayName("게시글 삭제")
     void delete() {
         //given

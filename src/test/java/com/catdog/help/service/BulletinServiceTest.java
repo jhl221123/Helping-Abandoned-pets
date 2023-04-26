@@ -89,7 +89,7 @@ class BulletinServiceTest {
 
     @Test
     @DisplayName("게시글 단건 조회")
-    void readBoards() {
+    void readOne() {
         //given
         Bulletin board = getBulletin("제목");
         List<ReadImageForm> imageForms = new ArrayList<>();
@@ -156,7 +156,7 @@ class BulletinServiceTest {
         EditBulletinForm form = bulletinService.getEditForm(board.getId());
 
         //then
-        assertThat(form.getTitle()).isEqualTo("제목");
+        assertThat(form.getTitle()).isEqualTo(board.getTitle());
 
         //verify
         verify(bulletinRepository, times(1)).findById(board.getId());

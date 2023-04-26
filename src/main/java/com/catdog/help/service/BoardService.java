@@ -18,4 +18,8 @@ public class BoardService {
                 .orElseThrow(BoardNotFoundException::new);
         return findBoard instanceof Bulletin;
     }
+
+    public String getWriter(Long id) {
+        return boardRepository.findNicknameById(id);
+    }
 }

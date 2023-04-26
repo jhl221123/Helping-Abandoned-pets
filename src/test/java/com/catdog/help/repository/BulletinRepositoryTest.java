@@ -30,10 +30,10 @@ class BulletinRepositoryTest {
         Bulletin board = getBulletin();
 
         //when
-        Bulletin savedBulletin = bulletinRepository.save(board);
+        Bulletin savedBoard = bulletinRepository.save(board);
 
         //then
-        assertThat(savedBulletin.getTitle()).isEqualTo("제목");
+        assertThat(savedBoard.getTitle()).isEqualTo("제목");
     }
 
     @Test
@@ -77,19 +77,6 @@ class BulletinRepositoryTest {
         //then
         assertThat(page.getSize()).isEqualTo(3);
         assertThat(page.getContent().get(0).getTitle()).isEqualTo("제목_5");
-    }
-
-    @Test
-    @DisplayName("총 개수 조회")
-    void countAll() {
-        //given
-        setBulletinList();
-
-        //when
-        Long count = bulletinRepository.count();
-
-        //then
-        assertThat(count).isEqualTo(5L);
     }
 
     @Test

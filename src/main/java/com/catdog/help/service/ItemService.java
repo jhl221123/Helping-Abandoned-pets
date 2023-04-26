@@ -6,10 +6,7 @@ import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
-import com.catdog.help.repository.ItemRepository;
-import com.catdog.help.repository.LikeRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.*;
 import com.catdog.help.web.form.item.EditItemForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.item.ReadItemForm;
@@ -52,7 +49,7 @@ public class ItemService {
         return new ReadItemForm(findBoard, readImageForms, likeSize);
     }
 
-    public Page<PageItemForm> readPage(Pageable pageable) {
+    public Page<PageItemForm> getPage(Pageable pageable) {
         return itemRepository.findPageBy(pageable)
                 .map(item -> getPageItemForm(item));
     }
