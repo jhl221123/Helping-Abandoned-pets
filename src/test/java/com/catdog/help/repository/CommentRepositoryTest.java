@@ -67,6 +67,26 @@ class CommentRepositoryTest {
     }
 
     @Test
+    @DisplayName("id로 닉네임 조회")
+    void findNicknameById() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Bulletin board = getBulletin(user, "제목");
+        bulletinRepository.save(board);
+
+        Comment comment = getComment(user, board, "댓글내용");
+        commentRepository.save(comment);
+
+        //when
+        String nickname = commentRepository.findNicknameById(comment.getId());
+
+        //then
+        assertThat(nickname).isEqualTo(comment.getUser().getNickname());
+    }
+
+    @Test
     @DisplayName("해당 게시글에 존재하는 댓글 모두 조회")
     void findByBoardId() {
         //given

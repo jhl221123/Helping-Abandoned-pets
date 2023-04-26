@@ -150,7 +150,7 @@ class InquiryControllerTest {
 
         List<CommentForm> forms = new ArrayList<>();
         doReturn(forms).when(commentService)
-                .readComments(2L);
+                .readByBoardId(2L);
 
         //expected
         mockMvc.perform(get("/inquiries/{id}", 2L)

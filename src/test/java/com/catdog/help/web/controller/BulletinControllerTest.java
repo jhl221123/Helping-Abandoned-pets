@@ -151,7 +151,7 @@ class BulletinControllerTest {
 
         List<CommentForm> forms = new ArrayList<>();
         doReturn(forms).when(commentService)
-                .readComments(2L);
+                .readByBoardId(2L);
 
         //expected
         mockMvc.perform(get("/bulletins/{id}", 2L)

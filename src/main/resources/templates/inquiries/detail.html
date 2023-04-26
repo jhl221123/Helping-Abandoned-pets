@@ -67,10 +67,10 @@
 
 		<!--    parent comment update form   -->
 
-		<div th:if="${updateCommentForm.commentId == form.id}" class="comment-box" >
+		<div th:if="${editCommentForm.commentId == form.id}" class="comment-box" >
 
 			<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
-			      th:object="${updateCommentForm}" th:method="post">
+			      th:object="${editCommentForm}" th:method="post">
 				<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
 					<div class="col-sm-10">
@@ -131,9 +131,9 @@
 
 			<!--    child comment update form   -->
 
-			<div th:if="${updateCommentForm.commentId == child.id}" class="comment-box" >
+			<div th:if="${editCommentForm.commentId == child.id}" class="comment-box" >
 				<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
-				      th:object="${updateCommentForm}" th:method="post">
+				      th:object="${editCommentForm}" th:method="post">
 					<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 					<div class="row">
 						<div class="col-sm-10">

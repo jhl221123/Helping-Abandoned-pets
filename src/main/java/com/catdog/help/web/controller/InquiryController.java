@@ -5,7 +5,7 @@ import com.catdog.help.service.CommentService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.UpdateCommentForm;
+import com.catdog.help.web.form.comment.EditCommentForm;
 import com.catdog.help.web.form.inquiry.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +70,7 @@ public class InquiryController {
     @GetMapping("/inquiries/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
+                            @ModelAttribute("editCommentForm") EditCommentForm editCommentForm,
                             @RequestParam(value = "clickReply", required = false) Long parentCommentId) {
         ReadInquiryForm readForm = inquiryService.read(id);
         model.addAttribute("readForm", readForm);
@@ -78,7 +78,7 @@ public class InquiryController {
 
         // TODO: 2023-04-13 매니저, 작성자 제외 차단
 
-        List<CommentForm> commentForms = commentService.readComments(id);
+        List<CommentForm> commentForms = commentService.readByBoardId(id);
         if (!commentForms.isEmpty()) {
             model.addAttribute("commentForms", commentForms);
         }

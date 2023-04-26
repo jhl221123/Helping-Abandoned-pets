@@ -8,7 +8,7 @@ import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.UpdateCommentForm;
+import com.catdog.help.web.form.comment.EditCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -76,7 +76,7 @@ public class BulletinController {
     @GetMapping("/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @ModelAttribute("updateCommentForm") UpdateCommentForm updateCommentForm,
+                            @ModelAttribute("editCommentForm") EditCommentForm editCommentForm,
                             @RequestParam(value = "clickReply", required = false) Long parentCommentId,
                             HttpServletRequest request, HttpServletResponse response) {
         //조회수 증가
@@ -95,7 +95,7 @@ public class BulletinController {
         boolean checkLike = likeService.isLike(id, nickname);
         model.addAttribute("checkLike", checkLike);
 
-        List<CommentForm> commentForms = commentService.readComments(id);
+        List<CommentForm> commentForms = commentService.readByBoardId(id);
         if (!commentForms.isEmpty()) {
             model.addAttribute("commentForms", commentForms);
         }

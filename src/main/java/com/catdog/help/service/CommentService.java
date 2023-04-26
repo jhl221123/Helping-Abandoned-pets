@@ -3,12 +3,14 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Comment;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.NotFoundBoard;
-import com.catdog.help.repository.jpa.JpaBoardRepository;
-import com.catdog.help.repository.jpa.JpaCommentRepository;
-import com.catdog.help.repository.jpa.JpaUserRepository;
+import com.catdog.help.exception.BoardNotFoundException;
+import com.catdog.help.exception.CommentNotFoundException;
+import com.catdog.help.exception.UserNotFoundException;
+import com.catdog.help.repository.BoardRepository;
+import com.catdog.help.repository.CommentRepository;
+import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.UpdateCommentForm;
+import com.catdog.help.web.form.comment.EditCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,59 +25,64 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CommentService {
 
-    private final JpaCommentRepository jpaCommentRepository;
-    private final JpaBoardRepository boardRepository;
-    private final JpaUserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
 
     @Transactional
-    public Long createComment(CommentForm form, Long parentCommentId) {
+    public Long save(CommentForm form, Long parentCommentId) {
 
         Board board = boardRepository.findById(form.getBoardId())
-                .orElseThrow(NotFoundBoard::new);
-        User user = userRepository.findByNickname(form.getNickname());
+                .orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findByNickname(form.getNickname())
+                .orElseThrow(UserNotFoundException::new);
 
         if (parentCommentId == -1L) {
             //parent comment
             Comment parentComment = getComment(form, board, user);
-            jpaCommentRepository.save(parentComment);
+            commentRepository.save(parentComment);
             return parentComment.getId();
         } else {
             //child comment
-            Comment findParentComment = jpaCommentRepository.findById(parentCommentId);
+            Comment findParentComment = commentRepository.findById(parentCommentId)
+                    .orElseThrow(CommentNotFoundException::new);
             Comment childComment = getComment(form, board, user);
             childComment.addParent(findParentComment);
-            jpaCommentRepository.save(childComment);
+            commentRepository.save(childComment);
             return childComment.getId();
         }
     }
 
-    public CommentForm readComment(Long id) {
-        return new CommentForm(jpaCommentRepository.findById(id));
+    public String getWriter(Long id) {
+        return commentRepository.findNicknameById(id);
     }
 
-    public List<CommentForm> readComments(Long boardId) {
-        List<Comment> comments = jpaCommentRepository.findAll(boardId);
+    public List<CommentForm> readByBoardId(Long boardId) {
+        List<Comment> comments = commentRepository.findByBoardId(boardId);
         return comments.stream()
                 .map(CommentForm::new)
                 .collect(Collectors.toList());
     }
 
-    public UpdateCommentForm getUpdateCommentForm(Long id, String nickname) {
-        Comment findComment = jpaCommentRepository.findById(id);
-        return new UpdateCommentForm(findComment, nickname);
+    public EditCommentForm getEditForm(Long id, String nickname) {
+        Comment findComment = commentRepository.findById(id)
+                .orElseThrow(CommentNotFoundException::new);
+        return new EditCommentForm(findComment, nickname);
     }
 
     @Transactional
-    public void updateComment(UpdateCommentForm form) {
-        Comment findComment = jpaCommentRepository.findById(form.getCommentId());
+    public void update(EditCommentForm form) {
+        Comment findComment = commentRepository.findById(form.getCommentId())
+                .orElseThrow(CommentNotFoundException::new);
         findComment.updateComment(form.getContent());
     }
 
     @Transactional
-    public void deleteComment(Long id) {
-        Comment findComment = jpaCommentRepository.findById(id);
-        jpaCommentRepository.delete(findComment);
+    public void delete(Long id) {
+        Comment findComment = commentRepository.findById(id)
+                .orElseThrow(CommentNotFoundException::new);
+        commentRepository.delete(findComment);
     }
 
 
@@ -83,11 +90,10 @@ public class CommentService {
 
 
     private Comment getComment(CommentForm form, Board board, User user) {
-        Comment comment = Comment.builder()
+        return Comment.builder()
                 .board(board)
                 .user(user)
                 .content(form.getContent())
                 .build();
-        return comment;
     }
 }
