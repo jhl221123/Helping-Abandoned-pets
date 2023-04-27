@@ -71,7 +71,10 @@ public class InquiryController {
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
                             @ModelAttribute("editCommentForm") EditCommentForm editCommentForm,
+                            @RequestParam(value = "bindingResult", required = false) BindingResult bindingResult,
                             @RequestParam(value = "clickReply", required = false) Long parentCommentId) {
+        // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
+
         ReadInquiryForm readForm = inquiryService.read(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);

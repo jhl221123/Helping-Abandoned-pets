@@ -3,6 +3,7 @@ package com.catdog.help.web.form.comment;
 import com.catdog.help.domain.board.Comment;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class CommentForm {
     private String nickname;
 
     @NotBlank
+    @Length(max = 100)
     private String content;
 
     private LocalDateTime createdDate;

@@ -123,7 +123,7 @@
 
 		<div th:if="${clickReply == form.id}" class="comment-box" >
 
-			<form role="form" th:action="@{/comments/child(id=${readForm.id}, parentId=${form.id})}"
+			<form role="form" th:action="@{/comments/child(boardId=${readForm.id}, parentId=${form.id})}"
 			      th:object="${commentForm}" th:method="post">
 				<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
@@ -193,7 +193,7 @@
 
 <!--    parent comment create form   -->
 
-	<form role="form" th:action="@{/comments/parent(id=${readForm.id})}" th:object="${commentForm}"
+	<form role="form" th:action="@{/comments/parent(boardId=${readForm.id})}" th:object="${commentForm}"
 	      th:method="post" class="comment-box">
 		<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
 		<div class="row">

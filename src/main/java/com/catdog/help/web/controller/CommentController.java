@@ -4,7 +4,7 @@ import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.UpdateCommentForm;
+import com.catdog.help.web.form.comment.EditCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,105 +22,102 @@ public class CommentController {
     private final BoardService boardService;
 
     @PostMapping("/comments/parent")
-    public String createParentComment(@RequestParam("id") Long boardId, RedirectAttributes redirectAttributes,
-                                      @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
-                                      @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
+    public String saveParent(@RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
+                             @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
+                             @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         redirectAttributes.addAttribute("id", boardId);
 
         if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
-            return "bulletinBoard/detail";
+            redirectAttributes.addFlashAttribute("bindingResult", bindingResult);
+            return redirectBoard(boardId);
         }
         commentForm.setBoardId(boardId);
         commentForm.setNickname(nickname);
-        commentService.createComment(commentForm, -1L);
+        commentService.save(commentForm, -1L);
 
-        return targetBoard(boardId);
+        return redirectBoard(boardId);
     }
 
     @GetMapping("/comments/child")
-    public String createChildCommentForm(@RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
-                                         @RequestParam("clickReply") Long parentId) {
+    public String getChildForm(@RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
+                               @RequestParam("clickReply") Long parentId) {
         redirectAttributes.addAttribute("id", boardId);
-
-        redirectAttributes.addAttribute("clickReply", parentId);
-        return targetBoard(boardId);
+        redirectAttributes.addFlashAttribute("clickReply", parentId);
+        return redirectBoard(boardId);
     }
 
     @PostMapping("/comments/child")
-    public String createChildComment(@RequestParam("id") Long boardId, RedirectAttributes redirectAttributes, @RequestParam("parentId") Long parentId,
-                                     @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
-                                     @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
+    public String saveChild(@RequestParam("boardId") Long boardId, @RequestParam("parentId") Long parentId,
+                            @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname, RedirectAttributes redirectAttributes,
+                            @Validated @ModelAttribute("commentForm") CommentForm commentForm, BindingResult bindingResult) {
         redirectAttributes.addAttribute("id", boardId);
-
         if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-17  redirectAttribute 이용해서 검증하기
-            return "bulletinBoard/detail";
+            redirectAttributes.addFlashAttribute("bindingResult", bindingResult);
+            return redirectBoard(boardId);
         }
+
         commentForm.setBoardId(boardId);
         commentForm.setNickname(nickname);
-        commentService.createComment(commentForm, parentId);
-
-        return targetBoard(boardId);
+        commentService.save(commentForm, parentId);
+        return redirectBoard(boardId);
     }
 
     @GetMapping("/comments/{id}/edit")
-    public String editCommentForm(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
-                                  @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
-                                  RedirectAttributes redirectAttributes) {
+    public String getEditForm(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
+                              @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
+                              RedirectAttributes redirectAttributes) {
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
+        }
+
+        EditCommentForm editCommentForm = commentService.getEditForm(id, nickname);
+//        redirectAttributes.addFlashAttribute("updateCommentId", id); todo 나중에 서버띄우고 잘 돌아가면 지워주자.
+        redirectAttributes.addFlashAttribute("editCommentForm", editCommentForm);
         redirectAttributes.addAttribute("id", boardId);
 
-        // TODO: 2023-04-12 댓글 작성자 외 리턴
-
-        UpdateCommentForm updateCommentForm = commentService.getUpdateCommentForm(id, nickname);
-        redirectAttributes.addAttribute("updateCommentId", id);
-        redirectAttributes.addFlashAttribute("updateCommentForm", updateCommentForm);
-
-        return targetBoard(boardId);
+        return redirectBoard(boardId);
     }
 
     @PostMapping("/comments/{id}/edit")
-    public String editComment(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
-                                @Validated @ModelAttribute("updateCommentForm") UpdateCommentForm updateForm, BindingResult bindingResult,
-                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname) {
+    public String edit(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
+                       @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
+                       @Validated @ModelAttribute("editCommentForm") EditCommentForm editForm, BindingResult bindingResult) {
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
+        }
+
         redirectAttributes.addAttribute("id", boardId);
-
-        //본인 댓글만 수정 가능
-        String commentNickname = commentService.readComment(id).getNickname();
-        if (!commentNickname.equals(nickname)) {
-            return "redirect:/boards/{id}";
-        }
-
         if (bindingResult.hasErrors()) {
-            // TODO: 2023-03-18  redirectAttribute 이용해서 검증하기
-            return "bulletinBoard/detail";
+            redirectAttributes.addFlashAttribute("bindingResult", bindingResult);
+            return redirectBoard(boardId);
         }
 
-        updateForm.setCommentId(id);
-        commentService.updateComment(updateForm);
-
-        return targetBoard(boardId);
+        editForm.setCommentId(id);
+        commentService.update(editForm);
+        return redirectBoard(boardId);
     }
 
 
     @GetMapping("/comments/{id}/delete")
-    public String deleteComment(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
-                                RedirectAttributes redirectAttributes,
-                                @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname) {
-        redirectAttributes.addAttribute("id", boardId);
-
-        //본인 댓글만 삭제 가능
-        String commentNickname = commentService.readComment(id).getNickname();
-        if (!commentNickname.equals(nickname)) {
-            return "redirect:/boards/{id}";
+    public String delete(@PathVariable("id") Long id, @RequestParam("boardId") Long boardId,
+                         @SessionAttribute(name = SessionConst.LOGIN_USER) String nickname,
+                         RedirectAttributes redirectAttributes) {
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
         }
 
-        commentService.deleteComment(id);
-
-        return targetBoard(boardId);
+        redirectAttributes.addAttribute("id", boardId);
+        commentService.delete(id);
+        return redirectBoard(boardId);
     }
 
-    private String targetBoard(Long boardId) {
+
+    private Boolean isWriter(Long id, String nickname) {
+        String writer = commentService.getWriter(id);
+        return writer.equals(nickname) ? true : false;
+    }
+
+    private String redirectBoard(Long boardId) {
         if (boardService.isBulletin(boardId)) {
             return "redirect:/boards/{id}";
         }
