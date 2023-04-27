@@ -62,7 +62,7 @@ class ItemRepositoryTest {
         Page<Item> page = itemRepository.findPageBy(pageRequest);
 
         //then
-        assertThat(page.getSize()).isEqualTo(3);
+        assertThat(page.getContent().size()).isEqualTo(3);
         assertThat(page.getContent().get(0).getTitle()).isEqualTo("제목_5");
     }
 

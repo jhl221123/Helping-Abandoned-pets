@@ -1,7 +1,7 @@
 package com.catdog.help.domain.message;
 
 import com.catdog.help.domain.BaseEntity;
-import com.catdog.help.domain.board.ItemBoard;
+import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class MessageRoom extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
-    private ItemBoard itemBoard;
+    private Item item;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "sender_id")
@@ -40,8 +40,8 @@ public class MessageRoom extends BaseEntity {
 
 
     @Builder
-    public MessageRoom(ItemBoard itemBoard, User sender, User recipient) {
-        this.itemBoard = itemBoard;
+    public MessageRoom(Item item, User sender, User recipient) {
+        this.item = item;
         this.sender = sender;
         this.recipient = recipient;
     }
