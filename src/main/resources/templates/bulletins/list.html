@@ -16,20 +16,27 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="pageBoardForm : ${pageBoardForms}" style="text-align: center">
-				<td th:text="${pageBoardForm.region}"></td>
-				<td th:text="${pageBoardForm.title}" th:onclick="|location.href='@{/boards/{id}(id=${pageBoardForm.id})}'|" style="cursor:pointer;"></td>
-				<td th:text="${pageBoardForm.nickname}"></td>
-				<td th:text="${#temporals.format(pageBoardForm.createdDate, 'yyyy-MM-dd')}"></td>
-				<td th:text="${pageBoardForm.views}"></td>
+			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
+				<td th:text="${pageForm.region}"></td>
+				<td th:text="${pageForm.title}" th:onclick="|location.href='@{/bulletins/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></td>
+				<td th:text="${pageForm.nickname}"></td>
+				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}"></td>
+				<td th:text="${pageForm.views}"></td>
 			</tr>
 			</tbody>
 		</table>
 
-		<button th:each="page : ${#numbers.sequence(1,lastPage)}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards(page=${page})}'|" th:text="${page}"></button>
+		<button th:if="${offset > 0}" type="button" class="btn btn-dark"
+		        th:onclick="|location.href='@{/bulletins(page=${offset-1})}'|" th:text="|◁|"></button>
+
+		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/bulletins(page=${page})}'|" th:text="${page+1}"></button>
+
+		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
+		        th:onclick="|location.href='@{/bulletins(page=${lastPage+1})}'|" th:text="|▷|"></button>
 
 		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards/new}'|">글 작성</button>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins/new}'|">글 작성</button>
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
 		</div>
 	</div>

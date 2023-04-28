@@ -4,7 +4,7 @@
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" action="/boards/new" th:object="${saveForm}" enctype="multipart/form-data"
+	<form role="form" action="/bulletins/new" th:object="${saveForm}" enctype="multipart/form-data"
 	      th:method="post">
 		<div class="form-group">
 			<label>닉네임</label>
@@ -32,7 +32,7 @@
 			<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
 		</div>
 		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/boards?page=1}'|">취소</button>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins?page=0}'|">취소</button>
 			<button type="submit" class="btn btn-primary">작성</button>
 		</div>
 	</form>

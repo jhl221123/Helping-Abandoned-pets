@@ -68,7 +68,7 @@ class CommentControllerTest {
                         .param(BOARD_ID, String.valueOf(2L))
                         .param(CONTENT, "댓글내용")
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -84,7 +84,7 @@ class CommentControllerTest {
                         .param(BOARD_ID, String.valueOf(2L))
                         .param(CLICK_REPLY, String.valueOf(3L))
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -105,7 +105,7 @@ class CommentControllerTest {
                         .param(PARENT_ID, String.valueOf(3L))
                         .param(CONTENT, "댓글내용")
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -124,7 +124,7 @@ class CommentControllerTest {
                         .param(CONTENT, "")
                 )
                 .andExpect(flash().attributeExists("bindingResult"))
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -143,7 +143,7 @@ class CommentControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(BOARD_ID, String.valueOf(2L))
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -166,7 +166,7 @@ class CommentControllerTest {
                         .param(BOARD_ID, String.valueOf(2L))
                         .param(CONTENT, "댓글내용")
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -187,7 +187,7 @@ class CommentControllerTest {
                         .param(CONTENT, "")
                 )
                 .andExpect(flash().attributeExists("bindingResult"))
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test
@@ -209,7 +209,7 @@ class CommentControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(BOARD_ID, String.valueOf(2L))
                 )
-                .andExpect(redirectedUrl("/boards/" + 2L));
+                .andExpect(redirectedUrl("/bulletins/" + 2L));
     }
 
     @Test

@@ -3,16 +3,17 @@ package com.catdog.help.web.controller;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
+import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
-import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.EditCommentForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,21 +65,30 @@ public class BulletinController {
 
     /***  read  ***/
     @GetMapping
-    public String getPage(Pageable pageable, Model model) {
+    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
         Page<PageBulletinForm> pageForm = bulletinService.getPage(pageable);
-        model.addAttribute("pageForm", pageForm.getContent()); // TODO: 2023-04-23 일단 getContent 함. 서비스 테스트 끝나고 Page에 맞게 수정
+        model.addAttribute("pageForms", pageForm.getContent());
 
-        int totalPages = pageForm.getTotalPages();
-        model.addAttribute("lastPage", totalPages); //
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = pageForm.getTotalPages() - 1;
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
         return "bulletins/list";
     }
 
     @GetMapping("/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @ModelAttribute("editCommentForm") EditCommentForm editCommentForm,
-                            @RequestParam(value = "bindingResult", required = false) BindingResult bindingResult,
-                            @RequestParam(value = "clickReply", required = false) Long parentCommentId,
                             HttpServletRequest request, HttpServletResponse response) {
         // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
 
@@ -108,9 +118,6 @@ public class BulletinController {
         CommentForm commentForm = new CommentForm();
         model.addAttribute("commentForm", commentForm);
 
-        //답글
-        model.addAttribute("clickReply", parentCommentId);
-
         return "bulletins/detail";
     }
 
@@ -131,7 +138,7 @@ public class BulletinController {
             return "redirect:/";
         }
         EditBulletinForm editForm = bulletinService.getEditForm(id);
-        model.addAttribute("updateForm", editForm);
+        model.addAttribute("editForm", editForm);
         model.addAttribute("nickname", nickname);
         return "bulletins/edit";
     }
@@ -182,6 +189,12 @@ public class BulletinController {
         return "redirect:/bulletins?page=0";
     }
 
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
+    }
 
     private Boolean isWriter(Long id, String nickname) {
         String writer = bulletinService.getWriter(id);

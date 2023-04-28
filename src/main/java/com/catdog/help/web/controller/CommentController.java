@@ -42,6 +42,8 @@ public class CommentController {
     public String getChildForm(@RequestParam("boardId") Long boardId, RedirectAttributes redirectAttributes,
                                @RequestParam("clickReply") Long parentId) {
         redirectAttributes.addAttribute("id", boardId);
+        log.info("clickReply={}", parentId);
+
         redirectAttributes.addFlashAttribute("clickReply", parentId);
         return redirectBoard(boardId);
     }
@@ -119,7 +121,7 @@ public class CommentController {
 
     private String redirectBoard(Long boardId) {
         if (boardService.isBulletin(boardId)) {
-            return "redirect:/boards/{id}";
+            return "redirect:/bulletins/{id}";
         }
         return "redirect:/inquiries/{id}";
     }
