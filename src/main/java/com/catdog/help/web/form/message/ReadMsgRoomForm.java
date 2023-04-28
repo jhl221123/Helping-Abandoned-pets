@@ -20,8 +20,8 @@ public class ReadMessageRoomForm {
 
     public ReadMessageRoomForm(MessageRoom messageRoom, List<ReadMessageForm> messageForms) {
         this.id = messageRoom.getId();
-        this.itemBoardId = messageRoom.getItemBoard().getId();
-        this.itemName = messageRoom.getItemBoard().getItemName();
+        this.itemBoardId = messageRoom.getItem().getId();
+        this.itemName = messageRoom.getItem().getItemName();
         this.senderNick = messageRoom.getSender().getNickname();
         this.recipientNick = messageRoom.getRecipient().getNickname();
         this.createdDate = messageRoom.getCreatedDate();

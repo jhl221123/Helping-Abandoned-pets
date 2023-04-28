@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,7 +101,7 @@ class MsgRoomRepositoryTest {
     }
 
     @Test
-    @DisplayName("해당 유저가 속한 메시지 룸을 모두 조회")
+    @DisplayName("특정 나눔글에서 해당 유저가 속한 메시지 룸 조회")
     void findByUser() {
         //given
         User sender = getUser("sender@test.test", "발신자");
@@ -109,21 +109,17 @@ class MsgRoomRepositoryTest {
         userRepository.save(sender);
         userRepository.save(recipient);
 
-        Item boardBySender = getItem(sender, "발신자 작성글");
-        Item boardByRecipient = getItem(recipient, "수신자 작성글");
-        itemRepository.save(boardBySender);
-        itemRepository.save(boardByRecipient);
+        Item board = getItem(recipient, "수신자 작성글");
+        itemRepository.save(board);
 
-        MessageRoom roomA = getMessageRoom(boardByRecipient, sender, recipient);
-        MessageRoom roomB = getMessageRoom(boardBySender, recipient, sender);
-        msgRoomRepository.save(roomA);
-        msgRoomRepository.save(roomB);
+        MessageRoom room = getMessageRoom(board, sender, recipient);
+        msgRoomRepository.save(room);
 
         //when
-        List<MessageRoom> rooms = msgRoomRepository.findAllByUser(sender.getId());
+        Optional<MessageRoom> findRoom = msgRoomRepository.findByRefers(sender.getId(), board.getId());
 
         //then
-        assertThat(rooms.size()).isEqualTo(2);
+        assertThat(findRoom.get()).isEqualTo(room);
     }
 
 //    @Test

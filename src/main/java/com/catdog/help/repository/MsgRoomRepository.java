@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MsgRoomRepository extends JpaRepository<MessageRoom, Long> {
@@ -16,8 +15,8 @@ public interface MsgRoomRepository extends JpaRepository<MessageRoom, Long> {
                                         " where mr.id = :id")
     Optional<MessageRoom> findWithRefers(@Param("id") Long id);
 
-    @Query("select mr from MessageRoom mr where sender_id = :userId or recipient_id = :userId")
-    List<MessageRoom> findAllByUser(@Param("userId") Long userId);
+    @Query("select mr from MessageRoom mr where (sender_id = :userId or recipient_id = :userId) and mr.item.id = :boardId")
+    Optional<MessageRoom> findByRefers(@Param("userId") Long userId, @Param("boardId") Long boardId);
 
 //    Page<MessageRoom> findPageBySenderIdOrRecipientId(@Param("userId") Long userId, Pageable pageable);
 // TODO: 2023-04-26 쿼리 DSL로 하자..ㅠ
