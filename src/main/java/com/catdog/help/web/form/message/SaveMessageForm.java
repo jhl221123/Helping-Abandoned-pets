@@ -10,4 +10,11 @@ public class SaveMessageForm {
 
     @NotBlank
     private String content;
+
+    public SaveMessageForm() {
+    }
+
+    public SaveMessageForm(String content) {
+        this.content = content;
+    }
 }

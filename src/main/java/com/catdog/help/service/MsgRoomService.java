@@ -9,7 +9,7 @@ import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.ItemRepository;
 import com.catdog.help.repository.MsgRoomRepository;
 import com.catdog.help.repository.UserRepository;
-import com.catdog.help.web.form.message.PageMessageRoomForm;
+import com.catdog.help.web.form.message.PageMsgRoomForm;
 import com.catdog.help.web.form.message.ReadMessageForm;
 import com.catdog.help.web.form.message.ReadMsgRoomForm;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class MsgRoomService {
         return new ReadMsgRoomForm(findRoom, forms);
     }
 
-    public List<PageMessageRoomForm> getPage(String nickname, int page) {
+    public List<PageMsgRoomForm> getPage(String nickname, int page) {
         Long userId = userRepository.findByNickname(nickname).get().getId();
         int offset = page * 10 - 10;
         int limit = 10;
@@ -92,9 +92,9 @@ public class MsgRoomService {
                 .build();
     }
 
-    private List<PageMessageRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
+    private List<PageMsgRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
         return findRooms.stream()
-                .map(PageMessageRoomForm::new)
+                .map(PageMsgRoomForm::new)
                 .collect(Collectors.toList());
     }
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PageMessageRoomForm {
+public class PageMsgRoomForm {
     private Long id;
     private Long itemBoardId;
     private String itemName;
@@ -14,10 +14,10 @@ public class PageMessageRoomForm {
     private String recipientNick;
     private LocalDateTime createdDate;
 
-    public PageMessageRoomForm(MessageRoom messageRoom) {
+    public PageMsgRoomForm(MessageRoom messageRoom) {
         this.id = messageRoom.getId();
-        this.itemBoardId = messageRoom.getItemBoard().getId();
-        this.itemName = messageRoom.getItemBoard().getItemName();
+        this.itemBoardId = messageRoom.getItem().getId();
+        this.itemName = messageRoom.getItem().getItemName();
         this.senderNick = messageRoom.getSender().getNickname();
         this.recipientNick = messageRoom.getRecipient().getNickname();
         this.createdDate = messageRoom.getCreatedDate();
