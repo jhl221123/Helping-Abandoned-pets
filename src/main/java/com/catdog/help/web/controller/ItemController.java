@@ -41,7 +41,6 @@ public class ItemController {
     public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         SaveItemForm saveForm = new SaveItemForm();
         model.addAttribute("saveForm", saveForm);
-        model.addAttribute("nickname", nickname);
         return "items/create";
     }
 
@@ -94,8 +93,6 @@ public class ItemController {
         //조회수 증가
         viewUpdater.addView(id, request, response);
 
-        model.addAttribute("nickname", nickname); // 수정버튼 본인확인
-
         ReadItemForm findReadForm = itemService.read(id);
         model.addAttribute("readForm", findReadForm);
         model.addAttribute("firstImage", findReadForm.getImages().get(0));
@@ -124,25 +121,27 @@ public class ItemController {
             return "redirect:/";
         }
 
-        EditItemForm updateForm = itemService.getEditForm(id);
-        model.addAttribute("updateForm", updateForm);
-        model.addAttribute("nickname", nickname);
+        EditItemForm editForm = itemService.getEditForm(id);
+        model.addAttribute("editForm", editForm);
         return "items/edit";
     }
 
     @PostMapping("/items/{id}/edit")
     public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @Validated @ModelAttribute("updateForm") EditItemForm updateForm, BindingResult bindingResult) {
+                            @Validated @ModelAttribute("editForm") EditItemForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {
             return "redirect:/";
         }
 
         if (bindingResult.hasErrors()) {
+            EditItemForm form = itemService.getEditForm(id);
+            editForm.setOldLeadImage(form.getOldLeadImage()); // TODO: 2023-04-29 브라우저에서 넘길 수 없을까..ㅠ
+            editForm.setOldImages(form.getOldImages());
             return "items/edit";
         }
 
-        itemService.update(updateForm);
+        itemService.update(editForm);
         return "redirect:/items/{id}";
     }
 
@@ -168,7 +167,6 @@ public class ItemController {
         }
 
         ReadItemForm readForm = itemService.read(id);
-        model.addAttribute("nickname", nickname);
         model.addAttribute("readForm", readForm);
         return "items/delete";
     }

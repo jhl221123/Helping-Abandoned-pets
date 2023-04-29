@@ -4,10 +4,10 @@
 <body>
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" th:object="${updateForm}" enctype="multipart/form-data" th:method="post">
+	<form role="form" th:object="${editForm}" enctype="multipart/form-data" th:method="post">
 		<div class="form-group">
 			<label>닉네임</label>
-			<p type="text" th:text="${nickname}" class="form-control" readonly></p>
+			<p type="text" th:text="${session.login_user}" class="form-control" readonly></p>
 		</div>
 		<div class="form-group">
 			<label th:for="itemName">제품명</label>
@@ -30,12 +30,12 @@
 			<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="12" ></textarea>
 			<p class="field-error" th:errors="*{content}">입력 오류</p>
 		</div>
-		<div th:if="|!${updateForm.oldLeadImage} == null|" class="form-group">
+		<div th:if="|!${editForm.oldLeadImage} == null|" class="form-group">
 			<div class="division-line"></div>
 			<p>대표 이미지</p>
 			<div>
 				<div>
-				<img th:src="|/images/${updateForm.oldLeadImage.getStoreFileName()}|" width="300" height="300"/>
+				<img th:src="|/images/${editForm.oldLeadImage.storeFileName}|" width="300" height="300"/>
 				</div>
 				<br/>
 				<div class="form-group">
@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<div th:if="${!updateForm.oldImages.isEmpty()}" class="form-group">
+		<div th:if="${!editForm.oldImages.isEmpty()}" class="form-group">
 			<div class="division-line"></div>
 			<p>삭제할 이미지를 선택해주세요.</p>
 			<div th:each="oldImage : *{oldImages}">
@@ -59,7 +59,7 @@
 			<input style="display: none" type="file" multiple="multiple" th:field="*{newImages}" class="form-control-file">
 		</div>
 		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items/{id}(id=${updateForm.id})}'|">취소</button>
+			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items/{id}(id=${editForm.id})}'|">취소</button>
 			<button type="submit" class="btn btn-primary" >완료</button>
 		</div>
 	</form>
