@@ -38,7 +38,7 @@ public class ItemController {
 
     /***  create  ***/
     @GetMapping("/items/new")
-    public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+    public String getSaveForm(Model model) {
         SaveItemForm saveForm = new SaveItemForm();
         model.addAttribute("saveForm", saveForm);
         return "items/create";
@@ -166,7 +166,7 @@ public class ItemController {
             return "redirect:/";
         }
 
-        ReadItemForm readForm = itemService.read(id);
+        ReadItemForm readForm = itemService.read(id); // TODO: 2023-04-29 detail에서 파라미터로 제목만 받자
         model.addAttribute("readForm", readForm);
         return "items/delete";
     }

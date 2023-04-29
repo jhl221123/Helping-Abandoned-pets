@@ -3,6 +3,7 @@ package com.catdog.help.service;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
+import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.InquiryRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
@@ -15,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,14 +25,17 @@ public class InquiryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long save(SaveInquiryForm form) {
-        Optional<User> findUser = userRepository.findByNickname(form.getNickname());
+    public Long save(SaveInquiryForm form, String nickname) {
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new);
+
         Inquiry inquiry = Inquiry.builder()
-                .user(findUser.get())
+                .user(findUser)
                 .title(form.getTitle())
                 .content(form.getContent())
                 .secret(form.getSecret())
                 .build();
+
         inquiryRepository.save(inquiry);
         return inquiry.getId();
     }

@@ -14,9 +14,6 @@ public class EditInquiryForm {
     private Long id;
 
     @NotBlank
-    private String nickname;
-
-    @NotBlank
     private String title;
 
     @NotBlank
@@ -30,7 +27,6 @@ public class EditInquiryForm {
 
     public EditInquiryForm(Inquiry inquiry) {
         this.id = inquiry.getId();
-        this.nickname = inquiry.getUser().getNickname();
         this.title = inquiry.getTitle();
         this.content = inquiry.getContent();
         this.secret = inquiry.getSecret();

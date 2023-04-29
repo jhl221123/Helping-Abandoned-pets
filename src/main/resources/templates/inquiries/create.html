@@ -7,7 +7,7 @@
 	<form role="form" action="/inquiries/new" th:object="${saveForm}" th:method="post">
 		<div class="form-group">
 			<label th:for="nickname">닉네임</label>
-			<input type="text" class="form-control" th:field="*{nickname}" readonly>
+			<p type="text" class="form-control" th:text="${session.login_user}" readonly></p>
 		</div>
 		<div class="form-group">
 			<label th:for="title">제목</label>

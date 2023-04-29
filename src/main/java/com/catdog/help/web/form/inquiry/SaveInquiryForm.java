@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 public class SaveInquiryForm {
 
     @NotBlank
-    private String nickname;
-
-    @NotBlank
     private String title;
 
     @NotBlank

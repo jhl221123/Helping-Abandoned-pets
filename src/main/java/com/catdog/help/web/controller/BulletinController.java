@@ -41,7 +41,7 @@ public class BulletinController {
 
     /***  create  ***/
     @GetMapping("/new")
-    public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+    public String getSaveForm(Model model) {
         SaveBulletinForm saveForm = new SaveBulletinForm();
         model.addAttribute("saveForm", saveForm);
         return "bulletins/create";
@@ -166,7 +166,7 @@ public class BulletinController {
             return "redirect:/";
         }
 
-        ReadBulletinForm form = bulletinService.read(id);
+        ReadBulletinForm form = bulletinService.read(id); // TODO: 2023-04-29 detail에서 파라미터로 제목만 받자
         String boardTitle = form.getTitle();
         model.addAttribute("boardId", id); // TODO: 2023-04-24 한 번에 처리할 수 있도록 해보자.
         model.addAttribute("boardTitle", boardTitle);

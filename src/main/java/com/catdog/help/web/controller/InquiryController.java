@@ -37,20 +37,20 @@ public class InquiryController {
     private final BoardService boardService;
 
     @GetMapping("/inquiries/new")
-    public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
+    public String getSaveForm(Model model) {
         SaveInquiryForm saveForm = new SaveInquiryForm();
-        saveForm.setNickname(nickname);
         model.addAttribute("saveForm", saveForm);
         return "inquiries/create";
     }
 
     @PostMapping("/inquiries/new")
-    public String saveBoard(@Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
+    public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
+                            @Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "inquiries/create";
         }
-        Long boardId = inquiryService.save(saveForm);
+        Long boardId = inquiryService.save(saveForm, nickname);
         redirectAttributes.addAttribute("boardId", boardId);
         return "redirect:/inquiries/{boardId}";
     }
@@ -120,8 +120,8 @@ public class InquiryController {
     }
 
     @PostMapping("/inquiries/{id}/edit")
-    public String editBoard(@Validated @ModelAttribute("editForm") EditInquiryForm editForm, BindingResult bindingResult,
-                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+    public String editBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
+                            @Validated @ModelAttribute("editForm") EditInquiryForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
         if (!isWriter(editForm.getId(), nickname)) {
             return "redirect:/";
@@ -137,7 +137,7 @@ public class InquiryController {
 
     @GetMapping("/inquiries/{id}/delete")
     public String getDeleteForm(@PathVariable("id") Long id, Model model,
-                                  @SessionAttribute(name = LOGIN_USER) String nickname) {
+                                @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {
             return "redirect:/";

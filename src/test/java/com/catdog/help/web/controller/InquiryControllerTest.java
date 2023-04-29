@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -90,7 +91,7 @@ class InquiryControllerTest {
     void saveBoard() throws Exception {
         //given
         doReturn(2L).when(inquiryService)
-                .save(any(SaveInquiryForm.class));
+                .save(any(SaveInquiryForm.class), eq("닉네임"));
 
         //expected
         mockMvc.perform(post("/inquiries/new")
