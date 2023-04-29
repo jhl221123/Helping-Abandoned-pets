@@ -5,17 +5,22 @@ import com.catdog.help.service.CommentService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.form.comment.CommentForm;
-import com.catdog.help.web.form.comment.EditCommentForm;
-import com.catdog.help.web.form.inquiry.*;
+import com.catdog.help.web.form.inquiry.EditInquiryForm;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
+import com.catdog.help.web.form.inquiry.ReadInquiryForm;
+import com.catdog.help.web.form.inquiry.SaveInquiryForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -41,18 +46,18 @@ public class InquiryController {
 
     @PostMapping("/inquiries/new")
     public String saveBoard(@Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
-                            BindingResult bindingResult, Model model) {
+                            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "inquiries/create";
         }
         Long boardId = inquiryService.save(saveForm);
-        model.addAttribute("boardId", boardId);
+        redirectAttributes.addAttribute("boardId", boardId);
         return "redirect:/inquiries/{boardId}";
     }
 
     @GetMapping("/inquiries")
-    public String getPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                          Pageable pageable, Model model) {
+    public String getPage(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC)
+                          Pageable pageable, Model model, @SessionAttribute(name = LOGIN_USER) String nickname) {
 
         Boolean isManager = userService.isManager(nickname);
         model.addAttribute("isManager", isManager);
@@ -60,8 +65,19 @@ public class InquiryController {
         Page<PageInquiryForm> pageForms = inquiryService.getPage(pageable);
         model.addAttribute("pageForms", pageForms);
 
-        int lastPage = pageForms.getTotalPages();
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
         model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
 
         model.addAttribute("nickname", nickname);
         return "inquiries/list";
@@ -69,10 +85,7 @@ public class InquiryController {
 
     @GetMapping("/inquiries/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
-                            @SessionAttribute(name = LOGIN_USER) String nickname,
-                            @ModelAttribute("editCommentForm") EditCommentForm editCommentForm,
-                            @RequestParam(value = "bindingResult", required = false) BindingResult bindingResult,
-                            @RequestParam(value = "clickReply", required = false) Long parentCommentId) {
+                            @SessionAttribute(name = LOGIN_USER) String nickname) {
         // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
 
         ReadInquiryForm readForm = inquiryService.read(id);
@@ -89,9 +102,6 @@ public class InquiryController {
         //댓글
         CommentForm commentForm = new CommentForm();
         model.addAttribute("commentForm", commentForm);
-
-        //답글
-        model.addAttribute("clickReply", parentCommentId);
 
         return "inquiries/detail";
     }
@@ -149,6 +159,12 @@ public class InquiryController {
         return "redirect:/inquiries?page=0";
     }
 
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
+    }
 
     private Boolean isWriter(Long id, String nickname) {
         String writer = boardService.getWriter(id);

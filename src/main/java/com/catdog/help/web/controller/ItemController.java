@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,7 +48,6 @@ public class ItemController {
     @PostMapping("/items/new")
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveItemForm saveForm, BindingResult bindingResult) {
-//        model.addAttribute("nickname", nickname); test 에서 redirect 경로에 파라미터로 붙어서 일단 주석해둠. 이거 없이도 닉 보이도록 해보자.
         if (bindingResult.hasErrors()) {
             return "items/create";
         }
@@ -65,12 +66,24 @@ public class ItemController {
 
     /***  read  ***/
     @GetMapping("/items")
-    public String getPage(Pageable pageable, Model model) {
+    public String getPage(@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
         Page<PageItemForm> pageForms = itemService.getPage(pageable);
-        model.addAttribute("pageForms", pageForms);
+        model.addAttribute("pageForms", pageForms.getContent());
 
-        int totalPages = pageForms.getTotalPages();
-        model.addAttribute("lastPage", totalPages);
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
         return "items/list";
     }
 
@@ -172,6 +185,12 @@ public class ItemController {
         return "redirect:/items?page=0";
     }
 
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
+    }
 
     private Boolean isWriter(Long id, String nickname) {
         String writer = boardService.getWriter(id);

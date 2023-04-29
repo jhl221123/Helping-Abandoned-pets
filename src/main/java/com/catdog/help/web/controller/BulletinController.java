@@ -66,14 +66,14 @@ public class BulletinController {
     /***  read  ***/
     @GetMapping
     public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
-        Page<PageBulletinForm> pageForm = bulletinService.getPage(pageable);
-        model.addAttribute("pageForms", pageForm.getContent());
+        Page<PageBulletinForm> pageForms = bulletinService.getPage(pageable);
+        model.addAttribute("pageForms", pageForms.getContent());
 
         int offset = pageable.getPageNumber() / 5 * 5;
         model.addAttribute("offset", offset);
 
         int limit = offset + 4;
-        int endPage = pageForm.getTotalPages() - 1;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
         int lastPage = getLastPage(limit, endPage);
         model.addAttribute("lastPage", lastPage);
 

@@ -64,12 +64,12 @@
 	</div>
 	<br/>
 	<button th:if="${readForm.nickname != nickname} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
-	        th:onclick="|location.href='@{/messages/new(boardId=${readForm.id}, recipientNickname=${readForm.nickname})}'|">쪽지 보내기</button>
+	        th:onclick="|location.href='@{/messages/new(boardId=${readForm.id}, recipientNick=${readForm.nickname})}'|">쪽지 보내기</button>
 	<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
 	        th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
 	        th:onclick="|location.href='@{/items/{id}/status(id=${readForm.id})}'|">거래상태 변경</button>
 	<div class="float-right">
-		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=1)}'|">목록으로</button>
+		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=0)}'|">목록으로</button>
 		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/items/{id}/edit(id=${readForm.id})}'|">수정</button>
 		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"

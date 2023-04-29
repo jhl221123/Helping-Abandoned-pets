@@ -26,7 +26,15 @@
 		</div>
 
 
-		<button th:each="page : ${#numbers.sequence(1,lastPage)}" type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=${page})}'|" th:text="${page}"></button>
+		<button th:if="${offset > 0}" type="button" class="btn btn-dark"
+		        th:onclick="|location.href='@{/items(page=${offset-1})}'|" th:text="|◁|"></button>
+
+		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
+		        th:onclick="|location.href='@{/items(page=${page})}'|" th:text="${page+1}"></button>
+
+		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
+		        th:onclick="|location.href='@{/items(page=${lastPage+1})}'|" th:text="|▷|"></button>
+
 
 		<div class="float-right">
 			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items/new}'|">제품 등록</button>
