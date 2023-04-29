@@ -43,7 +43,6 @@ public class BulletinController {
     @GetMapping("/new")
     public String getSaveForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         SaveBulletinForm saveForm = new SaveBulletinForm();
-        model.addAttribute("nickname", nickname);
         model.addAttribute("saveForm", saveForm);
         return "bulletins/create";
     }
@@ -52,7 +51,6 @@ public class BulletinController {
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveBulletinForm saveForm,
                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        model.addAttribute("nickname", nickname); // TODO: 2023-04-23 이거 없어도 될텐데?
         if (bindingResult.hasErrors()) {
             return "bulletins/create";
         }
@@ -95,8 +93,6 @@ public class BulletinController {
         //조회수 증가
         viewUpdater.addView(id, request, response);
 
-        model.addAttribute("nickname", nickname); // 수정버튼 본인확인
-
         ReadBulletinForm readForm = bulletinService.read(id);
         model.addAttribute("readForm", readForm);
 
@@ -131,20 +127,19 @@ public class BulletinController {
     }
 
     @GetMapping("/{id}/edit")
-    public String getEditForm(@SessionAttribute(name = LOGIN_USER) String nickname,
-                              @PathVariable("id") Long id, Model model) {
+    public String getEditForm(@PathVariable("id") Long id, Model model,
+                              @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {
             return "redirect:/";
         }
         EditBulletinForm editForm = bulletinService.getEditForm(id);
         model.addAttribute("editForm", editForm);
-        model.addAttribute("nickname", nickname);
         return "bulletins/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String editBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
+    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
                             @Validated @ModelAttribute("editForm") EditBulletinForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
         if (!isWriter(editForm.getId(), nickname)) {
@@ -152,6 +147,8 @@ public class BulletinController {
         }
 
         if (bindingResult.hasErrors()) {
+            EditBulletinForm form = bulletinService.getEditForm(id);
+            editForm.setOldImages(form.getOldImages());
             return "bulletins/edit";
         }
 
@@ -173,7 +170,6 @@ public class BulletinController {
         String boardTitle = form.getTitle();
         model.addAttribute("boardId", id); // TODO: 2023-04-24 한 번에 처리할 수 있도록 해보자.
         model.addAttribute("boardTitle", boardTitle);
-        model.addAttribute("nickname", nickname);
         return "bulletins/delete";
     }
 

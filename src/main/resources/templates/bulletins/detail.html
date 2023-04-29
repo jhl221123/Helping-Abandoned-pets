@@ -58,9 +58,9 @@
 	</div>
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins(page=0)}'|">목록으로</button>
-		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/bulletins/{id}/edit(id=${readForm.id})}'|">수정</button>
-		<button th:if="${readForm.nickname == nickname}" type="button" class="btn btn-primary"
+		<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
 		        th:onclick="|location.href='@{/bulletins/{id}/delete(id=${readForm.id})}'|">삭제</button>
 	</div>
 
@@ -85,9 +85,9 @@
 			<p th:text="${form.nickname}">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<p class="text-left text-muted" th:text="${#temporals.format(form.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 			<div>
-				<a th:if="${form.nickname==nickname}" class="text-muted"
+				<a th:if="${form.nickname==session.login_user}" class="text-muted"
 				   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
-				<a th:if="${form.nickname==nickname}" class="text-muted"
+				<a th:if="${form.nickname==session.login_user}" class="text-muted"
 				   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
 			</div>
 		</div>
@@ -104,7 +104,7 @@
 
 				<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
 				      th:object="${editCommentForm}" th:method="post">
-					<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
+					<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
 					<div class="row">
 						<div class="col-sm-10">
 						<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -128,7 +128,7 @@
 
 			<form role="form" th:action="@{/comments/child(boardId=${readForm.id}, parentId=${form.id})}"
 			      th:object="${commentForm}" th:method="post">
-				<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
+				<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
 				<div class="row">
 					<div class="col-sm-10">
 					<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -152,9 +152,9 @@
 				<p th:text="|┕ ${child.nickname}|">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<p class="text-left text-muted" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
 				<div>
-					<a th:if="${child.nickname==nickname}" class="text-muted"
+					<a th:if="${child.nickname==session.login_user}" class="text-muted"
 					   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
-					<a th:if="${child.nickname==nickname}" class="text-muted"
+					<a th:if="${child.nickname==session.login_user}" class="text-muted"
 					   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
 				</div>
 			</div>
@@ -169,7 +169,7 @@
 				<div th:if="${editCommentForm.commentId == child.id}" class="comment-box" >
 					<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
 					      th:object="${editCommentForm}" th:method="post">
-						<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
+						<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
 						<div class="row">
 							<div class="col-sm-10">
 						<textarea th:errorclass="field-error" class="form-control" th:field="*{content}"
@@ -201,7 +201,7 @@
 
 	<form role="form" th:action="@{/comments/parent(boardId=${readForm.id})}" th:object="${commentForm}"
 	      th:method="post" class="comment-box">
-		<p th:text="${nickname}" class="col-form-label attribute-name">닉네임</p>
+		<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
 		<div class="row">
 			<div class="col-sm-10">
 				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>
