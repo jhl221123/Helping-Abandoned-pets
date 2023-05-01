@@ -42,7 +42,7 @@ public class ImageService {
                         File file = new File(fileDir + uploadFile
                                             .orElseThrow(FileNotFoundException::new)
                                             .getStoreFileName());
-                        file.delete(); // TODO: 2023-04-24 파일 삭제 되는지 확인해주세요..ㅠㅠ 미래의 나님
+                        file.delete(); // 폴더에서 이미지 삭제 todo 삭제는 잘 되는데 사용자나 글 삭제 시 이미지도 같이 삭제 되도록 구현필요
                         uploadFileRepository.delete(uploadFile.orElseThrow(FileNotFoundException::new));
                     });
 
