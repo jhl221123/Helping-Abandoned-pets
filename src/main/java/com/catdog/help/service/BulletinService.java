@@ -74,10 +74,6 @@ public class BulletinService {
 //        }
 //    }
 
-    public String getWriter(Long id) {
-        return bulletinRepository.findNicknameById(id);
-    }
-
     public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);

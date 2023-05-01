@@ -128,23 +128,6 @@ class BulletinServiceTest {
     }
 
     @Test
-    @DisplayName("작성자 닉네임 반환")
-    void getWriter() {
-        //given
-        doReturn("닉네임").when(bulletinRepository)
-                .findNicknameById(1L);
-
-        //when
-        String nickname = bulletinService.getWriter(1L);
-
-        //then
-        assertThat(nickname).isEqualTo("닉네임");
-
-        //verify
-        verify(bulletinRepository, times(1)).findNicknameById(1L);
-    }
-
-    @Test
     @DisplayName("게시글 수정 양식 호출")
     void getEditForm() {
         //given

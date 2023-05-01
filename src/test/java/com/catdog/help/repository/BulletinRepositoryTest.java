@@ -51,20 +51,6 @@ class BulletinRepositoryTest {
     }
 
     @Test
-    @DisplayName("id로 닉네임 조회")
-    void findNicknameById() {
-        //given
-        Bulletin board = getBulletin();
-        Bulletin savedBoard = bulletinRepository.save(board);
-
-        //when
-        String nickname = bulletinRepository.findNicknameById(savedBoard.getId());
-
-        //then
-        assertThat(nickname).isEqualTo(board.getUser().getNickname());
-    }
-
-    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given

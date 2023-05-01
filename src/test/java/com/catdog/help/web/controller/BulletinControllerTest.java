@@ -3,6 +3,7 @@ package com.catdog.help.web.controller;
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
@@ -55,6 +56,9 @@ class BulletinControllerTest {
 
     @Mock
     private BulletinService bulletinService;
+
+    @Mock
+    private BoardService boardService;
 
     @Mock
     private ViewUpdater viewUpdater;
@@ -182,7 +186,7 @@ class BulletinControllerTest {
         //given
         EditBulletinForm form = getBeforeEditForm();
 
-        doReturn("닉네임").when(bulletinService)
+        doReturn("닉네임").when(boardService)
                 .getWriter(2L);
 
         doReturn(form).when(bulletinService)
@@ -200,7 +204,7 @@ class BulletinControllerTest {
     @DisplayName("게시글 수정 성공")
     void edit() throws Exception {
         //given
-        doReturn("닉네임").when(bulletinService)
+        doReturn("닉네임").when(boardService)
                 .getWriter(2L);
 
         doNothing().when(bulletinService)
@@ -223,7 +227,7 @@ class BulletinControllerTest {
         //given
         EditBulletinForm form = getBeforeEditForm();
 
-        doReturn("닉네임").when(bulletinService)
+        doReturn("닉네임").when(boardService)
                 .getWriter(2L);
 
         doReturn(form).when(bulletinService)
@@ -246,7 +250,7 @@ class BulletinControllerTest {
         //given
         ReadBulletinForm form = getReadBulletinForm();
 
-        doReturn("닉네임").when(bulletinService)
+        doReturn("닉네임").when(boardService)
                 .getWriter(2L);
 
         doReturn(form).when(bulletinService)
@@ -264,7 +268,7 @@ class BulletinControllerTest {
     @DisplayName("게시글 삭제 성공")
     void delete() throws Exception {
         //given
-        doReturn("닉네임").when(bulletinService)
+        doReturn("닉네임").when(boardService)
                 .getWriter(2L);
 
         doNothing().when(bulletinService)
@@ -282,7 +286,7 @@ class BulletinControllerTest {
     @DisplayName("작성자 외 접근으로 요청 실패")
     void failRequestWriterDiscord() throws Exception {
         //given
-        doReturn("작성자").when(bulletinService)
+        doReturn("작성자").when(boardService)
                 .getWriter(2L);
 
         //expected

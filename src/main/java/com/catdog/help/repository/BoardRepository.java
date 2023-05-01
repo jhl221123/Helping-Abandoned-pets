@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    @Query("select b.user.nickname from Board b where b.id = :id")// TODO: 2023-04-23 크로스 조인 발생. fetch join 이용해서 수정하자.
+    @Query("select u.nickname from Board b join b.user u where b.id = :id")
     String findNicknameById(@Param("id") Long id);
 }

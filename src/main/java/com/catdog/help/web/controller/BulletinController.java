@@ -1,5 +1,6 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
@@ -37,6 +38,7 @@ public class BulletinController {
     private final CommentService commentService;
     private final LikeService likeService;
     private final ViewUpdater viewUpdater;
+    private final BoardService boardService;
 
 
     /***  create  ***/
@@ -193,7 +195,7 @@ public class BulletinController {
     }
 
     private Boolean isWriter(Long id, String nickname) {
-        String writer = bulletinService.getWriter(id);
+        String writer = boardService.getWriter(id);
         return writer.equals(nickname) ? true : false;
     }
 }
