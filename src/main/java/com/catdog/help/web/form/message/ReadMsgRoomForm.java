@@ -1,6 +1,6 @@
 package com.catdog.help.web.form.message;
 
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,13 +21,13 @@ public class ReadMsgRoomForm {
 
 
     @Builder
-    public ReadMsgRoomForm(MessageRoom messageRoom, List<ReadMessageForm> messageForms) {
-        this.id = messageRoom.getId();
-        this.boardId = messageRoom.getItem().getId();
-        this.itemName = messageRoom.getItem().getItemName();
-        this.senderNick = messageRoom.getSender().getNickname();
-        this.recipientNick = messageRoom.getRecipient().getNickname();
-        this.createdDate = messageRoom.getCreatedDate();
+    public ReadMsgRoomForm(MsgRoom msgRoom, List<ReadMessageForm> messageForms) {
+        this.id = msgRoom.getId();
+        this.boardId = msgRoom.getItem().getId();
+        this.itemName = msgRoom.getItem().getItemName();
+        this.senderNick = msgRoom.getSender().getNickname();
+        this.recipientNick = msgRoom.getRecipient().getNickname();
+        this.createdDate = msgRoom.getCreatedDate();
         this.messages = messageForms;
     }
 }

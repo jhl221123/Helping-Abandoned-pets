@@ -223,8 +223,13 @@ class ItemControllerTest {
     @DisplayName("검증으로 인한 나눔글 수정 실패")
     void failEditByValidate() throws Exception {
         //given
+        EditItemForm form = getBeforeEditForm();
+
         doReturn("닉네임").when(boardService)
                 .getWriter(2L);
+
+        doReturn(form).when(itemService)
+                .getEditForm(2L);
 
         //expected
         mockMvc.perform(post("/items/{id}/edit", 2L)

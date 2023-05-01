@@ -1,7 +1,7 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Item;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -38,17 +38,17 @@ class MsgRoomRepositoryTest {
         Item board = getItem(recipient, "나눔제목");
         itemRepository.save(board);
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
 
         //when
-        MessageRoom savedRoom = msgRoomRepository.save(room);
+        MsgRoom savedRoom = msgRoomRepository.save(room);
 
         //then
         assertThat(savedRoom).isEqualTo(room);
     }
 
-    private static MessageRoom getMessageRoom(Item board, User sender, User recipient) {
-        MessageRoom room = MessageRoom.builder()
+    private static MsgRoom getMessageRoom(Item board, User sender, User recipient) {
+        MsgRoom room = MsgRoom.builder()
                 .item(board)
                 .sender(sender)
                 .recipient(recipient)
@@ -68,11 +68,11 @@ class MsgRoomRepositoryTest {
         Item board = getItem(recipient, "나눔제목");
         itemRepository.save(board);
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
         msgRoomRepository.save(room);
 
         //when
-        MessageRoom findRoom = msgRoomRepository.findById(room.getId()).get();
+        MsgRoom findRoom = msgRoomRepository.findById(room.getId()).get();
 
         //then
         assertThat(findRoom).isEqualTo(room);
@@ -90,11 +90,11 @@ class MsgRoomRepositoryTest {
         Item board = getItem(recipient, "나눔제목");
         itemRepository.save(board);
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
         msgRoomRepository.save(room);
 
         //when
-        MessageRoom findRoom = msgRoomRepository.findWithRefers(room.getId()).get();
+        MsgRoom findRoom = msgRoomRepository.findWithRefers(room.getId()).get();
 
         //then
         assertThat(findRoom).isEqualTo(room);
@@ -112,11 +112,11 @@ class MsgRoomRepositoryTest {
         Item board = getItem(recipient, "수신자 작성글");
         itemRepository.save(board);
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
         msgRoomRepository.save(room);
 
         //when
-        Optional<MessageRoom> findRoom = msgRoomRepository.findByRefers(sender.getId(), board.getId());
+        Optional<MsgRoom> findRoom = msgRoomRepository.findByRefers(sender.getId(), board.getId());
 
         //then
         assertThat(findRoom.get()).isEqualTo(room);
@@ -164,8 +164,8 @@ class MsgRoomRepositoryTest {
         itemRepository.save(boardBySender);
         itemRepository.save(boardByRecipient);
 
-        MessageRoom roomA = getMessageRoom(boardByRecipient, sender, recipient);
-        MessageRoom roomB = getMessageRoom(boardBySender, recipient, sender);
+        MsgRoom roomA = getMessageRoom(boardByRecipient, sender, recipient);
+        MsgRoom roomB = getMessageRoom(boardBySender, recipient, sender);
         msgRoomRepository.save(roomA);
         msgRoomRepository.save(roomB);
 

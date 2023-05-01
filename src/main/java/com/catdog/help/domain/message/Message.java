@@ -25,15 +25,15 @@ public class Message extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "message_room_id")
-    private MessageRoom messageRoom;
+    private MsgRoom msgRoom;
 
     private String content;
 
 
     @Builder
-    public Message(MessageRoom messageRoom, User sender, String content) {
-        this.messageRoom = messageRoom;
-        messageRoom.getMessages().add(this);
+    public Message(MsgRoom msgRoom, User sender, String content) {
+        this.msgRoom = msgRoom;
+        msgRoom.getMessages().add(this);
         this.sender = sender;
         this.content = content;
     }

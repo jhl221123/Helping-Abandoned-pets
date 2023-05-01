@@ -1,6 +1,6 @@
 package com.catdog.help.domain.board;
 
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class Item extends Board {
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = REMOVE)
-    private List<MessageRoom> rooms = new ArrayList<>();
+    private List<MsgRoom> rooms = new ArrayList<>();
 
 
     @Builder

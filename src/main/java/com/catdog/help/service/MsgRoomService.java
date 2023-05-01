@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Item;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.MsgRoomNotFoundException;
@@ -33,20 +33,20 @@ public class MsgRoomService {
 
     @Transactional
     public Long save(Long boardId, String senderNick, String recipientNick) {
-        MessageRoom messageRoom = getMessageRoom(boardId, senderNick, recipientNick);
-        return msgRoomRepository.save(messageRoom).getId();
+        MsgRoom msgRoom = getMessageRoom(boardId, senderNick, recipientNick);
+        return msgRoomRepository.save(msgRoom).getId();
     }
 
     public Long checkRoom(Long boardId, String senderNick) {
         User findUser = userRepository.findByNickname(senderNick)
                 .orElseThrow(UserNotFoundException::new);
-        Optional<MessageRoom> findRoom = msgRoomRepository.findByRefers(findUser.getId(), boardId);
+        Optional<MsgRoom> findRoom = msgRoomRepository.findByRefers(findUser.getId(), boardId);
 
         return findRoom.isEmpty() ? -1L : findRoom.get().getId();
     }
 
     public ReadMsgRoomForm read(Long roomId) {
-        MessageRoom findRoom = msgRoomRepository.findWithRefers(roomId)
+        MsgRoom findRoom = msgRoomRepository.findWithRefers(roomId)
                 .orElseThrow(MsgRoomNotFoundException::new);
         List<ReadMessageForm> forms = getReadMessageForms(findRoom);
         return new ReadMsgRoomForm(findRoom, forms);
@@ -77,7 +77,7 @@ public class MsgRoomService {
     /**============================= private method ==============================*/
 
 
-    private MessageRoom getMessageRoom(Long boardId, String senderNick, String recipientNick) {
+    private MsgRoom getMessageRoom(Long boardId, String senderNick, String recipientNick) {
         Item findBoard = itemRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
         User sender = userRepository.findByNickname(senderNick)
@@ -85,21 +85,21 @@ public class MsgRoomService {
         User recipient = userRepository.findByNickname(recipientNick)
                 .orElseThrow(UserNotFoundException::new);
 
-        return MessageRoom.builder()
+        return MsgRoom.builder()
                 .item(findBoard)
                 .sender(sender)
                 .recipient(recipient)
                 .build();
     }
 
-    private List<PageMsgRoomForm> getPageMessageRoomForms(List<MessageRoom> findRooms) {
+    private List<PageMsgRoomForm> getPageMessageRoomForms(List<MsgRoom> findRooms) {
         return findRooms.stream()
                 .map(PageMsgRoomForm::new)
                 .collect(Collectors.toList());
     }
 
-    private List<ReadMessageForm> getReadMessageForms(MessageRoom messageRoom) {
-        return messageRoom.getMessages().stream()
+    private List<ReadMessageForm> getReadMessageForms(MsgRoom msgRoom) {
+        return msgRoom.getMessages().stream()
                 .map(ReadMessageForm::new)
                 .collect(Collectors.toList());
     }

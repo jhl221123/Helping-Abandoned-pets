@@ -82,7 +82,7 @@ class BulletinControllerTest {
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
-                .andExpect(model().attributeExists("nickname", "saveForm"))
+                .andExpect(model().attributeExists("saveForm"))
                 .andExpect(view().name("bulletins/create"));
     }
 
@@ -221,8 +221,13 @@ class BulletinControllerTest {
     @DisplayName("검증으로 인한 게시글 수정 실패")
     void failEditByValidate() throws Exception {
         //given
+        EditBulletinForm form = getBeforeEditForm();
+
         doReturn("닉네임").when(bulletinService)
                 .getWriter(2L);
+
+        doReturn(form).when(bulletinService)
+                .getEditForm(2L);
 
         //expected
         mockMvc.perform(post("/bulletins/{id}/edit", 2L)

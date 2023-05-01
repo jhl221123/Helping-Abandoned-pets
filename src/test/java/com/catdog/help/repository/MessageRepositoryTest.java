@@ -2,7 +2,7 @@ package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.message.Message;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -37,14 +37,14 @@ class MessageRepositoryTest {
         Item board = getItem(recipient, "나눔제목");
         itemRepository.save(board);
 
-        MessageRoom room = MessageRoom.builder()
+        MsgRoom room = MsgRoom.builder()
                 .item(board)
                 .sender(sender)
                 .recipient(recipient)
                 .build();
 
         Message message = Message.builder()
-                .messageRoom(room)
+                .msgRoom(room)
                 .sender(sender)
                 .content("발신자의 메시지")
                 .build();

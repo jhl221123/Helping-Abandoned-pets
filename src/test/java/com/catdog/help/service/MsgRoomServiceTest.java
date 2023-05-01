@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.message.Message;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.ItemRepository;
@@ -57,7 +57,7 @@ class MsgRoomServiceTest {
         doReturn(Optional.ofNullable(recipient)).when(userRepository)
                 .findByNickname(recipient.getNickname());
 
-        when(msgRoomRepository.save(any(MessageRoom.class))).then(AdditionalAnswers.returnsFirstArg());
+        when(msgRoomRepository.save(any(MsgRoom.class))).then(AdditionalAnswers.returnsFirstArg());
 
         //expected
         Long roomId = msgRoomService.save(board.getId(), sender.getNickname(), recipient.getNickname());
@@ -65,7 +65,7 @@ class MsgRoomServiceTest {
         verify(itemRepository, times(1)).findById(board.getId());
         verify(userRepository, times(1)).findByNickname(sender.getNickname());
         verify(userRepository, times(1)).findByNickname(recipient.getNickname());
-        verify(msgRoomRepository, times(1)).save(any(MessageRoom.class));
+        verify(msgRoomRepository, times(1)).save(any(MsgRoom.class));
     }
 
     @Test
@@ -77,7 +77,7 @@ class MsgRoomServiceTest {
 
         Item board = getItem(recipient, "나눔상품");
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
 
         doReturn(Optional.ofNullable(sender)).when(userRepository)
                 .findByNickname(sender.getNickname());
@@ -105,7 +105,7 @@ class MsgRoomServiceTest {
 
         Item board = getItem(recipient, "나눔상품");
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
 
         doReturn(Optional.ofNullable(sender)).when(userRepository)
                 .findByNickname(sender.getNickname());
@@ -133,7 +133,7 @@ class MsgRoomServiceTest {
 
         Item board = getItem(recipient, "나눔상품");
 
-        MessageRoom room = getMessageRoom(board, sender, recipient);
+        MsgRoom room = getMessageRoom(board, sender, recipient);
 
         doReturn(Optional.ofNullable(room)).when(msgRoomRepository)
                 .findWithRefers(room.getId());
@@ -146,16 +146,16 @@ class MsgRoomServiceTest {
     }
 
 
-    private Message getMessage(User sender, MessageRoom room) {
+    private Message getMessage(User sender, MsgRoom room) {
         return Message.builder()
                 .sender(sender)
-                .messageRoom(room)
+                .msgRoom(room)
                 .content("메시지내용")
                 .build();
     }
 
-    private MessageRoom getMessageRoom(Item board, User sender, User recipient) {
-        return MessageRoom.builder()
+    private MsgRoom getMessageRoom(Item board, User sender, User recipient) {
+        return MsgRoom.builder()
                 .item(board)
                 .sender(sender)
                 .recipient(recipient)

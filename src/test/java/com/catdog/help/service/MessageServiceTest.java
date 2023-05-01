@@ -2,7 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.message.Message;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.MessageRepository;
@@ -46,7 +46,7 @@ class MessageServiceTest {
 
         Item board = getItem(recipient, "나눔상품");
 
-        MessageRoom room = getMessageRoom(sender, recipient, board);
+        MsgRoom room = getMessageRoom(sender, recipient, board);
 
         Message message = getMessage(sender, room);
 
@@ -69,16 +69,16 @@ class MessageServiceTest {
     }
 
 
-    private Message getMessage(User sender, MessageRoom room) {
+    private Message getMessage(User sender, MsgRoom room) {
         return Message.builder()
                 .sender(sender)
-                .messageRoom(room)
+                .msgRoom(room)
                 .content("메시지내용")
                 .build();
     }
 
-    private MessageRoom getMessageRoom(User sender, User recipient, Item board) {
-        return MessageRoom.builder()
+    private MsgRoom getMessageRoom(User sender, User recipient, Item board) {
+        return MsgRoom.builder()
                 .item(board)
                 .sender(sender)
                 .recipient(recipient)

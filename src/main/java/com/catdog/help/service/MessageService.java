@@ -1,7 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.message.Message;
-import com.catdog.help.domain.message.MessageRoom;
+import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.MsgRoomNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
@@ -27,7 +27,7 @@ public class MessageService {
 
     @Transactional
     public void save(Long roomId, String senderNick, SaveMessageForm form) {
-        MessageRoom findRoom = msgRoomRepository.findById(roomId)
+        MsgRoom findRoom = msgRoomRepository.findById(roomId)
                 .orElseThrow(MsgRoomNotFoundException::new);
         User sender = userRepository.findByNickname(senderNick)
                 .orElseThrow(UserNotFoundException::new);
@@ -35,9 +35,9 @@ public class MessageService {
     }
 
 
-    private Message getMessage(SaveMessageForm form, MessageRoom findRoom, User sender) {
+    private Message getMessage(SaveMessageForm form, MsgRoom findRoom, User sender) {
         return Message.builder()
-                .messageRoom(findRoom)
+                .msgRoom(findRoom)
                 .sender(sender)
                 .content(form.getContent())
                 .build();
