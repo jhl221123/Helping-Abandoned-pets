@@ -19,11 +19,9 @@ import static com.catdog.help.domain.user.QUser.user;
 public class MsgRoomRepositoryImpl implements MsgRoomRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
-    private final EntityManager em;
 
     public MsgRoomRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-        this.em = em;
     }
 
     @Override
