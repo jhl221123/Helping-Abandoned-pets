@@ -13,6 +13,7 @@ import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.search.BulletinSearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -137,6 +139,26 @@ class BulletinControllerTest {
                         .param(SIZE, String.valueOf(10))
                 )
                 .andExpect(view().name("bulletins/list"));
+    }
+
+    @Test
+    @DisplayName("검색 조건으로 게시글 목록 조회")
+    void searchPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+
+        doReturn(page).when(bulletinService)
+                .search(any(BulletinSearch.class), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(post("/bulletins")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .param(TITLE, "검색제목")
+                        .param(REGION, "검색지역")
+                        .param(PAGE, String.valueOf(0))
+                        .param(SIZE, String.valueOf(10))
+                )
+                .andExpect(view().name("bulletins/list")).andDo(MockMvcResultHandlers.print());
     }
 
     @Test

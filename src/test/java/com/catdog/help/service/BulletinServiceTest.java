@@ -4,15 +4,13 @@ import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
-import com.catdog.help.repository.BulletinRepository;
-import com.catdog.help.repository.LikeRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.*;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.search.BulletinSearch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,6 +54,9 @@ class BulletinServiceTest {
 
     @Mock
     LikeRepository likeRepository;
+
+    @Mock
+    SearchQueryRepository searchQueryRepository;
 
 
     @Test
@@ -125,6 +126,26 @@ class BulletinServiceTest {
         //expected
         Page<PageBulletinForm> formPage = bulletinService.getPage(pageable);
         verify(bulletinRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
+
+    @Test
+    @DisplayName("검색 조건에 맞는 페이지 조회")
+    void searchPageByCond() {
+        //given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page<Bulletin> page = Page.empty();
+
+        BulletinSearch search = BulletinSearch.builder()
+                .title("검색제목")
+                .region("검색지역")
+                .build();
+
+        doReturn(page).when(searchQueryRepository)
+                .searchBulletin(search.getTitle(), search.getRegion(), pageable);
+
+        //expected
+        Page<PageBulletinForm> formPage = bulletinService.search(search, pageable);
+        verify(searchQueryRepository, times(1)).searchBulletin(search.getTitle(), search.getRegion(), pageable);
     }
 
     @Test

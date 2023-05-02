@@ -4,15 +4,13 @@ import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
-import com.catdog.help.repository.BulletinRepository;
-import com.catdog.help.repository.LikeRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.*;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.search.BulletinSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +33,7 @@ public class BulletinService {
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+    private final SearchQueryRepository searchQueryRepository;
 
 
     @Transactional
@@ -59,20 +58,13 @@ public class BulletinService {
 
     public Page<PageBulletinForm> getPage(Pageable pageable) {
         return bulletinRepository.findPageBy(pageable)
-                .map(PageBulletinForm::new);
-//        return getPageBulletinBoardForms(bulletinRepository.findPageBy(age(offset, limit));
+                .map(PageBulletinForm::new); // TODO: 2023-05-02 제거 고려
     }
-//
-//    public int countPages() {
-//        int total = (int) bulletinRepository.count();
-//        if (total <= 10) {
-//            return 1;
-//        } else if (total % 10 == 0) {
-//            return total / 10;
-//        } else {
-//            return total / 10 + 1;
-//        }
-//    }
+
+    public Page<PageBulletinForm> search(BulletinSearch search, Pageable pageable) {
+        return searchQueryRepository.searchBulletin(search.getTitle(), search.getRegion(), pageable)
+                .map(PageBulletinForm::new);
+    }
 
     public EditBulletinForm getEditForm(Long id) {
         Bulletin findBoard = bulletinRepository.findById(id)

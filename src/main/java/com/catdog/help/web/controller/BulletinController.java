@@ -9,6 +9,7 @@ import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.search.BulletinSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -65,8 +66,10 @@ public class BulletinController {
 
     /***  read  ***/
     @GetMapping
-    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
-        Page<PageBulletinForm> pageForms = bulletinService.getPage(pageable);
+    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                          @ModelAttribute("bulletinSearch") BulletinSearch search, Model model) {
+        Page<PageBulletinForm> pageForms = bulletinService.search(search, pageable);
+
         model.addAttribute("pageForms", pageForms.getContent());
 
         int offset = pageable.getPageNumber() / 5 * 5;
