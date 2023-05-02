@@ -14,6 +14,8 @@ import com.catdog.help.web.form.message.ReadMessageForm;
 import com.catdog.help.web.form.message.ReadMsgRoomForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,25 +54,13 @@ public class MsgRoomService {
         return new ReadMsgRoomForm(findRoom, forms);
     }
 
-    public List<PageMsgRoomForm> getPage(String nickname, int page) {
-        Long userId = userRepository.findByNickname(nickname).get().getId();
-        int offset = page * 10 - 10;
-        int limit = 10;
+    public Page<PageMsgRoomForm> getPage(String nickname, Pageable pageable) {
+        Long userId = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new)
+                .getId();
 
-//        return getPageMessageRoomForms(msgRoomRepository.findPageByUserId(userId, offset, limit));
-        return null;
-    }
-
-    public int countPages(String nickname) {
-        Long findUserId = userRepository.findByNickname(nickname).get().getId();
-        int totalRooms = Math.toIntExact(msgRoomRepository.countByUser(findUserId));
-        if (totalRooms <= 10) {
-            return 1;
-        } else if (totalRooms % 10 == 0) {
-            return totalRooms / 10;
-        } else {
-            return totalRooms / 10 + 1;
-        }
+        return msgRoomRepository.findPageByUserId(userId, pageable)
+                .map(PageMsgRoomForm::new);
     }
 
 
@@ -90,12 +80,6 @@ public class MsgRoomService {
                 .sender(sender)
                 .recipient(recipient)
                 .build();
-    }
-
-    private List<PageMsgRoomForm> getPageMessageRoomForms(List<MsgRoom> findRooms) {
-        return findRooms.stream()
-                .map(PageMsgRoomForm::new)
-                .collect(Collectors.toList());
     }
 
     private List<ReadMessageForm> getReadMessageForms(MsgRoom msgRoom) {

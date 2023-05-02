@@ -8,6 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Optional;
 
@@ -45,15 +49,6 @@ class MsgRoomRepositoryTest {
 
         //then
         assertThat(savedRoom).isEqualTo(room);
-    }
-
-    private static MsgRoom getMessageRoom(Item board, User sender, User recipient) {
-        MsgRoom room = MsgRoom.builder()
-                .item(board)
-                .sender(sender)
-                .recipient(recipient)
-                .build();
-        return room;
     }
 
     @Test
@@ -122,33 +117,33 @@ class MsgRoomRepositoryTest {
         assertThat(findRoom.get()).isEqualTo(room);
     }
 
-//    @Test
-//    @DisplayName("해당 유저의 메시지 룸 페이지 조회")
-//    void findPage() {
-//        //given
-//        User sender = getUser("sender@test.test", "발신자");
-//        User recipient = getUser("recipient@test.test", "수신자");
-//        userRepository.save(sender);
-//        userRepository.save(recipient);
-//
-//        Item boardBySender = getItem(sender, "발신자 작성글");
-//        Item boardByRecipient = getItem(recipient, "수신자 작성글");
-//        itemRepository.save(boardBySender);
-//        itemRepository.save(boardByRecipient);
-//
-//        MessageRoom roomA = getMessageRoom(boardByRecipient, sender, recipient);
-//        MessageRoom roomB = getMessageRoom(boardBySender, recipient, sender);
-//        msgRoomRepository.save(roomA);
-//        msgRoomRepository.save(roomB);
-//
-//        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
-//
-//        //when
-//        Page<MessageRoom> page = msgRoomRepository.findPageBySenderIdOrRecipientId(sender.getId(), pageRequest);
-//
-//        //then
-//        assertThat(page.getContent().size()).isEqualTo(2L);
-//    }
+    @Test
+    @DisplayName("해당 유저의 메시지 룸 페이지 조회")
+    void findPage() {
+        //given
+        User sender = getUser("sender@test.test", "발신자");
+        User recipient = getUser("recipient@test.test", "수신자");
+        userRepository.save(sender);
+        userRepository.save(recipient);
+
+        Item boardBySender = getItem(sender, "발신자 작성글");
+        Item boardByRecipient = getItem(recipient, "수신자 작성글");
+        itemRepository.save(boardBySender);
+        itemRepository.save(boardByRecipient);
+
+        MsgRoom roomA = getMessageRoom(boardByRecipient, sender, recipient);
+        MsgRoom roomB = getMessageRoom(boardBySender, recipient, sender);
+        msgRoomRepository.save(roomA);
+        msgRoomRepository.save(roomB);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<MsgRoom> page = msgRoomRepository.findPageByUserId(sender.getId(), pageRequest);
+
+        //then
+        assertThat(page.getContent().size()).isEqualTo(2L);
+    }
 
     @Test
     @DisplayName("해당 유저가 속한 메시지 룸 개수를 조회")
@@ -177,7 +172,13 @@ class MsgRoomRepositoryTest {
     }
 
 
-
+    private MsgRoom getMessageRoom(Item board, User sender, User recipient) {
+        return MsgRoom.builder()
+                .item(board)
+                .sender(sender)
+                .recipient(recipient)
+                .build();
+    }
 
 
     private Item getItem(User user, String title) {

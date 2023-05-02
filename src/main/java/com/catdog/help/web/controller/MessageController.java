@@ -1,20 +1,21 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.service.MsgRoomService;
 import com.catdog.help.service.MessageService;
+import com.catdog.help.service.MsgRoomService;
 import com.catdog.help.web.form.message.PageMsgRoomForm;
 import com.catdog.help.web.form.message.ReadMsgRoomForm;
 import com.catdog.help.web.form.message.SaveMessageForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
@@ -72,13 +73,32 @@ public class MessageController {
     }
 
     @GetMapping("/messages")
-    public String getRooms(@SessionAttribute(name = LOGIN_USER) String senderNick,
-                           @RequestParam("page") int page, Model model) {
-        List<PageMsgRoomForm> pageForms = msgRoomService.getPage(senderNick, page);
+    public String getRooms(@SessionAttribute(name = LOGIN_USER) String senderNick, Model model,
+                           @PageableDefault Pageable pageable) {
+        Page<PageMsgRoomForm> pageForms = msgRoomService.getPage(senderNick, pageable);
+        model.addAttribute("pageForms", pageForms.getContent());
 
-        int lastPage = msgRoomService.countPages(senderNick);
-        model.addAttribute("pageForms", pageForms);
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
         model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
         return "messages/list";
+    }
+
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
     }
 }

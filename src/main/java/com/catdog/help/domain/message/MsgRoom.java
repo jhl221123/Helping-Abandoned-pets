@@ -17,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "message_room") //수정 고려
 public class MsgRoom extends BaseEntity {
 
     @Id @GeneratedValue
