@@ -6,15 +6,13 @@ import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
-import com.catdog.help.repository.ItemRepository;
-import com.catdog.help.repository.LikeRepository;
-import com.catdog.help.repository.UploadFileRepository;
-import com.catdog.help.repository.UserRepository;
+import com.catdog.help.repository.*;
 import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.item.EditItemForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.item.ReadItemForm;
 import com.catdog.help.web.form.item.SaveItemForm;
+import com.catdog.help.web.form.search.ItemSearch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,6 +54,9 @@ class ItemServiceTest {
 
     @Mock
     LikeRepository likeRepository;
+
+    @Mock
+    SearchQueryRepository searchQueryRepository;
 
 
     @Test
@@ -104,7 +105,7 @@ class ItemServiceTest {
     @DisplayName("나눔글 페이지 조회")
     void getPage() {
         //given
-        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(0, 6, Sort.Direction.DESC, "id");
         Page<Item> page = Page.empty();
 
         doReturn(page).when(itemRepository)
@@ -115,8 +116,25 @@ class ItemServiceTest {
         verify(itemRepository, times(1)).findPageBy(pageable);
     }
 
+    @Test
+    @DisplayName("검색 조건에 맞는 나눔글 페이지 조회")
+    void searchPageByCond() {
+        //given
+        Pageable pageable = PageRequest.of(0, 6, Sort.Direction.DESC, "id");
+        Page<Item> page = Page.empty();
 
+        ItemSearch search = ItemSearch.builder()
+                .title("검색제목")
+                .itemName("검색상품명")
+                .build();
 
+        doReturn(page).when(searchQueryRepository)
+                .searchItem(search.getTitle(), search.getItemName(), pageable);
+
+        //expected
+        Page<PageItemForm> formPage = itemService.search(search, pageable);
+        verify(searchQueryRepository, times(1)).searchItem(search.getTitle(), search.getItemName(), pageable);
+    }
 
     @Test
     @DisplayName("나눔글 수정 양식 호출")

@@ -12,6 +12,7 @@ import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.item.EditItemForm;
 import com.catdog.help.web.form.item.ReadItemForm;
 import com.catdog.help.web.form.item.SaveItemForm;
+import com.catdog.help.web.form.search.ItemSearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -124,18 +125,20 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("나눔글 페이지 조회")
+    @DisplayName("검색 조건에 맞는 나눔글 페이지 조회")
     void getPage() throws Exception {
         //given
         Page page = Mockito.mock(Page.class);
         doReturn(page).when(itemService)
-                .getPage(any(Pageable.class));
+                .search(any(ItemSearch.class), any(Pageable.class));
 
         //expected
         mockMvc.perform(get("/items")
                         .contentType(APPLICATION_FORM_URLENCODED)
+                        .param(TITLE, "검색제목")
+                        .param(ITEM_NAME, "검색상품명")
                         .param(PAGE, String.valueOf(0))
-                        .param(SIZE, String.valueOf(10))
+                        .param(SIZE, String.valueOf(6))
                 )
                 .andExpect(view().name("items/list"));
     }

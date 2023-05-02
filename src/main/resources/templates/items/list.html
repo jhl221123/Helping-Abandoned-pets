@@ -6,6 +6,16 @@
 	<div th:replace="fragments/bodyHeader :: bodyHeader" />
 	<div>
 
+		<form th:object="${itemSearch}" class="form-inline" th:action="@{/items}">
+			<div class="form-group mb-2">
+				<input type="text" th:field="*{itemName}" class="form-control" placeholder="상품명"/>
+			</div>
+			<div class="form-group mx-sm-1 mb-2">
+				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+			</div>
+			<button type="submit" class="btn btn-primary mb-2">검색</button>
+		</form>
+
 		<div class="row row-cols-1 row-cols-md-3 g-4">
 			<div th:each="pageForm : ${pageForms}">
 				<div class="col" style="padding: 15px;">
@@ -30,7 +40,7 @@
 		        th:onclick="|location.href='@{/items(page=${offset-1})}'|" th:text="|◁|"></button>
 
 		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/items(page=${page})}'|" th:text="${page+1}"></button>
+		        th:onclick="|location.href='@{/items(page=${page}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}'|" th:text="${page+1}"></button>
 
 		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
 		        th:onclick="|location.href='@{/items(page=${lastPage+1})}'|" th:text="|▷|"></button>

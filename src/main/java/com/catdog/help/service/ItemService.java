@@ -7,11 +7,12 @@ import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.*;
+import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.item.EditItemForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.item.ReadItemForm;
 import com.catdog.help.web.form.item.SaveItemForm;
-import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.search.ItemSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class ItemService {
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+    private final SearchQueryRepository searchQueryRepository;
 
     @Transactional
     public void save(SaveItemForm form, String nickname) {
@@ -53,17 +55,11 @@ public class ItemService {
         return itemRepository.findPageBy(pageable)
                 .map(item -> getPageItemForm(item));
     }
-//
-//    public int countPage() {
-//        int total = (int) itemRepository.count();
-//        if (total <= 6) {
-//            return 1;
-//        } else if (total % 6 == 0) {
-//            return total / 6;
-//        } else {
-//            return total / 6 + 1;
-//        }
-//    }
+
+    public Page<PageItemForm> search(ItemSearch search, Pageable pageable) {
+        return searchQueryRepository.searchItem(search.getTitle(), search.getItemName(), pageable)
+                .map(item -> getPageItemForm(item));
+    }
 
     public EditItemForm getEditForm(Long id) {
         Item findBoard = itemRepository.findById(id)

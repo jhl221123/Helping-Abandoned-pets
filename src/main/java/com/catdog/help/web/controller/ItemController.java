@@ -7,6 +7,7 @@ import com.catdog.help.web.form.item.EditItemForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.item.ReadItemForm;
 import com.catdog.help.web.form.item.SaveItemForm;
+import com.catdog.help.web.form.search.ItemSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -65,8 +66,9 @@ public class ItemController {
 
     /***  read  ***/
     @GetMapping("/items")
-    public String getPage(@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
-        Page<PageItemForm> pageForms = itemService.getPage(pageable);
+    public String getPage(@ModelAttribute ItemSearch itemSearch,
+                          @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
+        Page<PageItemForm> pageForms = itemService.search(itemSearch, pageable);
         model.addAttribute("pageForms", pageForms.getContent());
 
         int offset = pageable.getPageNumber() / 5 * 5;
