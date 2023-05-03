@@ -5,11 +5,13 @@ import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.InquiryRepository;
+import com.catdog.help.repository.SearchQueryRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.search.InquirySearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,8 @@ public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
     private final UserRepository userRepository;
+    private final SearchQueryRepository searchQueryRepository;
+
 
     @Transactional
     public Long save(SaveInquiryForm form, String nickname) {
@@ -50,17 +54,11 @@ public class InquiryService {
         return inquiryRepository.findPageBy(pageable)
                 .map(PageInquiryForm::new);
     }
-//
-//    public int countPage() {
-//        int total = (int)inquiryRepository.countAll();
-//        if (total <= 10) {
-//            return 1;
-//        } else if (total % 10 == 0) {
-//            return total / 10;
-//        } else {
-//            return total / 10 + 1;
-//        }
-//    }
+
+    public Page<PageInquiryForm> search(InquirySearch search, Pageable pageable) {
+        return searchQueryRepository.searchInquiry(search.getTitle(), pageable)
+                .map(PageInquiryForm::new);
+    }
 
     public EditInquiryForm getEditForm(Long id) {
         Inquiry findBoard = inquiryRepository.findById(id)

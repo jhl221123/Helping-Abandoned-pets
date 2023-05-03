@@ -5,7 +5,7 @@
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader" />
 	<div>
-		<form th:object="${bulletinSearch}" class="form-inline" th:action="@{/bulletins(page=0)}">
+		<form th:object="${bulletinSearch}" class="form-inline" th:action="@{/bulletins}">
 			<div class="form-group mb-2">
 				<input type="text" th:field="*{region}" class="form-control" placeholder="지역"/>
 			</div>

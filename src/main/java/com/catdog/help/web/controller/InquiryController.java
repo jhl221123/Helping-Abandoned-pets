@@ -9,6 +9,7 @@ import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.search.InquirySearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,13 +57,13 @@ public class InquiryController {
     }
 
     @GetMapping("/inquiries")
-    public String getPage(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC)
-                          Pageable pageable, Model model, @SessionAttribute(name = LOGIN_USER) String nickname) {
+    public String getPage(@ModelAttribute InquirySearch inquirySearch, @SessionAttribute(name = LOGIN_USER) String nickname,
+                          @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
 
         Boolean isManager = userService.isManager(nickname);
         model.addAttribute("isManager", isManager);
 
-        Page<PageInquiryForm> pageForms = inquiryService.getPage(pageable);
+        Page<PageInquiryForm> pageForms = inquiryService.search(inquirySearch, pageable);
         model.addAttribute("pageForms", pageForms);
 
         int offset = pageable.getPageNumber() / 5 * 5;
@@ -79,7 +80,6 @@ public class InquiryController {
         }
         model.addAttribute("isEnd", isEnd);
 
-        model.addAttribute("nickname", nickname);
         return "inquiries/list";
     }
 

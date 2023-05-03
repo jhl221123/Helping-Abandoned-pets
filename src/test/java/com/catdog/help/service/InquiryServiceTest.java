@@ -4,10 +4,12 @@ import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.InquiryRepository;
+import com.catdog.help.repository.SearchQueryRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
+import com.catdog.help.web.form.search.InquirySearch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,9 @@ class InquiryServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    SearchQueryRepository searchQueryRepository;
+
 
     @Test
     @DisplayName("문의글 단건 조회")
@@ -54,10 +59,10 @@ class InquiryServiceTest {
     }
 
     @Test
-    @DisplayName("페이지 조회")
+    @DisplayName("문의글 페이지 조회")
     void readPage() {
         //given
-        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
         Page<Inquiry> page = Page.empty();
 
         doReturn(page).when(inquiryRepository)
@@ -66,6 +71,25 @@ class InquiryServiceTest {
         //expected
         Page<PageInquiryForm> formPage = inquiryService.getPage(pageable);
         verify(inquiryRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
+
+    @Test
+    @DisplayName("검색 조건에 맞는 문의글 페이지 조회")
+    void searchPageByCond() {
+        //given
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
+        Page<Inquiry> page = Page.empty();
+
+        InquirySearch search = InquirySearch.builder()
+                .title("검색제목")
+                .build();
+
+        doReturn(page).when(searchQueryRepository)
+                .searchInquiry(search.getTitle(), pageable);
+
+        //expected
+        Page<PageInquiryForm> formPage = inquiryService.search(search, pageable);
+        verify(searchQueryRepository, times(1)).searchInquiry(search.getTitle(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
     }
 
     @Test

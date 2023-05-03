@@ -1,6 +1,7 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.board.Item;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -62,6 +63,23 @@ public class SearchQueryRepository {
                 .fetchResults();
 
         List<Item> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    public Page<Inquiry> searchInquiry(String title, Pageable pageable) {
+        QueryResults<Inquiry> results = queryFactory
+                .selectFrom(inquiry)
+                .where(
+                        titleContain(title, INQUIRY)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(inquiry.id.desc())
+                .fetchResults();
+
+        List<Inquiry> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

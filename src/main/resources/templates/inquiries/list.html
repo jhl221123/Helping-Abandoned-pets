@@ -5,6 +5,13 @@
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader" />
 	<div>
+		<form th:object="${inquirySearch}" class="form-inline" th:action="@{/inquiries}">
+			<div class="form-group mb-2">
+				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+			</div>
+			<button type="submit" class="btn btn-primary mb-2">검색</button>
+		</form>
+
 		<table class="table table-striped">
 			<thead>
 			<tr style="text-align: center">
@@ -17,8 +24,8 @@
 			<tbody>
 			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
 				<td ></td>
-				<td th:text="${pageForm.secret} and ${pageForm.nickname != nickname} and ${!isManager} ? '비밀글' : ${pageForm.title}"
-				    th:onclick="${pageForm.secret} and ${pageForm.nickname != nickname} and ${!isManager} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
+				<td th:text="${pageForm.secret} and ${pageForm.nickname != session.login_user} and ${!isManager} ? '비밀글' : ${pageForm.title}"
+				    th:onclick="${pageForm.secret} and ${pageForm.nickname != session.login_user} and ${!isManager} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
 				    style="cursor:pointer;"></td>
 				<td th:text="${pageForm.nickname}"></td>
 				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}"></td>
@@ -30,7 +37,7 @@
 		        th:onclick="|location.href='@{/inquiries(page=${offset-1})}'|" th:text="|◁|"></button>
 
 		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/inquiries(page=${page})}'|" th:text="${page+1}"></button>
+		        th:onclick="|location.href='@{/inquiries(page=${page}, title=${inquirySearch.title})}'|" th:text="${page+1}"></button>
 
 		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
 		        th:onclick="|location.href='@{/inquiries(page=${lastPage+1})}'|" th:text="|▷|"></button>

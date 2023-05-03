@@ -12,6 +12,7 @@ import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.inquiry.EditInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.search.InquirySearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -121,7 +122,7 @@ class InquiryControllerTest {
     }
 
     @Test
-    @DisplayName("문의글 페이지 조회")
+    @DisplayName("검색 조건에 맞는 문의글 페이지 조회")
     void getPage() throws Exception {
         //given
         doReturn(false).when(userService)
@@ -129,14 +130,14 @@ class InquiryControllerTest {
 
         Page page = Mockito.mock(Page.class);
         doReturn(page).when(inquiryService)
-                .getPage(any(Pageable.class));
+                .search(any(InquirySearch.class), any(Pageable.class));
 
         //expected
         mockMvc.perform(get("/inquiries")
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(TITLE, "검색제목")
                         .param(PAGE, String.valueOf(0))
-                        .param(SIZE, String.valueOf(10))
                 )
                 .andExpect(view().name("inquiries/list"));
     }

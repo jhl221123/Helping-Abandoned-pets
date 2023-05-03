@@ -1,11 +1,10 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.board.Item;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.web.form.search.BulletinSearch;
-import com.catdog.help.web.form.search.ItemSearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,11 +59,6 @@ class SearchQueryRepositoryTest {
         bulletinRepository.save(regionCond);
         bulletinRepository.save(titleCond);
 
-        BulletinSearch search = BulletinSearch.builder()
-                .title(allCond.getTitle())
-                .region(allCond.getRegion())
-                .build();
-
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
         //when
@@ -87,11 +81,6 @@ class SearchQueryRepositoryTest {
         bulletinRepository.save(allCond);
         bulletinRepository.save(regionCond);
         bulletinRepository.save(titleCond);
-
-        BulletinSearch search = BulletinSearch.builder()
-                .title(allCond.getTitle())
-                .region(allCond.getRegion())
-                .build();
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -116,11 +105,6 @@ class SearchQueryRepositoryTest {
         bulletinRepository.save(regionCond);
         bulletinRepository.save(titleCond);
 
-        BulletinSearch search = BulletinSearch.builder()
-                .title(allCond.getTitle())
-                .region(allCond.getRegion())
-                .build();
-
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
         //when
@@ -144,11 +128,6 @@ class SearchQueryRepositoryTest {
         bulletinRepository.save(regionCond);
         bulletinRepository.save(titleCond);
 
-        BulletinSearch search = BulletinSearch.builder()
-                .title(allCond.getTitle())
-                .region(allCond.getRegion())
-                .build();
-
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
         //when
@@ -157,9 +136,6 @@ class SearchQueryRepositoryTest {
         //then
         assertThat(pages.getContent().size()).isEqualTo(3);
     }
-
-
-
 
     @Test
     @DisplayName("검색 조건으로 나눔글 조회 시 제목, 상품명 조건 모두 있는 경우")
@@ -170,15 +146,10 @@ class SearchQueryRepositoryTest {
 
         Item allCond = getItem(user, "검색제목", "검색상품");
         Item titleCond = getItem(user, "검색제목", "상품");
-        Item regionCond = getItem(user, "제목", "검색상품");
+        Item itemNameCond = getItem(user, "제목", "검색상품");
         itemRepository.save(allCond);
-        itemRepository.save(regionCond);
+        itemRepository.save(itemNameCond);
         itemRepository.save(titleCond);
-
-        ItemSearch search = ItemSearch.builder()
-                .title(allCond.getTitle())
-                .itemName(allCond.getItemName())
-                .build();
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -198,15 +169,10 @@ class SearchQueryRepositoryTest {
 
         Item allCond = getItem(user, "검색제목", "검색상품");
         Item titleCond = getItem(user, "검색제목", "상품");
-        Item regionCond = getItem(user, "제목", "검색상품");
+        Item itemNameCond = getItem(user, "제목", "검색상품");
         itemRepository.save(allCond);
-        itemRepository.save(regionCond);
+        itemRepository.save(itemNameCond);
         itemRepository.save(titleCond);
-
-        ItemSearch search = ItemSearch.builder()
-                .title(allCond.getTitle())
-                .itemName(allCond.getItemName())
-                .build();
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -218,7 +184,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 게시글 조회 시 상품명 조건만 있는 경우")
+    @DisplayName("검색 조건으로 나눔글 조회 시 상품명 조건만 있는 경우")
     void findItemByItemNameCond() {
         //given
         User user = getUser();
@@ -226,15 +192,10 @@ class SearchQueryRepositoryTest {
 
         Item allCond = getItem(user, "검색제목", "검색상품");
         Item titleCond = getItem(user, "검색제목", "상품");
-        Item regionCond = getItem(user, "제목", "검색상품");
+        Item itemNameCond = getItem(user, "제목", "검색상품");
         itemRepository.save(allCond);
-        itemRepository.save(regionCond);
+        itemRepository.save(itemNameCond);
         itemRepository.save(titleCond);
-
-        ItemSearch search = ItemSearch.builder()
-                .title(allCond.getTitle())
-                .itemName(allCond.getItemName())
-                .build();
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -254,15 +215,10 @@ class SearchQueryRepositoryTest {
 
         Item allCond = getItem(user, "검색제목", "검색상품");
         Item titleCond = getItem(user, "검색제목", "상품");
-        Item regionCond = getItem(user, "제목", "검색상품");
+        Item itemNameCond = getItem(user, "제목", "검색상품");
         itemRepository.save(allCond);
-        itemRepository.save(regionCond);
+        itemRepository.save(itemNameCond);
         itemRepository.save(titleCond);
-
-        ItemSearch search = ItemSearch.builder()
-                .title(allCond.getTitle())
-                .itemName(allCond.getItemName())
-                .build();
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -273,7 +229,57 @@ class SearchQueryRepositoryTest {
         assertThat(pages.getContent().size()).isEqualTo(3);
     }
 
+    @Test
+    @DisplayName("검색 조건으로 문의글 조회 시 제목 조건이 있는 경우")
+    void findInquiryByTitleCond() {
+        //given
+        User user = getUser();
+        userRepository.save(user);
 
+        Inquiry titleCond = getInquiry(user, "검색제목");
+        Inquiry noCond = getInquiry(user, "제목");
+        inquiryRepository.save(titleCond);
+        inquiryRepository.save(noCond);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Inquiry> pages = searchQueryRepository.searchInquiry("검색제목", pageRequest);
+
+        //then
+        assertThat(pages.getContent().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("검색 조건으로 문의글 조회 시 조건이 없는 경우")
+    void findInquiryByNoCond() {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Inquiry titleCond = getInquiry(user, "검색제목");
+        Inquiry noCond = getInquiry(user, "제목");
+        inquiryRepository.save(titleCond);
+        inquiryRepository.save(noCond);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Inquiry> pages = searchQueryRepository.searchInquiry(null, pageRequest);
+
+        //then
+        assertThat(pages.getContent().size()).isEqualTo(2);
+    }
+
+
+    private Inquiry getInquiry(User user, String title) {
+        return Inquiry.builder()
+                .user(user)
+                .title(title)
+                .content("내용")
+                .secret(false)
+                .build();
+    }
 
     private Item getItem(User user, String title, String itemName) {
         return Item.builder()
