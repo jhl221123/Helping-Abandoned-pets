@@ -1,3 +1,9 @@
+body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
 .my-background{
     height: 100vh;
     background: url('../img/flowers-garden.jpg') no-repeat center;
@@ -29,10 +35,123 @@ button {
 
 .comment-box {
     border: 1px solid #E7E7E7;
+    margin: 15px 0px 20px 0px;
     padding: 13px 10px;
+}
+
+.item-box {
+    border: 1px solid #E7E7E7;
+    margin: 15px 0px 20px 0px;
 }
 
 .board-title {
     font-weight: bold;
     font-size: 20px;
+}
+
+.nickname {
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    display: inline-block;
+}
+
+.mini-leadImage {
+    margin: 12px 0px 0px 12px;
+    vertical-align: sub;
+}
+
+.item-name {
+    margin: 0px 0px 8px 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.item-price {
+    margin: 0px 0px 12px 10px;
+    font-size: 0.8rem;
+    color: #515151;
+}
+
+.msgRoom-name {
+    padding: 60px 15px 0px 0px;
+    float: right;
+    vertical-align: text-bottom;
+}
+
+.regDate {
+    margin-bottom: 8px;
+    padding-top: 3px;
+    font-size: 0.8rem;
+    color: #6B6B6B;
+    display: inline-block;
+}
+
+/* Message */
+.from-me {
+  position: relative;
+  margin: 10px 0px 10px 350px;
+  padding: 10px 20px;
+  color: white;
+  background: #0B93F6;
+  border-radius: 25px;
+}
+.from-me::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  bottom: -2px;
+  right: -7px;
+  height: 20px;
+  border-right: 20px solid #0B93F6;
+  border-bottom-left-radius: 16px 14px;
+  -webkit-transform: translate(0, -2px);
+}
+.from-me::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  bottom: -2px;
+  right: -56px;
+  width: 26px;
+  height: 20px;
+  background: white;
+  border-bottom-left-radius: 10px;
+  -webkit-transform: translate(-30px, -2px);
+}
+
+.from-them {
+  position: relative;
+  margin: 10px 350px 10px 0px;
+  padding: 10px 20px;
+  background: #E5E5EA;
+  border-radius: 25px;
+  color: black;
+}
+.from-them::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  bottom: -2px;
+  left: -7px;
+  height: 20px;
+  border-left: 20px solid #E5E5EA;
+  border-bottom-right-radius: 16px 14px;
+  -webkit-transform: translate(0, -2px);
+}
+.from-them::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  bottom: -2px;
+  left: 4px;
+  width: 26px;
+  height: 20px;
+  background: white;
+  border-bottom-right-radius: 10px;
+  -webkit-transform: translate(-30px, -2px);
+}
+
+.clear {
+  clear: both;
 }

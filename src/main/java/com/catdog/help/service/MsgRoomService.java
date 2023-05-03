@@ -9,6 +9,7 @@ import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.ItemRepository;
 import com.catdog.help.repository.MsgRoomRepository;
 import com.catdog.help.repository.UserRepository;
+import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.message.PageMsgRoomForm;
 import com.catdog.help.web.form.message.ReadMessageForm;
 import com.catdog.help.web.form.message.ReadMsgRoomForm;
@@ -50,8 +51,9 @@ public class MsgRoomService {
     public ReadMsgRoomForm read(Long roomId) {
         MsgRoom findRoom = msgRoomRepository.findWithRefers(roomId)
                 .orElseThrow(MsgRoomNotFoundException::new);
+        ReadImageForm leadImage = new ReadImageForm(findRoom.getItem().getImages().get(0));
         List<ReadMessageForm> forms = getReadMessageForms(findRoom);
-        return new ReadMsgRoomForm(findRoom, forms);
+        return new ReadMsgRoomForm(findRoom,leadImage, forms);
     }
 
     public Page<PageMsgRoomForm> getPage(String nickname, Pageable pageable) {

@@ -1,6 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.message.Message;
 import com.catdog.help.domain.message.MsgRoom;
 import com.catdog.help.domain.user.Gender;
@@ -132,6 +133,7 @@ class MsgRoomServiceTest {
         User recipient = getUser("recipient@test.test", "수신자");
 
         Item board = getItem(recipient, "나눔상품");
+        setImage(board);
 
         MsgRoom room = getMessageRoom(board, sender, recipient);
 
@@ -145,6 +147,14 @@ class MsgRoomServiceTest {
         assertThat(form.getItemName()).isEqualTo("테스트상품");
     }
 
+
+    private void setImage(Item board) {
+        UploadFile image = UploadFile.builder()
+                .storeFileName("저장이름")
+                .uploadFileName("업로드이름")
+                .build();
+        image.addBoard(board);
+    }
 
     private Message getMessage(User sender, MsgRoom room) {
         return Message.builder()
