@@ -6,7 +6,7 @@
 	<div th:replace="fragments/bodyHeader :: bodyHeader" />
 	<div>
 		<form th:object="${inquirySearch}" class="form-inline" th:action="@{/inquiries}">
-			<div class="form-group mb-2">
+			<div class="form-group mx-sm-1 mb-2">
 				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
 			</div>
 			<button type="submit" class="btn btn-primary mb-2">검색</button>

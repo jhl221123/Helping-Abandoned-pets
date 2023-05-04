@@ -24,24 +24,35 @@ button {
 	}
 
 .field-error {
-    border-color: #dc3545;
     color: #dc3545;
+    border-color: #dc3545;
 }
 
 .division-line {
-    border-top: 1px solid #E7E7E7;
     margin: 0px 0px 10px 0px;
+    border-top: 1px solid #E7E7E7;
+}
+
+.vertical-division-line {
+    margin: 0px 10px;
+    border-left: 2px solid #E7E7E7;
 }
 
 .comment-box {
-    border: 1px solid #E7E7E7;
-    margin: 15px 0px 20px 0px;
     padding: 13px 10px;
+    margin: 15px 0px 20px 0px;
+    border: 1px solid #E7E7E7;
 }
 
 .item-box {
-    border: 1px solid #E7E7E7;
     margin: 15px 0px 20px 0px;
+    border: 1px solid #E7E7E7;
+}
+
+.text-box {
+    padding: 13px 10px;
+    margin: 15px 0px 20px 0px;
+    white-space: pre-wrap;
 }
 
 .board-title {
@@ -50,10 +61,10 @@ button {
 }
 
 .nickname {
+    display: inline-block;
     margin-bottom: 8px;
     font-weight: bold;
     font-size: 1rem;
-    display: inline-block;
 }
 
 .mini-leadImage {
@@ -69,8 +80,8 @@ button {
 
 .item-price {
     margin: 0px 0px 12px 10px;
-    font-size: 0.8rem;
     color: #515151;
+    font-size: 0.8rem;
 }
 
 .msgRoom-name {
@@ -79,12 +90,20 @@ button {
     vertical-align: text-bottom;
 }
 
-.regDate {
+.regName {
+    display: inline-block;
     margin-bottom: 8px;
     padding-top: 3px;
-    font-size: 0.8rem;
     color: #6B6B6B;
+    font-size: 0.8rem;
+}
+
+.regDate {
     display: inline-block;
+    margin-bottom: 8px;
+    padding-top: 3px;
+    color: #6B6B6B;
+    font-size: 0.8rem;
 }
 
 /* Message */

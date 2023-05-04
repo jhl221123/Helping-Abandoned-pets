@@ -5,30 +5,25 @@
 <div class="container">
 	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <!--	start bulletin board   -->
-	<div class="container">
-		<div class="row">
-			<div class="col-sm-11 board-title text-left" style="justify-content: start">
-				<p th:text="${readForm.title}">제목</p>
-			</div>
-			<div class="col-sm-1" style="justify-content: end">
-				<button type="button" class="btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
-					<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
-					<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
-				</button>
-			</div>
+	<div class="row">
+		<div class="col-sm-11 board-title text-left">
+			<p th:text="${readForm.title}">제목</p>
 		</div>
-		<div >
-			<div class="division-line"></div>
-				<div class="row">
-					<p th:text="${readForm.nickname}">작성자</p>&nbsp;&nbsp;&nbsp;
-					<p style="border-left: 2px solid #E7E7E7;"></p>&nbsp;&nbsp;&nbsp;
-					<p class="text-muted" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>
-				</div>
-				<div class="row float-right">
-					<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
-					<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
-				</div>
+		<div class="col-sm-1" style="justify-content: end">
+			<button type="button" class="btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
+				<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
+				<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
+			</button>
 		</div>
+	</div>
+	<div class="division-line"></div>
+	<span class="regName" th:text="${readForm.nickname}">작성자</span>
+	<span class="vertical-division-line"></span>
+	<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
+
+	<div class="row float-right">
+		<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
+		<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
 	</div>
 
 	<!-- Carousel -->
@@ -52,10 +47,10 @@
 		</a>
 	</div>
 
-	<div class="form-group">
-		<label for="content"></label>
-		<textarea class="form-control" id="content" name="content" th:text="${readForm.content}" rows="12" readonly>내용</textarea>
-	</div>
+	<div class="division-line"></div>
+	<div class="text-box" id="content" name="content" th:text="${readForm.content}" rows="12" readonly></div>
+	<div class="division-line"></div>
+
 	<div class="float-right">
 		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins(page=0)}'|">목록으로</button>
 		<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
