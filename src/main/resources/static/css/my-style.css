@@ -38,10 +38,15 @@ button {
     border-left: 2px solid #E7E7E7;
 }
 
-.comment-box {
+.comment-input-box {
     padding: 13px 10px;
     margin: 15px 0px 20px 0px;
     border: 1px solid #E7E7E7;
+}
+
+.child-comment {
+    background-color: #F3F3F3;
+    padding: 15px 0px 0px 15px
 }
 
 .item-box {

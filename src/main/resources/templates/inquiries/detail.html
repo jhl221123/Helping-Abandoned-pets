@@ -43,26 +43,28 @@
 	<!--       parent comment list     -->
 
 	<div th:each="form : ${commentForms}">
-		<div class="row">
-			<p th:text="${form.nickname}">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<p class="text-left text-muted" th:text="${#temporals.format(form.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
-			<div>
-				<a th:if="${form.nickname == session.login_user}" class="text-muted"
-				   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
-				<a th:if="${form.nickname == session.login_user}" class="text-muted"
-				   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
-			</div>
-		</div>
-		<div>
-			<p th:text="${form.content}">content</p>
-		</div>
-		<a th:href="@{/comments/child(boardId=${readForm.id}, clickReply=${form.id})}">답글 달기</a>
-		<div class="division-line"></div>
 
+		<div style="padding: 0px 0px 0px 5px">
+			<span class="nickname" th:text="${form.nickname}">nickname</span>
+			<span style="margin: 0px 0px 0px 10px">
+				<a style="font-size: 0.9rem;" th:if="${form.nickname == session.login_user}" class="text-muted"
+				   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
+				<a style="font-size: 0.9rem;" th:if="${form.nickname == session.login_user}" class="text-muted"
+				   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
+			</span>
+			<div>
+				<p style="margin: 0px;" th:text="${form.content}">content</p>
+			</div>
+			<span class="regDate" th:text="${#temporals.format(form.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
+			<div>
+				<a th:href="@{/comments/child(boardId=${readForm.id}, clickReply=${form.id})}">답글 달기</a>
+			</div>
+			<div class="division-line" style="margin: 0px;"></div>
+		</div>
 		<!--    parent comment update form   -->
 
 		<div th:if="${editCommentForm != null}">
-			<div th:if="${editCommentForm.commentId == form.id}" class="comment-box" >
+			<div th:if="${editCommentForm.commentId == form.id}" class="comment-input-box" >
 
 				<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
 				      th:object="${editCommentForm}" th:method="post">
@@ -86,7 +88,7 @@
 
 		<!--    child comment create form   -->
 
-		<div th:if="${clickReply == form.id}" class="comment-box" >
+		<div th:if="${clickReply == form.id}" class="comment-input-box" >
 
 			<form role="form" th:action="@{/comments/child(boardId=${readForm.id}, parentId=${form.id})}"
 			      th:object="${commentForm}" th:method="post">
@@ -107,28 +109,27 @@
 
 		</div>
 
-		<!--       child comment list      -->
+	<!--       child comment list      -->
 
-		<div style="background-color: #F3F3F3" th:each="child : ${form.child}">
-			<div style="margin-left: 2em" class="row">
-				<p th:text="|┕ ${child.nickname}|">nickname</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<p class="text-left text-muted" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</p>&nbsp;&nbsp;
-				<div>
-					<a th:if="${child.nickname == session.login_user}" class="text-muted"
-					   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
-					<a th:if="${child.nickname == session.login_user}" class="text-muted"
-					   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
-				</div>
+		<div class="child-comment" th:each="child : ${form.child}">
+			<span style="padding: 0px 5px 0px 0px" th:text="|┕|"></span>
+			<span class="nickname" th:text="${child.nickname}">nickname</span>
+			<span style="margin: 0px 0px 0px 10px">
+				<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
+				   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
+				<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
+				   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
+			</span>
+			<div>
+				<p style="margin: 0px; padding: 0px 0px 0px 25px;" th:text="${child.content}">content</p>
 			</div>
-			<div style="margin-left: 4em" >
-				<p th:text="${child.content}">content</p>
-			</div>
+			<span class="regDate" style="padding: 0px 0px 0px 25px;" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
 			<div class="division-line"></div>
 
 			<!--    child comment update form   -->
 
 			<div th:if="${editCommentForm != null}">
-				<div th:if="${editCommentForm.commentId == child.id}" class="comment-box" >
+				<div th:if="${editCommentForm.commentId == child.id}" class="comment-input-box" >
 					<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
 					      th:object="${editCommentForm}" th:method="post">
 						<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
@@ -162,7 +163,7 @@
 	<!--    parent comment create form   -->
 
 	<form role="form" th:action="@{/comments/parent(boardId=${readForm.id})}" th:object="${commentForm}"
-	      th:method="post" class="comment-box">
+	      th:method="post" class="comment-input-box">
 		<p th:text="${session.login_user}" class="col-form-label attribute-name">닉네임</p>
 		<div class="row">
 			<div class="col-sm-10">
