@@ -4,7 +4,7 @@
 <link href="/css/sign-in.css" rel="stylesheet">
 <body class="text-center">
 	<form class="form-signin" role="form" th:action th:object="${loginForm}" method="post">
-		<button type="button" class="btm_image" th:onclick="|location.href='@{/}'|">
+		<button type="button" class="btn btm_image" style="border:none;" th:onclick="|location.href='@{/}'|">
 			<img class="mb-4" th:src="|/img/cat-paw-sky.png|" alt="" width="72" height="72">
 		</button>
 		<h1 class="h3 mb-3 font-weight-normal">로그인 해주세옹</h1>

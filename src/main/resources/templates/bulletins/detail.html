@@ -10,7 +10,7 @@
 			<p th:text="${readForm.title}">제목</p>
 		</div>
 		<div class="col-sm-1" style="justify-content: end">
-			<button type="button" class="btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
+			<button type="button" class="btn btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
 				<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
 				<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
 			</button>
