@@ -1,31 +1,12 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header">
-	<title>Hello</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body class="my-background">
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
 <div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader" />
-	<div class="jumbotron">
-		<h1>멍이 냥이</h1>
-		<p class="lead">회원</p>
-		<p>
-			<a class="btn btn-lg btn-secondary" href="/users/new">회원 가입</a>
-			<a class="btn btn-lg btn-secondary" href="/users/login">로그인</a>
-		</p>
-		<p class="lead">게시판</p>
-		<p>
-			<a class="btn btn-lg btn-dark" href="/bulletins?page=0">게시판</a>
-			<a class="btn btn-lg btn-dark" href="/items?page=0">나눔 장터</a>
-		</p>
-		<p class="lead">기타 기능</p>
-		<p>
-			<a class="btn btn-lg btn-info" href="/messages?page=0">쪽지함</a>
-			<a class="btn btn-lg btn-info" href="/inquiries?page=0">문의함</a>
-		</p>
+	<div style="text-align: center;">
+		<img th:src="|/img/mini_map.png|" alt="미니지도">
 	</div>
-	<div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+</section>
 </body>
 </html>

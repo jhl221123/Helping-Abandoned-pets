@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html th:fragment="layout (content)" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	      crossorigin="anonymous">
+	<!-- Custom styles for this template -->
+	<link href="/css/jumbotron-narrow.css" rel="stylesheet">
+	<link href="/css/my-style.css" rel="stylesheet">
+	<!-- Pretendard font -->
+	<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard-dynamic-subset.css" />
+	<title>Hello, world!</title>
+</head>
+<body>
+<div class="container">
+	<bodyHeader>
+		<h1 class="main-logo text-center"><a class="main-logo-link" href="/" title="Home">멍이 냥이</a></h1>
+		<div class="division-line"></div>
+		<nav class="nav">
+			<a class="p-2 text-muted" href="/bulletins?page=0">게시판</a>
+			<a class="p-2 text-muted" href="/items?page=0">나눔 장터</a>
+			<a class="p-2 text-muted" href="/messages?page=0">쪽지함</a>
+			<a class="p-2 text-muted" href="/inquiries?page=0">문의함</a>
+			<a th:if="${session.login_user == null}" class="p-2 text-muted" style="margin-left: auto;" href="/users/login">로그인</a>
+			<a th:if="${session.login_user == null}" class="p-2 text-muted" href="/users/new">회원가입</a>
+			<a th:if="${session.login_user != null}" class="p-2 text-muted" style="margin-left: auto;" href="/users/detail">마이페이지</a>
+			<a th:if="${session.login_user != null}" class="p-2 text-muted" href="/users/logout">로그아웃</a>
+		</nav>
+		<div class="division-line"></div>
+	</bodyHeader>
+
+	<div th:replace="${content}">
+	</div>
+
+	<footer>
+		<div class="division-line"></div>
+		<p>&copy; Helping Abandoned pets</p>
+	</footer>
+</div>
+</body>
+</html>

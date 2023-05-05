@@ -17,6 +17,6 @@ public class HomeController {
         }
 
         model.addAttribute("nickname", nickname);
-        return "loginHome";
+        return "home";
     }
 }
