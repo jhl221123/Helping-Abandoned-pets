@@ -43,6 +43,22 @@ button {
     box-shadow:none !important;
 }
 
+.utility-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 50px;
+    font-size: 15px;
+    color: #333;
+}
+
+.comment-write-button {
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+    border-width: 0px 0px 0px 1px;
+    color: #333;
+}
+
 .field-error {
     color: #dc3545;
     border-color: #dc3545;
@@ -58,15 +74,62 @@ button {
     border-left: 2px solid #E7E7E7;
 }
 
+.views-icon {
+    vertical-align: sub;
+}
+
+.like-icon {
+    vertical-align: sub;
+}
+
+.comment-nickname-icon {
+    vertical-align: sub;
+    margin-left: 15px;
+}
+
+.comment-area {
+    padding: 10px;
+    background-color: #F9F9F9;
+}
+
+.comment-icon {
+    vertical-align: sub;
+}
+
 .comment-input-box {
-    padding: 13px 10px;
-    margin: 15px 0px 20px 0px;
-    border: 1px solid #E7E7E7;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #ced4da;
+    background-color: #FFFFFF;
+}
+
+.comment-textarea {
+    border-radius: 0px;
+    border: 1px solid #ced4da;
+    border-width: 1px 0px 0px;
+}
+
+.comment-nickname {
+    display: inline-block;
+    padding: 11px 0px 0px 5px;
+    font-weight: 550;
+    font-size: 1rem;
+}
+
+.parent-comment-content {
+    margin: 0px;
+    white-space: pre-wrap;
+}
+
+.child-comment-content {
+    margin: 0px;
+    padding: 0px 0px 0px 25px;
+    white-space: pre-wrap;
 }
 
 .child-comment {
-    background-color: #F3F3F3;
-    padding: 15px 0px 0px 15px
+    padding: 15px 0px 10px 15px;
+    background-color: #E9E9E9;
 }
 
 .item-box {
