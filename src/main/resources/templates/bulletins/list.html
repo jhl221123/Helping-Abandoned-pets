@@ -40,7 +40,7 @@
 			<ul class="pagination">
 				<li class="page-item">
 					<a th:if="${offset > 0}" class="page-link"
-					   th:href="@{/bulletins(page=${offset-1})}">&laquo;</a>
+					   th:href="@{/bulletins(page=${offset-1}, region=${bulletinSearch.region}, title=${bulletinSearch.title})}">&laquo;</a>
 				</li>
 
 				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
@@ -50,7 +50,7 @@
 
 				<li class="page-item">
 					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
-					   th:href="@{/bulletins(page=${lastPage+1})}">&raquo;</a>
+					   th:href="@{/bulletins(page=${lastPage+1}, region=${bulletinSearch.region}, title=${bulletinSearch.title})}">&raquo;</a>
 				</li>
 			</ul>
 		</nav> <!--	/pagination -->
