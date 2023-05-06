@@ -10,8 +10,10 @@
 			<div class="form-group mx-sm-1 mb-2">
 				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
 			</div>
-			<button type="submit" class="btn btn-primary mb-2">검색</button>
-			<button type="button" class="btn btn-primary mb-2" style="margin-left: auto;" th:onclick="|location.href='@{/bulletins/new}'|">글 작성</button>
+			<button type="submit" class="utility-button mb-2">
+				<img th:src="|/img/search.png|" width="25" height="25"/>
+			</button>
+			<a class="utility-button mb-2" style="margin-left: auto;" th:href="@{/bulletins/new}">글 작성</a>
 		</form>
 
 		<table class="table table-striped">
