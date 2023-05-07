@@ -22,7 +22,7 @@ public class EditBulletinForm {
     private String region;
 
     @NotBlank
-    @Length(max = 25)
+    @Length(max = 30)
     private String title;
 
     @NotBlank

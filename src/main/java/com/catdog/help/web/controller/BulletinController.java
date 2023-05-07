@@ -147,11 +147,14 @@ public class BulletinController {
         }
         EditBulletinForm editForm = bulletinService.getEditForm(id);
         model.addAttribute("editForm", editForm);
+
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
         return "bulletins/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
+    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("editForm") EditBulletinForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
         if (!isWriter(editForm.getId(), nickname)) {
@@ -161,6 +164,9 @@ public class BulletinController {
         if (bindingResult.hasErrors()) {
             EditBulletinForm form = bulletinService.getEditForm(id);
             editForm.setOldImages(form.getOldImages());
+
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
             return "bulletins/edit";
         }
 

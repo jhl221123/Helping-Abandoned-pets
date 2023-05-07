@@ -14,7 +14,7 @@ import java.util.List;
 public class SaveBulletinForm {
 
     @NotBlank
-    @Length(max = 25)
+    @Length(max = 30)
     private String title;
 
     @NotBlank
