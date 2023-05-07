@@ -1,44 +1,45 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<form role="form" action="/bulletins/new" th:object="${saveForm}" enctype="multipart/form-data"
-	      th:method="post">
-		<div class="form-group">
-			<label>닉네임</label>
-			<p type="text" class="form-control" th:text="${session.login_user}" readonly></p>
-		</div>
-		<div class="form-group">
-			<label th:for="region">지역</label>
-			<input type="text" th:field="*{region}" th:errorclass="field-error" class="form-control"
-			       placeholder="지역을 입력하세요">
-			<p class="field-error" th:errors="*{region}">입력 오류</p>
-		</div>
-		<div class="form-group">
-			<label th:for="title">제목</label>
-			<input type="text" th:field="*{title}" th:errorclass="field-error" class="form-control"
-			       placeholder="제목을 입력하세요">
-			<p class="field-error" th:errors="*{title}">입력 오류</p>
-		</div>
-		<div class="form-group">
-			<label th:for="content">내용</label>
-			<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="5"></textarea>
-			<p class="field-error" th:errors="*{content}">입력 오류</p>
-		</div>
-		<div class="form-group">
-			<label th:for="images">이미지</label>
-			<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
-		</div>
-		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins?page=0}'|">취소</button>
-			<button type="submit" class="btn btn-primary">작성</button>
-		</div>
-	</form>
-	<br/>
-	<br/>
-	<div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+<section>
+	<div class="container">
+		<form role="form" action="/bulletins/new" th:object="${saveForm}" enctype="multipart/form-data"
+		      th:method="post" class="bulletin-write-box">
+			<div class="bulletin-title-box">
+				<span>
+					<label style="display: none;" th:for="title">제목</label>
+					<input class="bulletin-title form-control" style="border: none;" type="text" th:field="*{title}" th:errorclass="field-error"
+					       placeholder="제목">
+				</span>
+				<span class="float-right">
+					<label style="display: none;" th:for="region">지역</label>
+					<select th:field="*{region}" th:errorclass="field-error" class="form-select">
+						<option value="">지역 선택</option>
+						<option th:each="region : ${regions}" th:value="${region}"
+						        th:text="${region}">region</option>
+					</select>
+				</span>
+			</div>
+			<span class="field-error" th:errors="*{title}">입력 오류</span>
+			<div class="division-line"></div>
+			<div class="form-group">
+				<label style="display: none;" th:for="content">내용</label>
+				<textarea style="border: none;" th:errorclass="field-error" class="form-control" th:field="*{content}" rows="10" placeholder="내용"></textarea>
+				<p class="field-error" th:errors="*{content}">입력 오류</p>
+			</div>
+			<div class="division-line"></div>
+			<div class="form-group">
+				<label style="display: none;" th:for="images">이미지</label>
+				<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
+			</div>
+			<div class="float-right">
+				<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/bulletins?page=0}'|">취소</button>
+				<button type="submit" class="btn btn-primary">작성</button>
+			</div>
+		</form>
+		<br/>
+		<br/>
+	</div> <!-- /container -->
+</section>
 </body>
 </html>

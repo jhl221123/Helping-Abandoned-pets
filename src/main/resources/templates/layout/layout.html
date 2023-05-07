@@ -29,7 +29,7 @@
 			<a th:if="${session.login_user != null}" class="p-2 text-muted" style="margin-left: auto;" href="/users/detail">마이페이지</a>
 			<a th:if="${session.login_user != null}" class="p-2 text-muted" href="/users/logout">로그아웃</a>
 		</nav>
-		<div class="division-line"></div>
+		<div style="margin-bottom: 40px;" class="division-line"></div>
 	</bodyHeader>
 
 	<div th:replace="${content}">

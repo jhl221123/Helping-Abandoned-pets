@@ -25,8 +25,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.catdog.help.domain.board.RegionConst.*;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Controller
@@ -47,6 +49,9 @@ public class BulletinController {
     public String getSaveForm(Model model) {
         SaveBulletinForm saveForm = new SaveBulletinForm();
         model.addAttribute("saveForm", saveForm);
+
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
         return "bulletins/create";
     }
 
@@ -55,6 +60,8 @@ public class BulletinController {
                             @Validated @ModelAttribute("saveForm") SaveBulletinForm saveForm,
                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
             return "bulletins/create";
         }
 
@@ -190,6 +197,11 @@ public class BulletinController {
         return "redirect:/bulletins?page=0";
     }
 
+
+    private List<String> getRegions() {
+        return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
+                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONNAM, JEONBUK, GYEONGBUK, GYEONGNAM, JEJU);
+    }
 
     private int getLastPage(int limit, int endPage) {
         int lastPage = Math.min(endPage, limit);

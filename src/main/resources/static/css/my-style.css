@@ -25,6 +25,21 @@ body {
     background-size: cover;
 }
 
+.field-error {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.division-line {
+    margin: 0px 0px 10px 0px;
+    border-top: 1px solid #E7E7E7;
+}
+
+.vertical-division-line {
+    margin: 0px 10px;
+    border-left: 2px solid #E7E7E7;
+}
+
 .my-btn-upload{
     padding: 6px 25px;
     background-color:#FF6600;
@@ -52,26 +67,36 @@ button {
     color: #333;
 }
 
-.comment-write-button {
-    padding: 10px 20px;
-    border: 1px solid #ced4da;
-    border-width: 0px 0px 0px 1px;
-    color: #333;
+.bulletin-write-box {
+    padding: 0px 10px;
 }
 
-.field-error {
-    color: #dc3545;
-    border-color: #dc3545;
+.bulletin-title-box {
+    padding-bottom:5px;
 }
 
-.division-line {
-    margin: 0px 0px 10px 0px;
-    border-top: 1px solid #E7E7E7;
+.bulletin-title {
+    display: inline-block;
+    width: 700px;
+    height: 37px;
 }
 
-.vertical-division-line {
-    margin: 0px 10px;
-    border-left: 2px solid #E7E7E7;
+/* IE 10, 11의 네이티브 화살표 숨기기 */
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  width: 110px; /* 원하는 너비설정 */
+  padding: .3em .5em; /* 여백으로 높이 설정 */
+  font-family: inherit;  /* 폰트 상속 */
+  background: url(https://farm1.staticflickr.com/379/19928272501_4ef877c265_t.jpg) no-repeat 95% 50%; /* 네이티브 화살표 대체 */
+  border: 1px solid #999;
+  border-radius: 0px; /* iOS 둥근모서리 제거 */
+  -webkit-appearance: none; /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+  color: #777777;
 }
 
 .views-icon {
@@ -90,6 +115,10 @@ button {
 .comment-area {
     padding: 10px;
     background-color: #F9F9F9;
+}
+
+.comment-list {
+    margin-bottom: 60px;
 }
 
 .comment-icon {
@@ -114,6 +143,13 @@ button {
     padding: 11px 0px 0px 5px;
     font-weight: 550;
     font-size: 1rem;
+}
+
+.comment-write-button {
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+    border-width: 0px 0px 0px 1px;
+    color: #333;
 }
 
 .parent-comment-content {
@@ -261,4 +297,14 @@ button {
 
 .clear {
   clear: both;
+}
+
+input[type=file]::file-selector-button {
+  width: 150px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid #C0C0C0;
+  border-radius: 10px;
+  color: #777777;
+  cursor: pointer;
 }

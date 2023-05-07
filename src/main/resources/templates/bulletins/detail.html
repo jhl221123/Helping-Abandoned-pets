@@ -74,7 +74,7 @@
 		<br/>
 		<br/>
 
-		<!--    start comment list    -->
+		<!--    comment area    -->
 		<div class="comment-area">
 			<div th:if="${commentForms != null}">
 				<span style="font-weight: bold;">댓글</span>
@@ -82,86 +82,32 @@
 				<div class="division-line"></div>
 			</div>
 
-			<!--       parent comment list     -->
-			<div th:each="form : ${commentForms}">
-				<div style="padding: 0px 0px 0px 5px">
-					<span class="nickname" th:text="${form.nickname}">nickname</span>
-					<span style="margin: 0px 0px 0px 10px">
-						<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
-						   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
-						<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
-						   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
-					</span>
-					<div>
-						<p class="parent-comment-content" th:text="${form.content}">content</p>
-					</div>
-					<span class="regDate" th:text="${#temporals.format(form.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
-					<div>
-						<a th:href="@{/comments/child(boardId=${readForm.id}, clickReply=${form.id})}">답글 달기</a>
-					</div>
-					<div class="division-line" style="margin: 0px;"></div>
-				</div>
-
-				<!--    parent comment update form   -->
-				<div th:if="${editCommentForm != null}">
-					<div th:if="${editCommentForm.commentId == form.id}" class="comment-input-box" >
-						<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
-						      th:object="${editCommentForm}" th:method="post">
-							<div>
-								<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
-								<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
-								<button class="float-right comment-write-button" type="button"
-								        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
-								<button class="float-right comment-write-button" type="submit">수정</button>
-							</div>
-							<div>
-								<label th:for="*{content}" style="display: none;"></label>
-								<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="댓글을 작성해주세요." rows="3"></textarea>
-								<p class="field-error" th:errors="*{content}">입력 오류</p>
-							</div>
-						</form>
-					</div>
-				</div><!--    parent comment update form   -->
-
-				<!--    child comment create form   -->
-				<div th:if="${clickReply == form.id}" class="comment-input-box" >
-					<form role="form" th:action="@{/comments/child(boardId=${readForm.id}, parentId=${form.id})}"
-					      th:object="${commentForm}" th:method="post">
+			<!--    comment list    -->
+			<div class="comment-list">
+				<!--       parent comment list     -->
+				<div th:each="form : ${commentForms}">
+					<div style="padding: 0px 0px 0px 5px">
+						<span class="nickname" th:text="${form.nickname}">nickname</span>
+						<span style="margin: 0px 0px 0px 10px">
+							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
+							   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
+							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
+							   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
+						</span>
 						<div>
-							<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
-							<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
-							<button class="float-right comment-write-button" type="button"
-							        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
-							<button class="float-right comment-write-button" type="submit">등록</button>
+							<p class="parent-comment-content" th:text="${form.content}">content</p>
 						</div>
+						<span class="regDate" th:text="${#temporals.format(form.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
 						<div>
-							<label th:for="*{content}" style="display: none;"></label>
-							<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="답글을 작성해주세요." rows="3"></textarea>
-							<p class="field-error" th:errors="*{content}">입력 오류</p>
+							<a th:href="@{/comments/child(boardId=${readForm.id}, clickReply=${form.id})}">답글 달기</a>
 						</div>
-					</form>
-				</div><!--    child comment create form   -->
-
-				<!--       child comment list      -->
-				<div class="child-comment" th:each="child : ${form.child}">
-					<span style="padding: 0px 5px 0px 0px" th:text="|┕|"></span>
-					<span class="nickname" th:text="${child.nickname}">nickname</span>
-					<span style="margin: 0px 0px 0px 10px">
-						<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
-						   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
-						<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
-						   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
-					</span>
-					<div>
-						<p class="child-comment-content" th:text="${child.content}">content</p>
+						<div class="division-line" style="margin: 0px;"></div>
 					</div>
-					<span class="regDate" style="padding: 0px 0px 0px 25px; margin: 0px;" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
-					<div class="division-line"></div>
 
-					<!--    child comment update form   -->
+					<!--    parent comment update form   -->
 					<div th:if="${editCommentForm != null}">
-						<div th:if="${editCommentForm.commentId == child.id}" class="comment-input-box" style="margin-right: 15px;">
-							<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
+						<div th:if="${editCommentForm.commentId == form.id}" class="comment-input-box" >
+							<form role="form" th:action="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}"
 							      th:object="${editCommentForm}" th:method="post">
 								<div>
 									<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
@@ -177,16 +123,68 @@
 								</div>
 							</form>
 						</div>
-					</div><!--    child comment update form   -->
-				</div><!--       child comment list      -->
+					</div><!--    parent comment update form   -->
 
-			</div><!--       parent comment list     -->
+					<!--    child comment create form   -->
+					<div th:if="${clickReply == form.id}" class="comment-input-box" >
+						<form role="form" th:action="@{/comments/child(boardId=${readForm.id}, parentId=${form.id})}"
+						      th:object="${commentForm}" th:method="post">
+							<div>
+								<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
+								<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
+								<button class="float-right comment-write-button" type="button"
+								        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
+								<button class="float-right comment-write-button" type="submit">등록</button>
+							</div>
+							<div>
+								<label th:for="*{content}" style="display: none;"></label>
+								<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="답글을 작성해주세요." rows="3"></textarea>
+								<p class="field-error" th:errors="*{content}">입력 오류</p>
+							</div>
+						</form>
+					</div><!--    child comment create form   -->
 
-		<!--	   end comment list        -->
+					<!--       child comment list      -->
+					<div class="child-comment" th:each="child : ${form.child}">
+						<span style="padding: 0px 5px 0px 0px" th:text="|┕|"></span>
+						<span class="nickname" th:text="${child.nickname}">nickname</span>
+						<span style="margin: 0px 0px 0px 10px">
+							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
+							   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
+							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
+							   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
+						</span>
+						<div>
+							<p class="child-comment-content" th:text="${child.content}">content</p>
+						</div>
+						<span class="regDate" style="padding: 0px 0px 0px 25px; margin: 0px;" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
+						<div class="division-line"></div>
 
-			<br/>
-			<br/>
-			<br/>
+						<!--    child comment update form   -->
+						<div th:if="${editCommentForm != null}">
+							<div th:if="${editCommentForm.commentId == child.id}" class="comment-input-box" style="margin-right: 15px;">
+								<form role="form" th:action="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}"
+								      th:object="${editCommentForm}" th:method="post">
+									<div>
+										<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
+										<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
+										<button class="float-right comment-write-button" type="button"
+										        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
+										<button class="float-right comment-write-button" type="submit">수정</button>
+									</div>
+									<div>
+										<label th:for="*{content}" style="display: none;"></label>
+										<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="댓글을 작성해주세요." rows="3"></textarea>
+										<p class="field-error" th:errors="*{content}">입력 오류</p>
+									</div>
+								</form>
+							</div>
+						</div><!--    /child comment update form   -->
+					</div><!--      / child comment list      -->
+
+				</div><!--       /parent comment list     -->
+			</div><!--    /comment list    -->
+
 
 			<!--    parent comment create form   -->
 			<form role="form" th:action="@{/comments/parent(boardId=${readForm.id})}" th:object="${commentForm}"
@@ -202,7 +200,7 @@
 						<p class="field-error" th:errors="*{content}">입력 오류</p>
 					</div>
 			</form><!--    parent comment create form   -->
-		</div>
+		</div><!--	   /comment area      -->
 		<br/>
 		<br/>
 	</div> <!-- /container -->
