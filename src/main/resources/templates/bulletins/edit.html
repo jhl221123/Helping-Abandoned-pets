@@ -5,10 +5,10 @@
 	<div class="container">
 		<form class="bulletin-edit-box" role="form" th:object="${editForm}" enctype="multipart/form-data" th:method="post">
 
-			<div class="bulletin-title-box">
+			<div class="board-title-box">
 				<span>
 					<label style="display: none;" th:for="title">제목</label>
-					<input class="bulletin-title form-control" style="border: none;" type="text" th:field="*{title}" th:errorclass="field-error"
+					<input class="board-title-field form-control" style="border: none;" type="text" th:field="*{title}" th:errorclass="field-error"
 					       placeholder="제목">
 				</span>
 				<span class="float-right">

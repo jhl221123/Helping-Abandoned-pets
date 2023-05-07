@@ -71,7 +71,7 @@ button {
     color: #333;
 }
 
-.bulletin-write-box {
+.board-write-box {
     padding: 0px 10px;
 }
 
@@ -79,11 +79,11 @@ button {
     padding: 0px 10px;
 }
 
-.bulletin-title-box {
+.board-title-box {
     padding-bottom:5px;
 }
 
-.bulletin-title {
+.board-title-field {
     display: inline-block;
     width: 700px;
     height: 37px;
