@@ -48,6 +48,10 @@ body {
     cursor: pointer;
 }
 
+.board-area {
+    margin-bottom: 80px;
+}
+
 button {
 		border: none;
 		background-color:transparent;

@@ -3,76 +3,71 @@
 <body>
 <section>
 	<div class="container">
-	<!--	start bulletin board   -->
-
-		<!--	Title and like button     -->
-		<div class="row">
-			<div class="col-sm-11 board-title text-left">
-				<p th:text="${readForm.title}">제목</p>
-			</div>
-			<div class="col-sm-1" style="justify-content: end">
-				<button type="button" class="btn btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
-					<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
-					<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
-				</button>
-			</div>
-		</div><!--	Title and like button     -->
-
-		<!--	writer and regDate    -->
-		<div class="division-line"></div>
-		<span class="regName" th:text="${readForm.nickname}">작성자</span>
-		<span class="vertical-division-line"></span>
-		<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span><!--	writer and regDate    -->
-
-		<!--	views and like    -->
-		<div class="float-right">
-			<img class="views-icon" th:src="|/svg/views.svg|" width="17" height="17"/>
-			<span class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</span>
-			<span class="vertical-division-line"></span>
-			<img class="like-icon" th:src="|/svg/like.svg|" width="17" height="17"/>
-			<span class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</span>
-		</div><!--	views and like    -->
-
-		<!-- Carousel -->
-		<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-			<ol class="carousel-indicators">
-				<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
-				    th:classappend ="${num} == 0 ? active : ''"></li>
-			</ol>
-			<div class="carousel-inner">
-				<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
-					<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
+		<!--	bulletin board   -->
+		<div class="board-area">
+			<!--	title and like button     -->
+			<div class="row">
+				<div class="col-sm-11 board-title text-left">
+					<p th:text="${readForm.title}">제목</p>
 				</div>
-			</div>
-			<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-				<span class="sr-only">Previous</span>
-			</a>
-			<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-				<span class="carousel-control-next-icon" aria-hidden="true"></span>
-				<span class="sr-only">Next</span>
-			</a>
-		</div><!-- Carousel -->
+				<div class="col-sm-1" style="justify-content: end">
+					<button type="button" class="btn btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
+						<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
+						<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
+					</button>
+				</div>
+			</div><!--	/title and like button     -->
 
-		<!--	board content   -->
-		<div class="division-line"></div>
-		<div class="text-box" id="content" name="content" th:text="${readForm.content}" rows="12" readonly></div>
-		<div class="division-line"></div><!--	board content   -->
+			<!--	writer and regDate    -->
+			<div class="division-line"></div>
+			<span class="regName" th:text="${readForm.nickname}">작성자</span>
+			<span class="vertical-division-line"></span>
+			<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span><!--	/writer and regDate    -->
 
-		<!--    utility button    -->
-		<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-		   th:href="@{/bulletins/{id}/edit(id=${readForm.id})}">수정</a>
-		<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-		   th:href="@{/bulletins/{id}/delete(id=${readForm.id})}">삭제</a>
-		<div class="float-right">
-			<a class="utility-button" th:href="@{/bulletins(page=0)}">목록으로</a>
-		</div><!--    utility button    -->
+			<!--	views and like    -->
+			<div class="float-right">
+				<img class="views-icon" th:src="|/svg/views.svg|" width="17" height="17"/>
+				<span class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</span>
+				<span class="vertical-division-line"></span>
+				<img class="like-icon" th:src="|/svg/like.svg|" width="17" height="17"/>
+				<span class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</span>
+			</div><!--	/views and like    -->
 
-	<!--	end bulletin board   -->
+			<!-- Carousel -->
+			<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				<ol class="carousel-indicators">
+					<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
+					    th:classappend ="${num} == 0 ? active : ''"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
+						<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
+					</div>
+				</div>
+				<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div><!-- /Carousel -->
 
-		<br/>
-		<br/>
-		<br/>
+			<!--	board content   -->
+			<div class="division-line"></div>
+			<div class="text-box" id="content" name="content" th:text="${readForm.content}"></div>
+			<div class="division-line"></div><!--	/board content   -->
+
+			<!--    utility button    -->
+			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
+			   th:href="@{/bulletins/{id}/edit(id=${readForm.id})}">수정</a>
+			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
+			   th:href="@{/bulletins/{id}/delete(id=${readForm.id})}">삭제</a>
+			<div class="float-right">
+				<a class="utility-button" th:href="@{/bulletins(page=0)}">목록으로</a>
+			</div><!--    /utility button    -->
+		</div><!--	/bulletin board   -->
 
 		<!--    comment area    -->
 		<div class="comment-area">
@@ -123,7 +118,7 @@
 								</div>
 							</form>
 						</div>
-					</div><!--    parent comment update form   -->
+					</div><!--    /parent comment update form   -->
 
 					<!--    child comment create form   -->
 					<div th:if="${clickReply == form.id}" class="comment-input-box" >
@@ -142,7 +137,7 @@
 								<p class="field-error" th:errors="*{content}">입력 오류</p>
 							</div>
 						</form>
-					</div><!--    child comment create form   -->
+					</div><!--    /child comment create form   -->
 
 					<!--       child comment list      -->
 					<div class="child-comment" th:each="child : ${form.child}">
@@ -180,11 +175,10 @@
 								</form>
 							</div>
 						</div><!--    /child comment update form   -->
-					</div><!--      / child comment list      -->
+					</div><!--      /child comment list      -->
 
 				</div><!--       /parent comment list     -->
 			</div><!--    /comment list    -->
-
 
 			<!--    parent comment create form   -->
 			<form role="form" th:action="@{/comments/parent(boardId=${readForm.id})}" th:object="${commentForm}"
@@ -199,10 +193,8 @@
 						<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="댓글을 작성해주세요." rows="3"></textarea>
 						<p class="field-error" th:errors="*{content}">입력 오류</p>
 					</div>
-			</form><!--    parent comment create form   -->
+			</form><!--    /parent comment create form   -->
 		</div><!--	   /comment area      -->
-		<br/>
-		<br/>
 	</div> <!-- /container -->
 </section>
 </body>
