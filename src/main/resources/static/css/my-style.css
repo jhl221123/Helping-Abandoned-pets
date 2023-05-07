@@ -71,11 +71,15 @@ button {
     color: #333;
 }
 
+.inquiry-list{
+    padding: 0px 50px;
+}
+
 .board-write-box {
     padding: 0px 10px;
 }
 
-.bulletin-edit-box {
+.board-edit-box {
     padding: 0px 10px;
 }
 

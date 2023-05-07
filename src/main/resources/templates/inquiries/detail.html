@@ -10,6 +10,9 @@
 				<div class="col-sm-11 board-title text-left">
 					<p th:text="${readForm.title}">제목</p>
 				</div>
+				<div th:if="${readForm.secret}" class="col-sm-1" style="justify-content: end">
+					<img th:src="|/img/lock.png|" width="30" height="30"/>
+				</div>
 			</div><!--	  /title     -->
 
 			<!--	writer and regDate    -->
