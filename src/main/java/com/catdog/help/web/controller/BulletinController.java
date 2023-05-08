@@ -31,8 +31,8 @@ import java.util.List;
 import static com.catdog.help.domain.board.RegionConst.*;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
-@Controller
 @Slf4j
+@Controller
 @RequestMapping("/bulletins")
 @RequiredArgsConstructor
 public class BulletinController {
@@ -177,21 +177,6 @@ public class BulletinController {
 
     /***  delete  ***/
     @GetMapping("/{id}/delete")
-    public String getDeleteForm(@PathVariable("id") Long id, Model model,
-                                @SessionAttribute(name = LOGIN_USER) String nickname) {
-        //작성자 본인만 접근 가능
-        if (!isWriter(id, nickname)) {
-            return "redirect:/";
-        }
-
-        ReadBulletinForm form = bulletinService.read(id); // TODO: 2023-04-29 detail에서 파라미터로 제목만 받자
-        String boardTitle = form.getTitle();
-        model.addAttribute("boardId", id); // TODO: 2023-04-24 한 번에 처리할 수 있도록 해보자.
-        model.addAttribute("boardTitle", boardTitle);
-        return "bulletins/delete";
-    }
-
-    @PostMapping("/{id}/delete")
     public String deleteBoard(@PathVariable("id") Long id,
                               @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 삭제 가능
@@ -220,3 +205,4 @@ public class BulletinController {
         return writer.equals(nickname) ? true : false;
     }
 }
+

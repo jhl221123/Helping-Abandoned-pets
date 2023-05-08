@@ -30,10 +30,31 @@
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
 			   th:href="@{/inquiries/{id}/edit(id=${readForm.id})}">수정</a>
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-			   th:href="@{/inquiries/{id}/delete(id=${readForm.id})}">삭제</a>
+			   data-toggle="modal" href="#deleteModal">삭제</a>
 			<div class="float-right">
 				<a class="utility-button" th:href="@{/inquiries(page=0)}">목록으로</a>
 			</div><!--    /utility button    -->
+
+			<!-- delete modal -->
+			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="deleteModalLabel">게시글 삭제</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							정말 삭제하시겠습니까?
+						</div>
+						<div class="modal-footer">
+							<a class="utility-button" href="#" data-dismiss="modal">취소</a>
+							<a class="utility-button" th:href="@{/inquiries/{id}/delete(id=${readForm.id})}">삭제</a>
+						</div>
+					</div>
+				</div>
+			</div><!-- /delete modal -->
 
 		</div><!--	/inquiry board   -->
 

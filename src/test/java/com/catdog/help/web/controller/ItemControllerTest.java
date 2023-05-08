@@ -265,26 +265,6 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("나눔글 삭제 양식 호출")
-    void getDeleteForm() throws Exception {
-        //given
-        ReadItemForm form = getReadItemForm();
-
-        doReturn("닉네임").when(boardService)
-                .getWriter(2L);
-
-        doReturn(form).when(itemService)
-                .read(2L);
-
-        //expected
-        mockMvc.perform(get("/items/{id}/delete", 2L)
-                        .contentType(APPLICATION_FORM_URLENCODED)
-                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
-                )
-                .andExpect(view().name("items/delete"));
-    }
-
-    @Test
     @DisplayName("나눔글 삭제 성공")
     void delete() throws Exception {
         //given
@@ -295,7 +275,7 @@ class ItemControllerTest {
                 .delete(2L);
 
         //expected
-        mockMvc.perform(post("/items/{id}/delete", 2L)
+        mockMvc.perform(get("/items/{id}/delete", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )

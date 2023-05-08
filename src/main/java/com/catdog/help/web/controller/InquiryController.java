@@ -29,6 +29,7 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
 @Controller
+@RequestMapping("/inquiries")
 @RequiredArgsConstructor
 public class InquiryController {
 
@@ -37,14 +38,16 @@ public class InquiryController {
     private final UserService userService;
     private final BoardService boardService;
 
-    @GetMapping("/inquiries/new")
+
+    /***  create  ***/
+    @GetMapping("/new")
     public String getSaveForm(Model model) {
         SaveInquiryForm saveForm = new SaveInquiryForm();
         model.addAttribute("saveForm", saveForm);
         return "inquiries/create";
     }
 
-    @PostMapping("/inquiries/new")
+    @PostMapping("/new")
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
                             @Validated @ModelAttribute("saveForm") SaveInquiryForm saveForm,
                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -56,7 +59,9 @@ public class InquiryController {
         return "redirect:/inquiries/{boardId}";
     }
 
-    @GetMapping("/inquiries")
+
+    /***  read  ***/
+    @GetMapping
     public String getPage(@ModelAttribute InquirySearch inquirySearch, @SessionAttribute(name = LOGIN_USER) String nickname,
                           @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
 
@@ -83,7 +88,7 @@ public class InquiryController {
         return "inquiries/list";
     }
 
-    @GetMapping("/inquiries/{id}")
+    @GetMapping("/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname) {
         // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
@@ -106,7 +111,9 @@ public class InquiryController {
         return "inquiries/detail";
     }
 
-    @GetMapping("/inquiries/{id}/edit")
+
+    /***  update  ***/
+    @GetMapping("/{id}/edit")
     public String getEditForm(@PathVariable("id") Long id, Model model,
                               @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
@@ -119,7 +126,7 @@ public class InquiryController {
         return "inquiries/edit";
     }
 
-    @PostMapping("/inquiries/{id}/edit")
+    @PostMapping("/{id}/edit")
     public String editBoard(@SessionAttribute(name = LOGIN_USER) String nickname,
                             @Validated @ModelAttribute("editForm") EditInquiryForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
@@ -135,20 +142,9 @@ public class InquiryController {
         return "redirect:/inquiries/{id}";
     }
 
-    @GetMapping("/inquiries/{id}/delete")
-    public String getDeleteForm(@PathVariable("id") Long id, Model model,
-                                @SessionAttribute(name = LOGIN_USER) String nickname) {
-        //작성자 본인만 수정 가능
-        if (!isWriter(id, nickname)) {
-            return "redirect:/";
-        }
 
-        ReadInquiryForm readForm = inquiryService.read(id);
-        model.addAttribute("readForm", readForm);
-        return "inquiries/delete";
-    }
-
-    @PostMapping("/inquiries/{id}/delete")
+    /***  delete  ***/
+    @GetMapping("/{id}/delete")
     public String deleteBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {

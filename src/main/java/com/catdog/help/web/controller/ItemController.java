@@ -28,6 +28,7 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
 @Controller
+@RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -38,14 +39,14 @@ public class ItemController {
 
 
     /***  create  ***/
-    @GetMapping("/items/new")
+    @GetMapping("/new")
     public String getSaveForm(Model model) {
         SaveItemForm saveForm = new SaveItemForm();
         model.addAttribute("saveForm", saveForm);
         return "items/create";
     }
 
-    @PostMapping("/items/new")
+    @PostMapping("/new")
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveItemForm saveForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -65,7 +66,7 @@ public class ItemController {
 
 
     /***  read  ***/
-    @GetMapping("/items")
+    @GetMapping
     public String getPage(@ModelAttribute ItemSearch itemSearch,
                           @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
         Page<PageItemForm> pageForms = itemService.search(itemSearch, pageable);
@@ -88,7 +89,7 @@ public class ItemController {
         return "items/list";
     }
 
-    @GetMapping("/items/{id}")
+    @GetMapping("/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
                             HttpServletRequest request, HttpServletResponse response) {
@@ -108,14 +109,14 @@ public class ItemController {
 
 
     /***  update  ***/
-    @GetMapping("/items/{id}/like")
+    @GetMapping("/{id}/like")
     public String clickLike(@PathVariable("id") Long id,
                             @SessionAttribute(name = LOGIN_USER) String nickname) {
         likeService.clickLike(id, nickname);
         return "redirect:/items/{id}";
     }
 
-    @GetMapping("/items/{id}/edit")
+    @GetMapping("/{id}/edit")
     public String getEditForm(@PathVariable("id") Long id, Model model,
                               @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
@@ -128,7 +129,7 @@ public class ItemController {
         return "items/edit";
     }
 
-    @PostMapping("/items/{id}/edit")
+    @PostMapping("/{id}/edit")
     public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
                             @Validated @ModelAttribute("editForm") EditItemForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
@@ -147,7 +148,7 @@ public class ItemController {
         return "redirect:/items/{id}";
     }
 
-    @GetMapping("/items/{id}/status")
+    @GetMapping("/{id}/status")
     public String changeItemStatus(@PathVariable("id") Long id,
                                    @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능
@@ -160,20 +161,8 @@ public class ItemController {
     }
 
     /***  delete  ***/
-    @GetMapping("/items/{id}/delete")
-    public String getDeleteForm(@PathVariable("id") Long id, Model model,
-                                @SessionAttribute(name = LOGIN_USER) String nickname) {
-        //작성자 본인만 수정 가능
-        if (!isWriter(id, nickname)) {
-            return "redirect:/";
-        }
 
-        ReadItemForm readForm = itemService.read(id); // TODO: 2023-04-29 detail에서 파라미터로 제목만 받자
-        model.addAttribute("readForm", readForm);
-        return "items/delete";
-    }
-
-    @PostMapping("/items/{id}/delete")
+    @GetMapping("/{id}/delete")
     public String deleteBoard(@PathVariable("id") Long id,
                               @SessionAttribute(name = LOGIN_USER) String nickname) {
         //작성자 본인만 수정 가능

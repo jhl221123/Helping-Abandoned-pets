@@ -26,7 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,25 +124,8 @@ class BulletinControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 목록 조회")
-    void getList() throws Exception {
-        //given
-        Page page = Mockito.mock(Page.class);
-        doReturn(page).when(bulletinService)
-                .getPage(any(Pageable.class));
-
-        //expected
-        mockMvc.perform(get("/bulletins")
-                        .contentType(APPLICATION_FORM_URLENCODED)
-                        .param(PAGE, String.valueOf(0))
-                        .param(SIZE, String.valueOf(10))
-                )
-                .andExpect(view().name("bulletins/list"));
-    }
-
-    @Test
-    @DisplayName("검색 조건으로 게시글 목록 조회")
-    void searchPage() throws Exception {
+    @DisplayName("검색 조건에 맞는 게시글 페이지 조회")
+    void getPage() throws Exception {
         //given
         Page page = Mockito.mock(Page.class);
 
@@ -151,14 +133,14 @@ class BulletinControllerTest {
                 .search(any(BulletinSearch.class), any(Pageable.class));
 
         //expected
-        mockMvc.perform(post("/bulletins")
+        mockMvc.perform(get("/bulletins")
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .param(TITLE, "검색제목")
                         .param(REGION, "검색지역")
                         .param(PAGE, String.valueOf(0))
                         .param(SIZE, String.valueOf(10))
                 )
-                .andExpect(view().name("bulletins/list")).andDo(MockMvcResultHandlers.print());
+                .andExpect(view().name("bulletins/list"));
     }
 
     @Test
@@ -267,26 +249,6 @@ class BulletinControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제 양식 호출")
-    void getDeleteForm() throws Exception {
-        //given
-        ReadBulletinForm form = getReadBulletinForm();
-
-        doReturn("닉네임").when(boardService)
-                .getWriter(2L);
-
-        doReturn(form).when(bulletinService)
-                .read(2L);
-
-        //expected
-        mockMvc.perform(get("/bulletins/{id}/delete", 2L)
-                        .contentType(APPLICATION_FORM_URLENCODED)
-                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
-                )
-                .andExpect(view().name("bulletins/delete"));
-    }
-
-    @Test
     @DisplayName("게시글 삭제 성공")
     void delete() throws Exception {
         //given
@@ -297,7 +259,7 @@ class BulletinControllerTest {
                 .delete(2L);
 
         //expected
-        mockMvc.perform(post("/bulletins/{id}/delete", 2L)
+        mockMvc.perform(get("/bulletins/{id}/delete", 2L)
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
