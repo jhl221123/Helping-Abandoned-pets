@@ -16,7 +16,7 @@ import java.util.List;
 public class SaveItemForm {
 
     @NotBlank
-    @Length(max = 25)
+    @Length(max = 30)
     private String title;
 
     @NotBlank
@@ -24,7 +24,7 @@ public class SaveItemForm {
     private String content;
 
     @NotBlank
-    @Length(max = 15)
+    @Length(max = 13)
     private String itemName;
 
     @NotNull

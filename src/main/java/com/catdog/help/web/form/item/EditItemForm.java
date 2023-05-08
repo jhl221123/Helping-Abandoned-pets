@@ -21,7 +21,7 @@ public class EditItemForm {
     private Long id;
 
     @NotBlank
-    @Length(max = 25)
+    @Length(max = 30)
     private String title;
 
     @NotBlank
@@ -29,7 +29,7 @@ public class EditItemForm {
     private String content;
 
     @NotBlank
-    @Length(max = 15)
+    @Length(max = 13)
     private String itemName;
 
     @NotNull

@@ -67,7 +67,7 @@ public class ItemController {
     /***  read  ***/
     @GetMapping("/items")
     public String getPage(@ModelAttribute ItemSearch itemSearch,
-                          @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
+                          @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
         Page<PageItemForm> pageForms = itemService.search(itemSearch, pageable);
         model.addAttribute("pageForms", pageForms.getContent());
 

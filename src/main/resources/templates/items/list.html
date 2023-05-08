@@ -1,59 +1,62 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader" />
-	<div>
-
-		<form th:object="${itemSearch}" class="form-inline" th:action="@{/items}">
-			<div class="form-group mb-2">
-				<input type="text" th:field="*{itemName}" class="form-control" placeholder="상품명"/>
-			</div>
-			<div class="form-group mx-sm-1 mb-2">
-				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
-			</div>
-			<button type="submit" class="btn btn-primary mb-2">검색</button>
-		</form>
-
-		<div class="row row-cols-1 row-cols-md-3 g-4">
-			<div th:each="pageForm : ${pageForms}">
-				<div class="col" style="padding: 15px;">
-					<div class="card h-100 w-100">
-						<img th:if="${#strings.equals(pageForm.status, 'STILL')}" th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" style="width: 320px; height: 200px"
-						     class="card-img-top" alt="대표 이미지">
-						<img th:if="${#strings.equals(pageForm.status, 'COMP')}" th:src="|/img/sold_out.png|" style="width: 320px; height: 200px"
-						     class="card-img-top" alt="sold out">
-						<div class="card-body">
-							<h5 class="card-title" th:text="${pageForm.itemName}">제품명</h5>
-							<p class="card-text" th:text="${pageForm.price}">가격</p>
-							<a th:onclick="|location.href='@{/items/{id}(id=${pageForm.id})}'|" class="btn btn-primary">상세보기</a>
-							<p th:if="${pageForm.status == COMP}">나눔 완료</p>
-						</div>
-					</div>
+<section>
+	<div class="container" style="padding: 0px;">
+		<div>
+			<!--	search box 	 -->
+			<form th:object="${itemSearch}" class="form-inline" th:action="@{/items}">
+				<div class="form-group mb-2">
+					<input type="text" th:field="*{itemName}" class="form-control" placeholder="상품명"/>
 				</div>
-			</div>
+				<div class="form-group mx-sm-1 mb-2">
+					<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+				</div>
+				<button type="submit" class="utility-button mb-2">
+					<img th:src="|/img/search.png|" width="25" height="25"/>
+				</button>
+				<a class="utility-button mb-2" th:href="@{/items/new}" style="margin-left: auto;">물건 등록</a>
+			</form><!--	  /search box 	 -->
+
+			<!--	item list    -->
+			<div class="item-area">
+				<div th:each="pageForm : ${pageForms}" class="item-box">
+					<a class="item-link" th:href="@{/items/{id}(id=${pageForm.id})}" style="text-decoration: none;">
+						<div class="item-image-top">
+							<img th:if="${#strings.equals(pageForm.status, 'STILL')}" th:src="|/images/${pageForm.leadImage.getStoreFileName()}|"
+							     class="card-img-top item-image" alt="대표 이미지">
+							<img th:if="${#strings.equals(pageForm.status, 'COMP')}" th:src="|/img/sold_out.png|"
+							     class="card-img-top item-image" alt="sold out">
+						</div>
+						<div class="item-info">
+							<h1 class="item-name" th:text="${pageForm.itemName}">제품명</h1>
+							<div class="item-price" th:text="|${pageForm.price} 원|">가격</div>
+						</div>
+					</a>
+				</div>
+			</div><!--	 /item list    -->
+
+			<!--	start pagination	-->
+			<nav class="nav justify-content-center">
+				<ul class="pagination">
+					<li class="page-item">
+						<a th:if="${offset > 0}" class="page-link"
+						   th:href="@{/items(page=${offset-1}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}">&laquo;</a>
+					</li>
+
+					<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+						<a class="page-link" th:text="${page+1}"
+						   th:href="@{/items(page=${page}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}"></a>
+					</li>
+
+					<li class="page-item">
+						<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+						   th:href="@{/items(page=${lastPage+1}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}">&raquo;</a>
+					</li>
+				</ul>
+			</nav> <!--	/pagination -->
 		</div>
-
-
-		<button th:if="${offset > 0}" type="button" class="btn btn-dark"
-		        th:onclick="|location.href='@{/items(page=${offset-1})}'|" th:text="|◁|"></button>
-
-		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/items(page=${page}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}'|" th:text="${page+1}"></button>
-
-		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
-		        th:onclick="|location.href='@{/items(page=${lastPage+1})}'|" th:text="|▷|"></button>
-
-
-		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items/new}'|">제품 등록</button>
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
-		</div>
-	</div>
-	<br/>
-	<br/>
-	<div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+	</div> <!-- /container -->
+</section>
 </body>
 </html>

@@ -71,8 +71,12 @@ button {
     color: #333;
 }
 
-.inquiry-list{
+.inquiry-list {
     padding: 0px 50px;
+}
+
+.message-list {
+    padding: 0px 70px;
 }
 
 .board-write-box {
@@ -201,7 +205,7 @@ select {
     background-color: #E9E9E9;
 }
 
-.item-box {
+.message-room-label {
     margin: 15px 0px 20px 0px;
     border: 1px solid #E7E7E7;
 }
@@ -225,17 +229,76 @@ select {
 }
 
 .mini-leadImage {
+    display: inline-block;
     margin: 12px 0px 0px 12px;
     vertical-align: sub;
+    border: 1px solid #ebebeb;
+    border-radius: .25em;
+}
+
+.item-area {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 965px;
+    margin: 0 auto;
+}
+
+.item-box {
+    width: calc(25% - 44px);
+    margin-right: 44px;
+    margin-bottom: 56px;
+}
+
+.item-link {
+    cursor: pointer;
+
+}
+
+.item-image-top {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #F8F9FA;
+    box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+.item-image {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+}
+
+.item-info {
+    margin-top: 12px;
+    color: #212529;
 }
 
 .item-name {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.item-price {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.msgRoom-item-name {
     margin: 0px 0px 8px 10px;
     font-weight: bold;
     font-size: 1.2rem;
 }
 
-.item-price {
+.msgRoom-item-price {
     margin: 0px 0px 12px 10px;
     color: #515151;
     font-size: 0.8rem;
@@ -266,7 +329,7 @@ select {
 /* Message */
 .from-me {
   position: relative;
-  margin: 10px 0px 10px 350px;
+  margin: 10px 0px 10px 550px;
   padding: 10px 20px;
   color: white;
   background: #0B93F6;
@@ -298,7 +361,7 @@ select {
 
 .from-them {
   position: relative;
-  margin: 10px 350px 10px 0px;
+  margin: 10px 550px 10px 0px;
   padding: 10px 20px;
   background: #E5E5EA;
   border-radius: 25px;
@@ -330,6 +393,13 @@ select {
 
 .clear {
   clear: both;
+}
+
+.message-input-box {
+    padding: 0px;
+    margin: 50px 0px;
+    border: 1px solid #ced4da;
+    background-color: #FFFFFF;
 }
 
 input[type=file]::file-selector-button {
