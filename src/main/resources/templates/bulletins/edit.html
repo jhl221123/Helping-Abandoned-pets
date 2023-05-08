@@ -46,7 +46,7 @@
 
 			<div class="form-group">
 				<label class="image-edit-label" th:for="newImages"> &#91; 사진 추가 &#93;</label>
-				<input type="file" multiple="multiple" th:field="*{newImages}" class="form-control-file">
+				<input class="form-control-file file-input-btn" type="file" multiple="multiple" th:field="*{newImages}">
 			</div>
 			<div class="col-lg-12 text-right">
 				<button type="button" class="utility-button" th:onclick="|location.href='@{/bulletins/{id}(id=${editForm.id})}'|">취소</button>

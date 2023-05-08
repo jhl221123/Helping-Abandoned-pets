@@ -115,12 +115,18 @@ select {
     color: #777777;
 }
 
+.file-input-btn {
+    margin-left: 10px;
+}
+
 .image-edit-area {
   display: flex;
   flex-wrap: wrap;
 }
 
 .image-edit-label {
+    display: block;
+    margin-left: 5px;
     padding: 10px;
     color: #9C9C9C;
 }
@@ -290,6 +296,11 @@ select {
 .item-price {
     font-size: 16px;
     font-weight: 600;
+}
+
+.item-edit-leadImage {
+    margin-bottom: 10px;
+    margin-left: 25px;
 }
 
 .msgRoom-item-name {
