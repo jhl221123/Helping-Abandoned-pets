@@ -54,7 +54,7 @@ public class ItemController {
 
         for (MultipartFile image : saveForm.getImages()) {
             if (image.isEmpty()) {
-                bindingResult.rejectValue("images", "empty", "반드시 하나 이상의 이미지를 업로드 해야합니다.");
+                bindingResult.rejectValue("images", "empty", "하나 이상의 이미지를 업로드 해야합니다.");
                 return "items/create";
             }
         }
