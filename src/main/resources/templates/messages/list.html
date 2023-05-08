@@ -1,48 +1,52 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader" />
-	<div>
-		<table class="table table-striped">
-			<thead>
-			<tr style="text-align: center">
-				<th>제품명</th>
-				<th>나눔 하는 사람</th>
-				<th>나눔 받는 사람</th>
-				<th>생성일</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
-				<td th:text="${pageForm.itemName}"
-				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|" style="cursor:pointer;"></td>
-				<td th:text="${pageForm.recipientNick}"
-				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|" style="cursor:pointer;">나눔 하는 사람</td>
-				<td th:text="${pageForm.senderNick}"
-				    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|" style="cursor:pointer;">나눔 받는 사람</td>
-				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}">생성일</td>
-			</tr>
-			</tbody>
-		</table>
+<section>
+	<div class="container">
+		<div class="message-list">
+			<table class="table table-striped">
+				<thead>
+				<tr style="text-align: center">
+					<th>제품명</th>
+					<th>나눔 하는 사람</th>
+					<th>나눔 받는 사람</th>
+					<th>생성일</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="pageForm : ${pageForms}" style="text-align: center">
+					<td th:text="${pageForm.itemName}" style="width: 38%; cursor:pointer;"
+					    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|"></td>
+					<td th:text="${pageForm.recipientNick}" style="width: 23%; cursor:pointer;"
+					    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|">나눔 하는 사람</td>
+					<td th:text="${pageForm.senderNick}" style="width: 23%; cursor:pointer;"
+					    th:onclick="|location.href='@{/messages/{roomId}(roomId=${pageForm.id}, boardId=${pageForm.itemBoardId})}'|">나눔 받는 사람</td>
+					<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}" style="width: 16%;">생성일</td>
+				</tr>
+				</tbody>
+			</table>
 
-		<button th:if="${offset > 0}" type="button" class="btn btn-dark"
-		        th:onclick="|location.href='@{/messages(page=${offset-1})}'|" th:text="|◁|"></button>
+			<!--	start pagination	-->
+			<nav class="nav justify-content-center">
+				<ul class="pagination">
+					<li class="page-item">
+						<a th:if="${offset > 0}" class="page-link"
+						   th:href="@{/messages(page=${offset-1})}">&laquo;</a>
+					</li>
 
-		<button th:each="page : ${#numbers.sequence(offset,lastPage)}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/messages(page=${page})}'|" th:text="${page+1}"></button>
+					<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+						<a class="page-link" th:text="${page+1}"
+						   th:href="@{/messages(page=${page})}"></a>
+					</li>
 
-		<button th:if="${!isEnd}" type="button" class="btn btn-dark"
-		        th:onclick="|location.href='@{/messages(page=${lastPage+1})}'|" th:text="|▷|"></button>
-
-		<div class="float-right">
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
+					<li class="page-item">
+						<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+						   th:href="@{/messages(page=${lastPage+1})}">&raquo;</a>
+					</li>
+				</ul>
+			</nav> <!--	/pagination -->
 		</div>
-	</div>
-	<br/>
-	<br/>
-	<div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+	</div> <!-- /container -->
+</section>
 </body>
 </html>

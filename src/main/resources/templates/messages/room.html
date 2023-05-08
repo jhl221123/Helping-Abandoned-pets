@@ -1,51 +1,42 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-
-	<div class="item-box">
-		<img class="mini-leadImage" th:src="|/images/${readForm.leadImage.getStoreFileName()}|" alt="..." width="70" height="70">
-		<div style="display: inline-block">
-			<p class="item-name" th:text="${readForm.itemName}"></p>
-			<p class="item-price" th:text="|가격: ${readForm.price} 원|"></p>
+<section>
+	<div class="container">
+		<div class="message-room-label">
+			<img class="mini-leadImage" th:src="|/images/${readForm.leadImage.getStoreFileName()}|" alt="..." width="70" height="70">
+			<div style="display: inline-block">
+				<p class="msgRoom-item-name" th:text="${readForm.itemName}"></p>
+				<p class="msgRoom-item-price" th:text="|가격: ${readForm.price} 원|"></p>
+			</div>
+			<p class="msgRoom-name" th:text="|${readForm.senderNick} 님과 ${readForm.recipientNick} 님의 채팅방|"></p>
 		</div>
-		<p class="msgRoom-name" th:text="|${readForm.senderNick} 님과 ${readForm.recipientNick} 님의 채팅방|"></p>
-	</div>
 
-	<!--   start messages    -->
-	<div th:each="message : ${readForm.messages}">
-		<div th:classappend="${message.senderNick == session.login_user} ? 'from-me' : 'from-them'">
-			<span class="nickname" style="margin-right: 10px;" th:text="${message.senderNick}">보낸 사람</span>
-			<span class="text-left regDate" th:text="${#temporals.format(message.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
-			<p th:text="${message.content}">content</p>
-			<div class="clear"></div>
-		</div>
-	</div>
-	<!--   end messages    -->
+		<!--    messages    -->
+		<div th:each="message : ${readForm.messages}">
+			<div th:classappend="${message.senderNick == session.login_user} ? 'from-me' : 'from-them'">
+				<span class="nickname" style="margin-right: 10px;" th:text="${message.senderNick}">보낸 사람</span>
+				<span class="text-left regDate" th:text="${#temporals.format(message.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
+				<p style="white-space: pre-wrap;" th:text="${message.content}">content</p>
+				<div class="clear"></div>
+			</div>
+		</div><!--   /messages    -->
 
-	<form role="form" th:action="@{/messages/{roomId}(roomId=${readForm.id})}"
-	      th:object="${saveForm}" th:method="post" class="comment-input-box">
-		<p th:text="${sender}" class="col-form-label attribute-name">닉네임</p>
-		<div class="row">
-			<div class="col-sm-10">
-				<textarea th:errorclass="field-error" class="form-control" th:field="*{content}" rows="2"></textarea>
+		<!--   message input box    -->
+		<form role="form" th:action="@{/messages/{roomId}(roomId=${readForm.id})}"
+		      th:object="${saveForm}" th:method="post" class="message-input-box">
+			<div>
+				<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
+				<span class="comment-nickname" th:text="${sender}">닉네임</span>
+				<button class="float-right comment-write-button" type="submit">보내기</button>
+			</div>
+			<div>
+				<label th:for="*{content}" style="display: none;"></label>
+				<textarea th:errorclass="field-error" class="form-control comment-textarea" th:field="*{content}" placeholder="메시지를 입력해주세요." rows="3"></textarea>
 				<p class="field-error" th:errors="*{content}">입력 오류</p>
 			</div>
-			<div class="col-sm-2">
-				<button type="submit" class="btn btn-primary">작성</button>
-			</div>
-		</div>
-	</form>
-
-	<div class="float-right">
-		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/messages(page=0)}'|">쪽지함</button>
-		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
-	</div>
-	<br/>
-	<br/>
-	<div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+		</form><!--   message input box    -->
+	</div> <!-- /container -->
+</section>
 </body>
 </html>
