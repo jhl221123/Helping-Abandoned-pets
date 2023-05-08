@@ -8,10 +8,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class EditItemForm {
 
     @NotNull
     @Max(10000)
-    @Positive
+    @PositiveOrZero
     private int price;
 
     private ReadImageForm oldLeadImage;

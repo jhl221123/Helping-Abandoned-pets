@@ -298,6 +298,19 @@ select {
     font-weight: 600;
 }
 
+.item-name-tag {
+    margin-right: 7px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6B6B6B;
+}
+
+.item-price-tag {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6B6B6B;
+}
+
 .item-edit-leadImage {
     margin-bottom: 10px;
     margin-left: 25px;

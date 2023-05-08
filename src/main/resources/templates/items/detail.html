@@ -1,81 +1,83 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-<!--	start item board   -->
-	<div class="row">
-		<div class="board-title col-sm-11 text-left">
-			<p th:text="${readForm.title}">제목</p>
-		</div>
-		<div class="col-sm-1" style="justify-content: end">
-			<img th:if="${#strings.equals(readForm.status, 'COMP')}" th:src="|/img/sold_out.png|" width="70" height="70">
-			<button th:if="${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btm_image"
-			        th:onclick="|location.href='@{/items/{id}/like(id=${readForm.id})}'|">
-				<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
-				<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
-			</button>
-		</div>
-	</div>
-	<div class="division-line"></div>
-	<span class="regName" th:text="${readForm.nickname}">작성자</span>
-	<span class="vertical-division-line"></span>
-	<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
-	<span class="vertical-division-line"></span>
-	<span class="item-price" th:text="|나눔 가격: ${readForm.price}|">가격</span>
+<section>
+	<div class="container">
+		<!--	item board   -->
+		<div class="board-area">
+			<!--	title and like button     -->
+			<div class="row">
+				<div class="col-sm-11 board-title text-left">
+					<p th:text="${readForm.title}">제목</p>
+				</div>
+				<div class="col-sm-1" style="justify-content: end">
+					<img th:if="${#strings.equals(readForm.status, 'COMP')}" th:src="|/img/sold_out.png|" width="70" height="70">
+					<button th:if="${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btm_image"
+					        th:onclick="|location.href='@{/items/{id}/like(id=${readForm.id})}'|">
+						<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
+						<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
+					</button>
+				</div>
+			</div><!--	/title and like button     -->
 
-	<div class="row float-right">
-		<p class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</p>&nbsp;&nbsp;&nbsp;
-		<p class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</p>&nbsp;&nbsp;&nbsp;
-	</div>
+			<!--	writer and regDate    -->
+			<div class="division-line"></div>
+			<span class="regName" th:text="${readForm.nickname}">작성자</span>
+			<span class="vertical-division-line"></span>
+			<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span><!--	/writer and regDate    -->
 
-	<!-- Carousel -->
-	<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-		<ol class="carousel-indicators">
-			<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
-			    th:classappend ="${num} == 0 ? active : ''"></li>
-		</ol>
-		<div class="carousel-inner">
-			<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
-				<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
-			</div>
-		</div>
-		<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			<span class="sr-only">Previous</span>
-		</a>
-		<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-			<span class="carousel-control-next-icon" aria-hidden="true"></span>
-			<span class="sr-only">Next</span>
-		</a>
-	</div>
+			<!--	views and like    -->
+			<div class="float-right">
+				<img class="views-icon" th:src="|/svg/views.svg|" width="17" height="17"/>
+				<span class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</span>
+				<span class="vertical-division-line"></span>
+				<img class="like-icon" th:src="|/svg/like.svg|" width="17" height="17"/>
+				<span class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</span>
+			</div><!--	/views and like    -->
 
-	<div class="division-line"></div>
-	<div class="text-box" id="content" name="content" th:text="${readForm.content}" rows="12" readonly></div>
-	<div class="division-line"></div>
+			<!-- Carousel -->
+			<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				<ol class="carousel-indicators">
+					<li th:each="num : ${#numbers.sequence(0,imageSize-1)}" data-target="#carouselExampleIndicators" th:data-slide-to="${num}"
+					    th:classappend ="${num} == 0 ? active : ''"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
+						<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
+					</div>
+				</div>
+				<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div><!-- /Carousel -->
 
-	<br/>
-	<button th:if="${readForm.nickname != session.login_user} and ${#strings.equals(readForm.status, 'STILL')}" type="button" class="btn btn-primary"
-	        th:onclick="|location.href='@{/messages/new(boardId=${readForm.id}, recipientNick=${readForm.nickname})}'|">쪽지 보내기</button>
-	<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
-	        th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
-	        th:onclick="|location.href='@{/items/{id}/status(id=${readForm.id})}'|">거래상태 변경</button>
-	<div class="float-right">
-		<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/items(page=0)}'|">목록으로</button>
-		<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/items/{id}/edit(id=${readForm.id})}'|">수정</button>
-		<button th:if="${readForm.nickname == session.login_user}" type="button" class="btn btn-primary"
-		        th:onclick="|location.href='@{/items/{id}/delete(id=${readForm.id})}'|">삭제</button>
-	</div>
+			<!--	board content and item info   -->
+			<div class="division-line"></div>
+			<div class="text-box" id="content" name="content" th:text="${readForm.content}" rows="12" readonly></div>
+			<span class="item-name-tag" th:text="|#${readForm.itemName}|">제품명</span>
+			<span class="item-price-tag" th:text="|#${readForm.price} 원|">가격</span>
+			<div class="division-line"></div><!--	/board content and item info   -->
 
-<!--	end item board   -->
-	<br/>
-	<br/>
-	<div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+			<!--    utility button    -->
+			<a th:if="${readForm.nickname != session.login_user} and ${#strings.equals(readForm.status, 'STILL')}" class="utility-button"
+			   th:href="@{/messages/new(boardId=${readForm.id}, recipientNick=${readForm.nickname})}">쪽지 보내기</a>
+			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
+			   th:text="${#strings.equals(readForm.status, 'STILL')} ? '거래 완료' : '완료 취소'"
+			   th:href="@{/items/{id}/status(id=${readForm.id})}"></a>
+			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
+			   th:href="@{/items/{id}/edit(id=${readForm.id})}">수정</a>
+			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
+			   th:href="@{/items/{id}/delete(id=${readForm.id})}">삭제</a>
+			<div class="float-right">
+				<a class="utility-button" th:href="@{/items(page=0)}">목록으로</a>
+			</div><!--    /utility button    -->
+		</div><!--	/item board   -->
+	</div> <!-- /container -->
+</section>
 </body>
 </html>
