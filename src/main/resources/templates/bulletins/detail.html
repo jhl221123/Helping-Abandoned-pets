@@ -63,17 +63,17 @@
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
 			   th:href="@{/bulletins/{id}/edit(id=${readForm.id})}">수정</a>
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-			   data-toggle="modal" href="#deleteModal">삭제</a>
+			   data-toggle="modal" href="#deleteBoardModal">삭제</a>
 			<div class="float-right">
 				<a class="utility-button" th:href="@{/bulletins(page=0)}">목록으로</a>
 			</div><!--    /utility button    -->
 
-			<!-- delete modal -->
-			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			<!-- delete board modal -->
+			<div class="modal fade" id="deleteBoardModal" tabindex="-1" role="dialog" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="deleteModalLabel">게시글 삭제</h5>
+							<h5 class="modal-title" id="deleteBoardModalLabel">게시글 삭제</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -87,7 +87,7 @@
 						</div>
 					</div>
 				</div>
-			</div><!-- /delete modal -->
+			</div><!-- /delete board modal -->
 
 		</div><!--	/bulletin board   -->
 
@@ -109,7 +109,7 @@
 							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
 							   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
 							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
-							   th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
+							   data-toggle="modal" href="#deleteParentModal">삭제</a>
 						</span>
 						<div>
 							<p class="parent-comment-content" th:text="${form.content}">content</p>
@@ -120,6 +120,27 @@
 						</div>
 						<div class="division-line" style="margin: 0px;"></div>
 					</div>
+
+					<!-- delete parent comment modal -->
+					<div class="modal fade" id="deleteParentModal" tabindex="-1" role="dialog" aria-labelledby="deleteParentModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="deleteParentModalLabel">댓글 삭제</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									정말 삭제하시겠습니까?
+								</div>
+								<div class="modal-footer">
+									<a class="utility-button" href="#" data-dismiss="modal">취소</a>
+									<a class="utility-button" th:href="@{/comments/{id}/delete(id=${form.id}, boardId=${readForm.id})}">삭제</a>
+								</div>
+							</div>
+						</div>
+					</div><!-- /delete parent comment modal -->
 
 					<!--    parent comment update form   -->
 					<div th:if="${editCommentForm != null}">
@@ -169,12 +190,34 @@
 							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
 							   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
 							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
-							   th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
+							   data-toggle="modal" href="#deleteChildModal">삭제</a>
 						</span>
 						<div>
 							<p class="child-comment-content" th:text="${child.content}">content</p>
 						</div>
 						<span class="regDate" style="padding: 0px 0px 0px 25px; margin: 0px;" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
+
+						<!-- delete child comment modal -->
+						<div class="modal fade" id="deleteChildModal" tabindex="-1" role="dialog" aria-labelledby="deleteChildModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="deleteChildModalLabel">댓글 삭제</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										정말 삭제하시겠습니까?
+									</div>
+									<div class="modal-footer">
+										<a class="utility-button" href="#" data-dismiss="modal">취소</a>
+										<a class="utility-button" th:href="@{/comments/{id}/delete(id=${child.id}, boardId=${readForm.id})}">삭제</a>
+									</div>
+								</div>
+							</div>
+						</div><!-- /delete child comment modal -->
+
 						<div class="division-line"></div>
 
 						<!--    child comment update form   -->
@@ -198,7 +241,6 @@
 							</div>
 						</div><!--    /child comment update form   -->
 					</div><!--      /child comment list      -->
-
 				</div><!--       /parent comment list     -->
 			</div><!--    /comment list    -->
 
