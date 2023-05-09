@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.REMOVE;
@@ -18,10 +19,10 @@ import static lombok.AccessLevel.PROTECTED;
 @DiscriminatorValue("Bulletin")
 public class Bulletin extends Board {
 
-    private String region; // TODO: 2023-04-17 지역이름 검증, 셀렉트박스
+    private String region;
 
     @OneToMany(mappedBy = "board", cascade = REMOVE)
-    private List<Like> likes;
+    private List<Like> likes = new ArrayList<>();
 
 
     @Builder

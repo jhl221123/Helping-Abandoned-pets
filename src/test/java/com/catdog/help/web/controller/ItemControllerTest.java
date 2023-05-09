@@ -51,6 +51,7 @@ class ItemControllerTest {
     private static final String CONTENT = "content";
     private static final String ITEM_NAME = "itemName";
     private static final String PRICE = "price";
+    private static final String REGION = "region";
     private static final String PAGE = "page";
     private static final String SIZE = "size";
 
@@ -105,6 +106,7 @@ class ItemControllerTest {
                         .param(CONTENT, "내용")
                         .param(ITEM_NAME, "상품명")
                         .param(PRICE, String.valueOf(1000))
+                        .param(REGION, "부산")
                 ) // TODO: 2023-04-25 이미지 업로드 안했는데 검증 안걸림... 추후 수정
                 .andExpect(redirectedUrl("/items?page=0"));
     }
@@ -120,6 +122,7 @@ class ItemControllerTest {
                         .param(CONTENT, "")
                         .param(ITEM_NAME, "")
                         .param(PRICE, "")
+                        .param(REGION, "")
                 )
                 .andExpect(view().name("items/create"));
     }
@@ -218,6 +221,7 @@ class ItemControllerTest {
                         .param(CONTENT, "내용")
                         .param(ITEM_NAME, "상품명")
                         .param(PRICE, String.valueOf(1000))
+                        .param(REGION, "부산")
                 )
                 .andExpect(redirectedUrl("/items/" + 2));
     }
@@ -242,6 +246,7 @@ class ItemControllerTest {
                         .param(CONTENT, "")
                         .param(ITEM_NAME, "")
                         .param(PRICE, "")
+                        .param(REGION, "")
                 )
                 .andExpect(view().name("items/edit"));
     }

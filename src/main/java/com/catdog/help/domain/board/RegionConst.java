@@ -13,8 +13,8 @@ public abstract class RegionConst {
     public static final String GANGWON = "강원";
     public static final String CHUNGBUK = "충북";
     public static final String CHUNGNAM = "충남";
-    public static final String JEONNAM = "전남";
     public static final String JEONBUK = "전북";
+    public static final String JEONNAM = "전남";
     public static final String GYEONGBUK = "경북";
     public static final String GYEONGNAM = "경남";
     public static final String JEJU = "제주";

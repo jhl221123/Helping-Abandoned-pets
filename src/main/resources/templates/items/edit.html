@@ -7,30 +7,37 @@
 
 			<div class="board-title-box">
 				<span>
-					<label th:for="itemName" style="display: none;">제목</label>
+					<label th:for="title" style="display: none;">제목</label>
+					<input class="board-title-field form-control" type="text" th:field="*{title}" th:errorclass="field-error"
+					       placeholder="제목" style="border: none;">
+				</span>
+				<span class="float-right">
+					<label style="display: none;" th:for="region">지역</label>
+					<select th:field="*{region}" th:errorclass="field-error" class="form-select">
+						<option value="">지역 선택</option>
+						<option th:each="region : ${regions}" th:value="${region}"
+						        th:text="${region}">region</option>
+					</select>
+				</span>
+			</div>
+			<span class="field-error" th:errors="*{title}">입력 오류</span>
+
+			<div class="division-line"></div>
+
+			<div class="board-title-box">
+				<span>
+					<label th:for="itemName" style="display: none;">제품명</label>
 					<input class="board-title-field form-control" type="text" th:field="*{itemName}" th:errorclass="field-error"
 					       placeholder="제품명" style="border: none;">
 				</span>
-
 				<span class="float-right">
-					<label th:for="price" style="color: #6E6E6E;">가격</label>
+					<label th:for="price" style="color: #6E6E6E; margin-right:10px;">가격</label>
 					<input class="board-title-field form-control" type="number" th:field="*{price}" th:errorclass="field-error"
 					       placeholder="희망가격" style="border: none; width: 110px;">
 				</span>
 			</div>
 			<p style="display: inline-block;" class="field-error" th:errors="*{itemName}">입력 오류</p>
 			<p style="display: inline-block;" class="field-error float-right" th:errors="*{price}">입력 오류</p>
-
-			<div class="division-line"></div>
-
-			<div class="board-title-box">
-				<span>
-					<label th:for="title" style="display: none;">제목</label>
-					<input class="board-title-field form-control" type="text" th:field="*{title}" th:errorclass="field-error"
-					       placeholder="제목" style="border: none;">
-				</span>
-			</div>
-			<span class="field-error" th:errors="*{title}">입력 오류</span>
 
 			<div class="division-line"></div>
 

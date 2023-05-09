@@ -24,6 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.catdog.help.domain.board.RegionConst.*;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
@@ -43,6 +47,9 @@ public class ItemController {
     public String getSaveForm(Model model) {
         SaveItemForm saveForm = new SaveItemForm();
         model.addAttribute("saveForm", saveForm);
+
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
         return "items/create";
     }
 
@@ -50,6 +57,8 @@ public class ItemController {
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveItemForm saveForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
             return "items/create";
         }
 
@@ -126,11 +135,14 @@ public class ItemController {
 
         EditItemForm editForm = itemService.getEditForm(id);
         model.addAttribute("editForm", editForm);
+
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
         return "items/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
+    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("editForm") EditItemForm editForm, BindingResult bindingResult) {
         //작성자 본인만 수정 가능
         if (!isWriter(id, nickname)) {
@@ -141,6 +153,9 @@ public class ItemController {
             EditItemForm form = itemService.getEditForm(id);
             editForm.setOldLeadImage(form.getOldLeadImage()); // TODO: 2023-04-29 브라우저에서 넘길 수 없을까..ㅠ
             editForm.setOldImages(form.getOldImages());
+
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
             return "items/edit";
         }
 
@@ -160,8 +175,8 @@ public class ItemController {
         return "redirect:/items/{id}";
     }
 
-    /***  delete  ***/
 
+    /***  delete  ***/
     @GetMapping("/{id}/delete")
     public String deleteBoard(@PathVariable("id") Long id,
                               @SessionAttribute(name = LOGIN_USER) String nickname) {
@@ -174,6 +189,11 @@ public class ItemController {
         return "redirect:/items?page=0";
     }
 
+
+    private List<String> getRegions() {
+        return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
+                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONBUK, JEONNAM, GYEONGBUK, GYEONGNAM, JEJU);
+    }
 
     private int getLastPage(int limit, int endPage) {
         int lastPage = Math.min(endPage, limit);

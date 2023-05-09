@@ -59,8 +59,9 @@
 			<!--	board content and item info   -->
 			<div class="division-line"></div>
 			<div class="text-box" id="content" name="content" th:text="${readForm.content}" rows="12" readonly></div>
-			<span class="item-name-tag" th:text="|#${readForm.itemName}|">제품명</span>
-			<span class="item-price-tag" th:text="|#${readForm.price} 원|">가격</span>
+			<span class="item-tag" th:text="|#${readForm.itemName}|">제품명</span>
+			<span class="item-next-tag" th:text="|#${readForm.price} 원|">가격</span>
+			<span class="item-next-tag" th:text="|#${readForm.region}|">지역</span>
 			<div class="division-line"></div><!--	/board content and item info   -->
 
 			<!--    utility button    -->
@@ -72,17 +73,17 @@
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
 			   th:href="@{/items/{id}/edit(id=${readForm.id})}">수정</a>
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-			   data-toggle="modal" href="#deleteModal">삭제</a>
+			   data-toggle="modal" href="#deleteBoardModal">삭제</a>
 			<div class="float-right">
 				<a class="utility-button" th:href="@{/items(page=0)}">목록으로</a>
 			</div><!--    /utility button    -->
 
-			<!-- delete modal -->
-			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			<!-- delete board modal -->
+			<div class="modal fade" id="deleteBoardModal" tabindex="-1" role="dialog" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="deleteModalLabel">게시글 삭제</h5>
+							<h5 class="modal-title" id="deleteBoardModalLabel">게시글 삭제</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -96,7 +97,7 @@
 						</div>
 					</div>
 				</div>
-			</div><!-- /delete modal -->
+			</div><!-- /delete board modal -->
 		</div><!--	/item board   -->
 	</div> <!-- /container -->
 </section>

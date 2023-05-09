@@ -35,6 +35,9 @@ public class EditItemForm {
     @PositiveOrZero
     private int price;
 
+    @NotBlank
+    private String region;
+
     private ReadImageForm oldLeadImage;
 
     private MultipartFile newLeadImage;
@@ -56,6 +59,7 @@ public class EditItemForm {
         this.content = findBoard.getContent();
         this.itemName = findBoard.getItemName();
         this.price = findBoard.getPrice();
+        this.region = findBoard.getRegion();
 
         //대표이미지
         this.oldLeadImage = readForms.get(0);

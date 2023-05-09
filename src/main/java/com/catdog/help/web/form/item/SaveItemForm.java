@@ -30,6 +30,9 @@ public class SaveItemForm {
     @PositiveOrZero
     private int price;
 
+    @NotBlank
+    private String region;
+
     private List<MultipartFile> images = new ArrayList<>();
 
 
@@ -37,11 +40,12 @@ public class SaveItemForm {
     }
 
     @Builder
-    public SaveItemForm(String title, String content, String itemName, int price, List<MultipartFile> images) {
+    public SaveItemForm(String title, String content, String itemName, int price, String region, List<MultipartFile> images) {
         this.title = title;
         this.content = content;
         this.itemName = itemName;
         this.price = price;
+        this.region = region;
         this.images = images;
     }
 }

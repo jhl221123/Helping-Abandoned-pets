@@ -22,6 +22,8 @@ public class Item extends Board {
 
     private int price;
 
+    private String region;
+
     @Enumerated(value = EnumType.STRING)
     private ItemStatus status;
 
@@ -33,18 +35,20 @@ public class Item extends Board {
 
 
     @Builder
-    public Item(User user, String title, String content, String itemName, int price) {
+    public Item(User user, String title, String content, String itemName, int price, String region) {
         super(user, title, content);
         this.itemName = itemName;
         this.price = price;
+        this.region = region;
         this.status = ItemStatus.STILL;
     }
 
 
-    public void updateBoard(String title, String content, String itemName, int price) {
+    public void updateBoard(String title, String content, String itemName, int price, String region) {
         super.updateBoard(title, content);
         this.itemName = itemName;
         this.price = price;
+        this.region = region;
     }
 
     public void changeStatus(ItemStatus status) {

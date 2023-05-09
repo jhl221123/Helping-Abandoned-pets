@@ -19,6 +19,7 @@ public class ReadItemForm {
     private LocalDateTime createdDate;
     private String itemName;
     private int price;
+    private String region;
     private ItemStatus status;
     private List<ReadImageForm> images = new ArrayList<>();
     private int views;
@@ -34,6 +35,7 @@ public class ReadItemForm {
         this.createdDate = findBoard.getCreatedDate();
         this.itemName = findBoard.getItemName();
         this.price = findBoard.getPrice();
+        this.region = findBoard.getRegion();
         this.status = findBoard.getStatus();
         this.images = images;
         this.views = findBoard.getViews();

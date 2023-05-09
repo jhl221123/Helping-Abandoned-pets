@@ -15,15 +15,28 @@ public class PageItemForm {
 
     private int price;
 
-    private ReadImageForm leadImage;
+    private String region;
 
     private ItemStatus status;
+
+    private ReadImageForm leadImage;
+
+    private int views;
+
+    private int likeSize;
+
+    private int rooms;
+
 
     public PageItemForm(Item board, ReadImageForm leadImage) {
         this.id = board.getId();
         this.itemName = board.getItemName();
         this.price = board.getPrice();
+        this.region = board.getRegion();
         this.status = board.getStatus();
         this.leadImage = leadImage;
+        this.views = board.getViews();
+        this.likeSize = board.getLikes().size();
+        this.rooms = board.getRooms().size();
     }
 }

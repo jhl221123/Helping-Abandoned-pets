@@ -51,11 +51,6 @@ public class ItemService {
         return new ReadItemForm(findBoard, readImageForms, likeSize);
     }
 
-    public Page<PageItemForm> getPage(Pageable pageable) {
-        return itemRepository.findPageBy(pageable)
-                .map(item -> getPageItemForm(item));
-    }
-
     public Page<PageItemForm> search(ItemSearch search, Pageable pageable) {
         return searchQueryRepository.searchItem(search.getTitle(), search.getItemName(), pageable)
                 .map(item -> getPageItemForm(item));
@@ -101,6 +96,7 @@ public class ItemService {
                 .content(form.getContent())
                 .itemName(form.getItemName())
                 .price(form.getPrice())
+                .region(form.getRegion())
                 .build();
 
         imageService.addImage(board, form.getImages());
@@ -112,7 +108,7 @@ public class ItemService {
     }
 
     private void updateItem(EditItemForm form, Item board) {
-        board.updateBoard(form.getTitle(), form.getContent(), form.getItemName(), form.getPrice());
+        board.updateBoard(form.getTitle(), form.getContent(), form.getItemName(), form.getPrice(), form.getRegion());
         imageService.updateLeadImage(form.getNewLeadImage(), board.getId());
         imageService.updateImage(board, form.getDeleteImageIds(), form.getNewImages());
     }

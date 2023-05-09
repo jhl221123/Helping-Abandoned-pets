@@ -102,21 +102,6 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("나눔글 페이지 조회")
-    void getPage() {
-        //given
-        Pageable pageable = PageRequest.of(0, 6, Sort.Direction.DESC, "id");
-        Page<Item> page = Page.empty();
-
-        doReturn(page).when(itemRepository)
-                .findPageBy(pageable);
-
-        //expected
-        Page<PageItemForm> formPage = itemService.getPage(pageable);
-        verify(itemRepository, times(1)).findPageBy(pageable);
-    }
-
-    @Test
     @DisplayName("검색 조건에 맞는 나눔글 페이지 조회")
     void searchPageByCond() {
         //given
@@ -287,6 +272,7 @@ class ItemServiceTest {
                 .content("내용")
                 .itemName("테스트상품")
                 .price(1000)
+                .region("부산")
                 .images(List.of())
                 .build();
     }
@@ -299,6 +285,7 @@ class ItemServiceTest {
                 .content("내용")
                 .itemName("테스트상품")
                 .price(1000)
+                .region("부산")
                 .build();
     }
 

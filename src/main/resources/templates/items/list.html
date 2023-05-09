@@ -31,6 +31,12 @@
 						<div class="item-info">
 							<h1 class="item-name" th:text="${pageForm.itemName}">제품명</h1>
 							<div class="item-price" th:text="|${pageForm.price} 원|">가격</div>
+							<div class="item-region" th:text="${pageForm.region}">지역</div>
+							<div class="item-info-detail">
+								<span th:text="|조회 ${pageForm.views}|"></span>
+								<span th:text="|· 좋아요 ${pageForm.likeSize}|"></span>
+								<span th:text="|· 쪽지 ${pageForm.rooms}|"></span>
+							</div>
 						</div>
 					</a>
 				</div>
