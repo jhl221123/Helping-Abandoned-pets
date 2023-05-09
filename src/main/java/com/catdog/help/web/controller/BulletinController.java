@@ -191,7 +191,7 @@ public class BulletinController {
 
     private List<String> getRegions() {
         return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
-                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONNAM, JEONBUK, GYEONGBUK, GYEONGNAM, JEJU);
+                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONBUK, JEONNAM, GYEONGBUK, GYEONGNAM, JEJU);
     }
 
     private int getLastPage(int limit, int endPage) {

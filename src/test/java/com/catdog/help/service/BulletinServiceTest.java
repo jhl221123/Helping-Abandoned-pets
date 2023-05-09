@@ -11,7 +11,6 @@ import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
 import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.search.BulletinSearch;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,9 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -215,8 +216,26 @@ class BulletinServiceTest {
                 .findById(1L);
 
         //expected
-        Assertions.assertThrows(BoardNotFoundException.class,
+        assertThrows(BoardNotFoundException.class,
                 ()-> bulletinService.delete(1L));
+    }
+
+    @Test
+    @DisplayName("키는 지역, 값은 지역별 게시글 수를 가지는 맵을 반환")
+    void getCountByRegion() {
+        //given
+        Bulletin board = getBulletin("제목");
+        List<Bulletin> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(bulletinRepository)
+                .findAll();
+
+        //when
+        Map<String, Long> result = bulletinService.getCountByRegion();
+
+        //then
+        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
 
@@ -225,7 +244,7 @@ class BulletinServiceTest {
                 .user(getUser())
                 .title(title)
                 .content("내용")
-                .region("지역")
+                .region("부산")
                 .build();
     }
 

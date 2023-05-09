@@ -2,9 +2,76 @@
 <html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
 <section>
-<div class="container">
-	<div style="text-align: center;">
-		<img th:src="|/img/mini_map.png|" alt="미니지도">
+<div class="container" style="padding: 0px;">
+
+	<div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
+		<div class="col-md-6 px-0">
+			<h1 class="display-4 font-italic">멍이 냥이 블로그</h1>
+			<p class="lead my-3">멍이 냥이 블로그를 찾아주셔서 감사합니다. 멍이 냥이는 유기 동물들을 보호하고 도움을 주는 분들을 지원하기 위해 힘쓰는 블로그입니다.</p>
+			<p class="lead mb-0"><a href="#" class="text-white font-weight-bold">블로그 가이드 보기</a></p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-3" style="margin-left: 25px;">
+			<img th:src="|/img/mini_map.png|" alt="미니지도" width="200px" height="300px">
+		</div>
+		<div class="col-lg-8" style="padding-top: 25px; margin-left: 20px;">
+			<table class="rwd-table" style="margin-bottom: 15px;">
+				<thead>
+				<tr>
+					<th>서울</th>
+					<th>부산</th>
+					<th>인천</th>
+					<th>대전</th>
+					<th>대구</th>
+					<th>울산</th>
+					<th>광주</th>
+					<th>세종</th>
+					<th>제주</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td><a th:text="${countMap.get('서울')}" th:href="@{/bulletins(page=0, region='서울')}"></a></td>
+					<td><a th:text="${countMap.get('부산')}" th:href="@{/bulletins(page=0, region='부산')}"></a></td>
+					<td><a th:text="${countMap.get('인천')}" th:href="@{/bulletins(page=0, region='인천')}"></a></td>
+					<td><a th:text="${countMap.get('대전')}" th:href="@{/bulletins(page=0, region='대전')}"></a></td>
+					<td><a th:text="${countMap.get('대구')}" th:href="@{/bulletins(page=0, region='대구')}"></a></td>
+					<td><a th:text="${countMap.get('울산')}" th:href="@{/bulletins(page=0, region='울산')}"></a></td>
+					<td><a th:text="${countMap.get('광주')}" th:href="@{/bulletins(page=0, region='광주')}"></a></td>
+					<td><a th:text="${countMap.get('세종')}" th:href="@{/bulletins(page=0, region='세종')}"></a></td>
+					<td><a th:text="${countMap.get('제주')}" th:href="@{/bulletins(page=0, region='제주')}"></a></td>
+				</tr>
+				</tbody>
+			</table>
+			<table class="rwd-table">
+				<thead>
+				<tr>
+					<th>경기</th>
+					<th>강원</th>
+					<th>충북</th>
+					<th>충남</th>
+					<th>전북</th>
+					<th>전남</th>
+					<th>경북</th>
+					<th>경남</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td><a th:text="${countMap.get('경기')}" th:href="@{/bulletins(page=0, region='경기')}"></a></td>
+					<td><a th:text="${countMap.get('강원')}" th:href="@{/bulletins(page=0, region='강원')}"></a></td>
+					<td><a th:text="${countMap.get('충북')}" th:href="@{/bulletins(page=0, region='충북')}"></a></td>
+					<td><a th:text="${countMap.get('충남')}" th:href="@{/bulletins(page=0, region='충남')}"></a></td>
+					<td><a th:text="${countMap.get('전북')}" th:href="@{/bulletins(page=0, region='전북')}"></a></td>
+					<td><a th:text="${countMap.get('전남')}" th:href="@{/bulletins(page=0, region='전남')}"></a></td>
+					<td><a th:text="${countMap.get('경북')}" th:href="@{/bulletins(page=0, region='경북')}"></a></td>
+					<td><a th:text="${countMap.get('경남')}" th:href="@{/bulletins(page=0, region='경남')}"></a></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div> <!-- /container -->
 </section>
