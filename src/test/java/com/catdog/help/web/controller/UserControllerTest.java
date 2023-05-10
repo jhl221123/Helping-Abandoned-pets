@@ -360,21 +360,10 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원 탈퇴 요청")
-    void deleteForm() throws Exception {
-        //expected
-        mockMvc.perform(get("/users/detail/delete")
-                        .contentType(APPLICATION_FORM_URLENCODED)
-                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
-                )
-                .andExpect(view().name("users/delete"));
-    }
-
-    @Test
     @DisplayName("회원 탈퇴")
     void delete() throws Exception {
         //expected
-        mockMvc.perform(post("/users/detail/delete")
+        mockMvc.perform(get("/users/detail/delete")
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )

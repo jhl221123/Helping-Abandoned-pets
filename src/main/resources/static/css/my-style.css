@@ -42,6 +42,14 @@ body {
     cursor: pointer;
 }
 
+.my-info {
+    max-width: 100%;
+    margin-left: 20px;
+    padding: 10px;
+    border: 1px solid #e8e8e8;
+    border-radius: 50px;
+}
+
 .board-area {
     margin-bottom: 80px;
 }

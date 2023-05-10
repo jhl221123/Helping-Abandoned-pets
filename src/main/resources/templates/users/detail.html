@@ -1,66 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
-<style>
- .attribute-name {
-            font-weight: bold;
-            font-size: 18px;
-        }
- .value {
-	       font-weight: bolder;
-        }
-</style>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="container">
-	<div th:replace="fragments/bodyHeader :: bodyHeader"/>
-	<div class="jumbotron">
-		<h1>개인 정보</h1>
-		</br>
-		</br>
-		</br>
-		<form th:object="${readForm}">
-			<div class="form-group row">
-				<label th:for="emailId" class="col-sm-2 col-form-label attribute-name">이메일</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{emailId}"></p>
+<section>
+	<div class="container">
+		<div class="row">
+			<form th:object="${readForm}">
+				<div class="col-md-4 mb-3 my-info">
+					<div style="margin-left: 10px;">
+						<span class="comment-nickname" th:text="|*{nickname} 님|">닉네임</span>
+						<span style="margin-left: 10px;">
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/edit}">수정</a>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500;"
+							   data-toggle="modal" href="#deleteUserModal">회원 탈퇴</a>
+						</span>
+					</div>
+					<div style="margin-left: 10px;">
+						<img th:src="|/img/email.png|" alt="email-icon" width="17" height="17"/>
+						<span th:text="*{emailId}">이메일</span>
+					</div>
+					<div style="margin-left: 10px;">
+						<img th:src="|/img/user.png|" alt="user-icon" width="17" height="17"/>
+						<p th:text="|이름: *{name}|">이름</p>
+						<p th:text="|나이: *{age}|"></p>
+						<p th:text="|성별: *{gender}|"></p>
+						<p class="text-muted" style="font-size: 13px;" th:text="|join from *{#temporals.format(createdDate, 'yyyy-MM-dd')}|"></p>
+					</div>
+				</div>
+			</form>
+			<div class="col-md-7 mb-3" style="max-width: 100%; margin-left: 50px; border: 1px solid #e8e8e8; border-radius: 50px;">
+				<div>
+					<p>좋아요</p>
+						<ul>
+						<li>
+							<span>게시글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/likes/bulletin}">5</a>
+						</li>
+						<li>
+							<span>나눔글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/likes/item}">3</a>
+						</li>
+					</ul>
+				</div>
+				<div class="division-line"></div>
+				<div>
+					<p>내가 작성한 글</p>
+					<ul>
+						<li>
+							<span>게시글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/bulletin}">1</a>
+						</li>
+						<li>
+							<span>나눔글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/item}">2</a>
+						</li>
+						<li>
+							<span>문의글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:href="@{/users/detail/inquiry}">0</a>
+						</li>
+					</ul>
 				</div>
 			</div>
-			<div class="form-group row">
-				<label th:for="nickname" class="col-sm-2 col-form-label attribute-name">닉네임</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{nickname}"></p>
+		</div>
+
+		<!-- delete board modal -->
+		<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="deleteUserModalLabel">회원 탈퇴</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" style="white-space: pre-line;">작성하신 게시글과 댓글이 모두 삭제됩니다.
+																		   정말 탈퇴하시겠습니까?</div>
+					<div class="modal-footer">
+						<a class="utility-button" href="#" data-dismiss="modal">취소</a>
+						<a class="utility-button" th:href="@{/users/detail/delete}">탈퇴</a>
+					</div>
 				</div>
 			</div>
-			<div class="form-group row">
-				<label th:for="name" class="col-sm-2 col-form-label attribute-name">이름</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{name}"></p>
-				</div>
-			</div>
-			<div class="form-group row">
-				<label th:for="age" class="col-sm-2 col-form-label attribute-name">나이</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{age}"></p>
-				</div>
-			</div>
-			<div class="form-group row">
-				<label th:for="gender" class="col-sm-2 col-form-label attribute-name">성별</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{gender}"></p>
-				</div>
-			</div>
-			<div class="form-group row">
-				<label th:for="createdDate" class="col-sm-2 col-form-label attribute-name">가입 날짜</label>
-				<div class="col-sm-10">
-					<p type="text" readonly class="form-control value" th:text="*{#temporals.format(createdDate, 'yyyy-MM-dd HH:mm:ss')}"></p>
-				</div>
-			</div>
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail/edit}'|">수정</button>
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/users/detail/delete}'|">회원 탈퇴</button>
-			<button type="button" class="btn btn-primary" th:onclick="|location.href='@{/}'|">홈으로</button>
-		</form>
-	</div>
-	<div th:replace="fragments/footer :: footer" />
-</div>
+		</div><!-- /delete board modal -->
+	</div><!--    /container    -->
+</section>
 </body>
 </html>

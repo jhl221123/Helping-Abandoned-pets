@@ -25,6 +25,8 @@ public class UserController {
 
     private final UserService userService;
 
+
+    /***  create  ***/
     @GetMapping("/new")
     public String joinForm(Model model) {
         model.addAttribute("saveForm", new SaveUserForm());
@@ -51,6 +53,8 @@ public class UserController {
         return "redirect:/";
     }
 
+
+    /***  login and logout  ***/
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm loginForm) {
         return "users/loginForm";
@@ -83,6 +87,8 @@ public class UserController {
         return "redirect:/";
     }
 
+
+    /***  read  ***/
     @GetMapping("/detail")
     public String detail(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         ReadUserForm readForm = userService.readByNickname(nickname);
@@ -90,6 +96,8 @@ public class UserController {
         return "users/detail";
     }
 
+
+    /***  update  ***/
     @GetMapping("/detail/edit")
     public String editForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         UpdateUserForm updateForm = userService.getUpdateForm(nickname);
@@ -133,13 +141,9 @@ public class UserController {
         return "redirect:/users/detail";
     }
 
-    @GetMapping("/detail/delete")
-    public String deleteForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
-        model.addAttribute("nickname", nickname);
-        return "users/delete";
-    }
 
-    @PostMapping("/detail/delete")
+    /***  delete  ***/
+    @GetMapping("/detail/delete")
     public String delete(@SessionAttribute(name = LOGIN_USER) String nickname) {
         userService.deleteUser(nickname);
         return "redirect:/users/logout";
