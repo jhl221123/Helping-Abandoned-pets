@@ -1,8 +1,6 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.board.Item;
-import com.catdog.help.domain.board.ItemStatus;
-import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.domain.board.*;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
@@ -99,6 +97,61 @@ class ItemServiceTest {
         //expected
         ReadItemForm form = itemService.read(board.getId());
         assertThat(form.getItemName()).isEqualTo(board.getItemName());
+    }
+
+    @Test
+    @DisplayName("닉네임으로 나눔글 수 조회")
+    void getCountByNickname() {
+        //given
+        Item board = getItem("제목");
+        List<Item> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(itemRepository)
+                .findAll();
+
+        //when
+        Long result = itemService.countByNickname("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 나눔글 페이지 조회")
+    void getPageByNickname() {
+        //given
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
+        Page<Item> page = Page.empty();
+
+        doReturn(page).when(itemRepository)
+                .findPageByNickname("닉네임", pageable);
+
+        //expected
+        Page<PageItemForm> formPage = itemService.getPageByNickname("닉네임", pageable);
+        verify(itemRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
+
+    @Test
+    @DisplayName("로그인 사용자가 좋아하는 나눔글 수 조회")
+    void countLikeBulletin() {
+        //given
+        Item board = getItem("제목");
+        Like.builder()
+                .board(board)
+                .user(board.getUser())
+                .build();
+        List<Item> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(itemRepository)
+                .findAll();
+
+        //when
+        Long result = itemService.countLikeItem("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
     }
 
     @Test

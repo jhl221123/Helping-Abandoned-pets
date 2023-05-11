@@ -51,6 +51,22 @@ public class ItemService {
         return new ReadItemForm(findBoard, readImageForms, likeSize);
     }
 
+    public Long countByNickname(String nickname) {
+        return itemRepository.findAll().stream()
+                .filter(b -> b.getUser().getNickname().equals(nickname))
+                .count();
+    }
+
+    public Page<PageItemForm> getPageByNickname(String nickname, Pageable pageable) {
+        return itemRepository.findPageByNickname(nickname, pageable)
+                .map(item -> getPageItemForm(item));
+    }
+
+    public Long countLikeItem(String nickname) {
+        return itemRepository.findAll().stream()
+                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
+    }
+
     public Page<PageItemForm> search(ItemSearch search, Pageable pageable) {
         return searchQueryRepository.searchItem(search.getTitle(), search.getItemName(), pageable)
                 .map(item -> getPageItemForm(item));

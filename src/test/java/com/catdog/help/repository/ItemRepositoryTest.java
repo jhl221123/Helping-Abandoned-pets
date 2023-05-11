@@ -52,6 +52,20 @@ class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 나눔글 페이지 조회")
+    void findByNickname() {
+        //given
+        setItemList();
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Item> findBoards = itemRepository.findPageByNickname("닉네임", pageRequest);
+
+        //then
+        assertThat(findBoards.getContent().size()).isEqualTo(3);
+    }
+
+    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given
