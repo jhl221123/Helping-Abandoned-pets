@@ -54,6 +54,20 @@ class InquiryRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 문의글 페이지 조회")
+    void findByNickname() {
+        //given
+        setInquiryList();
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Inquiry> findBoards = inquiryRepository.findPageByNickname("닉네임", pageRequest);
+
+        //then
+        assertThat(findBoards.getContent().size()).isEqualTo(3);
+    }
+
+    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given

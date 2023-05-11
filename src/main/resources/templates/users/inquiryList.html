@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container inquiry-list">
+		<table class="table table-striped">
+			<thead>
+			<tr style="text-align: center">
+				<th><img th:src="|/img/lock.png|" width="20" height="20"/></th>
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성일</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
+				<td style="width: 7%">
+					<img th:if="${pageForm.secret}" th:src="|/img/lock.png|" width="20" height="20"/>
+				</td>
+				<td th:text="${pageForm.secret} and ${pageForm.nickname != session.login_user} and ${!isManager} ? '비밀글' : ${pageForm.title}"
+				    th:onclick="${pageForm.secret} and ${pageForm.nickname != session.login_user} and ${!isManager} ? '' : |location.href='@{/inquiries/{id}(id=${pageForm.id})}'|"
+				    style="width: 54%; cursor:pointer;"></td>
+				<td th:text="${pageForm.nickname}" style="width: 23%"></td>
+				<td th:text="${#temporals.format(pageForm.createdDate, 'yyyy-MM-dd')}" style="width: 16%"></td>
+			</tr>
+			</tbody>
+		</table>
+
+		<!--	start pagination	-->
+		<nav class="nav justify-content-center">
+			<ul class="pagination">
+				<li class="page-item">
+					<a th:if="${offset > 0}" class="page-link"
+					   th:href="@{/users/detail/inquiries(page=${offset-1})}">&laquo;</a>
+				</li>
+
+				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+					<a class="page-link" th:text="${page+1}"
+					   th:href="@{/users/detail/inquiries(page=${page})}"></a>
+				</li>
+
+				<li class="page-item">
+					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+					   th:href="@{/users/detail/inquiries(page=${lastPage+1})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav> <!--	/pagination -->
+
+		<br/>
+		<br/>
+	</div> <!-- /container -->
+</section>
+</body>
+</html>

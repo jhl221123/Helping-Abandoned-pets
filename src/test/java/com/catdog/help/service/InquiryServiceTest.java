@@ -21,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,18 +61,36 @@ class InquiryServiceTest {
     }
 
     @Test
-    @DisplayName("문의글 페이지 조회")
+    @DisplayName("닉네임으로 문의글 수 조회")
+    void getCountByNickname() {
+        //given
+        Inquiry board = getInquiry("제목");
+        List<Inquiry> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(inquiryRepository)
+                .findAll();
+
+        //when
+        Long result = inquiryService.countByNickname("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 문의글 페이지 조회")
     void readPage() {
         //given
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
         Page<Inquiry> page = Page.empty();
 
         doReturn(page).when(inquiryRepository)
-                .findPageBy(pageable);
+                .findPageByNickname("닉네임", pageable);
 
         //expected
-        Page<PageInquiryForm> formPage = inquiryService.getPage(pageable);
-        verify(inquiryRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        Page<PageInquiryForm> formPage = inquiryService.getPageByNickname("닉네임", pageable);
+        verify(inquiryRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
     }
 
     @Test
