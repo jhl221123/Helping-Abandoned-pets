@@ -1,6 +1,7 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Like;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
@@ -115,22 +116,95 @@ class BulletinServiceTest {
     }
 
     @Test
-    @DisplayName("페이지 조회")
-    void readPage() {
+    @DisplayName("키는 지역, 값은 지역별 게시글 수를 가지는 맵을 반환")
+    void getCountByRegion() {
+        //given
+        Bulletin board = getBulletin("제목");
+        List<Bulletin> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(bulletinRepository)
+                .findAll();
+
+        //when
+        Map<String, Long> result = bulletinService.getCountByRegion();
+
+        //then
+        assertThat(result.get("부산")).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 게시글 수 조회")
+    void getCountByNickname() {
+        //given
+        Bulletin board = getBulletin("제목");
+        List<Bulletin> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(bulletinRepository)
+                .findAll();
+
+        //when
+        Long result = bulletinService.countByNickname("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 게시글 페이지 조회")
+    void getPageByNickname() {
         //given
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         Page<Bulletin> page = Page.empty();
 
         doReturn(page).when(bulletinRepository)
-                .findPageBy(pageable);
+                .findPageByNickname("닉네임", pageable);
 
         //expected
-        Page<PageBulletinForm> formPage = bulletinService.getPage(pageable);
-        verify(bulletinRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        Page<PageBulletinForm> formPage = bulletinService.getPageByNickname("닉네임", pageable);
+        verify(bulletinRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
     }
 
     @Test
-    @DisplayName("검색 조건에 맞는 페이지 조회")
+    @DisplayName("로그인 사용자가 좋아하는 게시글 수 조회")
+    void countLikeBulletin() {
+        //given
+        Bulletin board = getBulletin("제목");
+        Like.builder()
+                .board(board)
+                .user(board.getUser())
+                .build();
+        List<Bulletin> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(bulletinRepository)
+                .findAll();
+
+        //when
+        Long result = bulletinService.countLikeBulletin("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+//
+//    @Test
+//    @DisplayName("해당 사용자가 좋아하는 게시글 페이지 조회")
+//    void getLikeBulletins() {
+//        //given
+//        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+//        Page<Bulletin> page = Page.empty();
+//
+//        doReturn(page).when(bulletinRepository)
+//                .findPageBy(pageable);
+//
+//        //expected
+//        Page<PageBulletinForm> formPage = bulletinService.getLikeBulletinPage("닉네임", pageable);
+//        verify(bulletinRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+//    }
+
+    @Test
+    @DisplayName("검색 조건에 맞는 게시글 페이지 조회")
     void searchPageByCond() {
         //given
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
@@ -144,7 +218,7 @@ class BulletinServiceTest {
         doReturn(page).when(searchQueryRepository)
                 .searchBulletin(search.getTitle(), search.getRegion(), pageable);
 
-        //expected
+        //expected  TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
         Page<PageBulletinForm> formPage = bulletinService.search(search, pageable);
         verify(searchQueryRepository, times(1)).searchBulletin(search.getTitle(), search.getRegion(), pageable);
     }
@@ -218,24 +292,6 @@ class BulletinServiceTest {
         //expected
         assertThrows(BoardNotFoundException.class,
                 ()-> bulletinService.delete(1L));
-    }
-
-    @Test
-    @DisplayName("키는 지역, 값은 지역별 게시글 수를 가지는 맵을 반환")
-    void getCountByRegion() {
-        //given
-        Bulletin board = getBulletin("제목");
-        List<Bulletin> boards = new ArrayList<>();
-        boards.add(board);
-
-        doReturn(boards).when(bulletinRepository)
-                .findAll();
-
-        //when
-        Map<String, Long> result = bulletinService.getCountByRegion();
-
-        //then
-        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
 

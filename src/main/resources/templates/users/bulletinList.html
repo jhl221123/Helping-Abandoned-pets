@@ -3,21 +3,6 @@
 <body>
 <section>
 	<div class="container">
-		<!--	search box 	 -->
-		<form th:object="${bulletinSearch}" class="form-inline" th:action="@{/bulletins}">
-			<div class="form-group mb-2">
-				<input type="text" th:field="*{region}" class="form-control" placeholder="지역"/>
-			</div>
-			<div class="form-group mx-sm-1 mb-2">
-				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
-			</div>
-			<button type="submit" class="utility-button mb-2">
-				<img th:src="|/img/search.png|" width="25" height="25"/>
-			</button>
-			<a class="utility-button mb-2" style="margin-left: auto;" th:href="@{/bulletins/new}">글 작성</a>
-		</form><!--	  /search box 	 -->
-
-		<!--	bulletin list    -->
 		<table class="table table-striped">
 			<thead>
 			<tr style="text-align: center">
@@ -37,24 +22,24 @@
 				<td th:text="${pageForm.views}"></td>
 			</tr>
 			</tbody>
-		</table><!--	/bulletin list    -->
+		</table>
 
 		<!--	start pagination	-->
 		<nav class="nav justify-content-center">
 			<ul class="pagination">
 				<li class="page-item">
 					<a th:if="${offset > 0}" class="page-link"
-					   th:href="@{/bulletins(page=${offset-1}, region=${bulletinSearch.region}, title=${bulletinSearch.title})}">&laquo;</a>
+					   th:href="@{/users/detail/bulletins(page=${offset-1})}">&laquo;</a>
 				</li>
 
 				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
 					<a class="page-link" th:text="${page+1}"
-					   th:href="@{/bulletins(page=${page}, region=${bulletinSearch.region}, title=${bulletinSearch.title})}"></a>
+					   th:href="@{/users/detail/bulletins(page=${page})}"></a>
 				</li>
 
 				<li class="page-item">
 					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
-					   th:href="@{/bulletins(page=${lastPage+1}, region=${bulletinSearch.region}, title=${bulletinSearch.title})}">&raquo;</a>
+					   th:href="@{/users/detail/bulletins(page=${lastPage+1})}">&raquo;</a>
 				</li>
 			</ul>
 		</nav> <!--	/pagination -->

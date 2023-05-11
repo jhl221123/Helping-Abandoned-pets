@@ -57,9 +57,26 @@ public class BulletinService {
                 .build();
     }
 
-    public Page<PageBulletinForm> getPage(Pageable pageable) {
-        return bulletinRepository.findPageBy(pageable)
-                .map(PageBulletinForm::new); // TODO: 2023-05-02 제거 고려
+    public Map<String, Long> getCountByRegion() {
+        List<Bulletin> boards = bulletinRepository.findAll();
+        List<String> regions = getRegions();
+        return getCountMap(boards, regions);
+    }
+
+    public Long countByNickname(String nickname) {
+        return bulletinRepository.findAll().stream()
+                .filter(b -> b.getUser().getNickname().equals(nickname))
+                .count();
+    }
+
+    public Page<PageBulletinForm> getPageByNickname(String nickname, Pageable pageable) {
+        return bulletinRepository.findPageByNickname(nickname, pageable)
+                .map(PageBulletinForm::new);
+    }
+
+    public Long countLikeBulletin(String nickname) {
+        return bulletinRepository.findAll().stream()
+                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
     }
 
     public Page<PageBulletinForm> search(BulletinSearch search, Pageable pageable) {
@@ -87,12 +104,6 @@ public class BulletinService {
         Bulletin findBoard = bulletinRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
         bulletinRepository.delete(findBoard);
-    }
-
-    public Map<String, Long> getCountByRegion() {
-        List<Bulletin> boards = bulletinRepository.findAll();
-        List<String> regions = getRegions();
-        return getCountMap(boards, regions);
     }
 
 

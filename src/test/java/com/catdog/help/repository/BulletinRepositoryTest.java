@@ -51,6 +51,20 @@ class BulletinRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 게시글 페이지 조회")
+    void findByNickname() {
+        //given
+        setBulletinList();
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Bulletin> findBoards = bulletinRepository.findPageByNickname("닉네임", pageRequest);
+
+        //then
+        assertThat(findBoards.getContent().size()).isEqualTo(3);
+    }
+
+    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given
