@@ -187,21 +187,27 @@ class BulletinServiceTest {
         //then
         assertThat(result).isEqualTo(1L);
     }
-//
-//    @Test
-//    @DisplayName("해당 사용자가 좋아하는 게시글 페이지 조회")
-//    void getLikeBulletins() {
-//        //given
-//        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
-//        Page<Bulletin> page = Page.empty();
-//
-//        doReturn(page).when(bulletinRepository)
-//                .findPageBy(pageable);
-//
-//        //expected
-//        Page<PageBulletinForm> formPage = bulletinService.getLikeBulletinPage("닉네임", pageable);
-//        verify(bulletinRepository, times(1)).findPageBy(pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
-//    }
+
+    @Test
+    @DisplayName("해당 사용자가 좋아하는 게시글 페이지 조회")
+    void getLikeBulletins() {
+        //given
+        User user = getUser();
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page<Bulletin> page = Page.empty();
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
+
+        doReturn(page).when(bulletinRepository)
+                .findLikeBulletins(user.getId(), pageable);
+
+        //expected
+        Page<PageBulletinForm> formPage = bulletinService.getLikeBulletins("닉네임", pageable);
+        verify(userRepository, times(1)).findByNickname("닉네임");
+        verify(bulletinRepository, times(1)).findLikeBulletins(user.getId(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
 
     @Test
     @DisplayName("검색 조건에 맞는 게시글 페이지 조회")

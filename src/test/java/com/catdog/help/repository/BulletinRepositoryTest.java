@@ -1,6 +1,7 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Like;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -20,14 +21,21 @@ class BulletinRepositoryTest {
     @Autowired
     BulletinRepository bulletinRepository;
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    LikeRepository likeRepository;
 
 
     @Test
     @DisplayName("게시글 저장")
     void save() {
         //given
-        Bulletin board = getBulletin();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Bulletin board = getBulletin(user);
 
         //when
         Bulletin savedBoard = bulletinRepository.save(board);
@@ -40,7 +48,10 @@ class BulletinRepositoryTest {
     @DisplayName("id로 단건 조회")
     void findById() {
         //given
-        Bulletin board = getBulletin();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Bulletin board = getBulletin(user);
         bulletinRepository.save(board);
 
         //when
@@ -65,6 +76,37 @@ class BulletinRepositoryTest {
     }
 
     @Test
+    @DisplayName("사용자가 좋아하는 게시글 페이지 조회 성공")
+    void findLikeBulletinByNickname() {
+        //given
+        User user_A = getUser("test@AAAA", "닉네임_A");
+        User user_B = getUser("test@BBBB", "닉네임_B");
+        userRepository.save(user_A);
+        userRepository.save(user_B);
+
+        Bulletin board_A = getBulletin(user_A);
+        Bulletin board_B = getBulletin(user_B);
+        bulletinRepository.save(board_A);
+        bulletinRepository.save(board_B);
+
+        //user_A가 좋아요를 누른 게시글은 2개
+        Like like_A = getLike(user_A, board_A);
+        Like like_B = getLike(user_A, board_B);
+        Like like_C = getLike(user_B, board_B);
+        likeRepository.save(like_A);
+        likeRepository.save(like_B);
+        likeRepository.save(like_C);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "board_id");
+
+        //when
+        Page<Bulletin> boards = bulletinRepository.findLikeBulletins(user_A.getId(), pageRequest);
+
+        //then
+        assertThat(boards.getContent().size()).isEqualTo(2L);
+    }
+
+    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given
@@ -83,7 +125,10 @@ class BulletinRepositoryTest {
     @DisplayName("게시글 삭제")
     void delete() {
         //given
-        Bulletin board = getBulletin();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Bulletin board = getBulletin(user);
         bulletinRepository.save(board);
         assertThat(bulletinRepository.count()).isEqualTo(1L);
 
@@ -95,10 +140,14 @@ class BulletinRepositoryTest {
     }
 
 
-    private Bulletin getBulletin() {
-        User user = getUser();
-        userRepository.save(user);
+    private Like getLike(User user, Bulletin board) {
+        return Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+    }
 
+    private Bulletin getBulletin(User user) {
         return Bulletin.builder()
                 .user(user)
                 .title("제목")
@@ -108,7 +157,7 @@ class BulletinRepositoryTest {
     }
 
     private void setBulletinList() {
-        User user = getUser();
+        User user = getUser("test@test.test", "닉네임");
         userRepository.save(user);
 
         for (int i = 1; i <= 5; i++) {
@@ -122,11 +171,11 @@ class BulletinRepositoryTest {
         }
     }
 
-    private User getUser() {
+    private User getUser(String emailId, String nickname) {
         return User.builder()
-                .emailId("test@test.test")
+                .emailId(emailId)
                 .password("12345678")
-                .nickname("닉네임")
+                .nickname(nickname)
                 .name("이름")
                 .age(20)
                 .gender(Gender.MAN)

@@ -1,10 +1,20 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.service.UserService;
+import com.catdog.help.service.*;
 import com.catdog.help.web.form.LoginForm;
-import com.catdog.help.web.form.user.*;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
+import com.catdog.help.web.form.item.PageItemForm;
+import com.catdog.help.web.form.user.ChangePasswordForm;
+import com.catdog.help.web.form.user.ReadUserForm;
+import com.catdog.help.web.form.user.SaveUserForm;
+import com.catdog.help.web.form.user.UpdateUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +34,10 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 public class UserController {
 
     private final UserService userService;
+    private final BulletinService bulletinService;
+    private final ItemService itemService;
+    private final InquiryService inquiryService;
+    private final LikeService likeService;
 
 
     /***  create  ***/
@@ -93,7 +107,115 @@ public class UserController {
     public String detail(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         ReadUserForm readForm = userService.readByNickname(nickname);
         model.addAttribute("readForm", readForm);
+
+        Long bulletinSize = bulletinService.countByNickname(nickname);
+        Long itemSize = itemService.countByNickname(nickname);
+        Long inquirySize = inquiryService.countByNickname(nickname);
+
+        model.addAttribute("bulletinSize", bulletinSize);
+        model.addAttribute("itemSize", itemSize);
+        model.addAttribute("inquirySize", inquirySize);
+
+        Long likeBulletinSize = bulletinService.countLikeBulletin(nickname);
+        Long likeItemSize = itemService.countLikeItem(nickname);
+
+        model.addAttribute("likeBulletinSize", likeBulletinSize);
+        model.addAttribute("likeItemSize", likeItemSize);
         return "users/detail";
+    }
+
+    @GetMapping("/detail/bulletins")
+    public String getMyBulletins(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                                @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
+
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/bulletinList";
+    }
+
+    @GetMapping("/detail/items")
+    public String getMyItems(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                             @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/itemList";
+    }
+
+    @GetMapping("/detail/inquiries")
+    public String getMyInquiries(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                                 @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageInquiryForm> pageForms = inquiryService.getPageByNickname(nickname, pageable);
+        model.addAttribute("pageForms", pageForms);
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/inquiryList";
+    }
+
+    @GetMapping("/detail/likes/bulletins")
+    public String getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                                      @PageableDefault(sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageBulletinForm> pageForms = bulletinService.getLikeBulletins(nickname, pageable);
+
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/likeBulletinList";
     }
 
 
@@ -147,5 +269,12 @@ public class UserController {
     public String delete(@SessionAttribute(name = LOGIN_USER) String nickname) {
         userService.deleteUser(nickname);
         return "redirect:/users/logout";
+    }
+
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
     }
 }

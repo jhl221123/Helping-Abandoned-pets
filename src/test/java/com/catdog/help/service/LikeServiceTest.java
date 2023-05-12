@@ -53,7 +53,7 @@ class LikeServiceTest {
         //when
         boolean result = likeService.isLike(board.getId(), "닉네임");
 
-        //given
+        //then
         assertThat(result).isTrue();
     }
 
@@ -73,7 +73,7 @@ class LikeServiceTest {
         //when
         boolean result = likeService.isLike(board.getId(), "닉네임");
 
-        //given
+        //then
         assertThat(result).isFalse();
     }
 
@@ -96,10 +96,8 @@ class LikeServiceTest {
 
         when(likeRepository.save(any(Like.class))).then(AdditionalAnswers.returnsFirstArg());
 
-        //when
+        //expected
         likeService.clickLike(board.getId(), "닉네임");
-
-        //given
         verify(likeRepository, times(1)).save(any(Like.class));
     }
 
@@ -123,10 +121,8 @@ class LikeServiceTest {
         doNothing().when(likeRepository)
                 .delete(like);
 
-        //when
+        //expected
         likeService.clickLike(board.getId(), "닉네임");
-
-        //given
         verify(likeRepository, times(1)).delete(like);
     }
 

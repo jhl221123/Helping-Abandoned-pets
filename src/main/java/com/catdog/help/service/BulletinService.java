@@ -4,6 +4,7 @@ import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
+import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.*;
 import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
@@ -77,6 +78,14 @@ public class BulletinService {
     public Long countLikeBulletin(String nickname) {
         return bulletinRepository.findAll().stream()
                 .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
+    }
+
+    public Page<PageBulletinForm> getLikeBulletins(String nickname, Pageable pageable) {
+        User user = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new);
+
+        return bulletinRepository.findLikeBulletins(user.getId(), pageable)
+                .map(PageBulletinForm::new);
     }
 
     public Page<PageBulletinForm> search(BulletinSearch search, Pageable pageable) {

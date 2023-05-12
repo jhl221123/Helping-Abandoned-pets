@@ -3,6 +3,9 @@ package com.catdog.help.web.controller;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.service.BulletinService;
+import com.catdog.help.service.InquiryService;
+import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.user.ReadUserForm;
@@ -14,12 +17,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +46,7 @@ class UserControllerTest {
     private static final String BEFORE_PASSWORD = "beforePassword";
     private static final String AFTER_PASSWORD = "afterPassword";
     private static final String CHECK_PASSWORD = "checkPassword";
+    private static final String PAGE = "page";
 
     @InjectMocks
     private UserController userController;
@@ -45,12 +54,22 @@ class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private BulletinService bulletinService;
+
+    @Mock
+    private ItemService itemService;
+
+    @Mock
+    private InquiryService inquiryService;
+
     private MockMvc mockMvc;
 
 
     @BeforeEach
     public void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build();;
     }
 
 
@@ -229,6 +248,78 @@ class UserControllerTest {
                 .andExpect(model().attributeExists("readForm"))
                 .andExpect(view().name("users/detail"));
     }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 게시글 모두 조회")
+    void getMyBulletinPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+        doReturn(page).when(bulletinService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/bulletins")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/bulletinList"));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 나눔글 모두 조회")
+    void getMyItemPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+        doReturn(page).when(itemService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/items")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/itemList"));
+    }
+
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 문의글 모두 조회")
+    void getMyInquiryPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+        doReturn(page).when(inquiryService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/inquiries")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/inquiryList"));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 좋아하는 게시글 모두 조회")
+    void getLikeBulletinPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+        doReturn(page).when(bulletinService)
+                .getLikeBulletins(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/likes/bulletins")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/likeBulletinList"));
+    }
+
+//    @Test
+//    @DisplayName("로그인한 사용자가 좋아하는 나눔글 모두 조회")
 
     @Test
     @DisplayName("개인정보 수정 양식 호출")
