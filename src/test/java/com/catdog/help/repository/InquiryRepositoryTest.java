@@ -26,7 +26,7 @@ class InquiryRepositoryTest {
 
 
     @Test
-    @DisplayName("게시글 저장")
+    @DisplayName("문의글 저장")
     void save() {
         //given
         Inquiry board = getInquiry();
@@ -83,7 +83,7 @@ class InquiryRepositoryTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제")
+    @DisplayName("문의글 삭제")
     void delete() {
         //given
         Inquiry board = getInquiry();

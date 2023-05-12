@@ -12,5 +12,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select i from Item i join i.user where i.user.nickname = :nickname")
     Page<Item> findPageByNickname(@Param("nickname") String nickname, Pageable pageable);
 
+    @Query(value = "select * from BOARD b" +
+            " join LIKES l on l.board_id = b.board_id" +
+            " and l.user_id = :id" +
+            " where b.dtype = 'Item'", nativeQuery = true)
+    Page<Item> findLikeItems(@Param("id") Long id, Pageable pageable);
+
     Page<Item> findPageBy(Pageable pageable);
 }

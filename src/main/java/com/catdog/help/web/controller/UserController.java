@@ -218,6 +218,30 @@ public class UserController {
         return "users/likeBulletinList";
     }
 
+    @GetMapping("/detail/likes/items")
+    public String getLikeItemPage(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                                  @PageableDefault(size = 12, sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageItemForm> pageForms = itemService.getLikeItems(nickname, pageable);
+
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/likeItemList";
+    }
+
 
     /***  update  ***/
     @GetMapping("/detail/edit")

@@ -155,6 +155,27 @@ class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("해당 사용자가 좋아하는 나눔글 페이지 조회")
+    void getLikeBulletins() {
+        //given
+        User user = getUser();
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "board_id");
+        Page<Item> page = Page.empty();
+
+        doReturn(Optional.ofNullable(user)).when(userRepository)
+                .findByNickname("닉네임");
+
+        doReturn(page).when(itemRepository)
+                .findLikeItems(user.getId(), pageable);
+
+        //expected
+        Page<PageItemForm> formPage = itemService.getLikeItems("닉네임", pageable);
+        verify(userRepository, times(1)).findByNickname("닉네임");
+        verify(itemRepository, times(1)).findLikeItems(user.getId(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+    }
+
+    @Test
     @DisplayName("검색 조건에 맞는 나눔글 페이지 조회")
     void searchPageByCond() {
         //given
@@ -199,7 +220,7 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 수정")
+    @DisplayName("나눔글 수정")
     void update() {
         //given
         Item board = getItem("제목");
@@ -254,7 +275,7 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제")
+    @DisplayName("나눔글 삭제")
     void delete() {
         //given
         Item board = getItem("제목");
@@ -268,7 +289,7 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 게시글 아이디로 조회 시 예외 발생")
+    @DisplayName("존재하지 않는 나눔글 아이디로 조회 시 예외 발생")
     void notFoundBoardExceptionById() {
         //given
         doReturn(Optional.empty()).when(itemRepository)

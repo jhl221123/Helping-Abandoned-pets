@@ -194,7 +194,7 @@ class BulletinServiceTest {
         //given
         User user = getUser();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "board_id");
         Page<Bulletin> page = Page.empty();
 
         doReturn(Optional.ofNullable(user)).when(userRepository)

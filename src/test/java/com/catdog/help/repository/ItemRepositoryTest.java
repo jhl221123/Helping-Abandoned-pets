@@ -1,6 +1,7 @@
 package com.catdog.help.repository;
 
 import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.Like;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
@@ -23,12 +24,18 @@ class ItemRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    LikeRepository likeRepository;
+
 
     @Test
     @DisplayName("나눔글 저장")
     void save() {
         //given
-        Item board = getItem();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Item board = getItem(user);
 
         //when
         Item savedBoard = itemRepository.save(board);
@@ -41,7 +48,10 @@ class ItemRepositoryTest {
     @DisplayName("id로 나눔글 단건 조회")
     void findById() {
         //given
-        Item board = getItem();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Item board = getItem(user);
         itemRepository.save(board);
 
         //when
@@ -66,6 +76,37 @@ class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("사용자가 좋아하는 나눔글 페이지 조회 성공")
+    void findLikeItemsByNickname() {
+        //given
+        User user_A = getUser("test@AAAA", "닉네임_A");
+        User user_B = getUser("test@BBBB", "닉네임_B");
+        userRepository.save(user_A);
+        userRepository.save(user_B);
+
+        Item board_A = getItem(user_A);
+        Item board_B = getItem(user_B);
+        itemRepository.save(board_A);
+        itemRepository.save(board_B);
+
+        //user_A가 좋아요를 누른 나눔글은 2개
+        Like like_A = getLike(user_A, board_A);
+        Like like_B = getLike(user_A, board_B);
+        Like like_C = getLike(user_B, board_B);
+        likeRepository.save(like_A);
+        likeRepository.save(like_B);
+        likeRepository.save(like_C);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "board_id");
+
+        //when
+        Page<Item> boards = itemRepository.findLikeItems(user_A.getId(), pageRequest);
+
+        //then
+        assertThat(boards.getContent().size()).isEqualTo(2L);
+    }
+
+    @Test
     @DisplayName("페이지 조회")
     void findPage() {
         //given
@@ -81,10 +122,13 @@ class ItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제")
+    @DisplayName("나눔글 삭제")
     void delete() {
         //given
-        Item board = getItem();
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Item board = getItem(user);
         itemRepository.save(board);
         assertThat(itemRepository.count()).isEqualTo(1L);
 
@@ -96,8 +140,15 @@ class ItemRepositoryTest {
     }
 
 
+    private Like getLike(User user, Item board) {
+        return Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+    }
+
     private void setItemList() {
-        User user = getUser();
+        User user = getUser("test@test.test", "닉네임");
         userRepository.save(user);
 
         for (int i = 1; i <= 5; i++) {
@@ -112,10 +163,7 @@ class ItemRepositoryTest {
         }
     }
 
-    private Item getItem() {
-        User user = getUser();
-        userRepository.save(user);
-
+    private Item getItem(User user) {
         return Item.builder()
                 .user(user)
                 .title("제목")
@@ -125,11 +173,11 @@ class ItemRepositoryTest {
                 .build();
     }
 
-    private User getUser() {
+    private User getUser(String emailId, String nickname) {
         return User.builder()
-                .emailId("test@test.test")
+                .emailId(emailId)
                 .password("12345678")
-                .nickname("닉네임")
+                .nickname(nickname)
                 .name("이름")
                 .age(20)
                 .gender(Gender.MAN)

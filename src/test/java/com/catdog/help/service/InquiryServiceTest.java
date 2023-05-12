@@ -132,7 +132,7 @@ class InquiryServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 수정")
+    @DisplayName("문의글 수정")
     void update() {
         //given
         Inquiry board = getInquiry("제목");
@@ -150,7 +150,7 @@ class InquiryServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제")
+    @DisplayName("문의글 삭제")
     void delete() {
         //given
         Inquiry board = getInquiry("제목");

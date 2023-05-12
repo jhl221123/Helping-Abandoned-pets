@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container">
+		<table class="table table-striped" style="margin-left: auto; margin-right: auto; width: 650px;">
+			<thead>
+			<tr style="text-align: center">
+				<th></th>
+				<th>지역</th>
+				<th>제목</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
+				<td><img th:src="|/img/redHeart.png|" width="20" height="20"/></td>
+				<td th:text="${pageForm.region}"></td>
+				<td th:text="${pageForm.title}" th:onclick="|location.href='@{/bulletins/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></td>
+			</tr>
+			</tbody>
+		</table>
+
+		<!--	start pagination	-->
+		<nav class="nav justify-content-center">
+			<ul class="pagination">
+				<li class="page-item">
+					<a th:if="${offset > 0}" class="page-link"
+					   th:href="@{/users/detail/likes/bulletins(page=${offset-1})}">&laquo;</a>
+				</li>
+
+				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+					<a class="page-link" th:text="${page+1}"
+					   th:href="@{/users/detail/likes/bulletins(page=${page})}"></a>
+				</li>
+
+				<li class="page-item">
+					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+					   th:href="@{/users/detail/likes/bulletins(page=${lastPage+1})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav> <!--	/pagination -->
+
+	</div> <!-- /container -->
+</section>
+</body>
+</html>

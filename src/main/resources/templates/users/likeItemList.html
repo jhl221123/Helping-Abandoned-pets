@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container" style="padding: 0px;">
+		<div>
+			<!--	item list    -->
+			<div class="item-area">
+				<div th:each="pageForm : ${pageForms}" class="item-box">
+					<a class="item-link" th:href="@{/items/{id}(id=${pageForm.id})}" style="text-decoration: none;">
+						<div class="item-image-top">
+							<img th:if="${#strings.equals(pageForm.status, 'STILL')}" th:src="|/images/${pageForm.leadImage.getStoreFileName()}|"
+							     class="card-img-top item-image" alt="대표 이미지">
+							<img th:if="${#strings.equals(pageForm.status, 'COMP')}" th:src="|/img/sold_out.png|"
+							     class="card-img-top item-image" alt="sold out">
+						</div>
+						<div class="item-info">
+							<h1 class="item-name" th:text="${pageForm.itemName}">제품명</h1>
+							<div class="item-price" th:text="|${pageForm.price} 원|">가격</div>
+							<div class="item-region" th:text="${pageForm.region}">지역</div>
+							<div class="item-info-detail">
+								<span th:text="|조회 ${pageForm.views}|"></span>
+								<span th:text="|· 좋아요 ${pageForm.likeSize}|"></span>
+								<span th:text="|· 쪽지 ${pageForm.rooms}|"></span>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div><!--	 /item list    -->
+
+			<!--	start pagination	-->
+			<nav class="nav justify-content-center">
+				<ul class="pagination">
+					<li class="page-item">
+						<a th:if="${offset > 0}" class="page-link"
+						   th:href="@{/users/detail/likes/items(page=${offset-1})}">&laquo;</a>
+					</li>
+
+					<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+						<a class="page-link" th:text="${page+1}"
+						   th:href="@{/users/detail/likes/items(page=${page})}"></a>
+					</li>
+
+					<li class="page-item">
+						<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+						   th:href="@{/users/detail/likes/items(page=${lastPage+1})}">&raquo;</a>
+					</li>
+				</ul>
+			</nav> <!--	/pagination -->
+		</div>
+	</div> <!-- /container -->
+</section>
+</body>
+</html>

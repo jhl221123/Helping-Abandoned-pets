@@ -35,12 +35,12 @@
 						<li>
 							<span>게시글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
-							   th:href="@{/users/detail/likes/bulletin}">5</a>
+							   th:text="${likeBulletinSize}" th:href="@{/users/detail/likes/bulletins}"></a>
 						</li>
 						<li>
 							<span>나눔글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
-							   th:href="@{/users/detail/likes/item}">3</a>
+							   th:text="${likeItemSize}" th:href="@{/users/detail/likes/items}"></a>
 						</li>
 					</ul>
 				</div>
@@ -51,17 +51,17 @@
 						<li>
 							<span>게시글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
-							   th:href="@{/users/detail/bulletin}">1</a>
+							   th:text="${bulletinSize}" th:href="@{/users/detail/bulletins}"></a>
 						</li>
 						<li>
 							<span>나눔글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
-							   th:href="@{/users/detail/item}">2</a>
+							   th:text="${itemSize}" th:href="@{/users/detail/items}"></a>
 						</li>
 						<li>
 							<span>문의글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
-							   th:href="@{/users/detail/inquiry}">0</a>
+							   th:text="${inquirySize}" th:href="@{/users/detail/inquiries}"></a>
 						</li>
 					</ul>
 				</div>

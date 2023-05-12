@@ -67,6 +67,14 @@ public class ItemService {
                 .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
     }
 
+    public Page<PageItemForm> getLikeItems(String nickname, Pageable pageable) {
+        User user = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new);
+
+        return itemRepository.findLikeItems(user.getId(), pageable)
+                .map(item -> getPageItemForm(item));
+    }
+
     public Page<PageItemForm> search(ItemSearch search, Pageable pageable) {
         return searchQueryRepository.searchItem(search.getTitle(), search.getItemName(), pageable)
                 .map(item -> getPageItemForm(item));
