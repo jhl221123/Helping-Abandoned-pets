@@ -134,7 +134,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("로그인 사용자가 좋아하는 나눔글 수 조회")
-    void countLikeBulletin() {
+    void countLikeItems() {
         //given
         Item board = getItem("제목");
         Like.builder()

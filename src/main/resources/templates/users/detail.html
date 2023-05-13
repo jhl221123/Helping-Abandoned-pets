@@ -24,20 +24,24 @@
 						<p th:text="|이름: *{name}|">이름</p>
 						<p th:text="|나이: *{age}|"></p>
 						<p th:text="|성별: *{gender}|"></p>
-						<p class="text-muted" style="font-size: 13px;" th:text="|join from *{#temporals.format(createdDate, 'yyyy-MM-dd')}|"></p>
+						<p class="text-muted" th:text="|join from *{#temporals.format(createdDate, 'yyyy-MM-dd')}|"
+						   style="font-size: 13px; text-align: center; padding-right: 10px; margin-top: 20px;"></p>
 					</div>
 				</div>
 			</form>
 			<div class="col-md-7 mb-3" style="max-width: 100%; margin-left: 50px; border: 1px solid #e8e8e8; border-radius: 50px;">
 				<div>
-					<p>좋아요</p>
-						<ul>
+					<img th:src="|/img/redHeart.png|" alt="heart-icon" width="17" height="17" style="margin-left: 10px;"/>
+					<span style="display: inline-block; margin: 10px 0px 5px 10px;">좋아요</span>
+					<ul style="list-style-type: none;">
 						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>게시글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${likeBulletinSize}" th:href="@{/users/detail/likes/bulletins}"></a>
 						</li>
 						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>나눔글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${likeItemSize}" th:href="@{/users/detail/likes/items}"></a>
@@ -46,19 +50,23 @@
 				</div>
 				<div class="division-line"></div>
 				<div>
-					<p>내가 작성한 글</p>
-					<ul>
+					<img th:src="|/img/write.png|" alt="heart-icon" width="17" height="17" style="margin-left: 10px;"/>
+					<span style="margin-left: 10px;">내가 작성한 글</span>
+					<ul style="list-style-type: none;">
 						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>게시글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${bulletinSize}" th:href="@{/users/detail/bulletins}"></a>
 						</li>
 						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>나눔글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${itemSize}" th:href="@{/users/detail/items}"></a>
 						</li>
 						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>문의글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${inquirySize}" th:href="@{/users/detail/inquiries}"></a>

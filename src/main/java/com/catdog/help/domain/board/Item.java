@@ -54,4 +54,8 @@ public class Item extends Board {
     public void changeStatus(ItemStatus status) {
         this.status = status;
     }
+
+    public void addLike(Like like) {
+        this.likes.add(like);
+    }
 }

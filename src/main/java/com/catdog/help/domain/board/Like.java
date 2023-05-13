@@ -33,5 +33,11 @@ public class Like {
     public Like(Board board, User user) {
         this.board = board;
         this.user = user;
+
+        if (board instanceof Bulletin) {
+            ((Bulletin) board).addLike(this);
+        } else {
+            ((Item) board).addLike(this);
+        }
     }
 }

@@ -36,4 +36,8 @@ public class Bulletin extends Board {
         super.updateBoard(title, content);
         this.region = region;
     }
+
+    public void addLike(Like like) {
+        this.likes.add(like);
+    }
 }

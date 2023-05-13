@@ -3,6 +3,8 @@
 <body>
 <section>
 	<div class="container inquiry-list">
+		<h1 class="text-muted" style="margin: 0px 0px 20px 10px; font-size: 16px;">
+			<img th:src="|/img/question.png|" alt="message-icon" width="16" height="16"/> 【문의함】</h1>
 		<form th:object="${inquirySearch}" class="form-inline" th:action="@{/inquiries}">
 			<div class="form-group mx-sm-1 mb-2">
 				<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
