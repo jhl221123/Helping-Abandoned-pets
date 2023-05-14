@@ -33,6 +33,7 @@ public class SaveItemForm {
     @NotBlank
     private String region;
 
+    @Size(max = 5)
     private List<MultipartFile> images = new ArrayList<>();
 
 

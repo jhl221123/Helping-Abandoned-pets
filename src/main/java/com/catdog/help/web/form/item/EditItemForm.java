@@ -44,6 +44,7 @@ public class EditItemForm {
 
     private List<ReadImageForm> oldImages = new ArrayList<>();
 
+    @Size(max = 5)
     private List<MultipartFile> newImages = new ArrayList<>();
 
     private List<Long> deleteImageIds = new ArrayList<>();

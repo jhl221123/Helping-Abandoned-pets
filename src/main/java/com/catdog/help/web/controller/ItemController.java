@@ -56,9 +56,9 @@ public class ItemController {
     @PostMapping("/new")
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveItemForm saveForm, BindingResult bindingResult) {
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
         if (bindingResult.hasErrors()) {
-            List<String> regions = getRegions();
-            model.addAttribute("regions", regions);
             return "items/create";
         }
 

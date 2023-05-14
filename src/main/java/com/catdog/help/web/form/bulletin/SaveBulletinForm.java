@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class SaveBulletinForm {
     @NotBlank
     private String region;
 
+    @Size(max = 5)
     private List<MultipartFile> images = new ArrayList<>();
 
 

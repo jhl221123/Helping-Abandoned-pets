@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class EditBulletinForm {
 
     private List<ReadImageForm> oldImages = new ArrayList<>();
 
+    @Size(max = 5)
     private List<MultipartFile> newImages = new ArrayList<>();
 
     private List<Long> deleteImageIds = new ArrayList<>();
