@@ -87,7 +87,7 @@ class MsgRoomServiceTest {
                 .findByRefers(sender.getId(), board.getId());
 
         //when
-        Long result = msgRoomService.checkRoom(board.getId(), sender.getNickname());// TODO: 2023-04-27 로직을 수정하든, 다시 돌아온다.
+        Long result = msgRoomService.checkRoom(board.getId(), sender.getNickname());
 
         //then
         assertThat(result).isEqualTo(room.getId());
@@ -166,6 +166,7 @@ class MsgRoomServiceTest {
 
     private MsgRoom getMessageRoom(Item board, User sender, User recipient) {
         return MsgRoom.builder()
+                .id(5L)
                 .item(board)
                 .sender(sender)
                 .recipient(recipient)

@@ -41,7 +41,8 @@ public class MsgRoom extends BaseEntity {
 
 
     @Builder
-    public MsgRoom(Item item, User sender, User recipient) {
+    public MsgRoom(Long id, Item item, User sender, User recipient) {
+        this.id = id;
         this.item = item;
         this.sender = sender;
         this.recipient = recipient;
