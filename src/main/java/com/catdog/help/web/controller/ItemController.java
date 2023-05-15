@@ -56,14 +56,17 @@ public class ItemController {
     @PostMapping("/new")
     public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
                             @Validated @ModelAttribute("saveForm") SaveItemForm saveForm, BindingResult bindingResult) {
-        List<String> regions = getRegions();
-        model.addAttribute("regions", regions);
+
         if (bindingResult.hasErrors()) {
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
             return "items/create";
         }
 
-        for (MultipartFile image : saveForm.getImages()) {
+        for (MultipartFile image : saveForm.getImages()) { // TODO: 2023-05-15 왜 이렇게 했는지 모르겠지만 for문 보다 size 이용해보자.
             if (image.isEmpty()) {
+                List<String> regions = getRegions();
+                model.addAttribute("regions", regions);
                 bindingResult.rejectValue("images", "empty", "하나 이상의 이미지를 업로드 해야합니다.");
                 return "items/create";
             }

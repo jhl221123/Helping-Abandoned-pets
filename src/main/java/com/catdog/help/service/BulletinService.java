@@ -112,6 +112,9 @@ public class BulletinService {
     public void delete(Long boardId) {
         Bulletin findBoard = bulletinRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
+        if (!findBoard.getImages().isEmpty()) {
+            imageService.deleteImage(findBoard.getImages());
+        }
         bulletinRepository.delete(findBoard);
     }
 

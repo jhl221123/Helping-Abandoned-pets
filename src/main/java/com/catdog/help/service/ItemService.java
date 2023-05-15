@@ -105,6 +105,9 @@ public class ItemService {
     public void delete(Long id) {
         Item findBoard = itemRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);
+        if (!findBoard.getImages().isEmpty()) {
+            imageService.deleteImage(findBoard.getImages());
+        }
         itemRepository.delete(findBoard);
     }
 

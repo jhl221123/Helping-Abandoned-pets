@@ -45,8 +45,6 @@ public class ImageService {
                         file.delete(); // 폴더에서 이미지 삭제 todo 삭제는 잘 되는데 사용자나 글 삭제 시 이미지도 같이 삭제 되도록 구현필요
                         uploadFileRepository.delete(uploadFile.orElseThrow(FileNotFoundException::new));
                     });
-
-
         }
 
         addImage(board, newImages);
@@ -61,5 +59,14 @@ public class ImageService {
                     .changeLeadImage(result);
             // TODO: 2023-04-02 이름 각각 덮어서 수정했는데 다른 방법도 강구해보자.
         }
+    }
+
+    public void deleteImage(List<UploadFile> images) {
+        images.stream()
+                .forEach(uploadFile -> {
+                    File file = new File(fileDir + uploadFile.getStoreFileName());
+                    file.delete();
+                    uploadFileRepository.delete(uploadFile);
+                });
     }
 }
