@@ -43,11 +43,13 @@
 				<div class="division-line"></div>
 			</div>
 
-
 			<div class="form-group">
 				<label class="image-edit-label" th:for="newImages"> &#91; 사진 추가 &#93;</label>
 				<input class="form-control-file file-input-btn" type="file" multiple="multiple" th:field="*{newImages}">
 			</div>
+			<p class="text-muted">※［파일제한: 3MB, 5장］</p>
+			<p class="field-error" th:errors="*{newImages}">입력 오류</p>
+
 			<div class="col-lg-12 text-right">
 				<button type="button" class="utility-button" th:onclick="|location.href='@{/bulletins/{id}(id=${editForm.id})}'|">취소</button>
 				<button type="submit" class="utility-button" >완료</button>

@@ -36,6 +36,8 @@
 				<label style="display: none;" th:for="images">이미지</label>
 				<input type="file" multiple="multiple" th:field="*{images}" class="form-control-file">
 			</div>
+			<p class="text-muted">※［파일제한: 3MB, 5장］</p>
+			<p class="field-error" th:errors="*{images}">입력 오류</p>
 
 			<div class="col-lg-12 text-right">
 				<button type="button" class="utility-button" th:onclick="|location.href='@{/bulletins?page=0}'|">취소</button>
