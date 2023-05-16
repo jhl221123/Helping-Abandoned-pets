@@ -12,8 +12,8 @@ public interface BulletinRepository extends JpaRepository<Bulletin, Long> {
     @Query("select b from Bulletin b join b.user where b.user.nickname = :nickname")
     Page<Bulletin> findPageByNickname(@Param("nickname") String nickname, Pageable pageable);
 
-    @Query(value = "select * from BOARD b" +
-            " join LIKES l on l.board_id = b.board_id" +
+    @Query(value = "select * from board b" +
+            " join likes l on l.board_id = b.board_id" +
             " and l.user_id = :id" +
             " where b.dtype = 'Bulletin'", nativeQuery = true)
     Page<Bulletin> findLikeBulletins(@Param("id") Long id, Pageable pageable);
