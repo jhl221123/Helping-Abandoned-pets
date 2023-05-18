@@ -37,7 +37,6 @@ public class UserController {
     private final BulletinService bulletinService;
     private final ItemService itemService;
     private final InquiryService inquiryService;
-    private final LikeService likeService;
 
 
     /***  create  ***/

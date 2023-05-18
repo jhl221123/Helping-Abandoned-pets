@@ -1,11 +1,9 @@
-package com.catdog.help.web.form.user;
+package com.catdog.help.web.api.request.user;
 
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.web.api.request.user.SaveUserRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
@@ -13,9 +11,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor
-public class SaveUserForm {
+public class SaveUserRequest {
 
     @NotBlank
     @Email
@@ -42,21 +40,12 @@ public class SaveUserForm {
 
 
     @Builder
-    public SaveUserForm(String emailId, String password, String nickname, String name, int age, Gender gender) {
+    public SaveUserRequest(String emailId, String password, String nickname, String name, int age, Gender gender) {
         this.emailId = emailId;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
         this.age = age;
         this.gender = gender;
-    }
-
-    public SaveUserForm(SaveUserRequest request) {
-        this.emailId = request.getEmailId();
-        this.password = request.getPassword();
-        this.nickname = request.getNickname();
-        this.name = request.getName();
-        this.age = request.getAge();
-        this.gender = request.getGender();
     }
 }
