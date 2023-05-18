@@ -139,9 +139,10 @@ public class BulletinService {
     }
 
     private Bulletin getBulletin(String nickname, SaveBulletinForm form) {
-        Optional<User> findUser = userRepository.findByNickname(nickname);
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(UserNotFoundException::new);
         Bulletin board = Bulletin.builder()
-                .user(findUser.get())
+                .user(findUser)
                 .title(form.getTitle())
                 .content(form.getContent())
                 .region(form.getRegion())

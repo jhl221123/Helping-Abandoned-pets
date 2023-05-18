@@ -1,9 +1,8 @@
-package com.catdog.help.web.form.bulletin;
+package com.catdog.help.web.api.request.bulletin;
 
-import com.catdog.help.web.api.request.bulletin.SaveBulletinRequest;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +12,13 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
-public class SaveBulletinForm {
+@Getter
+@NoArgsConstructor
+public class SaveBulletinRequest {
+
+    @NotBlank
+    @Length(min = 2, max = 10)
+    private String nickname;
 
     @NotBlank
     @Length(max = 30)
@@ -25,27 +29,18 @@ public class SaveBulletinForm {
     private String content;
 
     @NotBlank
-    private String region;
+    private String region; // TODO: 2023-05-18 지역이름 검증 들어가야겠는걸
 
     @Size(max = 5)
     private List<MultipartFile> images = new ArrayList<>();
 
 
-    public SaveBulletinForm() {
-    }
-
     @Builder
-    public SaveBulletinForm(String title, String content, String region, List<MultipartFile> images) {
+    public SaveBulletinRequest(String nickname, String title, String content, String region, List<MultipartFile> images) {
+        this.nickname = nickname;
         this.title = title;
         this.content = content;
         this.region = region;
         this.images = images;
-    }
-
-    public SaveBulletinForm(SaveBulletinRequest request) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-        this.region = request.getRegion();
-        this.images = request.getImages();
     }
 }

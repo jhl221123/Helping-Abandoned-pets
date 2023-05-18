@@ -1,16 +1,13 @@
-package com.catdog.help.web.api.response;
+package com.catdog.help.web.api.response.bulletin;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
+@Getter
 public class SaveBulletinResponse {
 
     private Long id;
 
 
-    @Builder
     public SaveBulletinResponse(Long id) {
         this.id = id;
     }
