@@ -6,9 +6,11 @@ import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
+import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -106,7 +108,34 @@ class UserApiControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    
+    @Test
+    @DisplayName("회원 정보 수정 성공")
+    void edit() throws Exception {
+        //given
+        EditUserRequest request = getEditUserRequest();
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(2L).when(userService)
+                .updateUserInfo(any(EditUserForm.class));
+
+        //expected
+        mockMvc.perform(post("/api/users/edit")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        );
+        verify(userService, times(1)).updateUserInfo(any(EditUserForm.class));
+    }
+
+
+    private EditUserRequest getEditUserRequest() {
+        return EditUserRequest.builder()
+                .nickname("닉네임")
+                .name("수정된_이름")
+                .age(33)
+                .gender(Gender.WOMAN)
+                .build();
+    }
+
     private User getUser() {
         return User.builder()
                 .emailId("test@test.test")

@@ -7,7 +7,7 @@ import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
+import com.catdog.help.web.form.user.EditUserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +24,7 @@ public class UserService {
 
     @Transactional
     public Long join(SaveUserForm form) {
-        User user = User.builder()
-                .emailId(form.getEmailId())
-                .password(form.getPassword())
-                .nickname(form.getNickname())
-                .name(form.getName())
-                .age(form.getAge())
-                .gender(form.getGender())
-                .build();
+        User user = getUser(form);
         return userRepository.save(user).getId();
     }
 
@@ -63,14 +56,14 @@ public class UserService {
         return new ReadUserForm(findUser);
     }
 
-    public UpdateUserForm getUpdateForm(String nickname) {
+    public EditUserForm getUpdateForm(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
-        return new UpdateUserForm(findUser);
+        return new EditUserForm(findUser);
     }
 
     @Transactional
-    public Long updateUserInfo(UpdateUserForm form) {
+    public Long updateUserInfo(EditUserForm form) {
         User findUser = userRepository.findByNickname(form.getNickname())
                 .orElseThrow(UserNotFoundException::new);
         findUser.updateUser(form.getName(), form.getAge(), form.getGender());
@@ -97,5 +90,17 @@ public class UserService {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
         userRepository.delete(findUser);
+    }
+
+
+    private User getUser(SaveUserForm form) {
+        return User.builder()
+                .emailId(form.getEmailId())
+                .password(form.getPassword())
+                .nickname(form.getNickname())
+                .name(form.getName())
+                .age(form.getAge())
+                .gender(form.getGender())
+                .build();
     }
 }

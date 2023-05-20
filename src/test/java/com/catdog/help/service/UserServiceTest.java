@@ -7,7 +7,7 @@ import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
+import com.catdog.help.web.form.user.EditUserForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -191,7 +191,7 @@ class UserServiceTest {
                 .findByNickname("닉네임");
 
         //when
-        UpdateUserForm updateForm = userService.getUpdateForm("닉네임");
+        EditUserForm updateForm = userService.getUpdateForm("닉네임");
 
         //then
         assertThat(updateForm.getName()).isEqualTo("이름");
@@ -206,7 +206,7 @@ class UserServiceTest {
         doReturn(Optional.ofNullable(user)).when(userRepository)
                 .findByNickname("닉네임");
 
-        UpdateUserForm form = new UpdateUserForm(
+        EditUserForm form = new EditUserForm(
                 User.builder()
                         .nickname("닉네임")
                         .name("이름변경")

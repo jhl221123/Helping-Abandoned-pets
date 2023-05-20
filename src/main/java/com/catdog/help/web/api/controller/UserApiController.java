@@ -4,9 +4,11 @@ import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
+import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +41,10 @@ public class UserApiController {
     public ReadUserResponse read(@RequestParam String nickname) {
         ReadUserForm form = userService.readByNickname(nickname);
         return new ReadUserResponse(form);
+    }
+
+    @PostMapping("/edit")
+    public void edit(@RequestBody @Validated EditUserRequest request) {
+        userService.updateUserInfo(new EditUserForm(request));
     }
 }

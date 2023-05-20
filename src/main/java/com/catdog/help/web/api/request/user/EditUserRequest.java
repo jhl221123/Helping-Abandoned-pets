@@ -1,17 +1,18 @@
-package com.catdog.help.web.form.user;
+package com.catdog.help.web.api.request.user;
 
 import com.catdog.help.domain.user.Gender;
-import com.catdog.help.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Getter @Setter
-public class UpdateUserForm {
+@Getter
+@NoArgsConstructor
+public class EditUserRequest {
 
     @NotBlank
     @Length(min = 2, max = 10)
@@ -28,13 +29,12 @@ public class UpdateUserForm {
     @NotNull
     private Gender gender;
 
-    public UpdateUserForm() {
-    }
 
-    public UpdateUserForm(User user) {
-        this.nickname = user.getNickname();
-        this.name = user.getName();
-        this.age = user.getAge();
-        this.gender = user.getGender();
+    @Builder
+    public EditUserRequest(String nickname, String name, int age, Gender gender) {
+        this.nickname = nickname;
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
     }
 }

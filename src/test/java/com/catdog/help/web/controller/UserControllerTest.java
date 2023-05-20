@@ -10,7 +10,7 @@ import com.catdog.help.service.UserService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
+import com.catdog.help.web.form.user.EditUserForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -325,7 +325,7 @@ class UserControllerTest {
     @DisplayName("개인정보 수정 양식 호출")
     void editForm() throws Exception {
         //given
-        doReturn(new UpdateUserForm()).when(userService)
+        doReturn(new EditUserForm()).when(userService)
                 .getUpdateForm("닉네임");
 
         //expected
@@ -342,7 +342,7 @@ class UserControllerTest {
     void edit() throws Exception {
         //given
         doReturn(1L).when(userService)
-                .updateUserInfo(any(UpdateUserForm.class));
+                .updateUserInfo(any(EditUserForm.class));
 
         //expected
         mockMvc.perform(post("/users/detail/edit")

@@ -8,7 +8,7 @@ import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.user.ChangePasswordForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
-import com.catdog.help.web.form.user.UpdateUserForm;
+import com.catdog.help.web.form.user.EditUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -245,13 +245,13 @@ public class UserController {
     /***  update  ***/
     @GetMapping("/detail/edit")
     public String editForm(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
-        UpdateUserForm updateForm = userService.getUpdateForm(nickname);
+        EditUserForm updateForm = userService.getUpdateForm(nickname);
         model.addAttribute("updateForm", updateForm);
         return "users/edit";
     }
 
     @PostMapping("/detail/edit")
-    public String edit(@Validated @ModelAttribute("updateForm") UpdateUserForm updateForm, BindingResult bindingResult) {
+    public String edit(@Validated @ModelAttribute("updateForm") EditUserForm updateForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "users/edit";
         }
