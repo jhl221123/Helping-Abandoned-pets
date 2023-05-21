@@ -2,6 +2,8 @@ package com.catdog.help.web.api.controller;
 
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.EmailDuplicateException;
+import com.catdog.help.exception.NicknameDuplicateException;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
@@ -27,12 +29,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 @Transactional
@@ -85,6 +89,61 @@ class UserApiControllerTest {
                         .content(json)
                 )
                 .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("검증으로 인한 회원가입 실패")
+    void failJoin() throws Exception {
+        //given
+        SaveUserRequest request = SaveUserRequest.builder()
+                .emailId("")
+                .password("")
+                .name("")
+                .nickname("")
+                .age(-1)
+                .gender(null)
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+
+        //expected
+        mockMvc.perform(post("/api/users/new")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                ).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("이메일 중복으로 회원가입 실패")
+    void failJoinByEmail() throws Exception {
+        //given
+        SaveUserRequest request = getSaveUserRequest();
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(true).when(userService)
+                .isEmailDuplication("test@test.test");
+
+        //expected
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/users/new")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        )).hasCause(new EmailDuplicateException());
+    }
+
+    @Test
+    @DisplayName("닉네임 중복으로 회원가입 실패")
+    void failJoinByNickname() throws Exception {
+        //given
+        SaveUserRequest request = getSaveUserRequest();
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(true).when(userService)
+                .isNicknameDuplication("닉네임");
+
+        //expected
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/users/new")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        )).hasCause(new NicknameDuplicateException());
     }
 
     @Test

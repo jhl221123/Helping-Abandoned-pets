@@ -1,5 +1,7 @@
 package com.catdog.help.web.api.controller;
 
+import com.catdog.help.exception.EmailDuplicateException;
+import com.catdog.help.exception.NicknameDuplicateException;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
@@ -27,12 +29,18 @@ public class UserApiController {
     private final ItemService itemService;
     private final InquiryService inquiryService;
 
-
     /***  create  ***/
 
     @PostMapping("/new")
     public SaveUserResponse join(@RequestBody @Validated SaveUserRequest request) {
-        // TODO: 2023-05-18 nickname, email 중복확인 후 예외 공통처리 만들기
+        // TODO: 2023-04-20 각 프로퍼티에 특수기호 사용불가 검증 특히 _
+        if (userService.isEmailDuplication(request.getEmailId())){
+            throw new EmailDuplicateException();
+        }
+
+        if (userService.isNicknameDuplication(request.getNickname())) {
+            throw new NicknameDuplicateException();
+        }
         Long userId = userService.join(new SaveUserForm(request));
         return new SaveUserResponse(userId);
     }
