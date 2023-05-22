@@ -98,7 +98,7 @@ class LostServiceTest {
     }
 
     @Test
-    @DisplayName("키는 지역, 값은 지역별 게시글 수를 가지는 맵을 반환")
+    @DisplayName("키는 지역, 값은 지역별 실종글 수를 가지는 맵을 반환")
     void getCountByRegion() {
         //given
         User user = getUser();
@@ -114,6 +114,25 @@ class LostServiceTest {
 
         //then
         assertThat(result.get("부산")).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 실종글 수 조회")
+    void getCountByNickname() {
+        //given
+        User user = getUser();
+        Lost board = getLost(user);
+        List<Lost> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(1L).when(lostRepository)
+                .countByNickname("닉네임");
+
+        //when
+        Long result = lostService.countByNickname("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
     }
 
 

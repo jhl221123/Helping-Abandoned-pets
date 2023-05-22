@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
+    @Query("select count(i) from Inquiry i join i.user u where u.nickname = :nickname")
+    Long countByNickname(@Param("nickname") String nickname);
+
     @Query("select i from Inquiry i join i.user where i.user.nickname = :nickname")
     Page<Inquiry> findPageByNickname(@Param("nickname") String nickname, Pageable pageable);
 

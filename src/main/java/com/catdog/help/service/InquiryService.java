@@ -51,9 +51,7 @@ public class InquiryService {
     }
 
     public Long countByNickname(String nickname) {
-        return inquiryRepository.findAll().stream()
-                .filter(b -> b.getUser().getNickname().equals(nickname))
-                .count();
+        return inquiryRepository.countByNickname(nickname);
     }
 
     public Page<PageInquiryForm> getPageByNickname(String nickname, Pageable pageable) {

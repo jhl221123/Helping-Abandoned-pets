@@ -66,9 +66,7 @@ public class BulletinService {
     }
 
     public Long countByNickname(String nickname) {
-        return bulletinRepository.findAll().stream()
-                .filter(b -> b.getUser().getNickname().equals(nickname))
-                .count();
+        return bulletinRepository.countByNickname(nickname);
     }
 
     public Page<PageBulletinForm> getPageByNickname(String nickname, Pageable pageable) {

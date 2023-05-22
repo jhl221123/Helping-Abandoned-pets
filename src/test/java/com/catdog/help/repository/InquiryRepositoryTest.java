@@ -54,6 +54,20 @@ class InquiryRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 문의글 수 조회")
+    void countByNickname() {
+        //given
+        Inquiry board = getInquiry();
+        inquiryRepository.save(board);
+
+        //when
+        Long result = inquiryRepository.countByNickname("닉네임");
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
     @DisplayName("닉네임으로 문의글 페이지 조회")
     void findByNickname() {
         //given

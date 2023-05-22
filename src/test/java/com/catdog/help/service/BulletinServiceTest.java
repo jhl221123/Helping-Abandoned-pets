@@ -143,8 +143,8 @@ class BulletinServiceTest {
         List<Bulletin> boards = new ArrayList<>();
         boards.add(board);
 
-        doReturn(boards).when(bulletinRepository)
-                .findAll();
+        doReturn(1L).when(bulletinRepository)
+                .countByNickname("닉네임");
 
         //when
         Long result = bulletinService.countByNickname("닉네임");

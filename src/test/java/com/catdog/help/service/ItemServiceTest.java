@@ -107,8 +107,8 @@ class ItemServiceTest {
         List<Item> boards = new ArrayList<>();
         boards.add(board);
 
-        doReturn(boards).when(itemRepository)
-                .findAll();
+        doReturn(1L).when(itemRepository)
+                .countByNickname("닉네임");
 
         //when
         Long result = itemService.countByNickname("닉네임");

@@ -52,9 +52,7 @@ public class ItemService {
     }
 
     public Long countByNickname(String nickname) {
-        return itemRepository.findAll().stream()
-                .filter(b -> b.getUser().getNickname().equals(nickname))
-                .count();
+        return itemRepository.countByNickname(nickname);
     }
 
     public Page<PageItemForm> getPageByNickname(String nickname, Pageable pageable) {

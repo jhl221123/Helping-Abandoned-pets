@@ -61,13 +61,11 @@ public class LostService {
         List<String> regions = getRegions();
         return getCountMap(boards, regions);
     }
-//
-//    public Long countByNickname(String nickname) {
-//        return bulletinRepository.findAll().stream()
-//                .filter(b -> b.getUser().getNickname().equals(nickname))
-//                .count();
-//    }
-//
+
+    public Long countByNickname(String nickname) {
+        return lostRepository.countByNickname(nickname);
+    }
+
 //    public Page<PageBulletinForm> getPageByNickname(String nickname, Pageable pageable) {
 //        return bulletinRepository.findPageByNickname(nickname, pageable)
 //                .map(PageBulletinForm::new);

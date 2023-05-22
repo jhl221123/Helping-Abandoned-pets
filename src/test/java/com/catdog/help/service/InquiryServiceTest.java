@@ -68,8 +68,8 @@ class InquiryServiceTest {
         List<Inquiry> boards = new ArrayList<>();
         boards.add(board);
 
-        doReturn(boards).when(inquiryRepository)
-                .findAll();
+        doReturn(1L).when(inquiryRepository)
+                .countByNickname("닉네임");
 
         //when
         Long result = inquiryService.countByNickname("닉네임");

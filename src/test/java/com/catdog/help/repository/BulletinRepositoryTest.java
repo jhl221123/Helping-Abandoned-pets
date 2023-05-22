@@ -62,6 +62,23 @@ class BulletinRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 게시글 수 조회")
+    void countByNickname() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Bulletin board = getBulletin(user);
+        bulletinRepository.save(board);
+
+        //when
+        Long result = bulletinRepository.countByNickname(user.getNickname());
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
     @DisplayName("닉네임으로 게시글 페이지 조회")
     void findByNickname() {
         //given
