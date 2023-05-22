@@ -1,10 +1,14 @@
 package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Lost;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.LostRepository;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
+import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -36,6 +42,9 @@ class LostServiceTest {
 
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private UploadFileRepository uploadFileRepository;
 
 
     @Test
@@ -62,8 +71,31 @@ class LostServiceTest {
         verify(userRepository, times(1)).findByNickname("닉네임");
         verify(imageService, times(1)).addImage(any(Lost.class), any(List.class));
         verify(lostRepository, times(1)).save(any(Lost.class));
-
     }
+
+    @Test
+    @DisplayName("실종글 단건 조회")
+    void readOne() {
+        //given
+        User user = getUser();
+        Lost board = getLost(user);
+        List<UploadFile> imageForms = new ArrayList<>();
+        imageForms.add(new UploadFile("업로드", "저장"));
+
+        doReturn(Optional.of(board)).when(lostRepository)
+                .findById(board.getId());
+
+        doReturn(imageForms).when(uploadFileRepository)
+                .findByBoardId(board.getId());
+
+        //when
+        ReadLostForm form = lostService.read(board.getId());
+
+        //then
+        assertThat(form.getTitle()).isEqualTo("제목");
+        assertThat(form.getImages().get(0)).isInstanceOf(ReadImageForm.class);
+    }
+
 
     private SaveLostForm getSaveLostForm() {
         return SaveLostForm.builder()

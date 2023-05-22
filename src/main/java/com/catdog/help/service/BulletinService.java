@@ -150,12 +150,6 @@ public class BulletinService {
                 .build();
     }
 
-    private List<PageBulletinForm> getPageBulletinForms(List<Bulletin> boards) {
-        return boards.stream()
-                .map(PageBulletinForm::new)
-                .collect(Collectors.toList());
-    }
-
     private void updateBulletin(Bulletin findBoard, EditBulletinForm form) {
         findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion());
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());

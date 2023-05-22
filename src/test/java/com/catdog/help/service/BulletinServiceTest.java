@@ -2,6 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.Like;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
@@ -95,7 +96,8 @@ class BulletinServiceTest {
     void readOne() {
         //given
         Bulletin board = getBulletin("제목");
-        List<ReadImageForm> imageForms = new ArrayList<>();
+        List<UploadFile> imageForms = new ArrayList<>();
+        imageForms.add(new UploadFile("업로드", "저장"));
 
         doReturn(Optional.ofNullable(board)).when(bulletinRepository)
                 .findById(board.getId());
@@ -111,7 +113,7 @@ class BulletinServiceTest {
 
         //then
         assertThat(form.getTitle()).isEqualTo("제목");
-        assertThat(form.getImages()).isEqualTo(imageForms);
+        assertThat(form.getImages().get(0)).isInstanceOf(ReadImageForm.class);
         assertThat(form.getLikeSize()).isEqualTo(3);
     }
 
