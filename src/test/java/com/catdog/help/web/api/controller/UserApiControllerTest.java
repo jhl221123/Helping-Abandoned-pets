@@ -4,10 +4,13 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.EmailDuplicateException;
 import com.catdog.help.exception.NicknameDuplicateException;
+import com.catdog.help.exception.PasswordIncorrectException;
+import com.catdog.help.exception.PasswordNotSameException;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
@@ -183,6 +186,76 @@ class UserApiControllerTest {
                 .content(json)
         );
         verify(userService, times(1)).updateUserInfo(any(EditUserForm.class));
+    }
+
+    @Test
+    @DisplayName("회원 비밀번호 변경 성공")
+    void successChangePassword() throws Exception {
+        //given
+        ChangePasswordRequest request = ChangePasswordRequest.builder()
+                .nickname("닉네임")
+                .beforePassword("12341234")
+                .afterPassword("43214321")
+                .checkPassword("43214321")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(true).when(userService)
+                .isSamePassword(request.getBeforePassword(), request.getNickname());
+
+        //expected
+        mockMvc.perform(post("/api/users/edit/password")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        );
+        verify(userService, times(1)).changePassword(request.getAfterPassword(), request.getNickname());
+    }
+
+    @Test
+    @DisplayName("기존 비밀번호 불일치로 비밀번호 변경 실패")
+    void failChangePasswordByIncorrectBeforePassword() throws Exception {
+        //given
+        ChangePasswordRequest request = ChangePasswordRequest.builder()
+                .nickname("닉네임")
+                .beforePassword("123412341234")
+                .afterPassword("43214321")
+                .checkPassword("43214321")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(false).when(userService)
+                .isSamePassword(request.getBeforePassword(), request.getNickname());
+
+        //expected
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/users/edit/password")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        )).hasCause(new PasswordIncorrectException());
+    }
+
+    @Test
+    @DisplayName("변경하려는 비밀번호 불일치로 비밀번호 변경 실패")
+    void failChangePasswordByNotSameAfterPassword() throws Exception {
+        //given
+        ChangePasswordRequest request = ChangePasswordRequest.builder()
+                .nickname("닉네임")
+                .beforePassword("12341234")
+                .afterPassword("43214321")
+                .checkPassword("432143214321")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(true).when(userService)
+                .isSamePassword(request.getBeforePassword(), request.getNickname());
+
+        //expected
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/users/edit/password")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        )).hasCause(new PasswordNotSameException());
     }
 
 

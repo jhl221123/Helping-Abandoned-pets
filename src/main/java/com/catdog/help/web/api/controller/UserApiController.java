@@ -2,10 +2,13 @@ package com.catdog.help.web.api.controller;
 
 import com.catdog.help.exception.EmailDuplicateException;
 import com.catdog.help.exception.NicknameDuplicateException;
+import com.catdog.help.exception.PasswordIncorrectException;
+import com.catdog.help.exception.PasswordNotSameException;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
@@ -54,5 +57,19 @@ public class UserApiController {
     @PostMapping("/edit")
     public void edit(@RequestBody @Validated EditUserRequest request) {
         userService.updateUserInfo(new EditUserForm(request));
+    }
+
+    @PostMapping("/edit/password")
+    public void editPassword(@RequestBody @Validated ChangePasswordRequest request) {
+        Boolean isCorrect = userService.isSamePassword(request.getBeforePassword(), request.getNickname());
+        if (!isCorrect) {
+            //기존 비밀번호 불일치
+            throw new PasswordIncorrectException();
+        }
+        if (!request.getAfterPassword().equals(request.getCheckPassword())) {
+            //새 비밀번호 불일치
+            throw new PasswordNotSameException();
+        }
+        userService.changePassword(request.getAfterPassword(), request.getNickname());
     }
 }
