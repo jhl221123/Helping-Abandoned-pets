@@ -8,6 +8,7 @@ import com.catdog.help.repository.LostRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +54,7 @@ class LostServiceTest {
     void saveLostBoard() {
         //given
         User user = getUser();
-        Lost board = getLost(user);
+        Lost board = getLost(user, "제목");
         SaveLostForm form = getSaveLostForm();
 
         doReturn(Optional.of(user)).when(userRepository)
@@ -79,7 +80,7 @@ class LostServiceTest {
     void readOne() {
         //given
         User user = getUser();
-        Lost board = getLost(user);
+        Lost board = getLost(user, "제목");
         List<UploadFile> imageForms = new ArrayList<>();
         imageForms.add(new UploadFile("업로드", "저장"));
 
@@ -102,7 +103,7 @@ class LostServiceTest {
     void getCountByRegion() {
         //given
         User user = getUser();
-        Lost board = getLost(user);
+        Lost board = getLost(user, "제목");
         List<Lost> boards = new ArrayList<>();
         boards.add(board);
 
@@ -121,7 +122,7 @@ class LostServiceTest {
     void getCountByNickname() {
         //given
         User user = getUser();
-        Lost board = getLost(user);
+        Lost board = getLost(user, "제목");
         List<Lost> boards = new ArrayList<>();
         boards.add(board);
 
@@ -135,6 +136,56 @@ class LostServiceTest {
         assertThat(result).isEqualTo(1L);
     }
 
+    @Test
+    @DisplayName("실종글 수정 양식 호출")
+    void getEditForm() {
+        //given
+        User user = getUser();
+        Lost board = getLost(user, "제목");
+        List<ReadImageForm> oldImages = new ArrayList<>();
+
+        doReturn(Optional.of(board)).when(lostRepository)
+                .findById(board.getId());
+
+        doReturn(oldImages).when(uploadFileRepository)
+                .findByBoardId(board.getId());
+
+        //when
+        EditLostForm form = lostService.getEditForm(board.getId());
+
+        //then
+        assertThat(form.getTitle()).isEqualTo(board.getTitle());
+
+        //verify
+        verify(lostRepository, times(1)).findById(board.getId());
+        verify(uploadFileRepository, times(1)).findByBoardId(board.getId());
+    }
+
+    @Test
+    @DisplayName("실종글 수정 성공")
+    void update() {
+        //given
+        Lost board = getLost(getUser(), "제목");
+        EditLostForm form = getAfterEditLostForm(getUser(), "제목수정");
+
+        doReturn(Optional.of(board)).when(lostRepository)
+                .findById(form.getId());
+
+        doNothing().when(imageService)
+                .updateImage(board, form.getDeleteImageIds(), form.getNewImages());
+
+        //when
+        lostService.update(form);
+
+        //then
+        assertThat(board.getTitle()).isEqualTo("제목수정");
+    }
+
+
+    private EditLostForm getAfterEditLostForm(User user, String title) {
+        Lost board = getLost(user, title);
+        return new EditLostForm(board, new ArrayList<>());
+    }
 
     private SaveLostForm getSaveLostForm() {
         return SaveLostForm.builder()
@@ -149,10 +200,10 @@ class LostServiceTest {
                 .build();
     }
 
-    private Lost getLost(User user) {
+    private Lost getLost(User user, String title) {
         return Lost.builder()
                 .user(user)
-                .title("제목")
+                .title(title)
                 .content("내용")
                 .region("부산")
                 .breed("품종")

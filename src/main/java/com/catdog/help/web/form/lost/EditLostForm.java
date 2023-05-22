@@ -1,23 +1,24 @@
-package com.catdog.help.web.form.bulletin;
+package com.catdog.help.web.form.lost;
 
-import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Lost;
 import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor
-public class EditBulletinForm {
+public class EditLostForm {
 
     @NotNull
     private Long id;
@@ -33,6 +34,21 @@ public class EditBulletinForm {
     @NotBlank
     private String region;
 
+    @NotBlank
+    @Length(max = 15)
+    private String breed;
+
+    @NotBlank
+    private LocalDateTime lostDate;
+
+    @NotBlank
+    @Length(max = 30)
+    private String lostPlace;
+
+    @NotNull
+    @PositiveOrZero
+    private int gratuity;
+
     private List<ReadImageForm> oldImages = new ArrayList<>();
 
     @Size(max = 5)
@@ -41,11 +57,15 @@ public class EditBulletinForm {
     private List<Long> deleteImageIds = new ArrayList<>();
 
 
-    public EditBulletinForm(Bulletin board, List<ReadImageForm> oldImages) {
-        this.id = board.getId();
-        this.title = board.getTitle();
-        this.content = board.getContent();
+    public EditLostForm(Lost lost, List<ReadImageForm> oldImages) {
+        this.id = lost.getId();;
+        this.title = lost.getTitle();
+        this.content = lost.getContent();
         this.oldImages = oldImages;
-        this.region = board.getRegion();
+        this.region = lost.getRegion();
+        this.breed = lost.getBreed();
+        this.lostDate = lost.getLostDate();
+        this.lostPlace = lost.getLostPlace();
+        this.gratuity = lost.getGratuity();
     }
 }

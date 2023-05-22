@@ -10,6 +10,7 @@ import com.catdog.help.repository.LostRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import lombok.RequiredArgsConstructor;
@@ -88,22 +89,22 @@ public class LostService {
 //        return searchQueryRepository.searchBulletin(search.getTitle(), search.getRegion(), pageable)
 //                .map(PageBulletinForm::new);
 //    }
-//
-//    public EditBulletinForm getEditForm(Long id) {
-//        Bulletin findBoard = bulletinRepository.findById(id)
-//                .orElseThrow(BoardNotFoundException::new);
-//        List<ReadImageForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
-//
-//        return new EditBulletinForm(findBoard, oldImages);
-//    }
-//
-//    @Transactional
-//    public void update(EditBulletinForm form) {
-//        Bulletin findBoard = bulletinRepository.findById(form.getId())
-//                .orElseThrow(BoardNotFoundException::new);
-//        updateBulletin(findBoard, form);
-//    }
-//
+
+    public EditLostForm getEditForm(Long id) {
+        Lost findBoard = lostRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
+        List<ReadImageForm> oldImages = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
+
+        return new EditLostForm(findBoard, oldImages);
+    }
+
+    @Transactional
+    public void update(EditLostForm form) {
+        Lost findBoard = lostRepository.findById(form.getId())
+                .orElseThrow(BoardNotFoundException::new);
+        updateBulletin(findBoard, form);
+    }
+
 //    @Transactional
 //    public void delete(Long boardId) {
 //        Bulletin findBoard = bulletinRepository.findById(boardId)
@@ -113,7 +114,15 @@ public class LostService {
 //        }
 //        bulletinRepository.delete(findBoard);
 //    }
-    /** **/
+
+    /**============================= private method ==============================*/
+
+    private void updateBulletin(Lost findBoard, EditLostForm form) {
+        findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion(), form.getBreed(), form.getLostDate(), form.getLostPlace(), form.getGratuity());
+        // TODO: 2023-05-22 lostedInfo 등으로 값타입 생성 고민해보자
+        imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
+    }
+
     private Map<String, Long> getCountMap(List<Lost> boards, List<String> regions) {
         Map<String, Long> result = new HashMap<>();
         for (String region : regions) {

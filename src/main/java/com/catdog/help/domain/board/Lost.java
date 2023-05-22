@@ -37,4 +37,14 @@ public class Lost extends Board {
         this.lostPlace = lostPlace;
         this.gratuity = gratuity;
     }
+
+
+    public void updateBoard(String title, String content, String region, String breed, LocalDateTime lostDate, String lostPlace, int gratuity) {
+        super.updateBoard(title, content);
+        this.region = region;
+        this.breed = breed;
+        this.lostDate = lostDate;
+        this.lostPlace = lostPlace;
+        this.gratuity = gratuity;
+    }
 }
