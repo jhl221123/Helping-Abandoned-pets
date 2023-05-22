@@ -17,8 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.catdog.help.domain.board.RegionConst.*;
 
 @Slf4j
 @Service
@@ -50,12 +55,12 @@ public class LostService {
         List<ReadImageForm> imageForms = getReadUploadFileForms(uploadFileRepository.findByBoardId(id));
         return new ReadLostForm(findBoard, imageForms);
     }
-//
-//    public Map<String, Long> getCountByRegion() {
-//        List<Bulletin> boards = bulletinRepository.findAll();
-//        List<String> regions = getRegions();
-//        return getCountMap(boards, regions);
-//    }
+
+    public Map<String, Long> getCountByRegion() {
+        List<Lost> boards = lostRepository.findAll();
+        List<String> regions = getRegions();
+        return getCountMap(boards, regions);
+    }
 //
 //    public Long countByNickname(String nickname) {
 //        return bulletinRepository.findAll().stream()
@@ -111,6 +116,21 @@ public class LostService {
 //        bulletinRepository.delete(findBoard);
 //    }
     /** **/
+    private Map<String, Long> getCountMap(List<Lost> boards, List<String> regions) {
+        Map<String, Long> result = new HashMap<>();
+        for (String region : regions) {
+            long countByRegion = boards.stream()
+                    .filter(b -> b.getRegion().equals(region))
+                    .count();
+            result.put(region, countByRegion);
+        }
+        return result;
+    }
+
+    private List<String> getRegions() {
+        return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
+                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONBUK, JEONNAM, GYEONGBUK, GYEONGNAM, JEJU);
+    }
 
     private List<ReadImageForm> getReadUploadFileForms(List<UploadFile> uploadFiles) {
         return uploadFiles.stream()
