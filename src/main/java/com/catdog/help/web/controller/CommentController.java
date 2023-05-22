@@ -73,7 +73,6 @@ public class CommentController {
         }
 
         EditCommentForm editCommentForm = commentService.getEditForm(id, nickname);
-//        redirectAttributes.addFlashAttribute("updateCommentId", id); todo 나중에 서버띄우고 잘 돌아가면 지워주자.
         redirectAttributes.addFlashAttribute("editCommentForm", editCommentForm);
         redirectAttributes.addAttribute("id", boardId);
 

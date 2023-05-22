@@ -41,6 +41,7 @@ public class BulletinService {
     @Transactional
     public Long save(SaveBulletinForm form, String nickname) {
         Bulletin board = getBulletin(nickname, form);
+        imageService.addImage(board, form.getImages());
         return bulletinRepository.save(board).getId();
     }
 
@@ -141,15 +142,12 @@ public class BulletinService {
     private Bulletin getBulletin(String nickname, SaveBulletinForm form) {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
-        Bulletin board = Bulletin.builder()
+        return Bulletin.builder()
                 .user(findUser)
                 .title(form.getTitle())
                 .content(form.getContent())
                 .region(form.getRegion())
                 .build();
-
-        imageService.addImage(board, form.getImages());
-        return board;
     }
 
     private List<PageBulletinForm> getPageBulletinForms(List<Bulletin> boards) {
