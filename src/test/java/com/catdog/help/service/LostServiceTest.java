@@ -4,6 +4,7 @@ import com.catdog.help.domain.board.Lost;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.LostRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -179,6 +181,32 @@ class LostServiceTest {
 
         //then
         assertThat(board.getTitle()).isEqualTo("제목수정");
+    }
+
+    @Test
+    @DisplayName("실종글 삭제")
+    void delete() {
+        //given
+        Lost board = getLost(getUser(), "제목");
+
+        doReturn(Optional.of(board)).when(lostRepository)
+                .findById(board.getId());
+
+        //expected
+        lostService.delete(board.getId());
+        verify(lostRepository, times(1)).delete(board);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 실종글 아이디로 조회 시 예외 발생")
+    void boardNotFoundExceptionById() {
+        //given
+        doReturn(Optional.empty()).when(lostRepository)
+                .findById(1L);
+
+        //expected
+        assertThrows(BoardNotFoundException.class,
+                ()-> lostService.delete(1L));
     }
 
 

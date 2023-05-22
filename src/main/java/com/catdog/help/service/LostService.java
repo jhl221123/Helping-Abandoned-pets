@@ -5,7 +5,6 @@ import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
-import com.catdog.help.repository.LikeRepository;
 import com.catdog.help.repository.LostRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
@@ -36,7 +35,6 @@ public class LostService {
     private final UserRepository userRepository;
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
-    private final LikeRepository likeRepository;
 
 
     @Transactional
@@ -49,7 +47,6 @@ public class LostService {
         return lostRepository.save(board).getId();
     }
 
-    /** **/
     public ReadLostForm read(Long id) {
         Lost findBoard = lostRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);
@@ -105,15 +102,15 @@ public class LostService {
         updateBulletin(findBoard, form);
     }
 
-//    @Transactional
-//    public void delete(Long boardId) {
-//        Bulletin findBoard = bulletinRepository.findById(boardId)
-//                .orElseThrow(BoardNotFoundException::new);
-//        if (!findBoard.getImages().isEmpty()) {
-//            imageService.deleteImage(findBoard.getImages());
-//        }
-//        bulletinRepository.delete(findBoard);
-//    }
+    @Transactional
+    public void delete(Long boardId) {
+        Lost findBoard = lostRepository.findById(boardId)
+                .orElseThrow(BoardNotFoundException::new);
+        if (!findBoard.getImages().isEmpty()) {
+            imageService.deleteImage(findBoard.getImages());
+        }
+        lostRepository.delete(findBoard);
+    }
 
     /**============================= private method ==============================*/
 
