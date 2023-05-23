@@ -10,10 +10,13 @@ import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.lost.EditLostForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,11 +67,11 @@ public class LostService {
         return lostRepository.countByNickname(nickname);
     }
 
-//    public Page<PageBulletinForm> getPageByNickname(String nickname, Pageable pageable) {
-//        return bulletinRepository.findPageByNickname(nickname, pageable)
-//                .map(PageBulletinForm::new);
-//    }
-//
+    public Page<PageLostForm> getPageByNickname(String nickname, Pageable pageable) {
+        return lostRepository.findPageByNickname(nickname, pageable)
+                .map(PageLostForm::new);
+    }
+
 //    public Long countLikeBulletin(String nickname) {
 //        return bulletinRepository.findAll().stream()
 //                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();

@@ -10,6 +10,7 @@ import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.lost.EditLostForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -136,6 +141,21 @@ class LostServiceTest {
 
         //then
         assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("닉네임으로 실종글 페이지 조회")
+    void getPageByNickname() {
+        //given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page<Lost> page = Page.empty();
+
+        doReturn(page).when(lostRepository)
+                .findPageByNickname("닉네임", pageable);
+
+        //expected
+        Page<PageLostForm> formPage = lostService.getPageByNickname("닉네임", pageable);
+        verify(lostRepository, times(1)).findPageByNickname("닉네임", pageable);
     }
 
     @Test
