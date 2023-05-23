@@ -3,6 +3,7 @@ package com.catdog.help.repository;
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.Lost;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,6 +37,9 @@ class SearchQueryRepositoryTest {
     BulletinRepository bulletinRepository;
 
     @Autowired
+    LostRepository lostRepository;
+
+    @Autowired
     ItemRepository itemRepository;
 
     @Autowired
@@ -46,7 +52,7 @@ class SearchQueryRepositoryTest {
 
 
     @Test
-    @DisplayName("검색 조건으로 게시글 조회 시 제목, 지역 조건 모두 있는 경우")
+    @DisplayName("게시글 페이지 조회 시 제목, 지역 조건 모두 있는 경우")
     void findBulletinByAllCond() {
         //given
         User user = getUser();
@@ -69,7 +75,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 게시글 조회 시 제목 조건만 있는 경우")
+    @DisplayName("게시글 페이지 조회 시 제목 조건만 있는 경우")
     void findBulletinByTitleCond() {
         //given
         User user = getUser();
@@ -92,7 +98,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 게시글 조회 시 지역 조건만 있는 경우")
+    @DisplayName("게시글 페이지 조회 시 지역 조건만 있는 경우")
     void findBulletinByRegionCond() {
         //given
         User user = getUser();
@@ -115,7 +121,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 게시글 조회 시 조건이 없는 경우")
+    @DisplayName("검색 조건 없이 게시글 페이지 조회")
     void findBulletinByNoCond() {
         //given
         User user = getUser();
@@ -138,7 +144,49 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 나눔글 조회 시 제목, 상품명 조건 모두 있는 경우")
+    @DisplayName("실종글 페이지 조회 시 지역 조건이 있는 경우")
+    void findLostByRegionCond() {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Lost regionCond = getLost(user, "부산");
+        Lost noCond = getLost(user,  "서울");
+        lostRepository.save(regionCond);
+        lostRepository.save(noCond);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Lost> pages = searchQueryRepository.searchLost("부산", pageRequest);
+
+        //then
+        assertThat(pages.getContent().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("검색 조건 없이 실종글 페이지 조회")
+    void findLostByNoCond() {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Lost regionCond = getLost(user, "부산");
+        Lost noCond = getLost(user,  "서울");
+        lostRepository.save(regionCond);
+        lostRepository.save(noCond);
+
+        Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        //when
+        Page<Lost> pages = searchQueryRepository.searchLost(null, pageRequest);
+
+        //then
+        assertThat(pages.getContent().size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("나눔글 페이지 조회 시 제목, 상품명 조건 모두 있는 경우")
     void findItemByAllCond() {
         //given
         User user = getUser();
@@ -161,7 +209,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 나눔글 조회 시 제목 조건만 있는 경우")
+    @DisplayName("나눔글 페이지 조회 시 제목 조건만 있는 경우")
     void findItemByTitleCond() {
         //given
         User user = getUser();
@@ -184,7 +232,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 나눔글 조회 시 상품명 조건만 있는 경우")
+    @DisplayName("나눔글 페이지 조회 시 상품명 조건만 있는 경우")
     void findItemByItemNameCond() {
         //given
         User user = getUser();
@@ -207,7 +255,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 나눔글 조회 시 조건이 없는 경우")
+    @DisplayName("검색 조건 없이 나눔글 페이지 조회")
     void findItemByNoCond() {
         //given
         User user = getUser();
@@ -230,7 +278,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 문의글 조회 시 제목 조건이 있는 경우")
+    @DisplayName("문의글 페이지 조회 시 제목 조건이 있는 경우")
     void findInquiryByTitleCond() {
         //given
         User user = getUser();
@@ -251,7 +299,7 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("검색 조건으로 문의글 조회 시 조건이 없는 경우")
+    @DisplayName("검색 조건 없이 문의글 페이지 조회")
     void findInquiryByNoCond() {
         //given
         User user = getUser();
@@ -271,6 +319,19 @@ class SearchQueryRepositoryTest {
         assertThat(pages.getContent().size()).isEqualTo(2);
     }
 
+
+    private Lost getLost(User user, String region) {
+        return Lost.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .region(region)
+                .breed("품종")
+                .lostDate(LocalDateTime.now())
+                .lostPlace("실종장소")
+                .gratuity(100000)
+                .build();
+    }
 
     private Inquiry getInquiry(User user, String title) {
         return Inquiry.builder()

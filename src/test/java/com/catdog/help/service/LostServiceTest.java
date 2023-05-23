@@ -6,6 +6,7 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.LostRepository;
+import com.catdog.help.repository.SearchQueryRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
@@ -13,6 +14,7 @@ import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +56,9 @@ class LostServiceTest {
 
     @Mock
     private UploadFileRepository uploadFileRepository;
+
+    @Mock
+    private SearchQueryRepository searchQueryRepository;
 
 
     @Test
@@ -156,6 +161,23 @@ class LostServiceTest {
         //expected
         Page<PageLostForm> formPage = lostService.getPageByNickname("닉네임", pageable);
         verify(lostRepository, times(1)).findPageByNickname("닉네임", pageable);
+    }
+
+    @Test
+    @DisplayName("검색 조건에 맞는 실종글 페이지 조회")
+    void searchPageByCond() {
+        //given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page<Lost> page = Page.empty();
+
+        LostSearch search = new LostSearch("부산");
+
+        doReturn(page).when(searchQueryRepository)
+                .searchLost(search.getRegion(), pageable);
+
+        //expected  TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        Page<PageLostForm> formPage = lostService.search(search, pageable);
+        verify(searchQueryRepository, times(1)).searchLost(search.getRegion(), pageable);
     }
 
     @Test

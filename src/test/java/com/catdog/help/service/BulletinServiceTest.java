@@ -220,7 +220,7 @@ class BulletinServiceTest {
 
         BulletinSearch search = BulletinSearch.builder()
                 .title("검색제목")
-                .region("검색지역")
+                .region("부산")
                 .build();
 
         doReturn(page).when(searchQueryRepository)
@@ -328,7 +328,7 @@ class BulletinServiceTest {
         return SaveBulletinForm.builder()
                 .title("제목")
                 .content("내용")
-                .region("지역")
+                .region("부산")
                 .images(images)
                 .build();
     }

@@ -6,6 +6,7 @@ import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
 import com.catdog.help.repository.LostRepository;
+import com.catdog.help.repository.SearchQueryRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.form.image.ReadImageForm;
@@ -13,6 +14,7 @@ import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,7 @@ public class LostService {
     private final UserRepository userRepository;
     private final UploadFileRepository uploadFileRepository;
     private final ImageService imageService;
+    private final SearchQueryRepository searchQueryRepository;
 
 
     @Transactional
@@ -69,26 +72,13 @@ public class LostService {
 
     public Page<PageLostForm> getPageByNickname(String nickname, Pageable pageable) {
         return lostRepository.findPageByNickname(nickname, pageable)
-                .map(PageLostForm::new);
+                .map(lost -> getPageLostForm(lost));
     }
 
-//    public Long countLikeBulletin(String nickname) {
-//        return bulletinRepository.findAll().stream()
-//                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
-//    }
-//
-//    public Page<PageBulletinForm> getLikeBulletins(String nickname, Pageable pageable) {
-//        User user = userRepository.findByNickname(nickname)
-//                .orElseThrow(UserNotFoundException::new);
-//
-//        return bulletinRepository.findLikeBulletins(user.getId(), pageable)
-//                .map(PageBulletinForm::new);
-//    }
-//
-//    public Page<PageBulletinForm> search(BulletinSearch search, Pageable pageable) {
-//        return searchQueryRepository.searchBulletin(search.getTitle(), search.getRegion(), pageable)
-//                .map(PageBulletinForm::new);
-//    }
+    public Page<PageLostForm> search(LostSearch search, Pageable pageable) {
+        return searchQueryRepository.searchLost(search.getRegion(), pageable)
+                .map(lost -> getPageLostForm(lost));
+    }
 
     public EditLostForm getEditForm(Long id) {
         Lost findBoard = lostRepository.findById(id)
@@ -102,7 +92,7 @@ public class LostService {
     public void update(EditLostForm form) {
         Lost findBoard = lostRepository.findById(form.getId())
                 .orElseThrow(BoardNotFoundException::new);
-        updateBulletin(findBoard, form);
+        updateLost(findBoard, form);
     }
 
     @Transactional
@@ -117,10 +107,14 @@ public class LostService {
 
     /**============================= private method ==============================*/
 
-    private void updateBulletin(Lost findBoard, EditLostForm form) {
+    private void updateLost(Lost findBoard, EditLostForm form) {
         findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion(), form.getBreed(), form.getLostDate(), form.getLostPlace(), form.getGratuity());
         // TODO: 2023-05-22 lostedInfo 등으로 값타입 생성 고민해보자
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
+    }
+
+    private PageLostForm getPageLostForm(Lost board) {
+        return new PageLostForm(board, new ReadImageForm(board.getImages().get(0))); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나가는지 확인하기..
     }
 
     private Map<String, Long> getCountMap(List<Lost> boards, List<String> regions) {

@@ -1,8 +1,6 @@
 package com.catdog.help.repository;
 
-import com.catdog.help.domain.board.Bulletin;
-import com.catdog.help.domain.board.Inquiry;
-import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.*;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,16 +12,14 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.catdog.help.MyConst.*;
 import static com.catdog.help.domain.board.QBulletin.bulletin;
 import static com.catdog.help.domain.board.QInquiry.inquiry;
 import static com.catdog.help.domain.board.QItem.item;
+import static com.catdog.help.domain.board.QLost.*;
 
 @Repository
 public class SearchQueryRepository {
-
-    private static final String BULLETIN = "bulletin";
-    private static final String ITEM = "item";
-    private static final String INQUIRY = "inquiry";
 
     private final JPAQueryFactory queryFactory;
 
@@ -37,7 +33,7 @@ public class SearchQueryRepository {
                 .selectFrom(bulletin)
                 .where(
                         titleContain(title, BULLETIN),
-                        regionEq(region)
+                        regionEq(region, BULLETIN)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -45,6 +41,23 @@ public class SearchQueryRepository {
                 .fetchResults();
 
         List<Bulletin> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    public Page<Lost> searchLost(String region, Pageable pageable) {
+        QueryResults<Lost> results = queryFactory
+                .selectFrom(lost)
+                .where(
+                        regionEq(region, LOST)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(lost.id.desc())
+                .fetchResults();
+
+        List<Lost> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
@@ -90,21 +103,31 @@ public class SearchQueryRepository {
         return itemName != null && !itemName.isBlank() ? item.itemName.contains(itemName) : null;
     }
 
-    private BooleanExpression regionEq(String region) {
-        return region != null && !region.isBlank() ? bulletin.region.eq(region) : null;
+    private BooleanExpression regionEq(String region, String boardType) {
+        return region != null && !region.isBlank() ? returnEqBoard(region, boardType) : null;
     }
 
     private BooleanExpression titleContain(String title, String boardType) {
-        return title != null && !title.isBlank() ? returnTargetBoard(title, boardType) : null;
+        return title != null && !title.isBlank() ? returnContainsBoard(title, boardType) : null;
     }
 
-    private BooleanExpression returnTargetBoard(String title, String boardType) {
+    private BooleanExpression returnContainsBoard(String title, String boardType) {
         if (boardType == BULLETIN) {
             return bulletin.title.contains(title);
         } else if (boardType == ITEM) {
             return item.title.contains(title);
         } else {
             return inquiry.title.contains(title);
+        }
+    }
+
+    private BooleanExpression returnEqBoard(String region, String boardType) {
+        if (boardType == BULLETIN) {
+            return bulletin.region.eq(region);
+        } else if (boardType == LOST) {
+            return lost.region.eq(region);
+        } else {
+            return item.region.eq(region);
         }
     }
 }
