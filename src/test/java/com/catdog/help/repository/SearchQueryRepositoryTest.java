@@ -17,8 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
-
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -327,7 +326,7 @@ class SearchQueryRepositoryTest {
                 .content("내용")
                 .region(region)
                 .breed("품종")
-                .lostDate(LocalDateTime.now())
+                .lostDate(LocalDate.now())
                 .lostPlace("실종장소")
                 .gratuity(100000)
                 .build();

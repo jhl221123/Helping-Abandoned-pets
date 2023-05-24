@@ -2,18 +2,20 @@ package com.catdog.help.web.form.lost;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Lob;
-import javax.validation.constraints.*;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class SaveLostForm {
 
     @NotBlank
@@ -31,8 +33,9 @@ public class SaveLostForm {
     @Length(max = 15)
     private String breed;
 
-    @NotBlank
-    private LocalDateTime lostDate;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate lostDate;
 
     @NotBlank
     @Length(max = 30)
@@ -47,7 +50,7 @@ public class SaveLostForm {
 
 
     @Builder
-    public SaveLostForm(String title, String content, String region, String breed, LocalDateTime lostDate, String lostPlace, int gratuity, List<MultipartFile> images) {
+    public SaveLostForm(String title, String content, String region, String breed, LocalDate lostDate, String lostPlace, int gratuity, List<MultipartFile> images) {
         this.title = title;
         this.content = content;
         this.region = region;

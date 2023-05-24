@@ -27,7 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -263,7 +263,7 @@ class LostServiceTest {
                 .content("내용")
                 .region("부산")
                 .breed("품종")
-                .lostDate(LocalDateTime.now())
+                .lostDate(LocalDate.now())
                 .lostPlace("실종장소")
                 .gratuity(100000)
                 .images(List.of())
@@ -277,7 +277,7 @@ class LostServiceTest {
                 .content("내용")
                 .region("부산")
                 .breed("품종")
-                .lostDate(LocalDateTime.now())
+                .lostDate(LocalDate.now())
                 .lostPlace("실종장소")
                 .gratuity(100000)
                 .build();

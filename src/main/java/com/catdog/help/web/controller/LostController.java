@@ -9,13 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.catdog.help.domain.board.RegionConst.*;
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 
 @Slf4j
 @Controller
@@ -33,28 +36,28 @@ public class LostController {
     /***  create  ***/
     @GetMapping("/new")
     public String getSaveForm(Model model) {
-        SaveLostForm saveForm = new SaveLostForm();
+        SaveLostForm saveForm = SaveLostForm.builder().build();
         model.addAttribute("saveForm", saveForm);
 
         List<String> regions = getRegions();
         model.addAttribute("regions", regions);
         return "lost/create";
     }
-//
-//    @PostMapping("/new")
-//    public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
-//                            @Validated @ModelAttribute("saveForm") SaveBulletinForm saveForm,
-//                            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-//        if (bindingResult.hasErrors()) {
-//            List<String> regions = getRegions();
-//            model.addAttribute("regions", regions);
-//            return "bulletins/create";
-//        }
-//
-//        Long boardId = bulletinService.save(saveForm, nickname);
-//        redirectAttributes.addAttribute("id", boardId);
-//        return "redirect:/bulletins/{id}";
-//    }
+
+    @PostMapping("/new")
+    public String saveBoard(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                            @Validated @ModelAttribute("saveForm") SaveLostForm saveForm,
+                            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
+            return "lost/create";
+        }
+
+        Long boardId = lostService.save(saveForm, nickname);
+        redirectAttributes.addAttribute("id", boardId);
+        return "redirect:/lost/{id}";
+    }
 
 //
 //    /***  read  ***/

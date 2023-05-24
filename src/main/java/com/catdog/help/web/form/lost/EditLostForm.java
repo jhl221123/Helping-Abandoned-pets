@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class EditLostForm {
     private String breed;
 
     @NotBlank
-    private LocalDateTime lostDate;
+    private LocalDate lostDate;
 
     @NotBlank
     @Length(max = 30)

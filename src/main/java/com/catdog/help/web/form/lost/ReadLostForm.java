@@ -4,6 +4,7 @@ import com.catdog.help.domain.board.Lost;
 import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ReadLostForm {
     private LocalDateTime createdDate;
     private String region;
     private String breed;
-    private LocalDateTime lostDate;
+    private LocalDate lostDate;
     private String lostPlace;
     private int gratuity;
     private List<ReadImageForm> images;

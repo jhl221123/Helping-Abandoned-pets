@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,7 +69,7 @@ class LostRepositoryTest {
                     .content("내용" + i)
                     .region("부산")
                     .breed("품종" + i)
-                    .lostDate(LocalDateTime.now())
+                    .lostDate(LocalDate.now())
                     .lostPlace("실종장소" + i)
                     .gratuity(100000)
                     .build();
@@ -84,7 +84,7 @@ class LostRepositoryTest {
                 .content("내용")
                 .region("부산")
                 .breed("품종")
-                .lostDate(LocalDateTime.now())
+                .lostDate(LocalDate.now())
                 .lostPlace("실종장소")
                 .gratuity(100000)
                 .build();
