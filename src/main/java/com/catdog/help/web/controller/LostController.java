@@ -163,20 +163,20 @@ public class LostController {
 //        return "redirect:/bulletins/{id}";
 //    }
 //
-//
-//    /***  delete  ***/
-//    @GetMapping("/{id}/delete")
-//    public String deleteBoard(@PathVariable("id") Long id,
-//                              @SessionAttribute(name = LOGIN_USER) String nickname) {
-//        //작성자 본인만 삭제 가능
-//        if (!isWriter(id, nickname)) {
-//            return "redirect:/";
-//        }
-//
-//        bulletinService.delete(id);
-//        return "redirect:/bulletins?page=0";
-//    }
-//
+
+    /***  delete  ***/
+    @GetMapping("/{id}/delete")
+    public String deleteBoard(@PathVariable("id") Long id,
+                              @SessionAttribute(name = LOGIN_USER) String nickname) {
+        //작성자 본인만 삭제 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
+        }
+
+        lostService.delete(id);
+        return "redirect:/lost?page=0";
+    }
+
 
     private List<String> getRegions() {
         return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
@@ -188,10 +188,10 @@ public class LostController {
 //        if(lastPage<0) lastPage = 0;
 //        return lastPage;
 //    }
-//
-//    private Boolean isWriter(Long id, String nickname) {
-//        String writer = boardService.getWriter(id);
-//        return writer.equals(nickname) ? true : false;
-//    }
+
+    private Boolean isWriter(Long id, String nickname) {
+        String writer = boardService.getWriter(id);
+        return writer.equals(nickname) ? true : false;
+    }
 }
 

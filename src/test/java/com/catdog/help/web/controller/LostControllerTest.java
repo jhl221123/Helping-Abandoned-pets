@@ -21,6 +21,7 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
@@ -118,5 +119,24 @@ class LostControllerTest {
                         .param(GRATUITY, "")
                 )
                 .andExpect(view().name("lost/create"));
+    }
+
+
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    void delete() throws Exception {
+        //given
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doNothing().when(lostService)
+                .delete(2L);
+
+        //expected
+        mockMvc.perform(get("/lost/{id}/delete", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(redirectedUrl("/lost?page=0"));
     }
 }
