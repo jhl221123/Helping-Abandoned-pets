@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container">
+		<h1 class="text-muted" style="margin: 0px 0px 20px 10px; font-size: 16px;">
+			<img th:src="|/img/write.png|" alt="lost-icon" width="17" height="17"/> 【긴급】</h1>
+		<!--	search box 	 -->
+		<form th:object="${lostSearch}" class="form-inline" th:action="@{/lost}">
+			<div class="form-group mb-2">
+				<input type="text" th:field="*{region}" class="form-control" placeholder="지역"/>
+			</div>
+			<button type="submit" class="utility-button mb-2">
+				<img th:src="|/img/search.png|" width="25" height="25"/>
+			</button>
+			<a class="utility-button mb-2" style="margin-left: auto;" th:href="@{/lost/new}">글 작성</a>
+		</form><!--	  /search box 	 -->
+
+		<!--	lost list    -->
+		<table class="table table-striped">
+			<thead>
+			<tr style="text-align: center">
+				<th>지역</th>
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성일</th>
+				<th>조회수</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
+				<td th:text="${pageForm.region}"></td>
+				<td th:text="${pageForm.breed}" th:onclick="|location.href='@{/bulletins/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></td>
+				<td th:text="${pageForm.lostPlace}"></td>
+				<td th:text="${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}"></td>
+				<td th:text="${pageForm.gratuity}"></td>
+			</tr>
+			</tbody>
+		</table><!--	/lost list    -->
+
+		<!--	start pagination	-->
+		<nav class="nav justify-content-center">
+			<ul class="pagination">
+				<li class="page-item">
+					<a th:if="${offset > 0}" class="page-link"
+					   th:href="@{/lost(page=${offset-1}, region=${lostSearch.region})}">&laquo;</a>
+				</li>
+
+				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+					<a class="page-link" th:text="${page+1}"
+					   th:href="@{/lost(page=${page}, region=${lostSearch.region})}"></a>
+				</li>
+
+				<li class="page-item">
+					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+					   th:href="@{/lost(page=${lastPage+1}, region=${lostSearch.region})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav> <!--	/pagination -->
+
+	</div> <!-- /container -->
+</section>
+</body>
+</html>
