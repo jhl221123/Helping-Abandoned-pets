@@ -6,13 +6,17 @@ import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -121,6 +125,24 @@ class LostControllerTest {
                 .andExpect(view().name("lost/create"));
     }
 
+    @Test
+    @DisplayName("검색 조건에 맞는 실종글 페이지 조회")
+    void getPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+
+        doReturn(page).when(lostService)
+                .search(any(LostSearch.class), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/lost")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .param(REGION, "검색지역")
+                        .param(PAGE, String.valueOf(0))
+                        .param(SIZE, String.valueOf(10))
+                )
+                .andExpect(view().name("lost/list"));
+    }
 
     @Test
     @DisplayName("게시글 삭제 성공")

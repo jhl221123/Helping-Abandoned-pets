@@ -4,9 +4,15 @@ import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -59,32 +65,32 @@ public class LostController {
         return "redirect:/lost/{id}";
     }
 
-//
-//    /***  read  ***/
-//    @GetMapping
-//    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-//                          @ModelAttribute("bulletinSearch") BulletinSearch search, Model model) {
-//        Page<PageBulletinForm> pageForms = bulletinService.search(search, pageable);
-//
-//        model.addAttribute("pageForms", pageForms.getContent());
-//
-//        int offset = pageable.getPageNumber() / 5 * 5;
-//        model.addAttribute("offset", offset);
-//
-//        int limit = offset + 4;
-//        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
-//        int lastPage = getLastPage(limit, endPage);
-//        model.addAttribute("lastPage", lastPage);
-//
-//        boolean isEnd = false;
-//        if (lastPage == endPage) {
-//            isEnd = true;
-//        }
-//        model.addAttribute("isEnd", isEnd);
-//
-//        return "bulletins/list";
-//    }
-//
+
+    /***  read  ***/
+    @GetMapping
+    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                          @ModelAttribute("lostSearch") LostSearch search, Model model) {
+        Page<PageLostForm> pageForms = lostService.search(search, pageable);
+
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "lost/list";
+    }
+
 //    @GetMapping("/{id}")
 //    public String readBoard(@PathVariable("id") Long id, Model model,
 //                            @SessionAttribute(name = LOGIN_USER) String nickname,
@@ -182,12 +188,12 @@ public class LostController {
         return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
                 GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONBUK, JEONNAM, GYEONGBUK, GYEONGNAM, JEJU);
     }
-//
-//    private int getLastPage(int limit, int endPage) {
-//        int lastPage = Math.min(endPage, limit);
-//        if(lastPage<0) lastPage = 0;
-//        return lastPage;
-//    }
+
+    private int getLastPage(int limit, int endPage) {
+        int lastPage = Math.min(endPage, limit);
+        if(lastPage<0) lastPage = 0;
+        return lastPage;
+    }
 
     private Boolean isWriter(Long id, String nickname) {
         String writer = boardService.getWriter(id);
