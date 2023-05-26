@@ -2,6 +2,7 @@ package com.catdog.help.service;
 
 import com.catdog.help.domain.board.Board;
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.domain.board.Lost;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,13 @@ import org.springframework.stereotype.Service;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+
+
+    public Boolean isLost(Long id) {
+        Board findBoard = boardRepository.findById(id)
+                .orElseThrow(BoardNotFoundException::new);
+        return findBoard instanceof Lost;
+    }
 
     public Boolean isBulletin(Long id) {
         Board findBoard = boardRepository.findById(id)

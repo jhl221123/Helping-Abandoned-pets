@@ -76,7 +76,7 @@
 							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
 							   th:href="@{/comments/{id}/edit(id=${form.id}, boardId=${readForm.id})}">수정</a>
 							<a style="font-size: 0.9rem;" th:if="${form.nickname==session.login_user}" class="text-muted"
-							   data-toggle="modal" href="#deleteParentModal">삭제</a>
+							   data-toggle="modal" th:href="@{#deleteParentModal{id}(id=${form.id})}">삭제</a>
 						</span>
 						<div>
 							<p class="parent-comment-content" th:text="${form.content}">content</p>
@@ -89,7 +89,7 @@
 					</div>
 
 					<!-- delete parent comment modal -->
-					<div class="modal fade" id="deleteParentModal" tabindex="-1" role="dialog" aria-labelledby="deleteParentModalLabel" aria-hidden="true">
+					<div class="modal fade" th:id="|deleteParentModal${form.id}|" tabindex="-1" role="dialog" aria-labelledby="deleteParentModalLabel" aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -157,7 +157,7 @@
 							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
 							   th:href="@{/comments/{id}/edit(id=${child.id}, boardId=${readForm.id})}">수정</a>
 							<a style="font-size: 0.9rem;" th:if="${child.nickname == session.login_user}" class="text-muted"
-							   data-toggle="modal" href="#deleteChildModal">삭제</a>
+							   data-toggle="modal" th:href="@{#deleteChildModal{id}(id=${child.id})}">삭제</a>
 						</span>
 						<div>
 							<p class="child-comment-content" th:text="${child.content}">content</p>
@@ -165,7 +165,7 @@
 						<span class="regDate" style="padding: 0px 0px 0px 25px; margin: 0px;" th:text="${#temporals.format(child.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span>
 
 						<!-- delete child comment modal -->
-						<div class="modal fade" id="deleteChildModal" tabindex="-1" role="dialog" aria-labelledby="deleteChildModalLabel" aria-hidden="true">
+						<div class="modal fade" th:id="|deleteChildModal${child.id}|" tabindex="-1" role="dialog" aria-labelledby="deleteChildModalLabel" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">

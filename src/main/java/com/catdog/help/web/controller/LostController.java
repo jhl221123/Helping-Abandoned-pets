@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,15 @@ public class LostController {
             List<String> regions = getRegions();
             model.addAttribute("regions", regions);
             return "lost/create";
+        }
+
+        for (MultipartFile image : saveForm.getImages()) { // TODO: 2023-05-15 왜 이렇게 했는지 모르겠지만 for문 보다 size 이용해보자.
+            if (image.isEmpty()) {
+                List<String> regions = getRegions();
+                model.addAttribute("regions", regions);
+                bindingResult.rejectValue("images", "empty", "하나 이상의 이미지를 업로드 해야합니다.");
+                return "lost/create";
+            }
         }
 
         Long boardId = lostService.save(saveForm, nickname);

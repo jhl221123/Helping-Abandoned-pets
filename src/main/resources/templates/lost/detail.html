@@ -3,20 +3,17 @@
 <body>
 <section>
 	<div class="container">
-		<!--	bulletin board   -->
+		<!--	lost board   -->
 		<div class="board-area">
-			<!--	title and like button     -->
+			<!--	title     -->
 			<div class="row">
 				<div class="col-sm-11 board-title text-left">
 					<p th:text="${readForm.title}">제목</p>
 				</div>
 				<div class="col-sm-1" style="justify-content: end">
-					<button type="button" class="btn btm_image" th:onclick="|location.href='@{/bulletins/{id}/like(id=${readForm.id})}'|">
-						<img th:if="${!checkLike}" th:src="|/img/blankHeart.png|" width="20" height="20"/>
-						<img th:if="${checkLike}" th:src="|/img/redHeart.png|" width="20" height="20"/>
-					</button>
+					<img th:src="|/img/siren.png|" width="30" height="30"/>
 				</div>
-			</div><!--	/title and like button     -->
+			</div><!--	/title     -->
 
 			<!--	writer and regDate    -->
 			<div class="division-line"></div>
@@ -24,14 +21,11 @@
 			<span class="vertical-division-line"></span>
 			<span class="regDate" th:text="${#temporals.format(readForm.createdDate, 'yyyy-MM-dd HH:mm:ss')}">작성 날짜</span><!--	/writer and regDate    -->
 
-			<!--	views and like    -->
+			<!--	views    -->
 			<div class="float-right">
 				<img class="views-icon" th:src="|/svg/views.svg|" width="17" height="17"/>
 				<span class="text-muted" style="font-size: 13px;" th:text="|조회수 : ${readForm.views}|">조회수</span>
-				<span class="vertical-division-line"></span>
-				<img class="like-icon" th:src="|/svg/like.svg|" width="17" height="17"/>
-				<span class="text-muted" style="font-size: 13px;" th:text="|좋아요 : ${readForm.likeSize}|">좋아요 수</span>
-			</div><!--	/views and like    -->
+			</div><!--	/views    -->
 
 			<!-- Carousel -->
 			<div th:if="${!readForm.images.isEmpty()}" id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -57,15 +51,20 @@
 			<!--	board content   -->
 			<div class="division-line"></div>
 			<div class="text-box" id="content" name="content" th:text="${readForm.content}"></div>
+			<span class="item-tag" th:text="|#${readForm.breed}|">품종</span>
+			<span class="item-next-tag" th:text="|#${readForm.gratuity} 원|">사례금</span>
+			<span class="item-next-tag" th:text="|#${readForm.region}|">지역</span>
+			<span class="item-next-tag" th:text="|#${readForm.lostPlace}|">실종장소</span>
+			<span class="item-next-tag" th:text="|#${readForm.lostDate}|">실종일</span>
 			<div class="division-line"></div><!--	/board content   -->
 
 			<!--    utility button    -->
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
-			   th:href="@{/bulletins/{id}/edit(id=${readForm.id})}">수정</a>
+			   th:href="@{/lost/{id}/edit(id=${readForm.id})}">수정</a>
 			<a th:if="${readForm.nickname == session.login_user}" class="utility-button"
 			   data-toggle="modal" href="#deleteBoardModal">삭제</a>
 			<div class="float-right">
-				<a class="utility-button" th:href="@{/bulletins(page=0)}">목록으로</a>
+				<a class="utility-button" th:href="@{/lost(page=0)}">목록으로</a>
 			</div><!--    /utility button    -->
 
 			<!-- delete board modal -->
@@ -73,7 +72,7 @@
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="deleteBoardModalLabel">게시글 삭제</h5>
+							<h5 class="modal-title" id="deleteBoardModalLabel">실종글 삭제</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -83,13 +82,13 @@
 						</div>
 						<div class="modal-footer">
 							<a class="utility-button" href="#" data-dismiss="modal">취소</a>
-							<a class="utility-button" th:href="@{/bulletins/{id}/delete(id=${readForm.id})}">삭제</a>
+							<a class="utility-button" th:href="@{/lost/{id}/delete(id=${readForm.id})}">삭제</a>
 						</div>
 					</div>
 				</div>
 			</div><!-- /delete board modal -->
 
-		</div><!--	/bulletin board   -->
+		</div><!--	/lost board   -->
 
 		<!--    comment area    -->
 		<div class="comment-area">
@@ -151,7 +150,7 @@
 									<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
 									<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
 									<button class="float-right comment-write-button" type="button"
-									        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
+									        th:onclick="|location.href='@{/lost/{id}(id=${readForm.id})}'|">취소</button>
 									<button class="float-right comment-write-button" type="submit">수정</button>
 								</div>
 								<div>
@@ -171,7 +170,7 @@
 								<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
 								<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
 								<button class="float-right comment-write-button" type="button"
-								        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
+								        th:onclick="|location.href='@{/lost/{id}(id=${readForm.id})}'|">취소</button>
 								<button class="float-right comment-write-button" type="submit">등록</button>
 							</div>
 							<div>
@@ -229,7 +228,7 @@
 										<img class="comment-nickname-icon" th:src="|/img/cat-face.png|" alt="cat-icon" width="17" height="17"/>
 										<span class="comment-nickname" th:text="${session.login_user}">닉네임</span>
 										<button class="float-right comment-write-button" type="button"
-										        th:onclick="|location.href='@{/bulletins/{id}(id=${readForm.id})}'|">취소</button>
+										        th:onclick="|location.href='@{/lost/{id}(id=${readForm.id})}'|">취소</button>
 										<button class="float-right comment-write-button" type="submit">수정</button>
 									</div>
 									<div>

@@ -121,7 +121,10 @@ public class CommentController {
     private String redirectBoard(Long boardId) {
         if (boardService.isBulletin(boardId)) {
             return "redirect:/bulletins/{id}";
+        } else if (boardService.isLost(boardId)) {
+            return "redirect:/lost/{id}";
+        } else {
+            return "redirect:/inquiries/{id}";
         }
-        return "redirect:/inquiries/{id}";
     }
 }
