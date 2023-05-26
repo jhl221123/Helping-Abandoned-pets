@@ -9,6 +9,8 @@ import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import com.catdog.help.web.form.search.LostSearch;
@@ -177,6 +179,26 @@ class LostControllerTest {
     }
 
     @Test
+    @DisplayName("실종글 수정 양식 호출 성공")
+    void getEditForm() throws Exception {
+        //given
+        EditLostForm form = getBeforeEditForm();
+
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doReturn(form).when(lostService)
+                .getEditForm(2L);
+
+        //expected
+        mockMvc.perform(get("/lost/{id}/edit", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(view().name("lost/edit"));
+    }
+
+    @Test
     @DisplayName("게시글 삭제 성공")
     void delete() throws Exception {
         //given
@@ -192,6 +214,14 @@ class LostControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(redirectedUrl("/lost?page=0"));
+    }
+
+
+    private EditLostForm getBeforeEditForm() {
+        User user = getUser();
+        Lost board = getLost(user);
+        List<ReadImageForm> oldImages = new ArrayList<>();
+        return new EditLostForm(board, oldImages);
     }
 
     private ReadLostForm getReadLostForm() {

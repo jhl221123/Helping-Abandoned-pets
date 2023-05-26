@@ -5,6 +5,7 @@ import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
@@ -124,25 +125,25 @@ public class LostController {
 
         return "lost/detail";
     }
-//
-//
-//    /***  update  ***/
-//
-//    @GetMapping("/{id}/edit")
-//    public String getEditForm(@PathVariable("id") Long id, Model model,
-//                              @SessionAttribute(name = LOGIN_USER) String nickname) {
-//        //작성자 본인만 수정 가능
-//        if (!isWriter(id, nickname)) {
-//            return "redirect:/";
-//        }
-//        EditBulletinForm editForm = bulletinService.getEditForm(id);
-//        model.addAttribute("editForm", editForm);
-//
-//        List<String> regions = getRegions();
-//        model.addAttribute("regions", regions);
-//        return "bulletins/edit";
-//    }
-//
+
+
+    /***  update  ***/
+
+    @GetMapping("/{id}/edit")
+    public String getEditForm(@PathVariable("id") Long id, Model model,
+                              @SessionAttribute(name = LOGIN_USER) String nickname) {
+        //작성자 본인만 수정 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
+        }
+        EditLostForm editForm = lostService.getEditForm(id);
+        model.addAttribute("editForm", editForm);
+
+        List<String> regions = getRegions();
+        model.addAttribute("regions", regions);
+        return "lost/edit";
+    }
+
 //    @PostMapping("/{id}/edit")
 //    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname, Model model,
 //                            @Validated @ModelAttribute("editForm") EditBulletinForm editForm, BindingResult bindingResult) {
