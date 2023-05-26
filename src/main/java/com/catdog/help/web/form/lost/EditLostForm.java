@@ -4,7 +4,9 @@ import com.catdog.help.domain.board.Lost;
 import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Lob;
@@ -16,7 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class EditLostForm {
 
@@ -38,7 +40,8 @@ public class EditLostForm {
     @Length(max = 15)
     private String breed;
 
-    @NotBlank
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate lostDate;
 
     @NotBlank
@@ -67,5 +70,10 @@ public class EditLostForm {
         this.lostDate = lost.getLostDate();
         this.lostPlace = lost.getLostPlace();
         this.gratuity = lost.getGratuity();
+    }
+
+
+    public void addOldImages(List<ReadImageForm> oldImages) {
+        this.oldImages = oldImages;
     }
 }

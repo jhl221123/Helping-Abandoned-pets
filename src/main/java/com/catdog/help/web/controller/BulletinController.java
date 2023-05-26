@@ -163,7 +163,7 @@ public class BulletinController {
 
         if (bindingResult.hasErrors()) {
             EditBulletinForm form = bulletinService.getEditForm(id);
-            editForm.setOldImages(form.getOldImages());
+            editForm.addOldImages(form.getOldImages());
 
             List<String> regions = getRegions();
             model.addAttribute("regions", regions);

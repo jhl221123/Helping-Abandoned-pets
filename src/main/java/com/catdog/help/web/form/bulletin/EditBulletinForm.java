@@ -48,4 +48,9 @@ public class EditBulletinForm {
         this.oldImages = oldImages;
         this.region = board.getRegion();
     }
+
+
+    public void addOldImages(List<ReadImageForm> oldImages) {
+        this.oldImages = oldImages;
+    }
 }

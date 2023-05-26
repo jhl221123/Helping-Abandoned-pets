@@ -144,27 +144,27 @@ public class LostController {
         return "lost/edit";
     }
 
-//    @PostMapping("/{id}/edit")
-//    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname, Model model,
-//                            @Validated @ModelAttribute("editForm") EditBulletinForm editForm, BindingResult bindingResult) {
-//        //작성자 본인만 수정 가능
-//        if (!isWriter(editForm.getId(), nickname)) {
-//            return "redirect:/";
-//        }
-//
-//        if (bindingResult.hasErrors()) {
-//            EditBulletinForm form = bulletinService.getEditForm(id);
-//            editForm.setOldImages(form.getOldImages());
-//
-//            List<String> regions = getRegions();
-//            model.addAttribute("regions", regions);
-//            return "bulletins/edit";
-//        }
-//
-//        bulletinService.update(editForm);
-//        return "redirect:/bulletins/{id}";
-//    }
-//
+    @PostMapping("/{id}/edit")
+    public String editBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                            @Validated @ModelAttribute("editForm") EditLostForm editForm, BindingResult bindingResult) {
+        //작성자 본인만 수정 가능
+        if (!isWriter(id, nickname)) {
+            return "redirect:/";
+        }
+
+        if (bindingResult.hasErrors()) {
+            EditLostForm form = lostService.getEditForm(id);
+            editForm.addOldImages(form.getOldImages());
+
+            List<String> regions = getRegions();
+            model.addAttribute("regions", regions);
+            return "lost/edit";
+        }
+
+        lostService.update(editForm);
+        return "redirect:/lost/{id}";
+    }
+
 
     /***  delete  ***/
     @GetMapping("/{id}/delete")

@@ -199,7 +199,59 @@ class LostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제 성공")
+    @DisplayName("실종글 수정 성공")
+    void edit() throws Exception {
+        //given
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doNothing().when(lostService)
+                .update(any(EditLostForm.class));
+
+        //expected
+        mockMvc.perform(post("/lost/{id}/edit", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(TITLE, "제목")
+                        .param(CONTENT, "내용")
+                        .param(REGION, "부산")
+                        .param(BREED, "품종")
+                        .param(LOST_DATE, String.valueOf(LocalDate.now()))
+                        .param(LOST_PLACE, "실종장소")
+                        .param(GRATUITY, String.valueOf(100000))
+                )
+                .andExpect(redirectedUrl("/lost/" + 2));
+    }
+
+    @Test
+    @DisplayName("검증으로 인한 실종글 수정 실패")
+    void failEditByValidate() throws Exception {
+        //given
+        EditLostForm form = getBeforeEditForm();
+
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doReturn(form).when(lostService)
+                .getEditForm(2L);
+
+        //expected
+        mockMvc.perform(post("/lost/{id}/edit", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(TITLE, "")
+                        .param(CONTENT, "")
+                        .param(REGION, "")
+                        .param(BREED, "")
+                        .param(LOST_DATE, "")
+                        .param(LOST_PLACE, "")
+                        .param(GRATUITY, "")
+                )
+                .andExpect(view().name("lost/edit"));
+    }
+
+    @Test
+    @DisplayName("실종글 삭제 성공")
     void delete() throws Exception {
         //given
         doReturn("닉네임").when(boardService)
@@ -214,6 +266,21 @@ class LostControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(redirectedUrl("/lost?page=0"));
+    }
+
+    @Test
+    @DisplayName("작성자 외 접근으로 요청 실패")
+    void failRequestWriterDiscord() throws Exception {
+        //given
+        doReturn("작성자").when(boardService)
+                .getWriter(2L);
+
+        //expected
+        mockMvc.perform(get("/lost/{id}/edit", 2)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "다른사용자")
+                )
+                .andExpect(redirectedUrl("/"));
     }
 
 
