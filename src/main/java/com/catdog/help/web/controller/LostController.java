@@ -4,7 +4,9 @@ import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
+import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.lost.PageLostForm;
+import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import com.catdog.help.web.form.search.LostSearch;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,47 +95,38 @@ public class LostController {
         return "lost/list";
     }
 
-//    @GetMapping("/{id}")
-//    public String readBoard(@PathVariable("id") Long id, Model model,
-//                            @SessionAttribute(name = LOGIN_USER) String nickname,
-//                            HttpServletRequest request, HttpServletResponse response) {
-//        // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
-//
-//        //조회수 증가
-//        viewUpdater.addView(id, request, response);
-//
-//        ReadBulletinForm readForm = bulletinService.read(id);
-//        model.addAttribute("readForm", readForm);
-//
-//        if (!readForm.getImages().isEmpty()) {
-//            model.addAttribute("firstImage", readForm.getImages().get(0));
-//            model.addAttribute("imageSize", readForm.getImages().size());
-//        }
-//
-//        boolean checkLike = likeService.isLike(id, nickname);
-//        model.addAttribute("checkLike", checkLike);
-//
-//        List<CommentForm> commentForms = commentService.readByBoardId(id);
-//        if (!commentForms.isEmpty()) {
-//            model.addAttribute("commentForms", commentForms);
-//        }
-//        // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
-//
-//        //댓글
-//        CommentForm commentForm = new CommentForm();
-//        model.addAttribute("commentForm", commentForm);
-//
-//        return "bulletins/detail";
-//    }
+    @GetMapping("/{id}")
+    public String readBoard(@PathVariable("id") Long id, Model model,
+                            @SessionAttribute(name = LOGIN_USER) String nickname,
+                            HttpServletRequest request, HttpServletResponse response) {
+        // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
+
+        //조회수 증가
+        viewUpdater.addView(id, request, response);
+
+        ReadLostForm readForm = lostService.read(id);
+        model.addAttribute("readForm", readForm);
+
+        if (!readForm.getImages().isEmpty()) {
+            model.addAttribute("firstImage", readForm.getImages().get(0));
+            model.addAttribute("imageSize", readForm.getImages().size());
+        }
+
+        List<CommentForm> commentForms = commentService.readByBoardId(id);
+        if (!commentForms.isEmpty()) {
+            model.addAttribute("commentForms", commentForms);
+        }
+        // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
+
+        //댓글
+        CommentForm commentForm = new CommentForm();
+        model.addAttribute("commentForm", commentForm);
+
+        return "lost/detail";
+    }
 //
 //
 //    /***  update  ***/
-//    @GetMapping("/{id}/like")
-//    public String clickLike(@SessionAttribute(name = LOGIN_USER) String nickname,
-//                            @PathVariable("id") Long id) {
-//        likeService.clickLike(id, nickname);
-//        return "redirect:/bulletins/{id}";
-//    }
 //
 //    @GetMapping("/{id}/edit")
 //    public String getEditForm(@PathVariable("id") Long id, Model model,

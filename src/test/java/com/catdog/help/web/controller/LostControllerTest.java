@@ -1,10 +1,15 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.domain.board.Lost;
+import com.catdog.help.domain.user.Gender;
+import com.catdog.help.domain.user.User;
 import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.SessionConst;
+import com.catdog.help.web.form.comment.CommentForm;
+import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
 import com.catdog.help.web.form.search.LostSearch;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +26,11 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -145,6 +154,29 @@ class LostControllerTest {
     }
 
     @Test
+    @DisplayName("실종글 단건 조회")
+    void readOne() throws Exception {
+        //given
+        doNothing().when(viewUpdater)
+                .addView(eq(2L), any(HttpServletRequest.class), any(HttpServletResponse.class));
+
+        ReadLostForm form = getReadLostForm();
+        doReturn(form).when(lostService)
+                .read(2L);
+
+        List<CommentForm> forms = new ArrayList<>();
+        doReturn(forms).when(commentService)
+                .readByBoardId(2L);
+
+        //expected
+        mockMvc.perform(get("/lost/{id}", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(view().name("lost/detail"));
+    }
+
+    @Test
     @DisplayName("게시글 삭제 성공")
     void delete() throws Exception {
         //given
@@ -160,5 +192,35 @@ class LostControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(redirectedUrl("/lost?page=0"));
+    }
+
+    private ReadLostForm getReadLostForm() {
+        User user = getUser();
+        Lost board = getLost(user);
+        return new ReadLostForm(board, List.of());
+    }
+
+    private Lost getLost(User user) {
+        return Lost.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .region("부산")
+                .breed("말티즈")
+                .lostDate(LocalDate.of(2023, 05, 26))
+                .lostPlace("행복아파트")
+                .gratuity(100000)
+                .build();
+    }
+
+    private User getUser() {
+        return User.builder()
+                .emailId("test@test.test")
+                .password("12341234")
+                .nickname("닉네임")
+                .name("이름")
+                .age(22)
+                .gender(Gender.WOMAN)
+                .build();
     }
 }
