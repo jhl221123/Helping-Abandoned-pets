@@ -17,11 +17,11 @@ import java.util.List;
 public class SaveBulletinForm {
 
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 40)
     private String title;
 
     @NotBlank @Lob
-    @Length(max = 250)
+    @Length(max = 1000)
     private String content;
 
     @NotBlank

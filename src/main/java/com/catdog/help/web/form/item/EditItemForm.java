@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,11 @@ public class EditItemForm {
     private Long id;
 
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 40)
     private String title;
 
-    @NotBlank
-    @Length(max = 250)
+    @NotBlank @Lob
+    @Length(max = 1000)
     private String content;
 
     @NotBlank
@@ -68,5 +69,14 @@ public class EditItemForm {
             //대표이미지 제외
             this.getOldImages().add(readForms.get(i));
         }
+    }
+
+
+    public void addOldLeadImage(ReadImageForm oldLeadImage) {
+        this.oldLeadImage = oldLeadImage;
+    }
+
+    public void addOldImages(List<ReadImageForm> oldImages) {
+        this.oldImages = oldImages;
     }
 }

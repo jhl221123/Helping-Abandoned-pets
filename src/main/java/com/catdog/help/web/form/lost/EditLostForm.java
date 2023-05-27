@@ -26,11 +26,11 @@ public class EditLostForm {
     private Long id;
 
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 40)
     private String title;
 
     @NotBlank @Lob
-    @Length(max = 250)
+    @Length(max = 1000)
     private String content;
 
     @NotBlank
@@ -52,6 +52,10 @@ public class EditLostForm {
     @PositiveOrZero
     private int gratuity;
 
+    private ReadImageForm oldLeadImage;
+
+    private MultipartFile newLeadImage;
+
     private List<ReadImageForm> oldImages = new ArrayList<>();
 
     @Size(max = 5)
@@ -60,16 +64,22 @@ public class EditLostForm {
     private List<Long> deleteImageIds = new ArrayList<>();
 
 
-    public EditLostForm(Lost lost, List<ReadImageForm> oldImages) {
+    public EditLostForm(Lost lost, List<ReadImageForm> readForms) {
         this.id = lost.getId();;
         this.title = lost.getTitle();
         this.content = lost.getContent();
-        this.oldImages = oldImages;
         this.region = lost.getRegion();
         this.breed = lost.getBreed();
         this.lostDate = lost.getLostDate();
         this.lostPlace = lost.getLostPlace();
         this.gratuity = lost.getGratuity();
+
+        //대표이미지
+        this.oldLeadImage = readForms.get(0);
+        for (int i = 1; i < readForms.size(); i++) {
+            //대표이미지 제외
+            this.getOldImages().add(readForms.get(i));
+        }
     }
 
 

@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.List;
 public class SaveItemForm {
 
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 40)
     private String title;
 
-    @NotBlank
-    @Length(max = 250)
+    @NotBlank @Lob
+    @Length(max = 1000)
     private String content;
 
     @NotBlank
