@@ -35,7 +35,7 @@
 				</ol>
 				<div class="carousel-inner">
 					<div th:each="imageFile : ${readForm.images}" class="carousel-item" th:classappend ="${firstImage.getStoreFileName == imageFile.getStoreFileName} ? active : ''">
-						<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500">
+						<img th:src="|/images/${imageFile.getStoreFileName()}|" class="d-block w-100" alt="..." height="500" style="object-fit: contain;">
 					</div>
 				</div>
 				<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
