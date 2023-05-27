@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container">
+		<form class="board-edit-box" role="form" th:object="${editForm}" enctype="multipart/form-data" th:method="post">
+			<div>
+				<span>
+					<label style="display: none;" th:for="breed">품종</label>
+					<input class="form-control" style="border: none;" type="text" th:field="*{breed}" th:errorclass="field-error"
+					       placeholder="품종">
+				</span>
+				<span>
+					<label style="display: none;" th:for="lostPlace">실종장소</label>
+					<input class="form-control" style="border: none;" type="text" th:field="*{lostPlace}" th:errorclass="field-error"
+					       placeholder="실종장소">
+				</span>
+				<span>
+					<label style="display: none;" th:for="gratuity">사례금</label>
+					<input class="form-control" style="border: none;" type="text" th:field="*{gratuity}" th:errorclass="field-error"
+					       placeholder="사례금">
+				</span>
+				<span>
+					<label style="display: none;" th:for="lostDate">실종일</label>
+					<input class="form-control" style="border: none;" type="date" th:field="*{lostDate}" th:errorclass="field-error"
+					       placeholder="실종일">
+				</span>
+			</div>
+			<div class="board-title-box">
+				<span>
+					<label style="display: none;" th:for="title">제목</label>
+					<input class="board-title-field form-control" style="border: none;" type="text" th:field="*{title}" th:errorclass="field-error"
+					       placeholder="제목">
+				</span>
+				<span class="float-right">
+					<label style="display: none;" th:for="region">지역</label>
+					<select th:field="*{region}" th:errorclass="field-error" class="form-select">
+						<option value="">지역 선택</option>
+						<option th:each="region : ${regions}" th:value="${region}"
+						        th:text="${region}">region</option>
+					</select>
+				</span>
+			</div>
+			<span class="field-error" th:errors="*{title}">입력 오류</span>
+			<div class="division-line"></div>
+
+			<div class="form-group">
+				<label style="display: none;" th:for="content">내용</label>
+				<textarea style="border: none;" th:errorclass="field-error" class="form-control" th:field="*{content}" rows="10" placeholder="내용"></textarea>
+				<p class="field-error" th:errors="*{content}">입력 오류</p>
+				<div class="division-line"></div>
+			</div>
+
+			<!--	change leadImage	-->
+			<div th:if="|!${editForm.oldLeadImage} == null|">
+				<div class="form-group">
+					<label class="image-edit-label" th:for="newLeadImage"> &#91; 대표이미지 교체 &#93;</label>
+					<img class="image-edit item-edit-leadImage" th:src="|/images/${editForm.oldLeadImage.storeFileName}|" width="100" height="100"/>
+					<input type="file" th:field="*{newLeadImage}" class="form-control-file">
+				</div>
+				<div class="division-line"></div>
+			</div><!--	/change leadImage	-->
+
+			<!--	change other images	-->
+			<div th:if="${!editForm.oldImages.isEmpty()}">
+				<span class="image-edit-label">&#91; 사진 삭제 &#93;</span>
+				<div class="image-edit-area">
+					<div class="image-edit-box" th:each="oldImage : *{oldImages}">
+						<label>
+							<input type="checkbox" th:field="*{deleteImageIds}" th:value="${oldImage.id}">
+							<img class="image-edit" th:src="|/images/${oldImage.getStoreFileName()}|" width="100" height="100"/>
+						</label>
+					</div>
+				</div>
+				<div class="division-line"></div>
+			</div><!--	/change other images	-->
+
+			<div class="form-group">
+				<label class="image-edit-label" th:for="newImages"> &#91; 사진 추가 &#93;</label>
+				<input class="form-control-file file-input-btn" type="file" multiple="multiple" th:field="*{newImages}">
+			</div>
+			<p class="text-muted">※［파일제한: 3MB, 5장］</p>
+			<p class="field-error" th:errors="*{newImages}">입력 오류</p>
+
+			<div class="col-lg-12 text-right">
+				<button type="button" class="utility-button" th:onclick="|location.href='@{/lost/{id}(id=${editForm.id})}'|">취소</button>
+				<button type="submit" class="utility-button" >완료</button>
+			</div>
+		</form>
+	</div> <!-- /container -->
+</section>
+</body>
+</html>
