@@ -17,6 +17,21 @@
 		</form><!--	  /search box 	 -->
 
 		<!--	lost list    -->
+
+		<div class="card-deck">
+			<div th:each="pageForm : ${pageForms}" class="card">
+				<a th:href="@{/lost/{id}(id=${pageForm.id})}" style="text-decoration: none;">
+					<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" class="card-img-top" alt="...">
+					<div class="card-body">
+						<h5 th:text="|품종: ${pageForm.breed}|" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></h5>
+						<p th:text="|지역: ${pageForm.region}|"></p>
+						<p th:text="|실종장소: ${pageForm.lostPlace}|"></p>
+						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}"|></p>
+						<p th:text="|사례금: ${pageForm.gratuity}|"></p>
+					</div>
+				</a>
+			</div>
+		</div>
 		<table class="table table-striped">
 			<thead>
 			<tr style="text-align: center">
