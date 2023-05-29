@@ -1,18 +1,19 @@
 package com.catdog.help.web.api.controller;
 
+import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.exception.EmailDuplicateException;
-import com.catdog.help.exception.NicknameDuplicateException;
-import com.catdog.help.exception.PasswordIncorrectException;
-import com.catdog.help.exception.PasswordNotSameException;
+import com.catdog.help.exception.*;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.service.ItemService;
 import com.catdog.help.service.UserService;
+import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
+import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
+import com.catdog.help.web.api.response.user.LoginResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.user.EditUserForm;
@@ -38,8 +39,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @Transactional
@@ -147,6 +147,71 @@ class UserApiControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(json)
         )).hasCause(new NicknameDuplicateException());
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void login() throws Exception {
+        //given
+        LoginRequest request = LoginRequest.builder()
+                .emailId("test@test.test")
+                .password("12345678")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        LoginResponse response = new LoginResponse("/");
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn("닉네임").when(userService)
+                .login("test@test.test", "12345678");
+
+        //expected
+        mockMvc.perform(post("/api/users/login")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(request().sessionAttribute(SessionConst.LOGIN_USER, "닉네임"))
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("검증으로 인한 로그인 실패")
+    void failLoginByEmail() throws Exception {
+        //given
+        LoginRequest request = LoginRequest.builder()
+                .emailId("")
+                .password("")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //expected
+        mockMvc.perform(post("/api/users/login")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        ).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이디 또는 비밀번호 불일치로 로그인 실패")
+    void failLoginByNonexistentEmailOrWrongPassword() throws Exception {
+        //given
+        LoginRequest request = LoginRequest.builder()
+                .emailId("nonexistent@test.test")
+                .password("12345678")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        doReturn(MyConst.FAIL_LOGIN).when(userService)
+                .login("nonexistent@test.test", "12345678");
+
+        //expected
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/users/login")
+                .contentType(APPLICATION_JSON)
+                .content(json)
+        )).hasCause(new LoginFailureException());
     }
 
     @Test

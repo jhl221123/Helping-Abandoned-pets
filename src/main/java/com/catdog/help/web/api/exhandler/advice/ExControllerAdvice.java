@@ -1,9 +1,6 @@
 package com.catdog.help.web.api.exhandler.advice;
 
-import com.catdog.help.exception.EmailDuplicateException;
-import com.catdog.help.exception.NicknameDuplicateException;
-import com.catdog.help.exception.PasswordIncorrectException;
-import com.catdog.help.exception.PasswordNotSameException;
+import com.catdog.help.exception.*;
 import com.catdog.help.web.api.exhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,7 +61,7 @@ public class ExControllerAdvice {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordIncorrectException.class)
     public ErrorResult passwordIncorrectExHandler(PasswordIncorrectException e) {
         return ErrorResult.builder()
@@ -74,12 +71,21 @@ public class ExControllerAdvice {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordNotSameException.class)
     public ErrorResult passwordNotSameExHandler(PasswordNotSameException e) {
         return ErrorResult.builder()
                 .code("BAD")
                 .field(e.getField())
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LoginFailureException.class)
+    public ErrorResult loginFailureExHandler(LoginFailureException e) {
+        return ErrorResult.builder()
+                .code("FAIL_LOGIN")
                 .message(e.getMessage())
                 .build();
     }
