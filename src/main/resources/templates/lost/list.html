@@ -18,40 +18,20 @@
 
 		<!--	lost list    -->
 
-		<div class="card-deck">
-			<div th:each="pageForm : ${pageForms}" class="card">
+		<div class="row" style="margin: 20px 0px;">
+			<div th:each="pageForm : ${pageForms}" class="card col-4" style="padding: 0px;">
 				<a th:href="@{/lost/{id}(id=${pageForm.id})}" style="text-decoration: none;">
-					<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" class="card-img-top" alt="...">
+					<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" class="card-img-top" alt="실종동물 이미지">
 					<div class="card-body">
 						<h5 th:text="|품종: ${pageForm.breed}|" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></h5>
 						<p th:text="|지역: ${pageForm.region}|"></p>
 						<p th:text="|실종장소: ${pageForm.lostPlace}|"></p>
-						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}"|></p>
+						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}|"></p>
 						<p th:text="|사례금: ${pageForm.gratuity}|"></p>
 					</div>
 				</a>
 			</div>
-		</div>
-		<table class="table table-striped">
-			<thead>
-			<tr style="text-align: center">
-				<th>지역</th>
-				<th>품종</th>
-				<th>실종장소</th>
-				<th>실종일</th>
-				<th>사례금</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr th:each="pageForm : ${pageForms}" style="text-align: center">
-				<td th:text="${pageForm.region}"></td>
-				<td th:text="${pageForm.breed}" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></td>
-				<td th:text="${pageForm.lostPlace}"></td>
-				<td th:text="${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}"></td>
-				<td th:text="${pageForm.gratuity}"></td>
-			</tr>
-			</tbody>
-		</table><!--	/lost list    -->
+		</div><!--	/lost list    -->
 
 		<!--	start pagination	-->
 		<nav class="nav justify-content-center">

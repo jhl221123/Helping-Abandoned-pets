@@ -83,7 +83,7 @@ public class LostController {
 
     /***  read  ***/
     @GetMapping
-    public String getPage(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public String getPage(@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                           @ModelAttribute("lostSearch") LostSearch search, Model model) {
         Page<PageLostForm> pageForms = lostService.search(search, pageable);
 
