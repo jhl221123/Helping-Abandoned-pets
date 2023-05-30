@@ -63,8 +63,16 @@ public class UserApiController {
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(LOGIN_USER, nickname); // TODO: 2023-05-29 프론트에 뭘 줘야할 지.. 세션처리 어떻게 하지
+        session.setAttribute(LOGIN_USER, nickname);
         return new LoginResponse(redirectURL);
+    }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
     }
 
     @GetMapping("/detail")

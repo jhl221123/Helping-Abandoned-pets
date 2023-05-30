@@ -215,6 +215,16 @@ class UserApiControllerTest {
     }
 
     @Test
+    @DisplayName("로그아웃")
+    void logout() throws Exception {
+        //expected
+        mockMvc.perform(get("/api/users/logout")
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(request().sessionAttributeDoesNotExist(SessionConst.LOGIN_USER));
+    }
+
+    @Test
     @DisplayName("닉네임으로 사용자 정보 조회")
     void readByNickname() throws Exception {
         //given
