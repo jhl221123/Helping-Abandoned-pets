@@ -222,6 +222,7 @@ class UserApiControllerTest {
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(request().sessionAttributeDoesNotExist(SessionConst.LOGIN_USER));
+
     }
 
     @Test
@@ -239,7 +240,7 @@ class UserApiControllerTest {
         //expected
         mockMvc.perform(get("/api/users/detail")
                         .contentType(APPLICATION_JSON)
-                        .param("nickname", "닉네임")
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(content().json(result))
                 .andDo(MockMvcResultHandlers.print());
@@ -331,6 +332,17 @@ class UserApiControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(json)
         )).hasCause(new PasswordNotSameException());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void delete() throws Exception {
+        //expected
+        mockMvc.perform(post("/api/users/detail/delete")
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(status().isOk());
     }
 
 

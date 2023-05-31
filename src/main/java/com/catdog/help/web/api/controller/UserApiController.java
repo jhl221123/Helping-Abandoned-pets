@@ -76,7 +76,7 @@ public class UserApiController {
     }
 
     @GetMapping("/detail")
-    public ReadUserResponse read(@RequestParam String nickname) {
+    public ReadUserResponse read(@SessionAttribute(name = LOGIN_USER) String nickname) {
         ReadUserForm form = userService.readByNickname(nickname);
         return new ReadUserResponse(form);
     }
@@ -98,5 +98,10 @@ public class UserApiController {
             throw new PasswordNotSameException();
         }
         userService.changePassword(request.getAfterPassword(), request.getNickname());
+    }
+
+    @PostMapping("/detail/delete")
+    public void delete(@SessionAttribute(name = LOGIN_USER) String nickname) {
+        userService.deleteUser(nickname);
     }
 }
