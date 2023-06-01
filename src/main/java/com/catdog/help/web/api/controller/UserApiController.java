@@ -1,10 +1,7 @@
 package com.catdog.help.web.api.controller;
 
 import com.catdog.help.exception.*;
-import com.catdog.help.service.BulletinService;
-import com.catdog.help.service.InquiryService;
-import com.catdog.help.service.ItemService;
-import com.catdog.help.service.UserService;
+import com.catdog.help.service.*;
 import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
@@ -33,6 +30,7 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 public class UserApiController {
 
     private final UserService userService;
+    private final LostService lostService;
     private final BulletinService bulletinService;
     private final ItemService itemService;
     private final InquiryService inquiryService;
@@ -78,7 +76,22 @@ public class UserApiController {
     @GetMapping("/detail")
     public ReadUserResponse read(@SessionAttribute(name = LOGIN_USER) String nickname) {
         ReadUserForm form = userService.readByNickname(nickname);
-        return new ReadUserResponse(form);
+        Long lostSize = lostService.countByNickname(nickname); // TODO: 2023-06-01 샘플데이터 추가해서 이 방식이랑 담당 쿼리생성했을 때 방식 소요시간 비교해서 솔루션글 작성 ㄱㄱ
+        Long bulletinSize = bulletinService.countByNickname(nickname);
+        Long itemSize = itemService.countByNickname(nickname);
+        Long inquirySize = inquiryService.countByNickname(nickname);
+        Long likeBulletinSize = bulletinService.countLikeBulletin(nickname);
+        Long likeItemSize = itemService.countLikeItem(nickname);
+
+        return ReadUserResponse.builder()
+                .form(form)
+                .lostSize(lostSize)
+                .bulletinSize(bulletinSize)
+                .itemSize(itemSize)
+                .inquirySize(inquirySize)
+                .likeBulletinSize(likeBulletinSize)
+                .likeItemSize(likeItemSize)
+                .build();
     }
 
     @PostMapping("/edit")

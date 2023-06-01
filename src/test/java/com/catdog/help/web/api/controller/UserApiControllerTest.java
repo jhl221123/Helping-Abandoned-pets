@@ -4,10 +4,7 @@ import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.*;
-import com.catdog.help.service.BulletinService;
-import com.catdog.help.service.InquiryService;
-import com.catdog.help.service.ItemService;
-import com.catdog.help.service.UserService;
+import com.catdog.help.service.*;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
@@ -29,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +46,9 @@ class UserApiControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private LostService lostService;
 
     @Mock
     private BulletinService bulletinService;
@@ -231,19 +230,45 @@ class UserApiControllerTest {
         //given
         User user = getUser();
         ReadUserForm form = new ReadUserForm(user);
-        ReadUserResponse response = new ReadUserResponse(form);
+        ReadUserResponse response = ReadUserResponse.builder()
+                .form(form)
+                .lostSize(2L)
+                .bulletinSize(2L)
+                .itemSize(2L)
+                .inquirySize(2L)
+                .likeBulletinSize(2L)
+                .likeItemSize(2L)
+                .build();
+
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(form).when(userService)
                 .readByNickname(user.getNickname());
+
+        doReturn(2L).when(lostService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(bulletinService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(itemService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(inquiryService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(bulletinService)
+                .countLikeBulletin(user.getNickname());
+
+        doReturn(2L).when(itemService)
+                .countLikeItem(user.getNickname());
 
         //expected
         mockMvc.perform(get("/api/users/detail")
                         .contentType(APPLICATION_JSON)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
-                .andExpect(content().json(result))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(content().json(result));
     }
 
     @Test
