@@ -5,28 +5,6 @@
 	<div class="container">
 		<form class="board-write-box" role="form" action="/lost/new" th:object="${saveForm}"
 		      enctype="multipart/form-data" th:method="post">
-			<div>
-				<span>
-					<label style="display: none;" th:for="breed">품종</label>
-					<input class="form-control" style="border: none;" type="text" th:field="*{breed}" th:errorclass="field-error"
-					       placeholder="품종">
-				</span>
-				<span>
-					<label style="display: none;" th:for="lostPlace">실종장소</label>
-					<input class="form-control" style="border: none;" type="text" th:field="*{lostPlace}" th:errorclass="field-error"
-					       placeholder="실종장소">
-				</span>
-				<span>
-					<label style="display: none;" th:for="gratuity">사례금</label>
-					<input class="form-control" style="border: none;" type="text" th:field="*{gratuity}" th:errorclass="field-error"
-					       placeholder="사례금">
-				</span>
-				<span>
-					<label style="display: none;" th:for="lostDate">실종일</label>
-					<input class="form-control" style="border: none;" type="date" th:field="*{lostDate}" th:errorclass="field-error"
-					       placeholder="실종일">
-				</span>
-			</div>
 			<div class="board-title-box">
 				<span>
 					<label style="display: none;" th:for="title">제목</label>
@@ -50,6 +28,32 @@
 				<label style="display: none;" th:for="content">내용</label>
 				<textarea style="border: none;" th:errorclass="field-error" class="form-control" th:field="*{content}" rows="10" placeholder="내용"></textarea>
 				<p class="field-error" th:errors="*{content}">입력 오류</p>
+			</div>
+
+			<div style="border: 1px solid #ebebeb; border-radius: .25em; margin-bottom: 10px; padding: 5px 10px;">
+				<div style="margin-bottom: 10px">
+					<span style="display: inline-block; width: 52%;">
+						<label style="display: none;" th:for="breed">품종</label>
+						<input class="form-control" style="border: none;" type="text" th:field="*{breed}" th:errorclass="field-error"
+						       placeholder="품종">
+					</span>
+					<span style="display: inline-block; width: 42%; text-align: end;">
+						<label style="font-size: 1rem; font-weight: 400; color: #6E7881;" th:for="gratuity">사례금</label>
+						<input class="form-control" style="display: inline-block; border: none; width: 50%;" type="text" th:field="*{gratuity}" th:errorclass="field-error"
+						       placeholder="사례금">
+					</span>
+				</div>
+				<div>
+					<span style="display: inline-block; width: 52%;">
+						<label style="display: none;" th:for="lostPlace">실종장소</label>
+						<input class="form-control" style="border: none;" type="text" th:field="*{lostPlace}" th:errorclass="field-error"
+						       placeholder="실종장소">
+					</span>
+					<span style="display: inline-block; width: 42%; text-align: end;">
+						<label style="font-size: 1rem; font-weight: 400; color: #6E7881;" th:for="lostDate">실종날짜</label>
+						<input class="form-control" style="display: inline-block; border: none; width: 50%;" type="date" th:field="*{lostDate}" th:errorclass="field-error">
+					</span>
+				</div>
 			</div>
 
 			<div class="division-line"></div>

@@ -50,12 +50,11 @@
 
 			<!--	board content   -->
 			<div class="division-line"></div>
-			<div class="text-box" id="content" name="content" th:text="${readForm.content}"></div>
-			<span class="item-tag" th:text="|#${readForm.breed}|">품종</span>
-			<span class="item-next-tag" th:text="|#${readForm.gratuity} 원|">사례금</span>
-			<span class="item-next-tag" th:text="|#${readForm.region}|">지역</span>
-			<span class="item-next-tag" th:text="|#${readForm.lostPlace}|">실종장소</span>
-			<span class="item-next-tag" th:text="|#${readForm.lostDate}|">실종일</span>
+			<p class="lost-animal-info" th:text="|실종동물: ${readForm.breed}|">품종</p>
+			<p class="lost-animal-info" th:text="|사례금: ${readForm.gratuity} 원|">사례금</p>
+			<p class="lost-animal-info" th:text="|실종장소: ${readForm.lostPlace}|">실종장소</p>
+			<p class="lost-animal-info" th:text="|실종날짜: ${readForm.lostDate}|">실종일</p>
+			<p class="lost-animal-info text-box" th:text="|${readForm.content}|">내용</p>
 			<div class="division-line"></div><!--	/board content   -->
 
 			<!--    utility button    -->

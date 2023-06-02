@@ -20,14 +20,13 @@
 
 		<div class="row" style="margin: 20px 0px;">
 			<div th:each="pageForm : ${pageForms}" class="card col-4" style="padding: 0px;">
-				<a th:href="@{/lost/{id}(id=${pageForm.id})}" style="text-decoration: none;">
+				<a class="card-content" th:href="@{/lost/{id}(id=${pageForm.id})}" style="text-decoration: none;">
 					<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" class="card-img-top" alt="실종동물 이미지">
 					<div class="card-body">
-						<h5 th:text="|품종: ${pageForm.breed}|" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="cursor:pointer;"></h5>
-						<p th:text="|지역: ${pageForm.region}|"></p>
-						<p th:text="|실종장소: ${pageForm.lostPlace}|"></p>
-						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}|"></p>
+						<h5 th:text="|품종: ${pageForm.breed}|" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="margin-bottom: 30px;"></h5>
 						<p th:text="|사례금: ${pageForm.gratuity}|"></p>
+						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}|"></p>
+						<p th:text="|실종장소: ${pageForm.lostPlace}|"></p>
 					</div>
 				</a>
 			</div>
