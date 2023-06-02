@@ -7,11 +7,13 @@ import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
 import com.catdog.help.web.api.response.item.PageItemResponse;
 import com.catdog.help.web.api.response.user.LoginResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
@@ -114,6 +116,13 @@ public class UserApiController {
                                              @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
         return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+    }
+
+    @GetMapping("/detail/inquiries")
+    public Page<PageInquiryResponse> getMyInquiries(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                    @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageInquiryForm> pageForms = inquiryService.getPageByNickname(nickname, pageable);
+        return pageForms.map(form -> new PageInquiryResponse(form));
     }
 
     @PostMapping("/edit")

@@ -11,11 +11,13 @@ import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
 import com.catdog.help.web.api.response.item.PageItemResponse;
 import com.catdog.help.web.api.response.user.LoginResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
@@ -321,6 +323,28 @@ class UserApiControllerTest {
 
         //expected
         mockMvc.perform(get("/api/users/detail/items")
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 문의글 모두 조회")
+    void getMyInquiryPage() throws Exception {
+        //given
+        List<PageInquiryForm> forms = new ArrayList<>();
+        Page<PageInquiryForm> pageInquiryForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+
+        Page<PageInquiryResponse> response = pageInquiryForms.map(PageInquiryResponse::new);
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn(pageInquiryForms).when(inquiryService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/inquiries")
                         .contentType(APPLICATION_JSON)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(PAGE, String.valueOf(0))
