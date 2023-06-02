@@ -13,12 +13,14 @@ import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
 import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
 import com.catdog.help.web.api.response.item.PageItemResponse;
+import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.user.LoginResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -282,6 +284,28 @@ class UserApiControllerTest {
         mockMvc.perform(get("/api/users/detail")
                         .contentType(APPLICATION_JSON)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 실종글 모두 조회")
+    void getMyLostPage() throws Exception {
+        //given
+        List<PageLostForm> forms = new ArrayList<>();
+        Page<PageLostForm> pageLostForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+
+        Page<PageLostResponse> response = pageLostForms.map(form -> new PageLostResponse(form, form.getLeadImage()));
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn(pageLostForms).when(lostService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/lost")
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
                 )
                 .andExpect(content().json(result));
     }
