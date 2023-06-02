@@ -11,8 +11,10 @@ import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.LoginResponse;
+import com.catdog.help.web.api.response.user.PageUserBulletinResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -24,10 +26,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +49,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @Transactional
 class UserApiControllerTest {
+
+    private static final String PAGE = "page";
 
     @InjectMocks
     UserApiController userApiController;
@@ -267,6 +278,28 @@ class UserApiControllerTest {
         mockMvc.perform(get("/api/users/detail")
                         .contentType(APPLICATION_JSON)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 게시글 모두 조회")
+    void getMyBulletinPage() throws Exception {
+        //given
+        List<PageBulletinForm> forms = new ArrayList<>();
+        Page<PageBulletinForm> pageBulletinForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+
+        Page<PageUserBulletinResponse> response = pageBulletinForms.map(PageUserBulletinResponse::new);
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn(pageBulletinForms).when(bulletinService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/bulletins")
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
                 )
                 .andExpect(content().json(result));
     }

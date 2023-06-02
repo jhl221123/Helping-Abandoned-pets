@@ -7,13 +7,19 @@ import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.user.LoginResponse;
+import com.catdog.help.web.api.response.user.PageUserBulletinResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,6 +98,13 @@ public class UserApiController {
                 .likeBulletinSize(likeBulletinSize)
                 .likeItemSize(likeItemSize)
                 .build();
+    }
+
+    @GetMapping("/detail/bulletins")
+    public Page<PageUserBulletinResponse> getMyBulletins(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                         @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
+        return pageForms.map(form -> new PageUserBulletinResponse(form));
     }
 
     @PostMapping("/edit")
