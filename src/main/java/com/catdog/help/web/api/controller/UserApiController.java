@@ -6,11 +6,13 @@ import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
+import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.item.PageItemResponse;
 import com.catdog.help.web.api.response.user.LoginResponse;
-import com.catdog.help.web.api.response.user.PageUserBulletinResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -101,10 +103,17 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/bulletins")
-    public Page<PageUserBulletinResponse> getMyBulletins(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                         @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<PageBulletinResponse> getMyBulletins(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
-        return pageForms.map(form -> new PageUserBulletinResponse(form));
+        return pageForms.map(form -> new PageBulletinResponse(form));
+    }
+
+    @GetMapping("/detail/items")
+    public Page<PageItemResponse> getMyItems(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                             @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
+        return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
     }
 
     @PostMapping("/edit")

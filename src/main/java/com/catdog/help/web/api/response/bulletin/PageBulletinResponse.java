@@ -1,4 +1,4 @@
-package com.catdog.help.web.api.response.user;
+package com.catdog.help.web.api.response.bulletin;
 
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PageUserBulletinResponse {
+public class PageBulletinResponse {
 
     private Long id;
     private String title;
@@ -16,7 +16,7 @@ public class PageUserBulletinResponse {
     private String region;
 
 
-    public PageUserBulletinResponse(PageBulletinForm form) {
+    public PageBulletinResponse(PageBulletinForm form) {
         this.id = form.getId();
         this.title = form.getTitle();
         this.nickname = form.getNickname();

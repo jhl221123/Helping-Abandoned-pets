@@ -10,11 +10,13 @@ import com.catdog.help.web.api.request.user.ChangePasswordRequest;
 import com.catdog.help.web.api.request.user.EditUserRequest;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
+import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.item.PageItemResponse;
 import com.catdog.help.web.api.response.user.LoginResponse;
-import com.catdog.help.web.api.response.user.PageUserBulletinResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -289,7 +291,7 @@ class UserApiControllerTest {
         List<PageBulletinForm> forms = new ArrayList<>();
         Page<PageBulletinForm> pageBulletinForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageUserBulletinResponse> response = pageBulletinForms.map(PageUserBulletinResponse::new);
+        Page<PageBulletinResponse> response = pageBulletinForms.map(PageBulletinResponse::new);
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageBulletinForms).when(bulletinService)
@@ -297,6 +299,28 @@ class UserApiControllerTest {
 
         //expected
         mockMvc.perform(get("/api/users/detail/bulletins")
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 나눔글 모두 조회")
+    void getMyItemPage() throws Exception {
+        //given
+        List<PageItemForm> forms = new ArrayList<>();
+        Page<PageItemForm> pageItemForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+
+        Page<PageItemResponse> response = pageItemForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn(pageItemForms).when(itemService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/items")
                         .contentType(APPLICATION_JSON)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(PAGE, String.valueOf(0))

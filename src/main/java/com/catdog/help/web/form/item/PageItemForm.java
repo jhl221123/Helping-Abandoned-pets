@@ -25,7 +25,7 @@ public class PageItemForm {
 
     private int likeSize;
 
-    private int rooms;
+    private int roomSize;
 
 
     public PageItemForm(Item board, ReadImageForm leadImage) {
@@ -37,6 +37,6 @@ public class PageItemForm {
         this.leadImage = leadImage;
         this.views = board.getViews();
         this.likeSize = board.getLikes().size();
-        this.rooms = board.getRooms().size();
+        this.roomSize = board.getRooms().size();
     }
 }
