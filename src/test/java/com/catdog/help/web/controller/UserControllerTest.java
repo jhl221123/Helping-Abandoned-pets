@@ -306,6 +306,7 @@ class UserControllerTest {
     void getLikeBulletinPage() throws Exception {
         //given
         Page page = Mockito.mock(Page.class);
+
         doReturn(page).when(bulletinService)
                 .getLikeBulletins(eq("닉네임"), any(Pageable.class));
 
@@ -318,8 +319,23 @@ class UserControllerTest {
                 .andExpect(view().name("users/likeBulletinList"));
     }
 
-//    @Test
-//    @DisplayName("로그인한 사용자가 좋아하는 나눔글 모두 조회")
+    @Test
+    @DisplayName("로그인한 사용자가 좋아하는 나눔글 모두 조회")
+    void getLikeItemPage() throws  Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+
+        doReturn(page).when(itemService)
+                .getLikeItems(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/likes/items")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/likeItemList"));
+    }
 
     @Test
     @DisplayName("개인정보 수정 양식 호출")

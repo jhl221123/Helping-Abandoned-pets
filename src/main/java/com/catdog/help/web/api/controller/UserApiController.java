@@ -141,6 +141,13 @@ public class UserApiController {
         return pageForms.map(form -> new PageBulletinResponse(form));
     }
 
+    @GetMapping("/detail/likes/items")
+    public Page<PageItemResponse> getLikeItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                  @PageableDefault(size = 12, sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageItemForm> pageForms = itemService.getLikeItems(nickname, pageable);
+        return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+    }
+
     @PostMapping("/edit")
     public void edit(@RequestBody @Validated EditUserRequest request) {
         userService.updateUserInfo(new EditUserForm(request));
