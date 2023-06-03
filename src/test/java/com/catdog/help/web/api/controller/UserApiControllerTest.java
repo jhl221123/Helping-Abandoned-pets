@@ -47,6 +47,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -370,6 +371,28 @@ class UserApiControllerTest {
         //expected
         mockMvc.perform(get("/api/users/detail/inquiries")
                         .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 좋아하는 게시글 모두 조회")
+    void getLikeBulletinPage() throws Exception {
+        //given
+        List<PageBulletinForm> forms = new ArrayList<>();
+        Page<PageBulletinForm> pageBulletinForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+
+        Page<PageBulletinResponse> response = pageBulletinForms.map(PageBulletinResponse::new);
+        String result = objectMapper.writeValueAsString(response);
+
+        doReturn(pageBulletinForms).when(bulletinService)
+                .getLikeBulletins(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/likes/bulletins")
+                        .contentType(APPLICATION_FORM_URLENCODED)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(PAGE, String.valueOf(0))
                 )

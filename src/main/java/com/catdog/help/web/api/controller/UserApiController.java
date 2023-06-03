@@ -115,23 +115,30 @@ public class UserApiController {
 
     @GetMapping("/detail/bulletins")
     public Page<PageBulletinResponse> getMyBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                        @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
         return pageForms.map(form -> new PageBulletinResponse(form));
     }
 
     @GetMapping("/detail/items")
     public Page<PageItemResponse> getMyItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                             @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
         return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
     }
 
     @GetMapping("/detail/inquiries")
     public Page<PageInquiryResponse> getMyInquiriePage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                    @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                       @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageInquiryForm> pageForms = inquiryService.getPageByNickname(nickname, pageable);
         return pageForms.map(form -> new PageInquiryResponse(form));
+    }
+
+    @GetMapping("/detail/likes/bulletins")
+    public Page<PageBulletinResponse> getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                          @PageableDefault(sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageBulletinForm> pageForms = bulletinService.getLikeBulletins(nickname, pageable);
+        return pageForms.map(form -> new PageBulletinResponse(form));
     }
 
     @PostMapping("/edit")
