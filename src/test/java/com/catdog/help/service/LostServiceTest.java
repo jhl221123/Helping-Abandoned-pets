@@ -186,7 +186,7 @@ class LostServiceTest {
         //given
         User user = getUser();
         Lost board = getLost(user, "제목");
-        List<ReadImageForm> oldImages = new ArrayList<>();
+        List<UploadFile> oldImages = getUploadFiles();
 
         doReturn(Optional.of(board)).when(lostRepository)
                 .findById(board.getId());
@@ -252,9 +252,32 @@ class LostServiceTest {
     }
 
 
+    private List<ReadImageForm> getReadImageForms() {
+        ReadImageForm form = new ReadImageForm(
+                UploadFile.builder()
+                        .uploadFileName("uploadFileName")
+                        .storeFileName("storeFileName")
+                        .build()
+        );
+        List<ReadImageForm> oldImages = new ArrayList<>();
+        oldImages.add(form);
+        return oldImages;
+    }
+
+    private List<UploadFile> getUploadFiles() {
+        List<UploadFile> oldImages = new ArrayList<>();
+        UploadFile file = UploadFile.builder()
+                .uploadFileName("uploadFileName")
+                .storeFileName("storeFileName")
+                .build();
+        oldImages.add(file);
+        return oldImages;
+    }
+
     private EditLostForm getAfterEditLostForm(User user, String title) {
         Lost board = getLost(user, title);
-        return new EditLostForm(board, new ArrayList<>());
+        List<ReadImageForm> readImageForms = getReadImageForms();
+        return new EditLostForm(board, readImageForms);
     }
 
     private SaveLostForm getSaveLostForm() {

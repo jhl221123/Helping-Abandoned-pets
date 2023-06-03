@@ -1,6 +1,7 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.domain.board.Lost;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.service.BoardService;
@@ -310,8 +311,20 @@ class LostControllerTest {
     private EditLostForm getBeforeEditForm() {
         User user = getUser();
         Lost board = getLost(user);
-        List<ReadImageForm> oldImages = new ArrayList<>();
+        List<ReadImageForm> oldImages = getReadImageForms();
         return new EditLostForm(board, oldImages);
+    }
+
+    private List<ReadImageForm> getReadImageForms() {
+        ReadImageForm form = new ReadImageForm(
+                UploadFile.builder()
+                        .uploadFileName("uploadFileName")
+                        .storeFileName("storeFileName")
+                        .build()
+        );
+        List<ReadImageForm> oldImages = new ArrayList<>();
+        oldImages.add(form);
+        return oldImages;
     }
 
     private ReadLostForm getReadLostForm() {
