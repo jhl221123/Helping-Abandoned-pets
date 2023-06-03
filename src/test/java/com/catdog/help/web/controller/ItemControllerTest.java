@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -39,8 +40,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -76,7 +76,7 @@ class ItemControllerTest {
     @BeforeEach
     void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(itemController)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build(); // TODO: 2023-04-25 pageable 파라미터 바인딩 시켜주는 이칭구 블로그 글 작성 고려
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build();
     }
 
 
@@ -95,11 +95,13 @@ class ItemControllerTest {
     @DisplayName("나눔글 작성 성공")
     void saveBoard() throws Exception {
         //given
+        MockMultipartFile image = new MockMultipartFile("images", "test.png", "image/png", "test".getBytes());
+
         doNothing().when(itemService)
                 .save(any(SaveItemForm.class), eq("닉네임"));
 
         //expected
-        mockMvc.perform(post("/items/new")
+        mockMvc.perform(multipart("/items/new").file(image)
                         .contentType(MULTIPART_FORM_DATA)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(TITLE, "제목")
@@ -107,8 +109,27 @@ class ItemControllerTest {
                         .param(ITEM_NAME, "상품명")
                         .param(PRICE, String.valueOf(1000))
                         .param(REGION, "부산")
-                ) // TODO: 2023-04-25 이미지 업로드 안했는데 검증 안걸림... 추후 수정
+                )
                 .andExpect(redirectedUrl("/items?page=0"));
+    }
+
+    @Test
+    @DisplayName("이미지파일을 업로드하지 않아 나눔글 작성 실패")
+    void failSaveByImage() throws Exception {
+        //given
+        MockMultipartFile image = new MockMultipartFile("images", "", "", (byte[]) null);
+
+        //expected
+        mockMvc.perform(multipart("/items/new").file(image)
+                        .contentType(MULTIPART_FORM_DATA)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(TITLE, "제목")
+                        .param(CONTENT, "내용")
+                        .param(ITEM_NAME, "상품명")
+                        .param(PRICE, String.valueOf(1000))
+                        .param(REGION, "부산")
+                )
+                .andExpect(view().name("items/create"));
     }
 
     @Test

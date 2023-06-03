@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,8 +41,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,11 +100,13 @@ class LostControllerTest {
     @DisplayName("실종글 저장 성공")
     void save() throws Exception {
         //given
+        MockMultipartFile image = new MockMultipartFile("images", "test.png", "image/png", "test".getBytes());
+
         doReturn(2L).when(lostService)
                 .save(any(SaveLostForm.class), eq("닉네임"));
 
         //expected
-        mockMvc.perform(post("/lost/new")
+        mockMvc.perform(multipart("/lost/new").file(image)
                         .contentType(MULTIPART_FORM_DATA)
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                         .param(TITLE, "제목")
@@ -116,6 +118,27 @@ class LostControllerTest {
                         .param(GRATUITY, String.valueOf(100000))
                 )
                 .andExpect(redirectedUrl("/lost/" + 2));
+    }
+
+    @Test
+    @DisplayName("이미지파일을 업로드하지 않아 실종글 저장 실패")
+    void failSaveByImage() throws Exception {
+        //given
+        MockMultipartFile image = new MockMultipartFile("images", "", "", (byte[]) null);
+
+        //expected
+        mockMvc.perform(multipart("/lost/new").file(image)
+                        .contentType(MULTIPART_FORM_DATA)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(TITLE, "제목")
+                        .param(CONTENT, "내용")
+                        .param(REGION, "부산")
+                        .param(BREED, "품종")
+                        .param(LOST_DATE, String.valueOf(LocalDate.now()))
+                        .param(LOST_PLACE, "실종장소")
+                        .param(GRATUITY, String.valueOf(100000))
+                )
+                .andExpect(view().name("lost/create"));
     }
 
     @Test
