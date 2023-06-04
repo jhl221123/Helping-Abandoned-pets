@@ -23,3 +23,21 @@ include::{snippets}/users-new/response-fields.adoc[]
 === CURL
 
 include::{snippets}/users-new/curl-request.adoc[]
+
+== 사용자 로그인
+
+=== 요청
+
+include::{snippets}/users-login/http-request.adoc[]
+
+include::{snippets}/users-login/request-fields.adoc[]
+
+=== 응답
+
+include::{snippets}/users-login/http-response.adoc[]
+
+include::{snippets}/users-login/response-fields.adoc[]
+
+=== CURL
+
+include::{snippets}/users-login/curl-request.adoc[]
