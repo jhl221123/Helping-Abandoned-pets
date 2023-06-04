@@ -1,0 +1,25 @@
+= 멍이냥이 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 사용자 회원가입
+
+=== 요청
+
+include::{snippets}/users-new/http-request.adoc[]
+
+include::{snippets}/users-new/request-fields.adoc[]
+
+=== 응답
+
+include::{snippets}/users-new/http-response.adoc[]
+
+include::{snippets}/users-new/response-fields.adoc[]
+
+=== CURL
+
+include::{snippets}/users-new/curl-request.adoc[]

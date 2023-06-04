@@ -90,3 +90,6 @@ target
 .flattened-pom.xml
 secrets.yml
 .gradletasknamecache
+
+### Spring REST Docs ###
+src/main/resources/static/docs/
