@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,11 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.catdog.help.MyConst.*;
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -83,14 +87,7 @@ public class UserApiControllerDocsTest {
     @DisplayName("Docs 로그인 성공")
     void successLogin() throws Exception {
         //given
-        User user = User.builder()
-                .emailId("test@test.test")
-                .password("12341234")
-                .nickname("닉네임")
-                .name("이름")
-                .age(22)
-                .gender(Gender.WOMAN)
-                .build();
+        User user = getUser();
         userRepository.save(user);
 
         LoginRequest request = LoginRequest.builder()
@@ -105,7 +102,7 @@ public class UserApiControllerDocsTest {
                         .accept(APPLICATION_JSON)
                         .content(json)
                 )
-                .andExpect(status().isOk())
+                .andExpect(request().sessionAttribute(LOGIN_USER, "닉네임"))
                 .andDo(document("users-login",
                         requestFields(
                                 fieldWithPath("emailId").description("이메일")
@@ -117,6 +114,35 @@ public class UserApiControllerDocsTest {
                                 fieldWithPath("redirectURL").description("로그인 하지 않고 접근했던 경로")
                         )
                 ));
+    }
+
+    @Test
+    @DisplayName("Docs 로그아웃 성공")
+    void successLogout() throws Exception {
+        //given
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        //expected
+        mockMvc.perform(get("/api/users/logout")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .session(session)
+                )
+                .andExpect(request().sessionAttributeDoesNotExist(LOGIN_USER))
+                .andDo(document("users-logout"));
+    }
+
+
+    private User getUser() {
+        return User.builder()
+                .emailId("test@test.test")
+                .password("12341234")
+                .nickname("닉네임")
+                .name("이름")
+                .age(22)
+                .gender(Gender.WOMAN)
+                .build();
     }
 
     private List<String> getConstraintDescription(Class target, String field) {

@@ -41,3 +41,17 @@ include::{snippets}/users-login/response-fields.adoc[]
 === CURL
 
 include::{snippets}/users-login/curl-request.adoc[]
+
+== 사용자 로그아웃
+
+=== 요청
+
+include::{snippets}/users-logout/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/users-logout/http-response.adoc[]
+
+=== CURL
+
+include::{snippets}/users-logout/curl-request.adoc[]
