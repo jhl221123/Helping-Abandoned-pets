@@ -55,3 +55,21 @@ include::{snippets}/users-logout/http-response.adoc[]
 === CURL
 
 include::{snippets}/users-logout/curl-request.adoc[]
+
+== 사용자 정보조회
+
+=== 요청
+
+include::{snippets}/users-Info/http-request.adoc[]
+
+include::{snippets}/users-Info/request-headers.adoc[]
+
+=== 응답
+
+include::{snippets}/users-Info/http-response.adoc[]
+
+include::{snippets}/users-Info/response-fields.adoc[]
+
+=== CURL
+
+include::{snippets}/users-Info/curl-request.adoc[]
