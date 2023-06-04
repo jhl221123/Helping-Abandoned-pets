@@ -107,10 +107,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/lost")
-    public Page<PageLostResponse> getMyLostBoardPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageLostResponse getMyLostBoardPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageLostForm> pageForms = lostService.getPageByNickname(nickname, pageable);
-        return pageForms.map(form -> new PageLostResponse(form, form.getLeadImage()));
+        return PageLostResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @GetMapping("/detail/bulletins")
