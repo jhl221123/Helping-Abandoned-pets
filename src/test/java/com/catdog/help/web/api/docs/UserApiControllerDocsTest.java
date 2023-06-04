@@ -1,11 +1,18 @@
 package com.catdog.help.web.api.docs;
 
+import com.catdog.help.domain.board.Lost;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.LostRepository;
+import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
+import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
+import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -23,6 +30,8 @@ import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.catdog.help.MyConst.*;
@@ -32,6 +41,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,6 +60,12 @@ public class UserApiControllerDocsTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LostRepository lostRepository;
+
+    @Autowired
+    private UploadFileRepository uploadFileRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -140,7 +157,7 @@ public class UserApiControllerDocsTest {
 
     @Test
     @DisplayName("Docs 내 정보 조회")
-    void readLoginUser() throws Exception {
+    void readLoginUserInfo() throws Exception {
         //given
         User user = getUser();
         userRepository.save(user);
@@ -182,6 +199,89 @@ public class UserApiControllerDocsTest {
                 ));
     }
 
+    @Test
+    @DisplayName("Docs 내가 작성한 실종글 목록 조회")
+    void readMyLostPage() throws Exception {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Lost board = getLost(user);
+        lostRepository.save(board);
+
+        UploadFile uploadFile = new UploadFile("uploadFileName", "storeFileName");
+        uploadFile.addBoard(board);
+        uploadFileRepository.save(uploadFile);
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        PageLostResponse response = getPageLostResponse(board, uploadFile);
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/lost")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .header("Set-Cookie", session.getId())
+                        .session(session)
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(content().json(result))
+                .andDo(document("users-lost",
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("조회 건수")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].id").description("실종글 식별자"),
+                                fieldWithPath("content[].leadImage.id").description("대표이미지 식별자"),
+                                fieldWithPath("content[].leadImage.uploadFileName").description("대표이미지 업로드 이름"),
+                                fieldWithPath("content[].leadImage.storeFileName").description("대표이미지 저장 이름"),
+                                fieldWithPath("content[].region").description("지역"),
+                                fieldWithPath("content[].breed").description("품종"),
+                                fieldWithPath("content[].lostDate").description("실종날짜"),
+                                fieldWithPath("content[].lostPlace").description("실종장소"),
+                                fieldWithPath("content[].gratuity").description("사례금"),
+
+                                fieldWithPath("page").description("현재 페이지"),
+                                fieldWithPath("size").description("조회 건수"),
+                                fieldWithPath("totalElements").description("전체 조회 건수"),
+                                fieldWithPath("totalPages").description("전체 페이지 수")
+                        )
+                ));
+    }
+
+
+    private PageLostResponse getPageLostResponse(Lost board, UploadFile uploadFile) {
+        PageLostForm pageLostForm = new PageLostForm(board, new ReadImageForm(uploadFile));
+        List<PageLostForm> forms = new ArrayList<>();
+        forms.add(pageLostForm);
+        return PageLostResponse.builder()
+                .content(forms)
+                .page(0)
+                .size(10)
+                .totalElements(1L)
+                .totalPages(1)
+                .build();
+    }
+
+    private Lost getLost(User user) {
+        return Lost.builder()
+                .user(user)
+                .title("실종글 제목")
+                .content("실종글 내용")
+                .breed("품종")
+                .lostDate(LocalDate.now())
+                .lostPlace("실종된 장소")
+                .gratuity(100000)
+                .build();
+    }
 
     private ReadUserResponse getReadUserResponse(User user) {
         return ReadUserResponse.builder()
