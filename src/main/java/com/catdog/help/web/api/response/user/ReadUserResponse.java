@@ -5,6 +5,8 @@ import com.catdog.help.web.form.user.ReadUserForm;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class ReadUserResponse {
 
@@ -19,6 +21,8 @@ public class ReadUserResponse {
     private int age;
 
     private Gender gender;
+
+    private LocalDateTime createdDate;
 
     private Long lostSize;
 
@@ -41,6 +45,7 @@ public class ReadUserResponse {
         this.name = form.getName();
         this.age = form.getAge();
         this.gender = form.getGender();
+        this.createdDate = form.getCreatedDate();
         this.lostSize = lostSize;
         this.bulletinSize = bulletinSize;
         this.itemSize = itemSize;
