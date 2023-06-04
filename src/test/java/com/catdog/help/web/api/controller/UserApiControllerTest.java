@@ -293,7 +293,13 @@ class UserApiControllerTest {
         List<PageLostForm> forms = new ArrayList<>();
         Page<PageLostForm> pageLostForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageLostResponse> response = pageLostForms.map(form -> new PageLostResponse(form, form.getLeadImage()));
+        PageLostResponse response = PageLostResponse.builder()
+                .content(pageLostForms.getContent())
+                .page(pageLostForms.getPageable().getPageNumber())
+                .size(pageLostForms.getPageable().getPageSize())
+                .totalElements(pageLostForms.getTotalElements())
+                .totalPages(pageLostForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageLostForms).when(lostService)
