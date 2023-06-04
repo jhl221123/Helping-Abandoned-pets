@@ -1,30 +1,28 @@
 package com.catdog.help.web.api.response.lost;
 
-import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.lost.PageLostForm;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class PageLostResponse {
 
-    private Long id;
-    private ReadImageForm leadImage;
-    private String region;
-    private String breed;
-    private LocalDate lostDate;
-    private String lostPlace;
-    private int gratuity;
+    private List<PageLostForm> content = new ArrayList<>();
+    private int page;
+    private int size;
+    private Long totalElements;
+    private int totalPages;
 
 
-    public PageLostResponse(PageLostForm form, ReadImageForm leadImage) {
-        this.id = form.getId();
-        this.leadImage = leadImage;
-        this.region = form.getRegion();
-        this.breed = form.getBreed();
-        this.lostDate = form.getLostDate();
-        this.lostPlace = form.getLostPlace();
-        this.gratuity = form.getGratuity();
+    @Builder
+    public PageLostResponse(List<PageLostForm> content, int page, int size, Long totalElements, int totalPages) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
     }
 }
