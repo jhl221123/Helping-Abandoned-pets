@@ -321,7 +321,13 @@ class UserApiControllerTest {
         List<PageBulletinForm> forms = new ArrayList<>();
         Page<PageBulletinForm> pageBulletinForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageBulletinResponse> response = pageBulletinForms.map(PageBulletinResponse::new);
+        PageBulletinResponse response = PageBulletinResponse.builder()
+                .content(pageBulletinForms.getContent())
+                .page(pageBulletinForms.getPageable().getPageNumber())
+                .size(pageBulletinForms.getPageable().getPageSize())
+                .totalElements(pageBulletinForms.getTotalElements())
+                .totalPages(pageBulletinForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageBulletinForms).when(bulletinService)
@@ -387,7 +393,13 @@ class UserApiControllerTest {
         List<PageBulletinForm> forms = new ArrayList<>();
         Page<PageBulletinForm> pageBulletinForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageBulletinResponse> response = pageBulletinForms.map(PageBulletinResponse::new);
+        PageBulletinResponse response = PageBulletinResponse.builder()
+                .content(pageBulletinForms.getContent())
+                .page(pageBulletinForms.getPageable().getPageNumber())
+                .size(pageBulletinForms.getPageable().getPageSize())
+                .totalElements(pageBulletinForms.getTotalElements())
+                .totalPages(pageBulletinForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageBulletinForms).when(bulletinService)
