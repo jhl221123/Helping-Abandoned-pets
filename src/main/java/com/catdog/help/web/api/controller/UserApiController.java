@@ -133,10 +133,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/items")
-    public Page<PageItemResponse> getMyItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageItemResponse getMyItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                          @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
-        return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+        return PageItemResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @GetMapping("/detail/inquiries")
@@ -160,10 +166,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/likes/items")
-    public Page<PageItemResponse> getLikeItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                  @PageableDefault(size = 12, sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageItemResponse getLikeItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                            @PageableDefault(size = 12, sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getLikeItems(nickname, pageable);
-        return pageForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+        return PageItemResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @PostMapping("/edit")

@@ -1,41 +1,27 @@
 package com.catdog.help.web.api.response.item;
 
-import com.catdog.help.domain.board.ItemStatus;
-import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.item.PageItemForm;
+import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class PageItemResponse {
 
-    private Long id;
-
-    private String itemName;
-
-    private int price;
-
-    private String region;
-
-    private ItemStatus status;
-
-    private ReadImageForm leadImage;
-
-    private int views;
-
-    private int likeSize;
-
-    private int roomSize;
+    private List<PageItemForm> content;
+    private int page;
+    private int size;
+    private Long totalElements;
+    private int totalPages;
 
 
-    public PageItemResponse(PageItemForm form, ReadImageForm leadImage) {
-        this.id = form.getId();
-        this.itemName = form.getItemName();
-        this.price = form.getPrice();
-        this.region = form.getRegion();
-        this.status = form.getStatus();
-        this.leadImage = leadImage;
-        this.views = form.getViews();
-        this.likeSize = form.getLikeSize();
-        this.roomSize = form.getRoomSize();
+    @Builder
+    public PageItemResponse(List<PageItemForm> content, int page, int size, Long totalElements, int totalPages) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
     }
 }
