@@ -146,10 +146,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/inquiries")
-    public Page<PageInquiryResponse> getMyInquiriePage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                       @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageInquiryResponse getMyInquiryPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageInquiryForm> pageForms = inquiryService.getPageByNickname(nickname, pageable);
-        return pageForms.map(form -> new PageInquiryResponse(form));
+        return PageInquiryResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @GetMapping("/detail/likes/bulletins")
