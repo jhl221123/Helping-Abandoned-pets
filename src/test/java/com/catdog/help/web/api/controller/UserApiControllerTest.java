@@ -377,7 +377,13 @@ class UserApiControllerTest {
         List<PageInquiryForm> forms = new ArrayList<>();
         Page<PageInquiryForm> pageInquiryForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageInquiryResponse> response = pageInquiryForms.map(PageInquiryResponse::new);
+        PageInquiryResponse response = PageInquiryResponse.builder()
+                .content(pageInquiryForms.getContent())
+                .page(pageInquiryForms.getPageable().getPageNumber())
+                .size(pageInquiryForms.getPageable().getPageSize())
+                .totalElements(pageInquiryForms.getTotalElements())
+                .totalPages(pageInquiryForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageInquiryForms).when(inquiryService)
