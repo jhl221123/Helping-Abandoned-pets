@@ -349,7 +349,13 @@ class UserApiControllerTest {
         List<PageItemForm> forms = new ArrayList<>();
         Page<PageItemForm> pageItemForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageItemResponse> response = pageItemForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+        PageItemResponse response = PageItemResponse.builder()
+                .content(pageItemForms.getContent())
+                .page(pageItemForms.getPageable().getPageNumber())
+                .size(pageItemForms.getPageable().getPageSize())
+                .totalElements(pageItemForms.getTotalElements())
+                .totalPages(pageItemForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageItemForms).when(itemService)
@@ -421,7 +427,13 @@ class UserApiControllerTest {
         List<PageItemForm> forms = new ArrayList<>();
         Page<PageItemForm> pageItemForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
 
-        Page<PageItemResponse> response = pageItemForms.map(form -> new PageItemResponse(form, form.getLeadImage()));
+        PageItemResponse response = PageItemResponse.builder()
+                .content(pageItemForms.getContent())
+                .page(pageItemForms.getPageable().getPageNumber())
+                .size(pageItemForms.getPageable().getPageSize())
+                .totalElements(pageItemForms.getTotalElements())
+                .totalPages(pageItemForms.getTotalPages())
+                .build();
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(pageItemForms).when(itemService)
