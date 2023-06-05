@@ -509,6 +509,76 @@ public class UserApiControllerDocsTest {
                 ));
     }
 
+    @Test
+    @DisplayName("Docs 내가 좋아요 누른 나눔글 목록 조회")
+    void readLikeItemPage() throws Exception {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Item board = Item.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .region("지역")
+                .itemName("제품명")
+                .price(1000)
+                .build();
+        itemRepository.save(board);
+
+        UploadFile uploadFile = new UploadFile("uploadFileName", "storeFileName");
+        uploadFile.addBoard(board);
+        uploadFileRepository.save(uploadFile);
+
+        Like like = Like.builder()
+                .user(user)
+                .board(board)
+                .build();
+        likeRepository.save(like);
+
+        PageItemResponse response = getPageItemResponse(board, uploadFile);
+        String result = objectMapper.writeValueAsString(response);
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/likes/items")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .header("Set-Cookie", session.getId())
+                        .session(session)
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(content().json(result))
+                .andDo(document("users-like-items",
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("조회 건수")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].id").description("나눔글 식별자"),
+                                fieldWithPath("content[].itemName").description("제품명"),
+                                fieldWithPath("content[].price").description("제품가격"),
+                                fieldWithPath("content[].region").description("지역"),
+                                fieldWithPath("content[].status").description("거래상태 STILL(거래중), COMP(거래완료)"),
+                                fieldWithPath("content[].leadImage.id").description("대표이미지 식별자"),
+                                fieldWithPath("content[].leadImage.uploadFileName").description("대표이미지 업로드 이름"),
+                                fieldWithPath("content[].leadImage.storeFileName").description("대표이미지 저장 이름"),
+                                fieldWithPath("content[].views").description("조회수"),
+                                fieldWithPath("content[].likeSize").description("좋아요 수"),
+                                fieldWithPath("content[].roomSize").description("쪽지 수"),
+
+                                fieldWithPath("page").description("현재 페이지"),
+                                fieldWithPath("size").description("조회 건수"),
+                                fieldWithPath("totalElements").description("전체 조회 건수"),
+                                fieldWithPath("totalPages").description("전체 페이지 수")
+                        )
+                ));
+    }
+
 
     private PageInquiryResponse getPageInquiryResponse(Inquiry board) {
         PageInquiryForm pageInquiryForm = new PageInquiryForm(board);

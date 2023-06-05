@@ -173,3 +173,23 @@ include::{snippets}/users-like-bulletins/response-fields.adoc[]
 === CURL
 
 include::{snippets}/users-like-bulletins/curl-request.adoc[]
+
+== 사용자가 좋아요 누른 나눔글 목록 조회
+
+=== 요청
+
+include::{snippets}/users-like-items/http-request.adoc[]
+
+include::{snippets}/users-like-items/request-headers.adoc[]
+
+include::{snippets}/users-like-items/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/users-like-items/http-response.adoc[]
+
+include::{snippets}/users-like-items/response-fields.adoc[]
+
+=== CURL
+
+include::{snippets}/users-like-items/curl-request.adoc[]
