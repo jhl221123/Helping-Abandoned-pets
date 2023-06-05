@@ -93,3 +93,23 @@ include::{snippets}/users-lost/response-fields.adoc[]
 === CURL
 
 include::{snippets}/users-lost/curl-request.adoc[]
+
+== 사용자가 작성한 게시글 목록 조회
+
+=== 요청
+
+include::{snippets}/users-bulletins/http-request.adoc[]
+
+include::{snippets}/users-bulletins/request-headers.adoc[]
+
+include::{snippets}/users-bulletins/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/users-bulletins/http-response.adoc[]
+
+include::{snippets}/users-bulletins/response-fields.adoc[]
+
+=== CURL
+
+include::{snippets}/users-bulletins/curl-request.adoc[]

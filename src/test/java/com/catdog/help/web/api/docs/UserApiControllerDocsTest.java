@@ -1,16 +1,20 @@
 package com.catdog.help.web.api.docs;
 
+import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.board.Lost;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.repository.BulletinRepository;
 import com.catdog.help.repository.LostRepository;
 import com.catdog.help.repository.UploadFileRepository;
 import com.catdog.help.repository.UserRepository;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
+import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
 import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
+import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.user.ReadUserForm;
@@ -63,6 +67,9 @@ public class UserApiControllerDocsTest {
 
     @Autowired
     private LostRepository lostRepository;
+
+    @Autowired
+    private BulletinRepository bulletinRepository;
 
     @Autowired
     private UploadFileRepository uploadFileRepository;
@@ -248,6 +255,71 @@ public class UserApiControllerDocsTest {
                                 fieldWithPath("content[].lostDate").description("실종날짜"),
                                 fieldWithPath("content[].lostPlace").description("실종장소"),
                                 fieldWithPath("content[].gratuity").description("사례금"),
+
+                                fieldWithPath("page").description("현재 페이지"),
+                                fieldWithPath("size").description("조회 건수"),
+                                fieldWithPath("totalElements").description("전체 조회 건수"),
+                                fieldWithPath("totalPages").description("전체 페이지 수")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("Docs 내가 작성한 게시글 목록 조회")
+    void readMyBulletinPage() throws Exception {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Bulletin board = Bulletin.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .region("지역")
+                .build();
+        bulletinRepository.save(board);
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        PageBulletinForm pageLostForm = new PageBulletinForm(board);
+        List<PageBulletinForm> forms = new ArrayList<>();
+        forms.add(pageLostForm);
+        PageBulletinResponse response = PageBulletinResponse.builder()
+                .content(forms)
+                .page(0)
+                .size(10)
+                .totalElements(1L)
+                .totalPages(1)
+                .build();
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/bulletins")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .header("Set-Cookie", session.getId())
+                        .session(session)
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(content().json(result))
+                .andDo(document("users-bulletins",
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("조회 건수")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].id").description("게시글 식별자"),
+                                fieldWithPath("content[].title").description("제목"),
+                                fieldWithPath("content[].nickname").description("작성자 닉네임"),
+                                fieldWithPath("content[].createdDate").description("작성날짜"),
+                                fieldWithPath("content[].views").description("조회수"),
+                                fieldWithPath("content[].region").description("지역"),
 
                                 fieldWithPath("page").description("현재 페이지"),
                                 fieldWithPath("size").description("조회 건수"),
