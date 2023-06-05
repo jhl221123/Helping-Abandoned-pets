@@ -1,20 +1,19 @@
 package com.catdog.help.web.api.docs;
 
-import com.catdog.help.domain.board.Bulletin;
-import com.catdog.help.domain.board.Item;
-import com.catdog.help.domain.board.Lost;
-import com.catdog.help.domain.board.UploadFile;
+import com.catdog.help.domain.board.*;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.repository.*;
 import com.catdog.help.web.api.request.user.LoginRequest;
 import com.catdog.help.web.api.request.user.SaveUserRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
 import com.catdog.help.web.api.response.item.PageItemResponse;
 import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.user.ReadUserForm;
@@ -73,6 +72,9 @@ public class UserApiControllerDocsTest {
     
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private InquiryRepository inquiryRepository;
 
     @Autowired
     private UploadFileRepository uploadFileRepository;
@@ -190,7 +192,7 @@ public class UserApiControllerDocsTest {
                 )
                 .andExpect(content().json(result))
                 .andDo(document("users-Info",
-                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
                         responseFields(
                                 fieldWithPath(ID).description("사용자 식별자"),
                                 fieldWithPath(EMAIL).description("이메일"),
@@ -243,7 +245,7 @@ public class UserApiControllerDocsTest {
                 )
                 .andExpect(content().json(result))
                 .andDo(document("users-lost",
-                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
                         requestParameters(
                                 parameterWithName("page").description("페이지 번호"),
                                 parameterWithName("size").description("조회 건수")
@@ -285,16 +287,7 @@ public class UserApiControllerDocsTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(LOGIN_USER, "닉네임");
 
-        PageBulletinForm pageLostForm = new PageBulletinForm(board);
-        List<PageBulletinForm> forms = new ArrayList<>();
-        forms.add(pageLostForm);
-        PageBulletinResponse response = PageBulletinResponse.builder()
-                .content(forms)
-                .page(0)
-                .size(10)
-                .totalElements(1L)
-                .totalPages(1)
-                .build();
+        PageBulletinResponse response = getPageBulletinResponse(board);
         String result = objectMapper
                 .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -311,7 +304,7 @@ public class UserApiControllerDocsTest {
                 )
                 .andExpect(content().json(result))
                 .andDo(document("users-bulletins",
-                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
                         requestParameters(
                                 parameterWithName("page").description("페이지 번호"),
                                 parameterWithName("size").description("조회 건수")
@@ -354,8 +347,7 @@ public class UserApiControllerDocsTest {
         uploadFileRepository.save(uploadFile);
 
         PageItemResponse response = getPageItemResponse(board, uploadFile);
-        String result = objectMapper
-                .writeValueAsString(response);
+        String result = objectMapper.writeValueAsString(response);
 
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(LOGIN_USER, "닉네임");
@@ -371,7 +363,7 @@ public class UserApiControllerDocsTest {
                 )
                 .andExpect(content().json(result))
                 .andDo(document("users-items",
-                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키")),
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
                         requestParameters(
                                 parameterWithName("page").description("페이지 번호"),
                                 parameterWithName("size").description("조회 건수")
@@ -397,12 +389,93 @@ public class UserApiControllerDocsTest {
                 ));
     }
 
+    @Test
+    @DisplayName("Docs 내가 작성한 문의글 목록 조회")
+    void readMyInquiryPage() throws Exception {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Inquiry board = Inquiry.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .secret(false)
+                .build();
+        inquiryRepository.save(board);
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        PageInquiryResponse response = getPageInquiryResponse(board);
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/inquiries")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .header("Set-Cookie", session.getId())
+                        .session(session)
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(content().json(result))
+                .andDo(document("users-inquiries",
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("조회 건수")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].id").description("문의글 식별자"),
+                                fieldWithPath("content[].title").description("제목"),
+                                fieldWithPath("content[].nickname").description("작성자 닉네임"),
+                                fieldWithPath("content[].createdDate").description("작성날짜"),
+                                fieldWithPath("content[].secret").description("비밀여부 false(공개글), true(비밀글)"),
+
+                                fieldWithPath("page").description("현재 페이지"),
+                                fieldWithPath("size").description("조회 건수"),
+                                fieldWithPath("totalElements").description("전체 조회 건수"),
+                                fieldWithPath("totalPages").description("전체 페이지 수")
+                        )
+                ));
+    }
+
+
+    private PageInquiryResponse getPageInquiryResponse(Inquiry board) {
+        PageInquiryForm pageInquiryForm = new PageInquiryForm(board);
+        List<PageInquiryForm> forms = new ArrayList<>();
+        forms.add(pageInquiryForm);
+        return PageInquiryResponse.builder()
+                .content(forms)
+                .page(0)
+                .size(10)
+                .totalElements(1L)
+                .totalPages(1)
+                .build();
+    }
 
     private PageItemResponse getPageItemResponse(Item board, UploadFile uploadFile) {
         PageItemForm pageItemForm = new PageItemForm(board, new ReadImageForm(uploadFile));
         List<PageItemForm> forms = new ArrayList<>();
         forms.add(pageItemForm);
         return PageItemResponse.builder()
+                .content(forms)
+                .page(0)
+                .size(10)
+                .totalElements(1L)
+                .totalPages(1)
+                .build();
+    }
+
+    private PageBulletinResponse getPageBulletinResponse(Bulletin board) {
+        PageBulletinForm pageBulletinForm = new PageBulletinForm(board);
+        List<PageBulletinForm> forms = new ArrayList<>();
+        forms.add(pageBulletinForm);
+        return PageBulletinResponse.builder()
                 .content(forms)
                 .page(0)
                 .size(10)
