@@ -78,4 +78,10 @@ public class BulletinApiController {
                 .commentForms(commentForms)
                 .build();
     }
+
+    /***  update  ***/
+    @PostMapping("/{id}/like")
+    public void clickLike(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname) {
+        likeService.clickLike(id, nickname);
+    }
 }
