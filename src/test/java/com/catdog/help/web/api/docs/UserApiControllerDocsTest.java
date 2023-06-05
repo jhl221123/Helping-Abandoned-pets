@@ -77,6 +77,9 @@ public class UserApiControllerDocsTest {
     private InquiryRepository inquiryRepository;
 
     @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
     private UploadFileRepository uploadFileRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -435,6 +438,68 @@ public class UserApiControllerDocsTest {
                                 fieldWithPath("content[].nickname").description("작성자 닉네임"),
                                 fieldWithPath("content[].createdDate").description("작성날짜"),
                                 fieldWithPath("content[].secret").description("비밀여부 false(공개글), true(비밀글)"),
+
+                                fieldWithPath("page").description("현재 페이지"),
+                                fieldWithPath("size").description("조회 건수"),
+                                fieldWithPath("totalElements").description("전체 조회 건수"),
+                                fieldWithPath("totalPages").description("전체 페이지 수")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("Docs 내가 좋아요 누른 게시글 목록 조회")
+    void readLikeBulletinPage() throws Exception {
+        //given
+        User user = getUser();
+        userRepository.save(user);
+
+        Bulletin board = Bulletin.builder()
+                .user(user)
+                .title("제목")
+                .content("내용")
+                .region("지역")
+                .build();
+        bulletinRepository.save(board);
+
+        Like like = Like.builder()
+                .user(user)
+                .board(board)
+                .build();
+        likeRepository.save(like);
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(LOGIN_USER, "닉네임");
+
+        PageBulletinResponse response = getPageBulletinResponse(board);
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        //expected
+        mockMvc.perform(get("/api/users/detail/likes/bulletins")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .header("Set-Cookie", session.getId())
+                        .session(session)
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(content().json(result))
+                .andDo(document("users-like-bulletins",
+                        requestHeaders(headerWithName("Set-Cookie").description("사용자 인증 쿠키(JSESSIONID={발급된 키})")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("조회 건수")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].id").description("게시글 식별자"),
+                                fieldWithPath("content[].title").description("제목"),
+                                fieldWithPath("content[].nickname").description("작성자 닉네임"),
+                                fieldWithPath("content[].createdDate").description("작성날짜"),
+                                fieldWithPath("content[].views").description("조회수"),
+                                fieldWithPath("content[].region").description("지역"),
 
                                 fieldWithPath("page").description("현재 페이지"),
                                 fieldWithPath("size").description("조회 건수"),
