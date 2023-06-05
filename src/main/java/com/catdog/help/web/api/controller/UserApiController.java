@@ -120,10 +120,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/bulletins")
-    public Page<PageBulletinResponse> getMyBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                        @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageBulletinResponse getMyBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
-        return pageForms.map(form -> new PageBulletinResponse(form));
+        return PageBulletinResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @GetMapping("/detail/items")
@@ -141,10 +147,16 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/likes/bulletins")
-    public Page<PageBulletinResponse> getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                          @PageableDefault(sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageBulletinResponse getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                    @PageableDefault(sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getLikeBulletins(nickname, pageable);
-        return pageForms.map(form -> new PageBulletinResponse(form));
+        return PageBulletinResponse.builder()
+                .content(pageForms.getContent())
+                .page(pageForms.getPageable().getPageNumber())
+                .size(pageForms.getPageable().getPageSize())
+                .totalElements(pageForms.getTotalElements())
+                .totalPages(pageForms.getTotalPages())
+                .build();
     }
 
     @GetMapping("/detail/likes/items")
