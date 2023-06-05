@@ -6,10 +6,13 @@ import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
 import com.catdog.help.web.api.request.bulletin.SaveBulletinRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
+import com.catdog.help.web.api.response.bulletin.ReadBulletinResponse;
 import com.catdog.help.web.api.response.bulletin.SaveBulletinResponse;
 import com.catdog.help.web.controller.ViewUpdater;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
+import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.search.BulletinSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
+import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
@@ -52,6 +60,22 @@ public class BulletinApiController {
                 .size(pageForms.getPageable().getPageSize())
                 .totalElements(pageForms.getTotalElements())
                 .totalPages(pageForms.getTotalPages())
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ReadBulletinResponse readBoard(@PathVariable("id") Long id, @SessionAttribute(name = LOGIN_USER) String nickname,
+                                          HttpServletRequest request, HttpServletResponse response) {
+        //조회수 증가
+        viewUpdater.addView(id, request, response);
+
+        ReadBulletinForm readForm = bulletinService.read(id);
+        boolean checkLike = likeService.isLike(id, nickname);
+        List<CommentForm> commentForms = commentService.readByBoardId(id);
+        return ReadBulletinResponse.builder()
+                .form(readForm)
+                .checkLike(checkLike)
+                .commentForms(commentForms)
                 .build();
     }
 }
