@@ -47,7 +47,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class BulletinApiControllerTest {
@@ -159,6 +159,21 @@ class BulletinApiControllerTest {
                         .sessionAttr(LOGIN_USER, "닉네임")
                 )
                 .andExpect(content().json(result)).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("게시글의 좋아요 버튼 클릭")
+    void clickLikeButton() throws Exception {
+        //given
+        doNothing().when(likeService)
+                .clickLike(2L, "닉네임");
+
+        //expected
+        mockMvc.perform(post("/api/bulletins/{id}/like", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(LOGIN_USER, "닉네임")
+                )
+                .andExpect(status().isOk());
     }
 
 
