@@ -7,6 +7,7 @@ import com.catdog.help.service.BoardService;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
+import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.api.Base64Image;
 import com.catdog.help.web.api.request.bulletin.EditBulletinRequest;
 import com.catdog.help.web.api.request.bulletin.SaveBulletinRequest;
@@ -51,8 +52,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class BulletinApiControllerTest {
@@ -201,6 +201,23 @@ class BulletinApiControllerTest {
         mockMvc.perform(post("/api/bulletins/{id}/edit", 2L)
                         .contentType(APPLICATION_JSON)
                         .content(request)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    void delete() throws Exception {
+        //given
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doNothing().when(bulletinService)
+                .delete(2L);
+
+        //expected
+        mockMvc.perform(post("/api/bulletins/{id}/delete", 2L)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(status().isOk());
     }
