@@ -1,6 +1,7 @@
 package com.catdog.help.web.form.bulletin;
 
 import com.catdog.help.domain.board.Bulletin;
+import com.catdog.help.web.api.request.bulletin.EditBulletinRequest;
 import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,8 +50,19 @@ public class EditBulletinForm {
         this.region = board.getRegion();
     }
 
+    public EditBulletinForm(EditBulletinRequest request) {
+        this.id = request.getId();
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.region = request.getRegion();
+        this.deleteImageIds = request.getDeleteImageIds();
+    }
 
     public void addOldImages(List<ReadImageForm> oldImages) {
         this.oldImages = oldImages;
+    }
+
+    public void addNewImages(List<MultipartFile> newImages) {
+        this.newImages = newImages;
     }
 }

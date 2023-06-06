@@ -3,14 +3,18 @@ package com.catdog.help.web.api.controller;
 import com.catdog.help.domain.board.Bulletin;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.BulletinService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LikeService;
+import com.catdog.help.web.api.Base64Image;
+import com.catdog.help.web.api.request.bulletin.EditBulletinRequest;
 import com.catdog.help.web.api.request.bulletin.SaveBulletinRequest;
 import com.catdog.help.web.api.response.bulletin.PageBulletinResponse;
 import com.catdog.help.web.api.response.bulletin.ReadBulletinResponse;
 import com.catdog.help.web.api.response.bulletin.SaveBulletinResponse;
 import com.catdog.help.web.controller.ViewUpdater;
+import com.catdog.help.web.form.bulletin.EditBulletinForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.bulletin.ReadBulletinForm;
 import com.catdog.help.web.form.bulletin.SaveBulletinForm;
@@ -47,7 +51,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class BulletinApiControllerTest {
@@ -57,6 +62,9 @@ class BulletinApiControllerTest {
 
     @Mock
     private BulletinService bulletinService;
+
+    @Mock
+    private BoardService boardService;
 
     @Mock
     private ViewUpdater viewUpdater;
@@ -176,6 +184,27 @@ class BulletinApiControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("게시글 수정 성공")
+    void edit() throws Exception {
+        //given
+        EditBulletinRequest editRequest = getEditBulletinRequest();
+        String request = objectMapper.writeValueAsString(editRequest);
+
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doNothing().when(bulletinService)
+                .update(any(EditBulletinForm.class));
+
+        //expected
+        mockMvc.perform(post("/api/bulletins/{id}/edit", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .content(request)
+                )
+                .andExpect(status().isOk());
+    }
+
 
     private PageBulletinResponse getPageBulletinResponse(Page<PageBulletinForm> pageBulletinForms) {
         return PageBulletinResponse.builder()
@@ -197,6 +226,29 @@ class BulletinApiControllerTest {
                 .imageForms(List.of())
                 .likeSize(1)
                 .build();
+    }
+
+    private EditBulletinRequest getEditBulletinRequest() {
+
+        return EditBulletinRequest.builder()
+                .id(2L)
+                .nickname("닉네임")
+                .title("제목")
+                .content("내용")
+                .region("부산")
+                .base64Images(getNewImages())
+                .deleteImageIds(List.of())
+                .build();
+    }
+
+    private List<Base64Image> getNewImages() {
+        Base64Image base64Image = Base64Image.builder()
+                .originalName("uploadFileName")
+                .base64File("base64File")
+                .build();
+        List<Base64Image> newImages = new ArrayList<>();
+        newImages.add(base64Image);
+        return newImages;
     }
 
     private SaveBulletinRequest getSaveBulletinRequest() {
