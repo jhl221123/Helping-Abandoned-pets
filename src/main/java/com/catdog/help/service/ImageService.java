@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,17 +37,12 @@ public class ImageService {
 
     public void updateImage(Board board, List<Long> deleteIds, List<MultipartFile> newImages) {
         if (!deleteIds.isEmpty()) {
-            deleteIds.stream()
-                    .map(id -> uploadFileRepository.findById(Long.valueOf(id)))
-                    .forEach(uploadFile -> {
-                        File file = new File(fileDir + uploadFile
-                                            .orElseThrow(FileNotFoundException::new)
-                                            .getStoreFileName());
-                        file.delete(); // 폴더에서 이미지 삭제 todo 삭제는 잘 되는데 사용자나 글 삭제 시 이미지도 같이 삭제 되도록 구현필요
-                        uploadFileRepository.delete(uploadFile.orElseThrow(FileNotFoundException::new));
-                    });
+            List<UploadFile> deleteImages = deleteIds.stream()
+                    .map(id -> uploadFileRepository.findById(Long.valueOf(id))
+                            .orElseThrow(FileNotFoundException::new))
+                    .collect(Collectors.toList());
+            deleteImage(deleteImages);
         }
-
         addImage(board, newImages);
     }
 
