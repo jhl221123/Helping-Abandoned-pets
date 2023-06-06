@@ -94,7 +94,7 @@ public class BulletinApiController {
         likeService.clickLike(id, nickname);
     }
 
-    @PostMapping(value = "/{id}/edit")
+    @PostMapping("/{id}/edit")
     public void editBoard(@Validated @RequestBody EditBulletinRequest request) {
         if (!isWriter(request.getId(), request.getNickname())) {
             throw new NotAuthorizedException(BULLETIN);
@@ -103,6 +103,16 @@ public class BulletinApiController {
         List<MultipartFile> newImages = getMultipartFiles(request.getBase64Images());
         form.addNewImages(newImages);
         bulletinService.update(form);
+    }
+
+    /***  delete  ***/
+    @PostMapping("/{id}/delete")
+    public void deleteBoard(@PathVariable("id") Long id,
+                            @SessionAttribute(name = LOGIN_USER) String nickname) {
+        if (!isWriter(id, nickname)) {
+            throw new NotAuthorizedException(BULLETIN);
+        }//작성자 본인만 삭제 가능
+        bulletinService.delete(id);
     }
 
 
