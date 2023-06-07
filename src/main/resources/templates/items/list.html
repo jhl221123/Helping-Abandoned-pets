@@ -4,7 +4,7 @@
 <section>
 	<div class="container" style="padding: 0px;">
 		<h1 class="text-muted" style="margin: 0px 0px 20px 10px; font-size: 16px;">
-			<img th:src="|/img/item-box.png|" alt="message-icon" width="20" height="20"/> 【나눔 장터】</h1>
+			<img th:src="|/img/item-box.png|" alt="item-icon" width="20" height="20"/> 【나눔 장터】</h1>
 		<div>
 			<!--	search box 	 -->
 			<form th:object="${itemSearch}" class="form-inline" th:action="@{/items}">
@@ -12,7 +12,7 @@
 					<input type="text" th:field="*{itemName}" class="form-control" placeholder="상품명"/>
 				</div>
 				<div class="form-group mx-sm-1 mb-2">
-					<input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+					<input type="text" th:field="*{region}" class="form-control" placeholder="지역"/>
 				</div>
 				<button type="submit" class="utility-button mb-2">
 					<img th:src="|/img/search.png|" width="25" height="25"/>
@@ -49,17 +49,17 @@
 				<ul class="pagination">
 					<li class="page-item">
 						<a th:if="${offset > 0}" class="page-link"
-						   th:href="@{/items(page=${offset-1}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}">&laquo;</a>
+						   th:href="@{/items(page=${offset-1}, itemName=${itemSearch.itemName}, region=${itemSearch.region})}">&laquo;</a>
 					</li>
 
 					<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
 						<a class="page-link" th:text="${page+1}"
-						   th:href="@{/items(page=${page}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}"></a>
+						   th:href="@{/items(page=${page}, itemName=${itemSearch.itemName}, region=${itemSearch.region})}"></a>
 					</li>
 
 					<li class="page-item">
 						<a th:if="${!isEnd}" class="page-link" aria-label="Next"
-						   th:href="@{/items(page=${lastPage+1}, itemName=${itemSearch.itemName}, title=${itemSearch.title})}">&raquo;</a>
+						   th:href="@{/items(page=${lastPage+1}, itemName=${itemSearch.itemName}, region=${itemSearch.region})}">&raquo;</a>
 					</li>
 				</ul>
 			</nav> <!--	/pagination -->

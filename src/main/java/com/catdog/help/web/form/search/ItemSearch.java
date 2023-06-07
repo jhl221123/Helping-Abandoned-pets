@@ -9,14 +9,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ItemSearch {
 
-    private String title;
+    private String region;
 
     private String itemName;
 
 
     @Builder
-    public ItemSearch(String title, String itemName) {
-        this.title = title;
+    public ItemSearch(String region, String itemName) {
+        this.region = region;
         this.itemName = itemName;
     }
 }

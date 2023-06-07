@@ -63,11 +63,11 @@ public class SearchQueryRepository {
         return new PageImpl<>(content, pageable, total);
     }
 
-    public Page<Item> searchItem(String title, String itemName, Pageable pageable) {
+    public Page<Item> searchItem(String region, String itemName, Pageable pageable) {
         QueryResults<Item> results = queryFactory
                 .selectFrom(item)
                 .where(
-                        titleContain(title, ITEM),
+                        regionEq(region, ITEM),
                         itemNameContain(itemName)
                 )
                 .offset(pageable.getOffset())
