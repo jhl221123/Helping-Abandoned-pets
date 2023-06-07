@@ -26,6 +26,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -97,6 +98,24 @@ class ItemServiceTest {
         //expected
         ReadItemForm form = itemService.read(board.getId());
         assertThat(form.getItemName()).isEqualTo(board.getItemName());
+    }
+
+    @Test
+    @DisplayName("키는 지역, 값은 지역별 나눔글 수를 가지는 맵을 반환")
+    void getCountByRegion() {
+        //given
+        Item board = getItem("제목");
+        List<Item> boards = new ArrayList<>();
+        boards.add(board);
+
+        doReturn(boards).when(itemRepository)
+                .findAll();
+
+        //when
+        Map<String, Long> result = itemService.getCountByRegion();
+
+        //then
+        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
     @Test
@@ -183,16 +202,16 @@ class ItemServiceTest {
         Page<Item> page = Page.empty();
 
         ItemSearch search = ItemSearch.builder()
-                .title("검색제목")
+                .region("부산")
                 .itemName("검색상품명")
                 .build();
 
         doReturn(page).when(searchQueryRepository)
-                .searchItem(search.getTitle(), search.getItemName(), pageable);
+                .searchItem(search.getRegion(), search.getItemName(), pageable);
 
         //expected
         Page<PageItemForm> formPage = itemService.search(search, pageable);
-        verify(searchQueryRepository, times(1)).searchItem(search.getTitle(), search.getItemName(), pageable);
+        verify(searchQueryRepository, times(1)).searchItem(search.getRegion(), search.getItemName(), pageable);
     }
 
     @Test
