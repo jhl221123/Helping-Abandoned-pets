@@ -1,13 +1,11 @@
 package com.catdog.help.web.controller;
 
-import com.catdog.help.service.BulletinService;
-import com.catdog.help.service.InquiryService;
-import com.catdog.help.service.ItemService;
-import com.catdog.help.service.UserService;
+import com.catdog.help.service.*;
 import com.catdog.help.web.form.LoginForm;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +32,7 @@ import static com.catdog.help.web.SessionConst.LOGIN_USER;
 public class UserController {
 
     private final UserService userService;
+    private final LostService lostService;
     private final BulletinService bulletinService;
     private final ItemService itemService;
     private final InquiryService inquiryService;
@@ -106,11 +105,13 @@ public class UserController {
     public String detail(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         ReadUserForm readForm = userService.readByNickname(nickname);
         model.addAttribute("readForm", readForm);
-
+// TODO: 2023-06-01 샘플데이터 추가해서 이 방식이랑 담당 쿼리생성했을 때 방식 소요시간 비교해서 솔루션글 작성 ㄱㄱ
+        Long lostSize = lostService.countByNickname(nickname);
         Long bulletinSize = bulletinService.countByNickname(nickname);
         Long itemSize = itemService.countByNickname(nickname);
         Long inquirySize = inquiryService.countByNickname(nickname);
 
+        model.addAttribute("lostSize", lostSize);
         model.addAttribute("bulletinSize", bulletinSize);
         model.addAttribute("itemSize", itemSize);
         model.addAttribute("inquirySize", inquirySize);
@@ -123,9 +124,33 @@ public class UserController {
         return "users/detail";
     }
 
+    @GetMapping("/detail/lost")
+    public String getMyLost(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PageLostForm> pageForms = lostService.getPageByNickname(nickname, pageable);
+
+        model.addAttribute("pageForms", pageForms.getContent());
+
+        int offset = pageable.getPageNumber() / 5 * 5;
+        model.addAttribute("offset", offset);
+
+        int limit = offset + 4;
+        int endPage = Math.max(pageForms.getTotalPages() - 1, 0);
+        int lastPage = getLastPage(limit, endPage);
+        model.addAttribute("lastPage", lastPage);
+
+        boolean isEnd = false;
+        if (lastPage == endPage) {
+            isEnd = true;
+        }
+        model.addAttribute("isEnd", isEnd);
+
+        return "users/lostList";
+    }
+
     @GetMapping("/detail/bulletins")
     public String getMyBulletins(@SessionAttribute(name = LOGIN_USER) String nickname, Model model,
-                                @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                 @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
 
         model.addAttribute("pageForms", pageForms.getContent());
@@ -288,7 +313,7 @@ public class UserController {
 
 
     /***  delete  ***/
-    @GetMapping("/detail/delete")
+    @GetMapping("/detail/delete") // TODO: 2023-05-31 POST로 수정
     public String delete(@SessionAttribute(name = LOGIN_USER) String nickname) {
         userService.deleteUser(nickname);
         return "redirect:/users/logout";
