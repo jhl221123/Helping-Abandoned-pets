@@ -55,6 +55,12 @@
 					<ul style="list-style-type: none;">
 						<li>
 							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
+							<span>실종글</span>
+							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
+							   th:text="${lostSize}" th:href="@{/users/detail/lost}"></a>
+						</li>
+						<li>
+							<img th:src="|/img/cat-paw-black.png|" alt="cat-icon" width="17" height="17"/>
 							<span>게시글</span>
 							<a class="utility-button" style="font-size: 13px; font-weight: 500; margin-left: 5px;"
 							   th:text="${bulletinSize}" th:href="@{/users/detail/bulletins}"></a>

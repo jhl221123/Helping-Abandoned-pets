@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+	<div class="container">
+		<h1 class="text-muted" style="text-align: center; margin-top: 10px; margin-bottom: 30px; font-size: 16px;">【내가 작성한 실종글 목록】</h1>
+
+		<!--	lost list    -->
+		<div class="row" style="margin: 20px 0px;">
+			<div th:each="pageForm : ${pageForms}" class="card col-4" style="padding: 0px;">
+				<a class="card-content" th:href="@{/lost/{id}(id=${pageForm.id})}" style="text-decoration: none;">
+					<img th:src="|/images/${pageForm.leadImage.getStoreFileName()}|" class="card-img-top" alt="실종동물 이미지">
+					<div class="card-body">
+						<h5 th:text="|품종: ${pageForm.breed}|" th:onclick="|location.href='@{/lost/{id}(id=${pageForm.id})}'|" style="margin-bottom: 30px;"></h5>
+						<p th:text="|사례금: ${pageForm.gratuity}|"></p>
+						<p th:text="|실종일: ${#temporals.format(pageForm.lostDate, 'yyyy-MM-dd')}|"></p>
+						<p th:text="|실종장소: ${pageForm.lostPlace}|"></p>
+					</div>
+				</a>
+			</div>
+		</div><!--	/lost list    -->
+
+		<!--	start pagination	-->
+		<nav class="nav justify-content-center">
+			<ul class="pagination">
+				<li class="page-item">
+					<a th:if="${offset > 0}" class="page-link"
+					   th:href="@{/users/detail/lost(page=${offset-1})}">&laquo;</a>
+				</li>
+
+				<li th:each="page : ${#numbers.sequence(offset,lastPage)}" class="page-item">
+					<a class="page-link" th:text="${page+1}"
+					   th:href="@{/users/detail/lost(page=${page})}"></a>
+				</li>
+
+				<li class="page-item">
+					<a th:if="${!isEnd}" class="page-link" aria-label="Next"
+					   th:href="@{/users/detail/lost(page=${lastPage+1})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav> <!--	/pagination -->
+
+	</div> <!-- /container -->
+</section>
+</body>
+</html>
