@@ -3,10 +3,7 @@ package com.catdog.help.web.controller;
 import com.catdog.help.MyConst;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
-import com.catdog.help.service.BulletinService;
-import com.catdog.help.service.InquiryService;
-import com.catdog.help.service.ItemService;
-import com.catdog.help.service.UserService;
+import com.catdog.help.service.*;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
@@ -53,6 +50,9 @@ class UserControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private LostService lostService;
 
     @Mock
     private BulletinService bulletinService;
@@ -247,6 +247,23 @@ class UserControllerTest {
                 )
                 .andExpect(model().attributeExists("readForm"))
                 .andExpect(view().name("users/detail"));
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 작성한 실종글 모두 조회")
+    void getMyLostPage() throws Exception {
+        //given
+        Page page = Mockito.mock(Page.class);
+        doReturn(page).when(lostService)
+                .getPageByNickname(eq("닉네임"), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/users/detail/lost")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .param(PAGE, String.valueOf(0))
+                )
+                .andExpect(view().name("users/lostList"));
     }
 
     @Test
