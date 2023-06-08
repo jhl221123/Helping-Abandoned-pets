@@ -163,8 +163,8 @@ class ItemServiceTest {
         List<Item> boards = new ArrayList<>();
         boards.add(board);
 
-        doReturn(boards).when(itemRepository)
-                .findAll();
+        doReturn(1L).when(itemRepository)
+                .countLikeItemByNickname(board.getUser().getNickname());
 
         //when
         Long result = itemService.countLikeItem("닉네임");

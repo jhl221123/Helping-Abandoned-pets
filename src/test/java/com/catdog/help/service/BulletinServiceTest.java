@@ -180,8 +180,8 @@ class BulletinServiceTest {
         List<Bulletin> boards = new ArrayList<>();
         boards.add(board);
 
-        doReturn(boards).when(bulletinRepository)
-                .findAll();
+        doReturn(1L).when(bulletinRepository)
+                .countLikeBulletinByNickname(board.getUser().getNickname());
 
         //when
         Long result = bulletinService.countLikeBulletin("닉네임");

@@ -79,6 +79,29 @@ class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("닉네임으로 좋아요 누른 나눔글 수 조회")
+    void countLikeItemByNickname() {
+        //given
+        User user = getUser("test@test.test", "닉네임");
+        userRepository.save(user);
+
+        Item board = getItem(user);
+        itemRepository.save(board);
+
+        Like like = Like.builder()
+                .user(user)
+                .board(board)
+                .build();
+        likeRepository.save(like);
+
+        //when
+        Long result = itemRepository.countLikeItemByNickname(user.getNickname());
+
+        //then
+        assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
     @DisplayName("닉네임으로 나눔글 페이지 조회")
     void findByNickname() {
         //given
