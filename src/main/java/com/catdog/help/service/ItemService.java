@@ -70,8 +70,7 @@ public class ItemService {
     }
 
     public Long countLikeItem(String nickname) {
-        return itemRepository.findAll().stream()
-                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
+        return itemRepository.countLikeItemByNickname(nickname);
     }
 
     public Page<PageItemForm> getLikeItems(String nickname, Pageable pageable) {

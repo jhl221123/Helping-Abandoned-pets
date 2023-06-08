@@ -75,8 +75,7 @@ public class BulletinService {
     }
 
     public Long countLikeBulletin(String nickname) {
-        return bulletinRepository.findAll().stream()  // TODO: 2023-05-23 담당 쿼리생성하자 그리고 시간측정해서 차이 기록하자
-                .filter(b -> b.getLikes().stream().anyMatch(like -> like.getUser().getNickname().equals(nickname))).count();
+        return bulletinRepository.countLikeBulletinByNickname(nickname);
     }
 
     public Page<PageBulletinForm> getLikeBulletins(String nickname, Pageable pageable) {
