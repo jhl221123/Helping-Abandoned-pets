@@ -25,7 +25,7 @@ public class ReadBulletinForm {
     @Builder
     public ReadBulletinForm(Bulletin board, List<ReadImageForm> imageForms, int likeSize) {
         this.id = board.getId();
-        this.nickname = board.getUser().getNickname();
+        this.nickname = board.getUser().getNickname(); // User 강제호출
         this.title = board.getTitle();
         this.content = board.getContent();
         this.createdDate = board.getCreatedDate();
