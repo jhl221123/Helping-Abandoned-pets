@@ -12,6 +12,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select count(i) from Item i join i.user u where u.nickname = :nickname")
     Long countByNickname(@Param("nickname") String nickname);
 
+    @Query("select count(i) from Item i right outer join i.likes l on l.board = i join l.user u where u.nickname = :nickname")
+    Long countLikeItemByNickname(@Param("nickname") String nickname);
+
     @Query("select i from Item i join i.user where i.user.nickname = :nickname")
     Page<Item> findPageByNickname(@Param("nickname") String nickname, Pageable pageable);
 

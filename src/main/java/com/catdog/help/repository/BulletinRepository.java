@@ -12,6 +12,9 @@ public interface BulletinRepository extends JpaRepository<Bulletin, Long> {
     @Query("select count(b) from Bulletin b join b.user u where u.nickname = :nickname")
     Long countByNickname(@Param("nickname") String nickname);
 
+    @Query("select count(b) from Bulletin b right outer join b.likes l on l.board = b join l.user u where u.nickname = :nickname")
+    Long countLikeBulletinByNickname(@Param("nickname") String nickname);
+
     @Query("select b from Bulletin b join b.user where b.user.nickname = :nickname")
     Page<Bulletin> findPageByNickname(@Param("nickname") String nickname, Pageable pageable);
 
