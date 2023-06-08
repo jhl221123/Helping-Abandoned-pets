@@ -12,6 +12,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select c.user.nickname from Comment c join c.user u where c.id = :id")
     String findNicknameById(@Param("id") Long id);
 
-    @Query("select distinct c from Comment c left join fetch c.child where c.parent = null and c.board.id = :boardId")
+    @Query("select distinct c from Comment c" +
+            " join fetch c.board b" +
+            " join fetch c.user u" +
+            " left join fetch c.child" +
+            " where c.parent = null and c.board.id = :boardId")
     List<Comment> findByBoardId(@Param("boardId") Long boardId);
 }
