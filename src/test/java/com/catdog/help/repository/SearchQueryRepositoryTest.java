@@ -185,46 +185,46 @@ class SearchQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("나눔글 페이지 조회 시 제목, 상품명 조건 모두 있는 경우")
+    @DisplayName("나눔글 페이지 조회 시 지역, 상품명 조건 모두 있는 경우")
     void findItemByAllCond() {
         //given
         User user = getUser();
         userRepository.save(user);
 
-        Item allCond = getItem(user, "검색제목", "검색상품");
-        Item titleCond = getItem(user, "검색제목", "상품");
-        Item itemNameCond = getItem(user, "제목", "검색상품");
+        Item allCond = getItem(user, "부산", "검색상품");
+        Item regionCond = getItem(user, "부산", "상품");
+        Item itemNameCond = getItem(user, "서울", "검색상품");
         itemRepository.save(allCond);
         itemRepository.save(itemNameCond);
-        itemRepository.save(titleCond);
+        itemRepository.save(regionCond);
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
         //when
-        Page<Item> pages = searchQueryRepository.searchItem("검색", "검색", pageRequest);
+        Page<Item> pages = searchQueryRepository.searchItem("부산", "검색", pageRequest);
 
         //then
         assertThat(pages.getContent().size()).isEqualTo(1);
     }
 
     @Test
-    @DisplayName("나눔글 페이지 조회 시 제목 조건만 있는 경우")
+    @DisplayName("나눔글 페이지 조회 시 지역 조건만 있는 경우")
     void findItemByTitleCond() {
         //given
         User user = getUser();
         userRepository.save(user);
 
-        Item allCond = getItem(user, "검색제목", "검색상품");
-        Item titleCond = getItem(user, "검색제목", "상품");
-        Item itemNameCond = getItem(user, "제목", "검색상품");
+        Item allCond = getItem(user, "부산", "검색상품");
+        Item regionCond = getItem(user, "부산", "상품");
+        Item itemNameCond = getItem(user, "서울", "검색상품");
         itemRepository.save(allCond);
         itemRepository.save(itemNameCond);
-        itemRepository.save(titleCond);
+        itemRepository.save(regionCond);
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
         //when
-        Page<Item> pages = searchQueryRepository.searchItem("검색", null, pageRequest);
+        Page<Item> pages = searchQueryRepository.searchItem("부산", null, pageRequest);
 
         //then
         assertThat(pages.getContent().size()).isEqualTo(2);
@@ -237,12 +237,12 @@ class SearchQueryRepositoryTest {
         User user = getUser();
         userRepository.save(user);
 
-        Item allCond = getItem(user, "검색제목", "검색상품");
-        Item titleCond = getItem(user, "검색제목", "상품");
-        Item itemNameCond = getItem(user, "제목", "검색상품");
+        Item allCond = getItem(user, "부산", "검색상품");
+        Item regionCond = getItem(user, "부산", "상품");
+        Item itemNameCond = getItem(user, "서울", "검색상품");
         itemRepository.save(allCond);
         itemRepository.save(itemNameCond);
-        itemRepository.save(titleCond);
+        itemRepository.save(regionCond);
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -260,12 +260,12 @@ class SearchQueryRepositoryTest {
         User user = getUser();
         userRepository.save(user);
 
-        Item allCond = getItem(user, "검색제목", "검색상품");
-        Item titleCond = getItem(user, "검색제목", "상품");
-        Item itemNameCond = getItem(user, "제목", "검색상품");
+        Item allCond = getItem(user, "부산", "검색상품");
+        Item regionCond = getItem(user, "부산", "상품");
+        Item itemNameCond = getItem(user, "서울", "검색상품");
         itemRepository.save(allCond);
         itemRepository.save(itemNameCond);
-        itemRepository.save(titleCond);
+        itemRepository.save(regionCond);
 
         Pageable pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
 
@@ -341,12 +341,13 @@ class SearchQueryRepositoryTest {
                 .build();
     }
 
-    private Item getItem(User user, String title, String itemName) {
+    private Item getItem(User user, String region, String itemName) {
         return Item.builder()
                 .user(user)
-                .title(title)
+                .title("제목")
                 .content("내용")
                 .itemName(itemName)
+                .region(region)
                 .price(1000)
                 .build();
     }
