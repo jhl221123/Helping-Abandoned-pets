@@ -153,7 +153,7 @@ public class ItemService {
     }
 
     private PageItemForm getPageItemForm(Item item) {
-        return new PageItemForm(item, new ReadImageForm(item.getImages().get(0))); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나가는지 확인하기..
+        return new PageItemForm(item, new ReadImageForm(item.getImages().get(0)));
     }
 
     private void updateItem(EditItemForm form, Item board) {

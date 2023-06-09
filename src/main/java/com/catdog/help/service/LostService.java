@@ -114,7 +114,7 @@ public class LostService {
     }
 
     private PageLostForm getPageLostForm(Lost board) {
-        return new PageLostForm(board, new ReadImageForm(board.getImages().get(0))); // TODO: 2023-04-14 페이지 당 6번씩 쿼리나가는지 확인하기..
+        return new PageLostForm(board, new ReadImageForm(board.getImages().get(0)));
     }
 
     private Map<String, Long> getCountMap(List<Lost> boards, List<String> regions) {
