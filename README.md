@@ -3,18 +3,18 @@ Community blog related to missing reporting and rescue of abandoned animals.
 
 ## Table of content
 
-* [Background](#Background)
-* [Build & Run](#Build-&-Run)
-* [Test Setting](#Intellij-IDEA)
-* [About project](#About-project)
-  * [Home](#Home)
-  * [Lost](#Lost)
-  * [Bulletin & Like](#Bulletin-&-Like)
-  * [Item & Message](#Item-&-Message)
-  * [Inquiry & Comment](#Inquiry-&-Comment)
-  * [User](#User)
-* [Problem and Solution](Problem-and-Solution)
-* [In the project](In-the-project)
+* [Background](#background)
+* [Build & Run](#build--run)
+* [Test Setting](#intellij-idea)
+* [About project](#about-project)
+  * [Home](#home)
+  * [Lost](#lost)
+  * [Bulletin & Like](#bulletin--like)
+  * [Item & Message](#item--message)
+  * [Inquiry & Comment](#inquiry--comment)
+  * [User](#user)
+* [Problem and Solution](#problem-and-solution)
+* [In the project](#in-the-project)
 
 ## Background
 On social media, I saw many people supporting and sponsoring the writer who said that he rescued and treated abandoned animals at his own expense.
