@@ -83,6 +83,10 @@ public class EditLostForm {
     }
 
 
+    public void addOldLeadImage(ReadImageForm oldLeadImage) {
+        this.oldLeadImage = oldLeadImage;
+    }
+
     public void addOldImages(List<ReadImageForm> oldImages) {
         this.oldImages = oldImages;
     }

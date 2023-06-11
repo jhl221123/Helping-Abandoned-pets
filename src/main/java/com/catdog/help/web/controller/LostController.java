@@ -163,6 +163,7 @@ public class LostController {
 
         if (bindingResult.hasErrors()) {
             EditLostForm form = lostService.getEditForm(id);
+            editForm.addOldLeadImage(form.getOldLeadImage());
             editForm.addOldImages(form.getOldImages());
 
             List<String> regions = getRegions();
