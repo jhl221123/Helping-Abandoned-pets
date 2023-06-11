@@ -17,44 +17,12 @@
 	<table style="margin-bottom: 30px;">
 		<thead>
 		<tr>
-			<th>서울</th>
-			<th>부산</th>
-			<th>인천</th>
-			<th>대전</th>
-			<th>대구</th>
-			<th>울산</th>
-			<th>광주</th>
-			<th>세종</th>
-			<th>제주</th>
-			<th>경기</th>
-			<th>강원</th>
-			<th>충북</th>
-			<th>충남</th>
-			<th>전북</th>
-			<th>전남</th>
-			<th>경북</th>
-			<th>경남</th>
+			<th th:each="BoardByRegion : ${lostByRegion}" th:text="${BoardByRegion.region}"></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr style="font-weight: bold;">
-			<td><a th:text="${lostMap.get('서울')}" th:href="@{/lost(page=0, region='서울')}"></a></td>
-			<td><a th:text="${lostMap.get('부산')}" th:href="@{/lost(page=0, region='부산')}"></a></td>
-			<td><a th:text="${lostMap.get('인천')}" th:href="@{/lost(page=0, region='인천')}"></a></td>
-			<td><a th:text="${lostMap.get('대전')}" th:href="@{/lost(page=0, region='대전')}"></a></td>
-			<td><a th:text="${lostMap.get('대구')}" th:href="@{/lost(page=0, region='대구')}"></a></td>
-			<td><a th:text="${lostMap.get('울산')}" th:href="@{/lost(page=0, region='울산')}"></a></td>
-			<td><a th:text="${lostMap.get('광주')}" th:href="@{/lost(page=0, region='광주')}"></a></td>
-			<td><a th:text="${lostMap.get('세종')}" th:href="@{/lost(page=0, region='세종')}"></a></td>
-			<td><a th:text="${lostMap.get('제주')}" th:href="@{/lost(page=0, region='제주')}"></a></td>
-			<td><a th:text="${lostMap.get('경기')}" th:href="@{/lost(page=0, region='경기')}"></a></td>
-			<td><a th:text="${lostMap.get('강원')}" th:href="@{/lost(page=0, region='강원')}"></a></td>
-			<td><a th:text="${lostMap.get('충북')}" th:href="@{/lost(page=0, region='충북')}"></a></td>
-			<td><a th:text="${lostMap.get('충남')}" th:href="@{/lost(page=0, region='충남')}"></a></td>
-			<td><a th:text="${lostMap.get('전북')}" th:href="@{/lost(page=0, region='전북')}"></a></td>
-			<td><a th:text="${lostMap.get('전남')}" th:href="@{/lost(page=0, region='전남')}"></a></td>
-			<td><a th:text="${lostMap.get('경북')}" th:href="@{/lost(page=0, region='경북')}"></a></td>
-			<td><a th:text="${lostMap.get('경남')}" th:href="@{/lost(page=0, region='경남')}"></a></td>
+			<td th:each="BoardByRegion : ${lostByRegion}"><a th:text="${BoardByRegion.count}" th:href="@{/lost(page=0, region=${BoardByRegion.region})}"></a></td>
 		</tr>
 		</tbody>
 	</table>
@@ -64,44 +32,12 @@
 	<table style="margin-bottom: 30px;">
 		<thead>
 		<tr>
-			<th>서울</th>
-			<th>부산</th>
-			<th>인천</th>
-			<th>대전</th>
-			<th>대구</th>
-			<th>울산</th>
-			<th>광주</th>
-			<th>세종</th>
-			<th>제주</th>
-			<th>경기</th>
-			<th>강원</th>
-			<th>충북</th>
-			<th>충남</th>
-			<th>전북</th>
-			<th>전남</th>
-			<th>경북</th>
-			<th>경남</th>
+			<th th:each="BoardByRegion : ${bulletinByRegion}" th:text="${BoardByRegion.region}"></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr style="font-weight: bold;">
-			<td><a th:text="${bulletinMap.get('서울')}" th:href="@{/bulletins(page=0, region='서울')}"></a></td>
-			<td><a th:text="${bulletinMap.get('부산')}" th:href="@{/bulletins(page=0, region='부산')}"></a></td>
-			<td><a th:text="${bulletinMap.get('인천')}" th:href="@{/bulletins(page=0, region='인천')}"></a></td>
-			<td><a th:text="${bulletinMap.get('대전')}" th:href="@{/bulletins(page=0, region='대전')}"></a></td>
-			<td><a th:text="${bulletinMap.get('대구')}" th:href="@{/bulletins(page=0, region='대구')}"></a></td>
-			<td><a th:text="${bulletinMap.get('울산')}" th:href="@{/bulletins(page=0, region='울산')}"></a></td>
-			<td><a th:text="${bulletinMap.get('광주')}" th:href="@{/bulletins(page=0, region='광주')}"></a></td>
-			<td><a th:text="${bulletinMap.get('세종')}" th:href="@{/bulletins(page=0, region='세종')}"></a></td>
-			<td><a th:text="${bulletinMap.get('제주')}" th:href="@{/bulletins(page=0, region='제주')}"></a></td>
-			<td><a th:text="${bulletinMap.get('경기')}" th:href="@{/bulletins(page=0, region='경기')}"></a></td>
-			<td><a th:text="${bulletinMap.get('강원')}" th:href="@{/bulletins(page=0, region='강원')}"></a></td>
-			<td><a th:text="${bulletinMap.get('충북')}" th:href="@{/bulletins(page=0, region='충북')}"></a></td>
-			<td><a th:text="${bulletinMap.get('충남')}" th:href="@{/bulletins(page=0, region='충남')}"></a></td>
-			<td><a th:text="${bulletinMap.get('전북')}" th:href="@{/bulletins(page=0, region='전북')}"></a></td>
-			<td><a th:text="${bulletinMap.get('전남')}" th:href="@{/bulletins(page=0, region='전남')}"></a></td>
-			<td><a th:text="${bulletinMap.get('경북')}" th:href="@{/bulletins(page=0, region='경북')}"></a></td>
-			<td><a th:text="${bulletinMap.get('경남')}" th:href="@{/bulletins(page=0, region='경남')}"></a></td>
+			<td th:each="BoardByRegion : ${bulletinByRegion}"><a th:text="${BoardByRegion.count}" th:href="@{/bulletins(page=0, region=${BoardByRegion.region})}"></a></td>
 		</tr>
 		</tbody>
 	</table>
@@ -111,44 +47,12 @@
 	<table style="margin-bottom: 30px;">
 		<thead>
 		<tr>
-			<th>서울</th>
-			<th>부산</th>
-			<th>인천</th>
-			<th>대전</th>
-			<th>대구</th>
-			<th>울산</th>
-			<th>광주</th>
-			<th>세종</th>
-			<th>제주</th>
-			<th>경기</th>
-			<th>강원</th>
-			<th>충북</th>
-			<th>충남</th>
-			<th>전북</th>
-			<th>전남</th>
-			<th>경북</th>
-			<th>경남</th>
+			<th th:each="BoardByRegion : ${itemByRegion}" th:text="${BoardByRegion.region}"></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr style="font-weight: bold;">
-			<td><a th:text="${itemMap.get('서울')}" th:href="@{/items(page=0, region='서울')}"></a></td>
-			<td><a th:text="${itemMap.get('부산')}" th:href="@{/items(page=0, region='부산')}"></a></td>
-			<td><a th:text="${itemMap.get('인천')}" th:href="@{/items(page=0, region='인천')}"></a></td>
-			<td><a th:text="${itemMap.get('대전')}" th:href="@{/items(page=0, region='대전')}"></a></td>
-			<td><a th:text="${itemMap.get('대구')}" th:href="@{/items(page=0, region='대구')}"></a></td>
-			<td><a th:text="${itemMap.get('울산')}" th:href="@{/items(page=0, region='울산')}"></a></td>
-			<td><a th:text="${itemMap.get('광주')}" th:href="@{/items(page=0, region='광주')}"></a></td>
-			<td><a th:text="${itemMap.get('세종')}" th:href="@{/items(page=0, region='세종')}"></a></td>
-			<td><a th:text="${itemMap.get('제주')}" th:href="@{/items(page=0, region='제주')}"></a></td>
-			<td><a th:text="${itemMap.get('경기')}" th:href="@{/items(page=0, region='경기')}"></a></td>
-			<td><a th:text="${itemMap.get('강원')}" th:href="@{/items(page=0, region='강원')}"></a></td>
-			<td><a th:text="${itemMap.get('충북')}" th:href="@{/items(page=0, region='충북')}"></a></td>
-			<td><a th:text="${itemMap.get('충남')}" th:href="@{/items(page=0, region='충남')}"></a></td>
-			<td><a th:text="${itemMap.get('전북')}" th:href="@{/items(page=0, region='전북')}"></a></td>
-			<td><a th:text="${itemMap.get('전남')}" th:href="@{/items(page=0, region='전남')}"></a></td>
-			<td><a th:text="${itemMap.get('경북')}" th:href="@{/items(page=0, region='경북')}"></a></td>
-			<td><a th:text="${itemMap.get('경남')}" th:href="@{/items(page=0, region='경남')}"></a></td>
+			<td th:each="BoardByRegion : ${itemByRegion}"><a th:text="${BoardByRegion.count}" th:href="@{/items(page=0, region=${BoardByRegion.region})}"></a></td>
 		</tr>
 		</tbody>
 	</table>

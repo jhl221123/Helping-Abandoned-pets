@@ -1,6 +1,8 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.board.*;
+import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.ItemStatus;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
 import com.catdog.help.exception.UserNotFoundException;
@@ -18,13 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.catdog.help.domain.board.RegionConst.*;
 
 @Slf4j
 @Service
@@ -52,12 +49,6 @@ public class ItemService {
         int likeSize = Math.toIntExact(likeRepository.countByBoardId(findBoard.getId()));
 
         return new ReadItemForm(findBoard, readImageForms, likeSize);
-    }
-
-    public Map<String, Long> getCountByRegion() {
-        List<Item> boards = itemRepository.findAll();
-        List<String> regions = getRegions();
-        return getCountMap(boards, regions);
     }
 
     public Long countByNickname(String nickname) {
@@ -134,22 +125,6 @@ public class ItemService {
 
         imageService.addImage(board, form.getImages());
         return board;
-    }
-
-    private Map<String, Long> getCountMap(List<Item> boards, List<String> regions) {
-        Map<String, Long> result = new HashMap<>();
-        for (String region : regions) {
-            long countByRegion = boards.stream()
-                    .filter(b -> b.getRegion().equals(region))
-                    .count();
-            result.put(region, countByRegion);
-        }
-        return result;
-    }
-
-    private List<String> getRegions() {
-        return Arrays.asList(SEOUL, BUSAN, INCHEON, DAEJEON, DAEGU, ULSAN, GWANGJU, SEJONG,
-                GYEONGGI, GANGWON, CHUNGBUK, CHUNGNAM, JEONBUK, JEONNAM, GYEONGBUK, GYEONGNAM, JEJU);
     }
 
     private PageItemForm getPageItemForm(Item item) {
