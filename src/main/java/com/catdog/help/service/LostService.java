@@ -99,6 +99,7 @@ public class LostService {
     private void updateLost(Lost findBoard, EditLostForm form) {
         findBoard.updateBoard(form.getTitle(), form.getContent(), form.getRegion(), form.getBreed(), form.getLostDate(), form.getLostPlace(), form.getGratuity());
         // TODO: 2023-05-22 lostedInfo 등으로 값타입 생성 고민해보자
+        imageService.updateLeadImage(form.getNewLeadImage(), findBoard.getId());
         imageService.updateImage(findBoard, form.getDeleteImageIds(), form.getNewImages());
     }
 
