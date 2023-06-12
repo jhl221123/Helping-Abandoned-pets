@@ -50,10 +50,12 @@ public class ImageService {
         //대표이미지 변경
         if (!newLeadImage.getResource().getFilename().isEmpty()) { //지금은 이름으로 검증하는게 최선;;
             UploadFile result = fileStore.storeFile(newLeadImage);
-            uploadFileRepository.findByBoardId(boardId) // TODO: 2023-04-24 findFirst 이용해보자.
-                    .get(0)
-                    .changeLeadImage(result);
-            // TODO: 2023-04-02 이름 각각 덮어서 수정했는데 다른 방법도 강구해보자.
+            UploadFile oldLeadImage = uploadFileRepository.findByBoardId(boardId) // TODO: 2023-04-24 findFirst 이용해보자.
+                    .get(0);
+            File file = new File(fileDir + oldLeadImage.getStoreFileName());
+            file.delete();
+
+            oldLeadImage.changeLeadImage(result);// TODO: 2023-04-02 이름 각각 덮어서 수정했는데 다른 방법도 강구해보자.
         }
     }
 
