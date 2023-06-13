@@ -120,7 +120,6 @@ public class BulletinController {
         if (!commentForms.isEmpty()) {
             model.addAttribute("commentForms", commentForms);
         }
-        // TODO: 2023-03-28 게시글 조회 시 한 번에 가져와서 boardDto 에서 다 해결하도록 수정하기! 그리고 이 부분은 자세히 기록해서 포트폴리오 소스로 활용하자. 이 부분 말고도 성능 개선해야할 부분 많네
 
         //댓글
         CommentForm commentForm = new CommentForm();

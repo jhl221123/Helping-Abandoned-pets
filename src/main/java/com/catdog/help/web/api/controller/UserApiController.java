@@ -88,7 +88,7 @@ public class UserApiController {
     @GetMapping("/detail")
     public ReadUserResponse read(@SessionAttribute(name = LOGIN_USER) String nickname) {
         ReadUserForm form = userService.readByNickname(nickname);
-        Long lostSize = lostService.countByNickname(nickname); // TODO: 2023-06-01 샘플데이터 추가해서 이 방식이랑 담당 쿼리생성했을 때 방식 소요시간 비교해서 솔루션글 작성 ㄱㄱ
+        Long lostSize = lostService.countByNickname(nickname);
         Long bulletinSize = bulletinService.countByNickname(nickname);
         Long itemSize = itemService.countByNickname(nickname);
         Long inquirySize = inquiryService.countByNickname(nickname);
