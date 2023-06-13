@@ -1,6 +1,7 @@
 package com.catdog.help.web.form.inquiry;
 
 import com.catdog.help.domain.board.Inquiry;
+import com.catdog.help.domain.board.SecretStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -22,7 +23,7 @@ public class EditInquiryForm {
     private String content;
 
     @NotNull
-    private Boolean secret;
+    private SecretStatus secret;
 
     public EditInquiryForm() {
     }

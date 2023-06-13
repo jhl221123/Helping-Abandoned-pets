@@ -1,6 +1,7 @@
 package com.catdog.help.web.controller;
 
 import com.catdog.help.domain.board.Inquiry;
+import com.catdog.help.domain.board.SecretStatus;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.service.BoardService;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -72,7 +74,7 @@ class InquiryControllerTest {
     @BeforeEach
     void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(inquiryController)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build(); // TODO: 2023-04-25 pageable 파라미터 바인딩 시켜주는 이칭구 블로그 글 작성 고려
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build();
     }
 
 
@@ -101,7 +103,7 @@ class InquiryControllerTest {
                         .param(NICKNAME, "닉네임")
                         .param(TITLE, "제목")
                         .param(CONTENT, "내용")
-                        .param(SECRET, String.valueOf(false))
+                        .param(SECRET, String.valueOf(OPEN))
                 )
                 .andExpect(redirectedUrl("/inquiries/" + 2L));
     }
@@ -199,7 +201,7 @@ class InquiryControllerTest {
                         .param(NICKNAME, "닉네임")
                         .param(TITLE, "제목수정")
                         .param(CONTENT, "내용수정")
-                        .param(SECRET, String.valueOf(true))
+                        .param(SECRET, String.valueOf(SecretStatus.SECRET))
                 )
                 .andExpect(redirectedUrl("/inquiries/" + 2));
     }
@@ -274,7 +276,7 @@ class InquiryControllerTest {
                 .user(user)
                 .title(title)
                 .content("내용")
-                .secret(false)
+                .secret(OPEN)
                 .build();
     }
 

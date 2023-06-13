@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 
+import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -337,7 +338,7 @@ class SearchQueryRepositoryTest {
                 .user(user)
                 .title(title)
                 .content("내용")
-                .secret(false)
+                .secret(OPEN)
                 .build();
     }
 

@@ -27,8 +27,8 @@
 			<div class="form-group">
 				<label style="display: none;" th:for="secret">비밀여부</label>
 				<p>
-					<label><input type="radio" th:field="*{secret}" value="TRUE"  th:checked> 비밀</label>&nbsp;&nbsp;&nbsp;
-					<label><input type="radio" th:field="*{secret}" value="FALSE" th:checked> 공개</label>
+					<label><input type="radio" th:field="*{secret}" value="SECRET"  th:checked> 비밀</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" th:field="*{secret}" value="OPEN" th:checked> 공개</label>
 				</p>
 				<p class="field-error" th:errors="*{secret}">비밀 오류</p>
 			</div>

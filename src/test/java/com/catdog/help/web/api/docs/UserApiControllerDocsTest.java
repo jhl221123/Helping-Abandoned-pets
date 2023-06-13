@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.catdog.help.MyConst.*;
+import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -403,7 +404,7 @@ public class UserApiControllerDocsTest {
                 .user(user)
                 .title("제목")
                 .content("내용")
-                .secret(false)
+                .secret(OPEN)
                 .build();
         inquiryRepository.save(board);
 

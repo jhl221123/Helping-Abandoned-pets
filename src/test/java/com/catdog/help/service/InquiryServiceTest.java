@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -177,7 +178,7 @@ class InquiryServiceTest {
                 .user(user)
                 .title(title)
                 .content("내용")
-                .secret(false)
+                .secret(OPEN)
                 .build();
     }
 

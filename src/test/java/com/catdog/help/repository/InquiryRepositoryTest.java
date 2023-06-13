@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -121,7 +122,7 @@ class InquiryRepositoryTest {
                     .user(user)
                     .title("제목_" + i)
                     .content("내용_" + i)
-                    .secret(false)
+                    .secret(OPEN)
                     .build();
             inquiryRepository.save(board);
         }
@@ -135,7 +136,7 @@ class InquiryRepositoryTest {
                 .user(user)
                 .title("제목")
                 .content("내용")
-                .secret(false)
+                .secret(OPEN)
                 .build();
     }
 
