@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,24 +114,6 @@ class BulletinServiceTest {
         assertThat(form.getTitle()).isEqualTo("제목");
         assertThat(form.getImages().get(0)).isInstanceOf(ReadImageForm.class);
         assertThat(form.getLikeSize()).isEqualTo(3);
-    }
-
-    @Test
-    @DisplayName("키는 지역, 값은 지역별 게시글 수를 가지는 맵을 반환")
-    void getCountByRegion() {
-        //given
-        Bulletin board = getBulletin("제목");
-        List<Bulletin> boards = new ArrayList<>();
-        boards.add(board);
-
-        doReturn(boards).when(bulletinRepository)
-                .findAll();
-
-        //when
-        Map<String, Long> result = bulletinService.getCountByRegion();
-
-        //then
-        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
     @Test

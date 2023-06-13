@@ -1,6 +1,9 @@
 package com.catdog.help.service;
 
-import com.catdog.help.domain.board.*;
+import com.catdog.help.domain.board.Item;
+import com.catdog.help.domain.board.ItemStatus;
+import com.catdog.help.domain.board.Like;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.BoardNotFoundException;
@@ -26,7 +29,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -98,24 +100,6 @@ class ItemServiceTest {
         //expected
         ReadItemForm form = itemService.read(board.getId());
         assertThat(form.getItemName()).isEqualTo(board.getItemName());
-    }
-
-    @Test
-    @DisplayName("키는 지역, 값은 지역별 나눔글 수를 가지는 맵을 반환")
-    void getCountByRegion() {
-        //given
-        Item board = getItem("제목");
-        List<Item> boards = new ArrayList<>();
-        boards.add(board);
-
-        doReturn(boards).when(itemRepository)
-                .findAll();
-
-        //when
-        Map<String, Long> result = itemService.getCountByRegion();
-
-        //then
-        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
     @Test

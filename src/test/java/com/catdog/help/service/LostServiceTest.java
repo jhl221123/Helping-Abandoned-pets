@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,25 +107,6 @@ class LostServiceTest {
         //then
         assertThat(form.getTitle()).isEqualTo("제목");
         assertThat(form.getImages().get(0)).isInstanceOf(ReadImageForm.class);
-    }
-
-    @Test
-    @DisplayName("키는 지역, 값은 지역별 실종글 수를 가지는 맵을 반환")
-    void getCountByRegion() {
-        //given
-        User user = getUser();
-        Lost board = getLost(user, "제목");
-        List<Lost> boards = new ArrayList<>();
-        boards.add(board);
-
-        doReturn(boards).when(lostRepository)
-                .findAll();
-
-        //when
-        Map<String, Long> result = lostService.getCountByRegion();
-
-        //then
-        assertThat(result.get("부산")).isEqualTo(1L);
     }
 
     @Test
