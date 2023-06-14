@@ -99,11 +99,12 @@ class BulletinApiControllerTest {
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(2L).when(bulletinService)
-                .save(any(SaveBulletinForm.class), eq(request.getNickname()));
+                .save(any(SaveBulletinForm.class), eq("닉네임"));
 
         //expected
         mockMvc.perform(post("/api/bulletins/new")
                         .contentType(APPLICATION_JSON)
+                        .sessionAttr(LOGIN_USER, "닉네임")
                         .content(json)
                 )
                 .andExpect(MockMvcResultMatchers.content().json(result));
@@ -253,12 +254,12 @@ class BulletinApiControllerTest {
                 .title("제목")
                 .content("내용")
                 .region("부산")
-                .base64Images(getNewImages())
+                .base64Images(getBase64Images())
                 .deleteImageIds(List.of())
                 .build();
     }
 
-    private List<Base64Image> getNewImages() {
+    private List<Base64Image> getBase64Images() {
         Base64Image base64Image = Base64Image.builder()
                 .originalName("uploadFileName")
                 .base64File("base64File")
@@ -270,10 +271,10 @@ class BulletinApiControllerTest {
 
     private SaveBulletinRequest getSaveBulletinRequest() {
         return SaveBulletinRequest.builder()
-                .nickname("닉네임")
                 .title("제목")
                 .content("내용")
                 .region("지역")
+                .base64Images(getBase64Images())
                 .build();
     }
 
