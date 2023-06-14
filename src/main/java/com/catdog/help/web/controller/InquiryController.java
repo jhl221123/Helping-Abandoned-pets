@@ -1,5 +1,6 @@
 package com.catdog.help.web.controller;
 
+import com.catdog.help.domain.board.SecretStatus;
 import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.InquiryService;
@@ -91,13 +92,17 @@ public class InquiryController {
     @GetMapping("/{id}")
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname) {
-        // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
-
         ReadInquiryForm readForm = inquiryService.read(id);
         model.addAttribute("readForm", readForm);
         model.addAttribute("nickname", nickname);
 
-        // TODO: 2023-04-13 매니저, 작성자 제외 차단
+        if (readForm.getSecret().equals(SecretStatus.SECRET)) {
+            Boolean isManager = userService.isManager(nickname);
+            boolean isWriter = boardService.getWriter(id).equals(nickname);
+            if (!isManager && !isWriter) {
+                return "redirect:/";
+            }
+        }
 
         List<CommentForm> commentForms = commentService.readByBoardId(id);
         if (!commentForms.isEmpty()) {
