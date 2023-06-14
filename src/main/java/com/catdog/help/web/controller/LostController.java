@@ -109,8 +109,6 @@ public class LostController {
     public String readBoard(@PathVariable("id") Long id, Model model,
                             @SessionAttribute(name = LOGIN_USER) String nickname,
                             HttpServletRequest request, HttpServletResponse response) {
-        // TODO: 2023-04-26 bindingResult 이용해서 뷰템플릿에 오류 보이도록 만들자.
-
         //조회수 증가
         viewUpdater.addView(id, request, response);
 

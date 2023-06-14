@@ -152,7 +152,7 @@ public class ItemController {
 
         if (bindingResult.hasErrors()) {
             EditItemForm form = itemService.getEditForm(id);
-            editForm.addOldLeadImage(form.getOldLeadImage()); // TODO: 2023-04-29 브라우저에서 넘길 수 없을까..ㅠ
+            editForm.addOldLeadImage(form.getOldLeadImage());
             editForm.addOldImages(form.getOldImages());
 
             List<String> regions = getRegions();
