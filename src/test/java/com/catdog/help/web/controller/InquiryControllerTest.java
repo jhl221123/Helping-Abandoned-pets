@@ -145,10 +145,10 @@ class InquiryControllerTest {
     }
 
     @Test
-    @DisplayName("문의글 단건 조회")
+    @DisplayName("문의글 단건 조회 성공")
     void readOne() throws Exception {
         //given
-        ReadInquiryForm form = getReadInquiryForm();
+        ReadInquiryForm form = getReadInquiryForm("제목", OPEN);
         doReturn(form).when(inquiryService)
                 .read(2L);
 
@@ -162,6 +162,50 @@ class InquiryControllerTest {
                         .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
                 )
                 .andExpect(view().name("inquiries/detail"));
+    }
+
+    @Test
+    @DisplayName("매니저는 모든 비밀 문의글 접근이 가능하다.")
+    void readSecretInquiriesByManager() throws Exception {
+        //given
+        ReadInquiryForm form = getReadInquiryForm("제목", SecretStatus.SECRET);
+        doReturn(form).when(inquiryService)
+                .read(2L);
+
+        doReturn(true).when(userService)
+                .isManager("매니저");
+
+        doReturn(form.getNickname()).when(boardService)
+                .getWriter(2L);
+
+        //expected
+        mockMvc.perform(get("/inquiries/{id}", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "매니저")
+                )
+                .andExpect(view().name("inquiries/detail"));
+    }
+
+    @Test
+    @DisplayName("매니저, 작성자가 아닌 사용자가 비밀 문의글 접근 시 메인페이지로 리다이렉트된다.")
+    void readOneByUnauthorizedUser() throws Exception {
+        //given
+        ReadInquiryForm form = getReadInquiryForm("제목", SecretStatus.SECRET);
+        doReturn(form).when(inquiryService)
+                .read(2L);
+
+        doReturn(false).when(userService)
+                .isManager("다른사용자");
+
+        doReturn(form.getNickname()).when(boardService)
+                .getWriter(2L);
+
+        //expected
+        mockMvc.perform(get("/inquiries/{id}", 2L)
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "다른사용자")
+                )
+                .andExpect(view().name("redirect:/"));
     }
 
     @Test
@@ -260,23 +304,23 @@ class InquiryControllerTest {
 
 
     private EditInquiryForm getBeforeEditForm() {
-        Inquiry board = getInquiry("제목");
+        Inquiry board = getInquiry("제목", OPEN);
         EditInquiryForm form = new EditInquiryForm(board);
         return form;
     }
 
-    private ReadInquiryForm getReadInquiryForm() {
-        Inquiry board = getInquiry("제목");
+    private ReadInquiryForm getReadInquiryForm(String title, SecretStatus secret) {
+        Inquiry board = getInquiry(title, secret);
         return new  ReadInquiryForm(board);
     }
 
-    private Inquiry getInquiry(String title) {
+    private Inquiry getInquiry(String title, SecretStatus secret) {
         User user = getUser();
         return Inquiry.builder()
                 .user(user)
                 .title(title)
                 .content("내용")
-                .secret(OPEN)
+                .secret(secret)
                 .build();
     }
 
