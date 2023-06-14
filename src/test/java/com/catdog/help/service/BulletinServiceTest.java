@@ -19,10 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -135,18 +132,22 @@ class BulletinServiceTest {
     }
 
     @Test
-    @DisplayName("닉네임으로 게시글 페이지 조회")
+    @DisplayName("작성자가 해당 닉네임인 게시글 페이지 조회")
     void getPageByNickname() {
         //given
+        List<Bulletin> bulletins = new ArrayList<>();
+        Bulletin bulletin = getBulletin("제목");
+        bulletins.add(bulletin);
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
-        Page<Bulletin> page = Page.empty();
+        Page page = new PageImpl(bulletins, pageable, 10);
 
         doReturn(page).when(bulletinRepository)
                 .findPageByNickname("닉네임", pageable);
 
         //expected
         Page<PageBulletinForm> formPage = bulletinService.getPageByNickname("닉네임", pageable);
-        verify(bulletinRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getTitle()).isEqualTo(bulletin.getTitle());
     }
 
     @Test
@@ -177,10 +178,14 @@ class BulletinServiceTest {
         //given
         User user = getUser();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "board_id");
-        Page<Bulletin> page = Page.empty();
+        List<Bulletin> bulletins = new ArrayList<>();
+        Bulletin bulletin = getBulletin("검색제목");
+        bulletins.add(bulletin);
 
-        doReturn(Optional.ofNullable(user)).when(userRepository)
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        Page page = new PageImpl(bulletins, pageable, 10);
+
+        doReturn(Optional.of(user)).when(userRepository)
                 .findByNickname("닉네임");
 
         doReturn(page).when(bulletinRepository)
@@ -188,16 +193,19 @@ class BulletinServiceTest {
 
         //expected
         Page<PageBulletinForm> formPage = bulletinService.getLikeBulletins("닉네임", pageable);
-        verify(userRepository, times(1)).findByNickname("닉네임");
-        verify(bulletinRepository, times(1)).findLikeBulletins(user.getId(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getTitle()).isEqualTo(bulletin.getTitle());
     }
 
     @Test
     @DisplayName("검색 조건에 맞는 게시글 페이지 조회")
     void searchPageByCond() {
         //given
+        List<Bulletin> bulletins = new ArrayList<>();
+        Bulletin bulletin = getBulletin("검색제목");
+        bulletins.add(bulletin);
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
-        Page<Bulletin> page = Page.empty();
+        Page page = new PageImpl(bulletins, pageable, 10);
 
         BulletinSearch search = BulletinSearch.builder()
                 .title("검색제목")
@@ -207,9 +215,9 @@ class BulletinServiceTest {
         doReturn(page).when(searchQueryRepository)
                 .searchBulletin(search.getTitle(), search.getRegion(), pageable);
 
-        //expected  TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        //expected
         Page<PageBulletinForm> formPage = bulletinService.search(search, pageable);
-        verify(searchQueryRepository, times(1)).searchBulletin(search.getTitle(), search.getRegion(), pageable);
+        assertThat(formPage.getContent().get(0).getTitle()).isEqualTo(bulletin.getTitle());
     }
 
     @Test

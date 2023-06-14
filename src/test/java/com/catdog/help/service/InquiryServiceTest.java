@@ -16,10 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,23 +80,31 @@ class InquiryServiceTest {
     @DisplayName("닉네임으로 문의글 페이지 조회")
     void readPage() {
         //given
+        List<Inquiry> inquiries = new ArrayList<>();
+        Inquiry inquiry = getInquiry("제목");
+        inquiries.add(inquiry);
+
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
-        Page<Inquiry> page = Page.empty();
+        Page page = new PageImpl(inquiries, pageable, 10);
 
         doReturn(page).when(inquiryRepository)
                 .findPageByNickname("닉네임", pageable);
 
         //expected
         Page<PageInquiryForm> formPage = inquiryService.getPageByNickname("닉네임", pageable);
-        verify(inquiryRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getTitle()).isEqualTo(inquiry.getTitle());
     }
 
     @Test
     @DisplayName("검색 조건에 맞는 문의글 페이지 조회")
     void searchPageByCond() {
         //given
+        List<Inquiry> inquiries = new ArrayList<>();
+        Inquiry inquiry = getInquiry("검색제목");
+        inquiries.add(inquiry);
+
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
-        Page<Inquiry> page = Page.empty();
+        Page page = new PageImpl(inquiries, pageable, 10);
 
         InquirySearch search = InquirySearch.builder()
                 .title("검색제목")
@@ -110,7 +115,7 @@ class InquiryServiceTest {
 
         //expected
         Page<PageInquiryForm> formPage = inquiryService.search(search, pageable);
-        verify(searchQueryRepository, times(1)).searchInquiry(search.getTitle(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getTitle()).isEqualTo(inquiry.getTitle());
     }
 
     @Test

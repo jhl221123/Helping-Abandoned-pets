@@ -22,10 +22,7 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,15 +121,22 @@ class ItemServiceTest {
     @DisplayName("닉네임으로 나눔글 페이지 조회")
     void getPageByNickname() {
         //given
+        Item item = getItem("제목");
+        UploadFile uploadFile = getUploadFile();
+        uploadFile.addBoard(item);
+
+        List<Item> items = new ArrayList<>();
+        items.add(item);
+
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
-        Page<Item> page = Page.empty();
+        Page page = new PageImpl(items, pageable, 5);
 
         doReturn(page).when(itemRepository)
                 .findPageByNickname("닉네임", pageable);
 
         //expected
         Page<PageItemForm> formPage = itemService.getPageByNickname("닉네임", pageable);
-        verify(itemRepository, times(1)).findPageByNickname("닉네임", pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getItemName()).isEqualTo(item.getItemName());
     }
 
     @Test
@@ -163,8 +167,15 @@ class ItemServiceTest {
         //given
         User user = getUser();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "board_id");
-        Page<Item> page = Page.empty();
+        Item item = getItem("제목");
+        UploadFile uploadFile = getUploadFile();
+        uploadFile.addBoard(item);
+
+        List<Item> items = new ArrayList<>();
+        items.add(item);
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
+        Page page = new PageImpl(items, pageable, 5);
 
         doReturn(Optional.ofNullable(user)).when(userRepository)
                 .findByNickname("닉네임");
@@ -174,8 +185,7 @@ class ItemServiceTest {
 
         //expected
         Page<PageItemForm> formPage = itemService.getLikeItems("닉네임", pageable);
-        verify(userRepository, times(1)).findByNickname("닉네임");
-        verify(itemRepository, times(1)).findLikeItems(user.getId(), pageable); // TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        assertThat(formPage.getContent().get(0).getItemName()).isEqualTo(item.getItemName());
     }
 
     @Test

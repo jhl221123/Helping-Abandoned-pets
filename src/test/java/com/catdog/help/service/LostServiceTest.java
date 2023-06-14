@@ -21,10 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -147,17 +144,26 @@ class LostServiceTest {
     @DisplayName("검색 조건에 맞는 실종글 페이지 조회")
     void searchPageByCond() {
         //given
+        User user = getUser();
+
+        Lost lost = getLost(user, "제목");
+        UploadFile uploadFile = getUploadFile();
+        uploadFile.addBoard(lost);
+
+        List<Lost> boards = new ArrayList<>();
+        boards.add(lost);
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
-        Page<Lost> page = Page.empty();
+        PageImpl page = new PageImpl(boards, pageable, 10);
 
         LostSearch search = new LostSearch("부산");
 
         doReturn(page).when(searchQueryRepository)
                 .searchLost(search.getRegion(), pageable);
 
-        //expected  TODO: 2023-04-25 map이 잘 작동하는지 확인 부족함.
+        //expected
         Page<PageLostForm> formPage = lostService.search(search, pageable);
-        verify(searchQueryRepository, times(1)).searchLost(search.getRegion(), pageable);
+        assertThat(formPage.getContent().get(0).getBreed()).isEqualTo(lost.getBreed());
     }
 
     @Test
@@ -246,12 +252,16 @@ class LostServiceTest {
 
     private List<UploadFile> getUploadFiles() {
         List<UploadFile> oldImages = new ArrayList<>();
-        UploadFile file = UploadFile.builder()
+        UploadFile file = getUploadFile();
+        oldImages.add(file);
+        return oldImages;
+    }
+
+    private UploadFile getUploadFile() {
+        return UploadFile.builder()
                 .uploadFileName("uploadFileName")
                 .storeFileName("storeFileName")
                 .build();
-        oldImages.add(file);
-        return oldImages;
     }
 
     private EditLostForm getAfterEditLostForm(User user, String title) {
