@@ -1,10 +1,10 @@
 package com.catdog.help.web.api.request.bulletin;
 
+import com.catdog.help.web.api.Base64Image;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
@@ -15,10 +15,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class SaveBulletinRequest {
-
-    @NotBlank
-    @Length(min = 2, max = 10)
-    private String nickname;
 
     @NotBlank
     @Length(max = 30)
@@ -32,15 +28,14 @@ public class SaveBulletinRequest {
     private String region; // TODO: 2023-05-18 지역이름 검증 들어가야겠는걸
 
     @Size(max = 5)
-    private List<MultipartFile> images = new ArrayList<>();
+    private List<Base64Image> base64Images = new ArrayList<>();
 
 
     @Builder
-    public SaveBulletinRequest(String nickname, String title, String content, String region, List<MultipartFile> images) {
-        this.nickname = nickname;
+    public SaveBulletinRequest(String title, String content, String region, List<Base64Image> base64Images) {
         this.title = title;
         this.content = content;
         this.region = region;
-        this.images = images;
+        this.base64Images = base64Images;
     }
 }

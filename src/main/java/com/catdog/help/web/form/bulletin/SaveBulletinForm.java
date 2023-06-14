@@ -46,6 +46,10 @@ public class SaveBulletinForm {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.region = request.getRegion();
-        this.images = request.getImages();
+    }
+
+
+    public void addImages(List<MultipartFile> images) {
+        this.images = images;
     }
 }

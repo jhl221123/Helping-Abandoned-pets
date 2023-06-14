@@ -53,8 +53,14 @@ public class BulletinApiController {
 
     /**    create    **/
     @PostMapping("/new")
-    public SaveBulletinResponse save(@RequestBody @Validated SaveBulletinRequest request) {
-        Long boardId = bulletinService.save(new SaveBulletinForm(request), request.getNickname());
+    public SaveBulletinResponse save(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                     @RequestBody @Validated SaveBulletinRequest request) {
+        SaveBulletinForm saveForm = new SaveBulletinForm(request);
+        if (!request.getBase64Images().isEmpty()) {
+            List<MultipartFile> images = getMultipartFiles(request.getBase64Images());
+            saveForm.addImages(images);
+        }
+        Long boardId = bulletinService.save(saveForm, nickname);
         return new SaveBulletinResponse(boardId);
     }
 
