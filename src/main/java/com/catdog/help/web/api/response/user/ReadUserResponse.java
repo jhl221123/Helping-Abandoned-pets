@@ -38,7 +38,7 @@ public class ReadUserResponse {
 
 
     @Builder
-    public ReadUserResponse(ReadUserForm form, Long lostSize, Long bulletinSize, Long itemSize, Long inquirySize, Long likeBulletinSize, Long likeItemSize) {
+    public ReadUserResponse(ReadUserForm form) {
         this.id = form.getId();
         this.emailId = form.getEmailId();
         this.nickname = form.getNickname();
@@ -46,11 +46,11 @@ public class ReadUserResponse {
         this.age = form.getAge();
         this.gender = form.getGender();
         this.createdDate = form.getCreatedDate();
-        this.lostSize = lostSize;
-        this.bulletinSize = bulletinSize;
-        this.itemSize = itemSize;
-        this.inquirySize = inquirySize;
-        this.likeBulletinSize = likeBulletinSize;
-        this.likeItemSize = likeItemSize;
+        this.lostSize = form.getLostSize();
+        this.bulletinSize = form.getBulletinSize();
+        this.itemSize = form.getItemSize();
+        this.inquirySize = form.getInquirySize();
+        this.likeBulletinSize = form.getLikeBulletinSize();
+        this.likeItemSize = form.getLikeItemSize();
     }
 }

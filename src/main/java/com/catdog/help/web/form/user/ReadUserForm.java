@@ -2,6 +2,7 @@ package com.catdog.help.web.form.user;
 
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
@@ -22,10 +23,6 @@ public class ReadUserForm {
     private String emailId;
 
     @NotBlank
-    @Length(min = 8, max = 16)
-    private String password;
-
-    @NotBlank
     @Length(min = 2, max = 10)
     private String nickname;
 
@@ -37,19 +34,51 @@ public class ReadUserForm {
     private int age;
 
     @NotNull
+    @Positive
     private Gender gender;
 
     @NotNull
+    @Positive
     private LocalDateTime createdDate;
 
-    public ReadUserForm(User user) {
+    @NotNull
+    @Positive
+    private Long lostSize;
+
+    @NotNull
+    @Positive
+    private Long bulletinSize;
+
+    @NotNull
+    @Positive
+    private Long itemSize;
+
+    @NotNull
+    @Positive
+    private Long inquirySize;
+
+    @NotNull
+    @Positive
+    private Long likeBulletinSize;
+
+    @NotNull
+    private Long likeItemSize;
+
+
+    @Builder
+    public ReadUserForm(User user, Long lostSize, Long bulletinSize, Long itemSize, Long inquirySize, Long likeBulletinSize, Long likeItemSize) {
         this.id = user.getId();
         this.emailId = user.getEmailId();
-        this.password = user.getPassword();
         this.nickname = user.getNickname();
         this.name = user.getName();
         this.age = user.getAge();
         this.gender = user.getGender();
         this.createdDate = user.getCreatedDate();
+        this.lostSize = lostSize;
+        this.bulletinSize = bulletinSize;
+        this.itemSize = itemSize;
+        this.inquirySize = inquirySize;
+        this.likeBulletinSize = likeBulletinSize;
+        this.likeItemSize = likeItemSize;
     }
 }
