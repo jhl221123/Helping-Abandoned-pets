@@ -105,21 +105,7 @@ public class UserController {
     public String detail(@SessionAttribute(name = LOGIN_USER) String nickname, Model model) {
         ReadUserForm readForm = userService.readByNickname(nickname);
         model.addAttribute("readForm", readForm);
-        Long lostSize = lostService.countByNickname(nickname);
-        Long bulletinSize = bulletinService.countByNickname(nickname);
-        Long itemSize = itemService.countByNickname(nickname);
-        Long inquirySize = inquiryService.countByNickname(nickname);
 
-        model.addAttribute("lostSize", lostSize);
-        model.addAttribute("bulletinSize", bulletinSize);
-        model.addAttribute("itemSize", itemSize);
-        model.addAttribute("inquirySize", inquirySize);
-
-        Long likeBulletinSize = bulletinService.countLikeBulletin(nickname);
-        Long likeItemSize = itemService.countLikeItem(nickname);
-
-        model.addAttribute("likeBulletinSize", likeBulletinSize);
-        model.addAttribute("likeItemSize", likeItemSize);
         return "users/detail";
     }
 

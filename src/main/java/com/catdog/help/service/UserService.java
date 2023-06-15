@@ -21,6 +21,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final LostService lostService;
+    private final BulletinService bulletinService;
+    private final ItemService itemService;
+    private final InquiryService inquiryService;
+
 
     @Transactional
     public Long join(SaveUserForm form) {
@@ -53,7 +58,24 @@ public class UserService {
     public ReadUserForm readByNickname(String nickname) {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
-        return new ReadUserForm(findUser);
+
+        Long lostSize = lostService.countByNickname(nickname);
+        Long bulletinSize = bulletinService.countByNickname(nickname);
+        Long itemSize = itemService.countByNickname(nickname);
+        Long inquirySize = inquiryService.countByNickname(nickname);
+
+        Long likeBulletinSize = bulletinService.countLikeBulletin(nickname);
+        Long likeItemSize = itemService.countLikeItem(nickname);
+
+        return ReadUserForm.builder()
+                .user(findUser)
+                .lostSize(lostSize)
+                .bulletinSize(bulletinSize)
+                .itemSize(itemSize)
+                .inquirySize(inquirySize)
+                .likeBulletinSize(likeBulletinSize)
+                .likeItemSize(likeItemSize)
+                .build();
     }
 
     public EditUserForm getUpdateForm(String nickname) {

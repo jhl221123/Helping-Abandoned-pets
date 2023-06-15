@@ -88,21 +88,9 @@ public class UserApiController {
     @GetMapping("/detail")
     public ReadUserResponse read(@SessionAttribute(name = LOGIN_USER) String nickname) {
         ReadUserForm form = userService.readByNickname(nickname);
-        Long lostSize = lostService.countByNickname(nickname);
-        Long bulletinSize = bulletinService.countByNickname(nickname);
-        Long itemSize = itemService.countByNickname(nickname);
-        Long inquirySize = inquiryService.countByNickname(nickname);
-        Long likeBulletinSize = bulletinService.countLikeBulletin(nickname);
-        Long likeItemSize = itemService.countLikeItem(nickname);
 
         return ReadUserResponse.builder()
                 .form(form)
-                .lostSize(lostSize)
-                .bulletinSize(bulletinSize)
-                .itemSize(itemSize)
-                .inquirySize(inquirySize)
-                .likeBulletinSize(likeBulletinSize)
-                .likeItemSize(likeItemSize)
                 .build();
     }
 
