@@ -235,7 +235,15 @@ class UserControllerTest {
     void detail() throws Exception {
         //given
         User user = User.builder().build();
-        ReadUserForm readForm = new ReadUserForm(user);
+        ReadUserForm readForm = ReadUserForm.builder()
+                .user(user)
+                .lostSize(0L)
+                .bulletinSize(0L)
+                .itemSize(0L)
+                .inquirySize(0L)
+                .likeBulletinSize(0L)
+                .likeItemSize(0L)
+                .build();
 
         doReturn(readForm).when(userService)
                 .readByNickname("닉네임");

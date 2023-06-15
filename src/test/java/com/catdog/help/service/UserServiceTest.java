@@ -33,6 +33,18 @@ class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    private LostService lostService;
+
+    @Mock
+    private BulletinService bulletinService;
+
+    @Mock
+    private ItemService itemService;
+
+    @Mock
+    private InquiryService inquiryService;
+
 
     @Test
     @DisplayName("회원가입")
@@ -173,6 +185,24 @@ class UserServiceTest {
 
         doReturn(Optional.ofNullable(user)).when(userRepository)
                 .findByNickname("닉네임");
+
+        doReturn(2L).when(lostService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(bulletinService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(itemService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(inquiryService)
+                .countByNickname(user.getNickname());
+
+        doReturn(2L).when(bulletinService)
+                .countLikeBulletin(user.getNickname());
+
+        doReturn(2L).when(itemService)
+                .countLikeItem(user.getNickname());
 
         //when
         ReadUserForm readForm = userService.readByNickname("닉네임");

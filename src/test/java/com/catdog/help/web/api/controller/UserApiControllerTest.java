@@ -244,9 +244,8 @@ class UserApiControllerTest {
     void readByNickname() throws Exception {
         //given
         User user = getUser();
-        ReadUserForm form = new ReadUserForm(user);
-        ReadUserResponse response = ReadUserResponse.builder()
-                .form(form)
+        ReadUserForm form = ReadUserForm.builder()
+                .user(user)
                 .lostSize(2L)
                 .bulletinSize(2L)
                 .itemSize(2L)
@@ -254,29 +253,14 @@ class UserApiControllerTest {
                 .likeBulletinSize(2L)
                 .likeItemSize(2L)
                 .build();
+        ReadUserResponse response = ReadUserResponse.builder()
+                .form(form)
+                .build();
 
         String result = objectMapper.writeValueAsString(response);
 
         doReturn(form).when(userService)
                 .readByNickname(user.getNickname());
-
-        doReturn(2L).when(lostService)
-                .countByNickname(user.getNickname());
-
-        doReturn(2L).when(bulletinService)
-                .countByNickname(user.getNickname());
-
-        doReturn(2L).when(itemService)
-                .countByNickname(user.getNickname());
-
-        doReturn(2L).when(inquiryService)
-                .countByNickname(user.getNickname());
-
-        doReturn(2L).when(bulletinService)
-                .countLikeBulletin(user.getNickname());
-
-        doReturn(2L).when(itemService)
-                .countLikeItem(user.getNickname());
 
         //expected
         mockMvc.perform(get("/api/users/detail")

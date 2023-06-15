@@ -647,13 +647,15 @@ public class UserApiControllerDocsTest {
 
     private ReadUserResponse getReadUserResponse(User user) {
         return ReadUserResponse.builder()
-                .form(new ReadUserForm(user))
-                .lostSize(0L)
-                .bulletinSize(0L)
-                .itemSize(0L)
-                .inquirySize(0L)
-                .likeBulletinSize(0L)
-                .likeItemSize(0L)
+                .form(ReadUserForm.builder()
+                        .user(user)
+                        .lostSize(0L)
+                        .bulletinSize(0L)
+                        .itemSize(0L)
+                        .inquirySize(0L)
+                        .likeBulletinSize(0L)
+                        .likeItemSize(0L)
+                        .build())
                 .build();
     }
 
