@@ -49,9 +49,13 @@ public class MessageController {
     public String getRoom(@PathVariable("roomId") Long roomId, Model model,
                           @SessionAttribute(name = LOGIN_USER) String senderNick) {
 
-        // TODO: 2023-04-27 접근제한
-
         ReadMsgRoomForm readForm = msgRoomService.read(roomId);
+        String recipient = readForm.getRecipientNick();
+        String sender = readForm.getSenderNick();
+        if (!senderNick.equals(recipient) && !senderNick.equals(sender)) {
+            return "redirect:/";
+        }
+
         model.addAttribute("readForm", readForm);
 
         SaveMessageForm saveForm = new SaveMessageForm();
