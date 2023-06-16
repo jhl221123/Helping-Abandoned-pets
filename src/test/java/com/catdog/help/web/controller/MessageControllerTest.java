@@ -125,6 +125,36 @@ class MessageControllerTest {
     }
 
     @Test
+    @DisplayName("권한이 없는 사용자가 메시지 룸 조회시 메인으로 리다이렉트")
+    void failGetRoomByUnauthorized() throws Exception {
+        //given
+        User sender = getUser("sender@test.test", "발신자");
+        User recipient = getUser("recipient@test.test", "수신자");
+
+        Item board = getItem(recipient, "나눔상품");
+
+        MsgRoom room = getMessageRoom(sender, recipient, board);
+
+        Message message = getMessage(sender, room);
+        List<ReadMessageForm> messages = getReadMessageForms(message);
+
+        ReadMsgRoomForm form = ReadMsgRoomForm.builder()
+                .msgRoom(room)
+                .messageForms(messages)
+                .build();
+
+        doReturn(form).when(msgRoomService)
+                .read(4L);
+
+        //expected
+        mockMvc.perform(get("/messages/{roomId}", 4L)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .sessionAttr(SessionConst.LOGIN_USER, "권한이없는사용자")
+                )
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
     @DisplayName("메시지 보내기 성공")
     void sendMessage() throws Exception {
         //given
