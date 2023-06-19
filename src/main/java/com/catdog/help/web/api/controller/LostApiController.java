@@ -6,12 +6,19 @@ import com.catdog.help.service.LostService;
 import com.catdog.help.web.api.Base64Image;
 import com.catdog.help.web.api.request.lost.SaveLostRequest;
 import com.catdog.help.web.api.response.comment.CommentResponse;
+import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.lost.ReadLostResponse;
 import com.catdog.help.web.api.response.lost.SaveLostResponse;
 import com.catdog.help.web.controller.ViewUpdater;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +32,8 @@ import java.util.List;
 
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static java.util.stream.Collectors.toList;
-
+import static org.springframework.data.domain.Sort.Direction.DESC;
+@Slf4j
 @RestController
 @RequestMapping("/api/lost")
 @RequiredArgsConstructor
@@ -49,6 +57,13 @@ public class LostApiController {
     }
 
     /***  read  ***/
+    @GetMapping
+    public Page<PageLostResponse> getPage(@ModelAttribute LostSearch search,
+                                          @PageableDefault(size = 6, sort = "id", direction = DESC) Pageable pageable) {
+        Page<PageLostForm> pageForms = lostService.search(search, pageable);
+        return pageForms.map(PageLostResponse::new);
+    }
+
     @GetMapping("/{id}")
     public ReadLostResponse readBoard(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         //조회수 증가
