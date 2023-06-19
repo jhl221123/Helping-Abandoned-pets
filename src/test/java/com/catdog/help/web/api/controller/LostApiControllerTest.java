@@ -11,13 +11,16 @@ import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.api.Base64Image;
 import com.catdog.help.web.api.request.lost.SaveLostRequest;
 import com.catdog.help.web.api.response.comment.CommentResponse;
+import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.lost.ReadLostResponse;
 import com.catdog.help.web.api.response.lost.SaveLostResponse;
 import com.catdog.help.web.controller.ViewUpdater;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
+import com.catdog.help.web.form.search.LostSearch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +30,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockCookie;
@@ -122,6 +129,37 @@ class LostApiControllerTest {
     }
 
     @Test
+    @DisplayName("실종글 페이지 조회 성공")
+    void getPage() throws Exception {
+        //given
+        Page<PageLostForm> pageForms = new PageImpl<>(getPageLostForms(), PageRequest.of(0, 6), 0);
+        Page<PageLostResponse> response = pageForms.map(PageLostResponse::new);
+
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        doReturn(pageForms).when(lostService)
+                .search(any(LostSearch.class), any(Pageable.class));
+
+        //expect
+        mockMvc.perform(get("/api/lost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new MockCookie("JSESSIONID", "session_value"))
+                        .param("region", "부산")
+                )
+                .andExpect(content().json(result));
+    }
+
+    private List<PageLostForm> getPageLostForms() {
+        PageLostForm pageForm = new PageLostForm(getLost(), getReadImageForm());
+        List<PageLostForm> forms = new ArrayList<>();
+        forms.add(pageForm);
+        return forms;
+    }
+
+    @Test
     @DisplayName("실종글 단건 조회 성공")
     void readLost() throws Exception {
         //given
@@ -145,12 +183,10 @@ class LostApiControllerTest {
         doNothing().when(viewUpdater)
                         .addView(eq(2L), any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        MockCookie cookie = new MockCookie("JSESSIONID", "session_value");
-
         //expect
         mockMvc.perform(get("/api/lost/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(cookie)
+                        .cookie(new MockCookie("JSESSIONID", "session_value"))
                 )
                 .andExpect(content().json(result));
     }
@@ -190,11 +226,15 @@ class LostApiControllerTest {
     }
 
     private List<ReadImageForm> getReadImageForms() {
-        UploadFile image = getUploadFile();
-        ReadImageForm imageForm = new ReadImageForm(image);
+        ReadImageForm imageForm = getReadImageForm();
         List<ReadImageForm> images = new ArrayList<>();
         images.add(imageForm);
         return images;
+    }
+
+    private ReadImageForm getReadImageForm() {
+        UploadFile image = getUploadFile();
+        return new ReadImageForm(image);
     }
 
     private  UploadFile getUploadFile() {
