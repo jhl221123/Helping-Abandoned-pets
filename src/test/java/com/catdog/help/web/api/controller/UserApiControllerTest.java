@@ -1,6 +1,8 @@
 package com.catdog.help.web.api.controller;
 
 import com.catdog.help.MyConst;
+import com.catdog.help.domain.board.Lost;
+import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.exception.*;
@@ -18,6 +20,7 @@ import com.catdog.help.web.api.response.user.LoginResponse;
 import com.catdog.help.web.api.response.user.ReadUserResponse;
 import com.catdog.help.web.api.response.user.SaveUserResponse;
 import com.catdog.help.web.form.bulletin.PageBulletinForm;
+import com.catdog.help.web.form.image.ReadImageForm;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.item.PageItemForm;
 import com.catdog.help.web.form.lost.PageLostForm;
@@ -25,6 +28,7 @@ import com.catdog.help.web.form.user.EditUserForm;
 import com.catdog.help.web.form.user.ReadUserForm;
 import com.catdog.help.web.form.user.SaveUserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,9 +44,11 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -274,17 +280,13 @@ class UserApiControllerTest {
     @DisplayName("로그인한 사용자가 작성한 실종글 모두 조회")
     void getMyLostPage() throws Exception {
         //given
-        List<PageLostForm> forms = new ArrayList<>();
-        Page<PageLostForm> pageLostForms = new PageImpl<>(forms, PageRequest.of(0, 10), 0);
+        Page<PageLostForm> pageLostForms = new PageImpl<>(getPageLostForms(), PageRequest.of(0, 10), 0);
+        Page<PageLostResponse> response = pageLostForms.map(PageLostResponse::new);
 
-        PageLostResponse response = PageLostResponse.builder()
-                .content(pageLostForms.getContent())
-                .page(pageLostForms.getPageable().getPageNumber())
-                .size(pageLostForms.getPageable().getPageSize())
-                .totalElements(pageLostForms.getTotalElements())
-                .totalPages(pageLostForms.getTotalPages())
-                .build();
-        String result = objectMapper.writeValueAsString(response);
+        String result = objectMapper
+                .registerModule(new JavaTimeModule()) //LocalDateTime 직렬화
+                .disable(WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
 
         doReturn(pageLostForms).when(lostService)
                 .getPageByNickname(eq("닉네임"), any(Pageable.class));
@@ -537,6 +539,38 @@ class UserApiControllerTest {
                 .andExpect(status().isOk());
     }
 
+
+    private List<PageLostForm> getPageLostForms() {
+        PageLostForm pageForm = new PageLostForm(getLost(), getReadImageForm());
+        List<PageLostForm> forms = new ArrayList<>();
+        forms.add(pageForm);
+        return forms;
+    }
+
+    private ReadImageForm getReadImageForm() {
+        UploadFile image = getUploadFile();
+        return new ReadImageForm(image);
+    }
+
+    private  UploadFile getUploadFile() {
+        return UploadFile.builder()
+                .storeFileName("storeFileName")
+                .uploadFileName("uploadFileName")
+                .build();
+    }
+
+    private Lost getLost() {
+        return Lost.builder()
+                .user(getUser())
+                .title("제목")
+                .content("내용")
+                .region("부산")
+                .breed("말티즈")
+                .lostDate(LocalDate.now())
+                .lostPlace("실종장소")
+                .gratuity(10000)
+                .build();
+    }
 
     private EditUserRequest getEditUserRequest() {
         return EditUserRequest.builder()
