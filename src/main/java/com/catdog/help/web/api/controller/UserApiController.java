@@ -95,16 +95,10 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/lost")
-    public PageLostResponse getMyLostBoardPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<PageLostResponse> getMyLostBoardPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PageLostForm> pageForms = lostService.getPageByNickname(nickname, pageable);
-        return PageLostResponse.builder()
-                .content(pageForms.getContent())
-                .page(pageForms.getPageable().getPageNumber())
-                .size(pageForms.getPageable().getPageSize())
-                .totalElements(pageForms.getTotalElements())
-                .totalPages(pageForms.getTotalPages())
-                .build();
+        return pageForms.map(PageLostResponse::new);
     }
 
     @GetMapping("/detail/bulletins")
