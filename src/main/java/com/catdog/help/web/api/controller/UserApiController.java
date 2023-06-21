@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpSession;
 
 import static com.catdog.help.MyConst.FAIL_LOGIN;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @RestController
@@ -96,27 +96,21 @@ public class UserApiController {
 
     @GetMapping("/detail/lost")
     public Page<PageLostResponse> getMyLostBoardPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                     @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                     @PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         Page<PageLostForm> pageForms = lostService.getPageByNickname(nickname, pageable);
         return pageForms.map(PageLostResponse::new);
     }
 
     @GetMapping("/detail/bulletins")
-    public PageBulletinResponse getMyBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<PageBulletinResponse> getMyBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                        @PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getPageByNickname(nickname, pageable);
-        return PageBulletinResponse.builder()
-                .content(pageForms.getContent())
-                .page(pageForms.getPageable().getPageNumber())
-                .size(pageForms.getPageable().getPageSize())
-                .totalElements(pageForms.getTotalElements())
-                .totalPages(pageForms.getTotalPages())
-                .build();
+        return pageForms.map(PageBulletinResponse::new);
     }
 
     @GetMapping("/detail/items")
     public PageItemResponse getMyItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                          @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                          @PageableDefault(size = 12, sort = "id", direction = DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getPageByNickname(nickname, pageable);
         return PageItemResponse.builder()
                 .content(pageForms.getContent())
@@ -129,7 +123,7 @@ public class UserApiController {
 
     @GetMapping("/detail/inquiries")
     public PageInquiryResponse getMyInquiryPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                @PageableDefault(size = 5, sort = "id", direction = DESC) Pageable pageable) {
         Page<PageInquiryForm> pageForms = inquiryService.getPageByNickname(nickname, pageable);
         return PageInquiryResponse.builder()
                 .content(pageForms.getContent())
@@ -141,21 +135,15 @@ public class UserApiController {
     }
 
     @GetMapping("/detail/likes/bulletins")
-    public PageBulletinResponse getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                                    @PageableDefault(sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<PageBulletinResponse> getLikeBulletinPage(@SessionAttribute(name = LOGIN_USER) String nickname,
+                                                          @PageableDefault(sort = "board_id", direction = DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.getLikeBulletins(nickname, pageable);
-        return PageBulletinResponse.builder()
-                .content(pageForms.getContent())
-                .page(pageForms.getPageable().getPageNumber())
-                .size(pageForms.getPageable().getPageSize())
-                .totalElements(pageForms.getTotalElements())
-                .totalPages(pageForms.getTotalPages())
-                .build();
+        return pageForms.map(PageBulletinResponse::new);
     }
 
     @GetMapping("/detail/likes/items")
     public PageItemResponse getLikeItemPage(@SessionAttribute(name = LOGIN_USER) String nickname,
-                                            @PageableDefault(size = 12, sort = "board_id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                            @PageableDefault(size = 12, sort = "board_id", direction = DESC) Pageable pageable) {
         Page<PageItemForm> pageForms = itemService.getLikeItems(nickname, pageable);
         return PageItemResponse.builder()
                 .content(pageForms.getContent())

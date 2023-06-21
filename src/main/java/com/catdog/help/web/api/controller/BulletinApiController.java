@@ -66,16 +66,10 @@ public class BulletinApiController {
 
     /***  read  ***/
     @GetMapping
-    public PageBulletinResponse getPage(@RequestBody BulletinSearch search,
-                                        @PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
+    public Page<PageBulletinResponse> getPage(@RequestBody BulletinSearch search,
+                                              @PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         Page<PageBulletinForm> pageForms = bulletinService.search(search, pageable);
-        return PageBulletinResponse.builder()
-                .content(pageForms.getContent())
-                .page(pageForms.getPageable().getPageNumber())
-                .size(pageForms.getPageable().getPageSize())
-                .totalElements(pageForms.getTotalElements())
-                .totalPages(pageForms.getTotalPages())
-                .build();
+        return pageForms.map(PageBulletinResponse::new);
     }
 
     @GetMapping("/{id}")

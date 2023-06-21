@@ -4,24 +4,27 @@ import com.catdog.help.web.form.bulletin.PageBulletinForm;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 public class PageBulletinResponse {
 
-    private List<PageBulletinForm> content;
-    private int page;
-    private int size;
-    private Long totalElements;
-    private int totalPages;
+    private Long id;
+    private String title;
+    private String nickname;
+    private LocalDateTime createdDate;
+    private int views;
+    private String region;
+
 
 
     @Builder
-    public PageBulletinResponse(List<PageBulletinForm> content, int page, int size, Long totalElements, int totalPages) {
-        this.content = content;
-        this.page = page;
-        this.size = size;
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
+    public PageBulletinResponse(PageBulletinForm form) {
+        this.id = form.getId();
+        this.title = form.getTitle();
+        this.nickname = form.getNickname();
+        this.createdDate = form.getCreatedDate();
+        this.views = form.getViews();
+        this.region = form.getRegion();
     }
 }
