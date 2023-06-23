@@ -1,27 +1,28 @@
 package com.catdog.help.web.api.response.inquiry;
 
+import com.catdog.help.domain.board.SecretStatus;
 import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 public class PageInquiryResponse {
 
-    private List<PageInquiryForm> content;
-    private int page;
-    private int size;
-    private Long totalElements;
-    private int totalPages;
+    private Long id;
+    private String nickname;
+    private String title;
+    private LocalDateTime createdDate;
+    private SecretStatus secret;
 
 
     @Builder
-    public PageInquiryResponse(List<PageInquiryForm> content, int page, int size, Long totalElements, int totalPages) {
-        this.content = content;
-        this.page = page;
-        this.size = size;
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
+    public PageInquiryResponse(PageInquiryForm form) {
+        this.id = form.getId();
+        this.nickname = form.getNickname();
+        this.title = form.getTitle();
+        this.createdDate = form.getCreatedDate();
+        this.secret = form.getSecret();
     }
 }
