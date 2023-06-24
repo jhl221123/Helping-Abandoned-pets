@@ -1,6 +1,7 @@
 package com.catdog.help.web.form.lost;
 
 import com.catdog.help.domain.board.Lost;
+import com.catdog.help.web.api.request.lost.EditLostRequest;
 import com.catdog.help.web.form.image.ReadImageForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -82,6 +83,17 @@ public class EditLostForm {
         }
     }
 
+    public EditLostForm(EditLostRequest request) {
+        this.id = request.getId();;
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.region = request.getRegion();
+        this.breed = request.getBreed();
+        this.lostDate = request.getLostDate();
+        this.lostPlace = request.getLostPlace();
+        this.gratuity = request.getGratuity();
+    }
+
 
     public void addOldLeadImage(ReadImageForm oldLeadImage) {
         this.oldLeadImage = oldLeadImage;
@@ -89,5 +101,13 @@ public class EditLostForm {
 
     public void addOldImages(List<ReadImageForm> oldImages) {
         this.oldImages = oldImages;
+    }
+
+    public void addNewLeadImage(MultipartFile newLeadImage) {
+        this.newLeadImage = newLeadImage;
+    }
+
+    public void addNewImages(List<MultipartFile> newImages) {
+        this.newImages = newImages;
     }
 }

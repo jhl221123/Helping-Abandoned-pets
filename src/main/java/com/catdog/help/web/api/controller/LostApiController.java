@@ -1,15 +1,18 @@
 package com.catdog.help.web.api.controller;
 
+import com.catdog.help.exception.NotAuthorizedException;
 import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.api.Base64Image;
+import com.catdog.help.web.api.request.lost.EditLostRequest;
 import com.catdog.help.web.api.request.lost.SaveLostRequest;
 import com.catdog.help.web.api.response.comment.CommentResponse;
 import com.catdog.help.web.api.response.lost.PageLostResponse;
 import com.catdog.help.web.api.response.lost.ReadLostResponse;
 import com.catdog.help.web.api.response.lost.SaveLostResponse;
 import com.catdog.help.web.controller.ViewUpdater;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static com.catdog.help.MyConst.BULLETIN;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -80,19 +84,50 @@ public class LostApiController {
                 .build();
     }
 
+    /***  update  ***/
+    @PostMapping("/{id}/edit")
+    public void editBoard(@SessionAttribute(value = LOGIN_USER) String nickname,
+                          @Validated @RequestBody(required = false) EditLostRequest request) {
+        if (!isWriter(request.getId(), nickname)) {
+            throw new NotAuthorizedException(BULLETIN);
+        } //작성자 본인만 수정 가능
+
+        EditLostForm form = new EditLostForm(request);
+
+        MockMultipartFile newLeadImage = getMultipartFile(request.getNewLeadImage());
+        form.addNewLeadImage(newLeadImage);
+
+        List<MultipartFile> newImages = getMultipartFiles(request.getNewImages());
+        form.addNewImages(newImages);
+
+        lostService.update(form);
+    }
+
 
     private List<MultipartFile> getMultipartFiles(List<Base64Image> base64Images) {
         List<MultipartFile> newImages = new ArrayList<>();
         for (Base64Image base64Image : base64Images) {
-            String fileName = base64Image.getOriginalName();
-            String base64File = base64Image.getBase64File();
-
-            Base64.Decoder decoder = Base64.getDecoder();
-            byte[] decodedBytes = decoder.decode(base64File.getBytes());
-
-            MockMultipartFile mockMultipartFile = new MockMultipartFile("image", fileName, "image/png", decodedBytes);
-            newImages.add(mockMultipartFile);
+            newImages.add(getMultipartFile(base64Image));
         }
         return newImages;
+    }
+
+    private MockMultipartFile getMultipartFile(Base64Image base64Image) {
+        String fileName = base64Image.getOriginalName();
+        String base64File = base64Image.getBase64File();
+        log.info("뭐냐{}", base64Image);
+        if (base64File == null) {
+            return new MockMultipartFile("name", (byte[]) null);
+        }
+
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] decodedBytes = decoder.decode(base64File.getBytes());
+
+        return new MockMultipartFile("image", fileName, "image/png", decodedBytes);
+    }
+
+    private Boolean isWriter(Long id, String nickname) {
+        String writer = boardService.getWriter(id);
+        return writer.equals(nickname) ? true : false;
     }
 }
