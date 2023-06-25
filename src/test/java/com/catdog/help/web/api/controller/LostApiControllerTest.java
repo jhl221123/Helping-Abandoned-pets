@@ -5,10 +5,12 @@ import com.catdog.help.domain.board.Lost;
 import com.catdog.help.domain.board.UploadFile;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.CommentService;
 import com.catdog.help.service.LostService;
 import com.catdog.help.web.SessionConst;
 import com.catdog.help.web.api.Base64Image;
+import com.catdog.help.web.api.request.lost.EditLostRequest;
 import com.catdog.help.web.api.request.lost.SaveLostRequest;
 import com.catdog.help.web.api.response.comment.CommentResponse;
 import com.catdog.help.web.api.response.lost.PageLostResponse;
@@ -17,6 +19,7 @@ import com.catdog.help.web.api.response.lost.SaveLostResponse;
 import com.catdog.help.web.controller.ViewUpdater;
 import com.catdog.help.web.form.comment.CommentForm;
 import com.catdog.help.web.form.image.ReadImageForm;
+import com.catdog.help.web.form.lost.EditLostForm;
 import com.catdog.help.web.form.lost.PageLostForm;
 import com.catdog.help.web.form.lost.ReadLostForm;
 import com.catdog.help.web.form.lost.SaveLostForm;
@@ -51,9 +54,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class LostApiControllerTest {
@@ -63,6 +68,9 @@ class LostApiControllerTest {
 
     @Mock
     private LostService lostService;
+
+    @Mock
+    private BoardService boardService;
 
     @Mock
     private CommentService commentService;
@@ -152,13 +160,6 @@ class LostApiControllerTest {
                 .andExpect(content().json(result));
     }
 
-    private List<PageLostForm> getPageLostForms() {
-        PageLostForm pageForm = new PageLostForm(getLost(), getReadImageForm());
-        List<PageLostForm> forms = new ArrayList<>();
-        forms.add(pageForm);
-        return forms;
-    }
-
     @Test
     @DisplayName("실종글 단건 조회 성공")
     void readLost() throws Exception {
@@ -191,6 +192,68 @@ class LostApiControllerTest {
                 .andExpect(content().json(result));
     }
 
+    @Test
+    @DisplayName("실종글 수정 성공")
+    void edit() throws Exception {
+        //given
+        EditLostRequest editRequest = getEditLostRequest();
+        String request = objectMapper
+                .registerModule(new JavaTimeModule())
+                .disable(WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(editRequest);
+
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        doNothing().when(lostService)
+                .update(any(EditLostForm.class));
+
+        //expected
+        mockMvc.perform(post("/api/lost/{id}/edit", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                        .content(request)
+                )
+                .andExpect(status().isOk());
+    }
+
+
+    private EditLostRequest getEditLostRequest() {
+        return EditLostRequest.builder()
+                .id(2L)
+                .title("제목")
+                .content("내용")
+                .region("부산")
+                .breed("품종")
+                .lostDate(LocalDate.now())
+                .lostPlace("실종장소")
+                .gratuity(100000)
+                .newLeadImage(getBase64Image())
+                .newImages(getBase64Images())
+                .deleteImageIds(List.of(5L, 6L))
+                .build();
+    }
+
+    private List<Base64Image> getBase64Images() {
+        Base64Image base64Image = getBase64Image();
+        List<Base64Image> newImages = new ArrayList<>();
+        newImages.add(base64Image);
+        return newImages;
+    }
+
+    private Base64Image getBase64Image() {
+        return Base64Image.builder()
+                .originalName("uploadFileName")
+                .base64File("base64File")
+                .build();
+    }
+
+    private List<PageLostForm> getPageLostForms() {
+        PageLostForm pageForm = new PageLostForm(getLost(), getReadImageForm());
+        List<PageLostForm> forms = new ArrayList<>();
+        forms.add(pageForm);
+        return forms;
+    }
 
     private ReadLostResponse getReadLostResponse(ReadLostForm lostForm, List<CommentResponse> commentResponses) {
         return ReadLostResponse.builder()

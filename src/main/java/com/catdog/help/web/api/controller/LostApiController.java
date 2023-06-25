@@ -115,7 +115,6 @@ public class LostApiController {
     private MockMultipartFile getMultipartFile(Base64Image base64Image) {
         String fileName = base64Image.getOriginalName();
         String base64File = base64Image.getBase64File();
-        log.info("뭐냐{}", base64Image);
         if (base64File == null) {
             return new MockMultipartFile("name", (byte[]) null);
         }
