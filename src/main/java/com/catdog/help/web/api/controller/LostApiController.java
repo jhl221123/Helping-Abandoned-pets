@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static com.catdog.help.MyConst.BULLETIN;
+import static com.catdog.help.MyConst.LOST;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -49,7 +49,6 @@ public class LostApiController {
     private final BoardService boardService;
 
 
-    /**    create    **/
     @PostMapping("/new")
     public SaveLostResponse save(@SessionAttribute(LOGIN_USER) String nickname,
                                  @RequestBody @Validated SaveLostRequest request) {
@@ -60,7 +59,6 @@ public class LostApiController {
         return new SaveLostResponse(boardId);
     }
 
-    /***  read  ***/
     @GetMapping
     public Page<PageLostResponse> getPage(@ModelAttribute LostSearch search,
                                           @PageableDefault(size = 6, sort = "id", direction = DESC) Pageable pageable) {
@@ -84,12 +82,11 @@ public class LostApiController {
                 .build();
     }
 
-    /***  update  ***/
     @PostMapping("/{id}/edit")
-    public void editBoard(@SessionAttribute(value = LOGIN_USER) String nickname,
+    public void editBoard(@SessionAttribute(LOGIN_USER) String nickname,
                           @Validated @RequestBody(required = false) EditLostRequest request) {
         if (!isWriter(request.getId(), nickname)) {
-            throw new NotAuthorizedException(BULLETIN);
+            throw new NotAuthorizedException(LOST);
         } //작성자 본인만 수정 가능
 
         EditLostForm form = new EditLostForm(request);
@@ -101,6 +98,14 @@ public class LostApiController {
         form.addNewImages(newImages);
 
         lostService.update(form);
+    }
+
+    @PostMapping("/{id}/delete")
+    public void deleteBoard(@PathVariable Long id, @SessionAttribute(LOGIN_USER) String nickname) {
+        if (!isWriter(id, nickname)) {
+            throw new NotAuthorizedException(LOST);
+        }
+        lostService.delete(id);
     }
 
 
