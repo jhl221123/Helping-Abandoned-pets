@@ -42,6 +42,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockCookie;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -215,6 +217,36 @@ class LostApiControllerTest {
                         .content(request)
                 )
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("실종글 삭제 성공")
+    void deleteLostBoard() throws Exception {
+        //given
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        //expected
+        mockMvc.perform(post("/api/lost/{id}/delete", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "닉네임")
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("작성자 불일치로 실종글 삭제 실패 후 NotAuthorizedException 발생")
+    void failDeleteLostBoardByNotAuthorizedException() throws Exception {
+        //given
+        doReturn("작성자").when(boardService)
+                .getWriter(2L);
+
+        //expected
+        assertThrows(NestedServletException.class, // TODO: 2023-06-26 NotAuthorizedException 으로 수정
+                () -> mockMvc.perform(post("/api/lost/{id}/delete", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(SessionConst.LOGIN_USER, "다른 사용자")
+                ));
     }
 
 
