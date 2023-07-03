@@ -5,10 +5,13 @@ import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.web.api.request.inquiry.SaveInquiryRequest;
+import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
 import com.catdog.help.web.api.response.inquiry.ReadInquiryResponse;
 import com.catdog.help.web.api.response.inquiry.SaveInquiryResponse;
+import com.catdog.help.web.form.inquiry.PageInquiryForm;
 import com.catdog.help.web.form.inquiry.ReadInquiryForm;
 import com.catdog.help.web.form.inquiry.SaveInquiryForm;
+import com.catdog.help.web.form.search.InquirySearch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +21,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
 
 import static com.catdog.help.domain.board.SecretStatus.OPEN;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
@@ -97,6 +106,36 @@ class InquiryApiControllerTest {
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(content().json(result));
+    }
+
+    @Test
+    @DisplayName("문의글 페이지 조회 성공")
+    void readInquiryBoardPage() throws Exception {
+        //given
+        InquirySearch search = InquirySearch.builder()
+                .title("검색제목")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(search);
+
+        Inquiry board = getInquiry();
+        PageInquiryForm pageForm = new PageInquiryForm(board);
+        Page<PageInquiryForm> pageForms = new PageImpl(List.of(pageForm), PageRequest.of(0, 5), 0);
+        Page<PageInquiryResponse> response = pageForms.map(PageInquiryResponse::new);
+
+        String responseJson = objectMapper
+                .registerModule(new JavaTimeModule())
+                .disable(WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(response);
+
+        doReturn(pageForms).when(inquiryService)
+                .search(any(InquirySearch.class), any(Pageable.class));
+
+        //expected
+        mockMvc.perform(get("/api/inquiries")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestJson)
+                )
+                .andExpect(content().json(responseJson));
     }
 
 
