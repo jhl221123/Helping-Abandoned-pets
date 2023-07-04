@@ -1,5 +1,7 @@
 package com.catdog.help.web.api.controller;
 
+import com.catdog.help.exception.NotAuthorizedException;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.web.api.request.inquiry.SaveInquiryRequest;
 import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import static com.catdog.help.MyConst.INQUIRY;
 import static com.catdog.help.web.SessionConst.LOGIN_USER;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -23,6 +26,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class InquiryApiController {
 
     private final InquiryService inquiryService;
+    private final BoardService boardService;
 
 
     @PostMapping("/new")
@@ -41,5 +45,18 @@ public class InquiryApiController {
     public ReadInquiryResponse readBoard(@PathVariable Long id) {
         ReadInquiryForm form = inquiryService.read(id);
         return new ReadInquiryResponse(form);
+    }
+
+    @PostMapping("/{id}/delete")
+    public void deleteBoard(@PathVariable(value = "id") Long boardId, @SessionAttribute(LOGIN_USER) String nickname) {
+        if (!isWriter(boardId, nickname)) {
+            throw new NotAuthorizedException(INQUIRY);
+        }
+        inquiryService.delete(boardId);
+    }
+
+    private Boolean isWriter(Long boardId, String nickname) {
+        String writer = boardService.getWriter(boardId);
+        return writer.equals(nickname) ? true : false;
     }
 }
