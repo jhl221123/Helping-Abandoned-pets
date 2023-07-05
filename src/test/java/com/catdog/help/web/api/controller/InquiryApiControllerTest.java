@@ -3,6 +3,7 @@ package com.catdog.help.web.api.controller;
 import com.catdog.help.domain.board.Inquiry;
 import com.catdog.help.domain.user.Gender;
 import com.catdog.help.domain.user.User;
+import com.catdog.help.service.BoardService;
 import com.catdog.help.service.InquiryService;
 import com.catdog.help.web.api.request.inquiry.SaveInquiryRequest;
 import com.catdog.help.web.api.response.inquiry.PageInquiryResponse;
@@ -41,6 +42,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class InquiryApiControllerTest {
@@ -50,6 +52,9 @@ class InquiryApiControllerTest {
 
     @Mock
     private InquiryService inquiryService;
+
+    @Mock
+    private BoardService boardService;
 
     private MockMvc mockMvc;
 
@@ -136,6 +141,21 @@ class InquiryApiControllerTest {
                         .content(requestJson)
                 )
                 .andExpect(content().json(responseJson));
+    }
+
+    @Test
+    @DisplayName("문의글 삭제 성공")
+    void deleteBoard() throws Exception {
+        //given
+        doReturn("닉네임").when(boardService)
+                .getWriter(2L);
+
+        //expected
+        mockMvc.perform(post("/api/inquiries/{id}/delete", 2L)
+                        .contentType(APPLICATION_JSON)
+                        .sessionAttr(LOGIN_USER, "닉네임")
+                )
+                .andExpect(status().isOk());
     }
 
 
